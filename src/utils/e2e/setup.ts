@@ -5,10 +5,23 @@ interface TestBrowser {
   page: Page;
 }
 
+interface CustomNetworkConditions {
+  latency: number;
+  download: number;
+  upload: number;
+  offline: boolean;
+}
+
 export async function setupTestBrowser(): Promise<TestBrowser> {
+  // Use puppeteer instead of puppeteer-core
   const browser = await puppeteer.launch({
-    headless: 'new' as any,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--single-process'
+    ]
   });
 
   const page = await browser.newPage();
@@ -31,28 +44,16 @@ export async function setupTestBrowser(): Promise<TestBrowser> {
     }, 100); // Default 100ms delay
   });
 
-  // Add custom test helpers to the page
-  await page.evaluate(() => {
-    (window as any).testHelpers = {
-      waitForElement: (selector: string) => {
-        return new Promise((resolve) => {
-          if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
-          }
-
-          const observer = new MutationObserver(() => {
-            if (document.querySelector(selector)) {
-              resolve(document.querySelector(selector));
-              observer.disconnect();
-            }
-          });
-
-          observer.observe(document.body, {
-            childList: true,
-            subtree: true
-          });
-        });
-      }
+  // Add helper methods to evaluate in browser context
+  await page.exposeFunction('getElementProps', (selector: string) => {
+    if (typeof document === 'undefined') return null;
+    const element = document.querySelector(selector);
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height,
+      visible: rect.width > 0 && rect.height > 0
     };
   });
 
@@ -67,18 +68,35 @@ export async function simulateNetworkCondition(
   page: Page,
   condition: 'slow-3g' | 'fast-3g' | '4g' | 'offline'
 ): Promise<void> {
-  const conditions = {
-    'slow-3g': { downloadThroughput: 500_000, uploadThroughput: 250_000, latency: 100 },
-    'fast-3g': { downloadThroughput: 1_500_000, uploadThroughput: 750_000, latency: 50 },
-    '4g': { downloadThroughput: 4_000_000, uploadThroughput: 2_000_000, latency: 20 },
-    'offline': { downloadThroughput: 0, uploadThroughput: 0, latency: 0 }
+  const conditions: Record<string, CustomNetworkConditions> = {
+    'slow-3g': {
+      download: 500_000,
+      upload: 250_000,
+      latency: 100,
+      offline: false
+    },
+    'fast-3g': {
+      download: 1_500_000,
+      upload: 750_000,
+      latency: 50,
+      offline: false
+    },
+    '4g': {
+      download: 4_000_000,
+      upload: 2_000_000,
+      latency: 20,
+      offline: false
+    },
+    'offline': {
+      download: 0,
+      upload: 0,
+      latency: 0,
+      offline: true
+    }
   };
 
-  if (condition === 'offline') {
-    await (page as any).setOfflineMode(true);
-  } else {
-    await page.emulateNetworkConditions(conditions[condition] as any);
-  }
+  const networkCondition = conditions[condition];
+  await (page as any).emulateNetworkConditions(networkCondition);
 }
 
 export async function simulateTouch(

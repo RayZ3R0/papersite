@@ -6,15 +6,39 @@
       "units": [
         {
           "id": "unit1",
-          "name": "Mechanics",
+          "name": "Unit 1",
           "order": 1,
           "description": "Forces, motion, and energy"
         },
         {
           "id": "unit2",
-          "name": "Waves",
+          "name": "Unit 2",
           "order": 2,
           "description": "Wave phenomena and properties"
+        },
+        {
+          "id": "unit3",
+          "name": "Unit 3",
+          "order": 3,
+          "description": "Electricity and magnetism"
+        },
+        {
+          "id": "unit4",
+          "name": "Unit 4",
+          "order": 4,
+          "description": "Thermal physics and materials"
+        },
+        {
+          "id": "unit5",
+          "name": "Unit 5",
+          "order": 5,
+          "description": "Nuclear physics and radiation"
+        },
+        {
+          "id": "unit6",
+          "name": "Unit 6",
+          "order": 6,
+          "description": "Quantum physics and particle physics"
         }
       ],
       "papers": [
@@ -28,6 +52,24 @@
           "title": "Physics Unit 1 - January 2024"
         },
         {
+          "id": "phys-2023-oct-u1",
+          "unitId": "unit1",
+          "year": 2023,
+          "session": "October",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 1 - October 2023"
+        },
+        {
+          "id": "phys-2023-jan-u1",
+          "unitId": "unit1",
+          "year": 2023,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 1 - January 2023"
+        },
+        {
           "id": "phys-2024-jan-u2",
           "unitId": "unit2",
           "year": 2024,
@@ -35,6 +77,51 @@
           "pdfUrl": "#",
           "markingSchemeUrl": "#",
           "title": "Physics Unit 2 - January 2024"
+        },
+        {
+          "id": "phys-2023-oct-u2",
+          "unitId": "unit2",
+          "year": 2023,
+          "session": "October",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 2 - October 2023"
+        },
+        {
+          "id": "phys-2023-jan-u3",
+          "unitId": "unit3",
+          "year": 2023,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 3 - January 2023"
+        },
+        {
+          "id": "phys-2022-oct-u4",
+          "unitId": "unit4",
+          "year": 2022,
+          "session": "October",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 4 - October 2022"
+        },
+        {
+          "id": "phys-2022-jan-u5",
+          "unitId": "unit5",
+          "year": 2022,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 5 - January 2022"
+        },
+        {
+          "id": "phys-2021-oct-u6",
+          "unitId": "unit6",
+          "year": 2021,
+          "session": "October",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 6 - October 2021"
         }
       ]
     },

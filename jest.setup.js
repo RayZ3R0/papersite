@@ -1,32 +1,22 @@
-import "whatwg-fetch";
 import "@testing-library/jest-dom";
+import "whatwg-fetch";
 
-// Ensure window and document are defined
+// Mock window if it doesn't exist (for node environment)
 if (typeof window === "undefined") {
   global.window = {};
 }
 
-if (typeof document === "undefined") {
-  global.document = {
-    createElement: () => ({
-      style: {},
-      removeChild: () => {},
-      appendChild: () => {},
-      getBoundingClientRect: () => ({
-        width: 0,
-        height: 0,
-      }),
-    }),
-    querySelector: () => null,
-    querySelectorAll: () => [],
-    documentElement: {
-      style: {},
-    },
-    body: {
-      appendChild: () => {},
-      removeChild: () => {},
-    },
+// Mock URL if it doesn't exist
+if (!global.URL) {
+  global.URL = {
+    createObjectURL: jest.fn(() => "mock-url"),
+    revokeObjectURL: jest.fn(),
   };
+}
+
+// Mock window.URL if it doesn't exist
+if (!window.URL) {
+  window.URL = global.URL;
 }
 
 // Mock window.matchMedia
@@ -78,12 +68,6 @@ global.ResizeObserver = class ResizeObserver {
 // Mock window.scrollTo
 window.scrollTo = jest.fn();
 
-// Mock createObjectURL
-if (typeof window.URL.createObjectURL === "undefined") {
-  window.URL.createObjectURL = jest.fn(() => "mock-url");
-  window.URL.revokeObjectURL = jest.fn();
-}
-
 // Mock fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -111,17 +95,21 @@ global.TouchEvent = class TouchEvent {
 };
 
 // Set up viewport size
-Object.defineProperty(window, "innerWidth", {
-  writable: true,
-  configurable: true,
-  value: 1024,
-});
+if (typeof window.innerWidth === "undefined") {
+  Object.defineProperty(window, "innerWidth", {
+    writable: true,
+    configurable: true,
+    value: 1024,
+  });
+}
 
-Object.defineProperty(window, "innerHeight", {
-  writable: true,
-  configurable: true,
-  value: 768,
-});
+if (typeof window.innerHeight === "undefined") {
+  Object.defineProperty(window, "innerHeight", {
+    writable: true,
+    configurable: true,
+    value: 768,
+  });
+}
 
 // Mock performance API
 if (typeof window.performance === "undefined") {

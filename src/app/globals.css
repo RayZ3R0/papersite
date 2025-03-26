@@ -1,26 +1,38 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Custom styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-gray-50;
+}
+
+.container {
+  @apply mx-auto px-4 max-w-7xl;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2;
+}
+
+/* PDF Viewer */
+.pdf-container {
+  @apply h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)];
+}
+
+.pdf-controls {
+  @apply flex justify-center gap-4 mb-4;
+}
+
+.pdf-button {
+  @apply px-4 py-2 rounded transition-colors;
+}
+
+.pdf-button.active {
+  @apply bg-blue-500 text-white;
+}
+
+.pdf-button.inactive {
+  @apply bg-gray-200 hover:bg-gray-300;
 }
