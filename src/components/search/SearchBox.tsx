@@ -1,5 +1,4 @@
-import React, { useRef, KeyboardEvent } from 'react';
-import { SearchQuery } from '@/types/search';
+import React, { useRef, KeyboardEvent, useEffect } from 'react';
 
 interface SearchBoxProps {
   value: string;
@@ -20,87 +19,105 @@ export default function SearchBox({
   suggestions = [],
   onSuggestionSelect
 }: SearchBoxProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLUListElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Only show suggestions if the user has typed at least 3 characters and paused
+  // Show suggestions when there's input and suggestions are available
   const shouldShowSuggestions = showSuggestions && 
-    value.length >= 3 && 
-    suggestions.length > 0 &&
-    !value.includes(' '); // Hide suggestions if user has started typing a complete query
+    value.length > 0 && 
+    suggestions.length > 0;
+
+  // Handle clicks outside the search component
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!suggestions.length) return;
+
     switch (e.key) {
       case 'ArrowDown':
-        if (shouldShowSuggestions) {
-          e.preventDefault();
-          setSelectedIndex(prev => 
-            prev < suggestions.length - 1 ? prev + 1 : prev
-          );
-        }
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : prev
+        );
         break;
       
       case 'ArrowUp':
-        if (shouldShowSuggestions) {
-          e.preventDefault();
-          setSelectedIndex(prev => prev > -1 ? prev - 1 : -1);
-        }
+        e.preventDefault();
+        setSelectedIndex(prev => prev > -1 ? prev - 1 : -1);
         break;
       
       case 'Enter':
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+          e.preventDefault();
           onSuggestionSelect?.(suggestions[selectedIndex]);
           setShowSuggestions(false);
+          setSelectedIndex(-1);
         }
         break;
       
       case 'Escape':
         setShowSuggestions(false);
-        break;
-      
-      case 'Tab':
-        // Hide suggestions on Tab
-        setShowSuggestions(false);
-        break;
-
-      case ' ':
-        // Hide suggestions when user starts typing a complete query
-        setShowSuggestions(false);
+        setSelectedIndex(-1);
+        inputRef.current?.blur();
         break;
     }
   };
 
-  const handleInputFocus = () => {
-    // Only show suggestions if there's some input
-    if (value.length >= 3) {
-      setShowSuggestions(true);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+    setShowSuggestions(true);
     setSelectedIndex(-1);
   };
 
-  const handleInputBlur = (e: React.FocusEvent) => {
-    // Hide suggestions unless clicking on a suggestion
-    if (!e.relatedTarget?.closest('#search-suggestions')) {
-      setShowSuggestions(false);
-    }
+  const handleSuggestionClick = (suggestion: string) => {
+    onSuggestionSelect?.(suggestion);
+    setShowSuggestions(false);
+    setSelectedIndex(-1);
+    inputRef.current?.focus();
   };
 
+  // Scroll suggestion into view when using keyboard navigation
+  useEffect(() => {
+    if (selectedIndex >= 0 && suggestionsRef.current) {
+      const suggestionEl = suggestionsRef.current.children[selectedIndex] as HTMLElement;
+      if (suggestionEl) {
+        suggestionEl.scrollIntoView({
+          block: 'nearest',
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [selectedIndex]);
+
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <div className="relative flex items-center">
         <input
           ref={inputRef}
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
+          onFocus={() => setShowSuggestions(true)}
           placeholder={placeholder}
           className={`w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 
             focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none 
             transition-colors ${className}`}
+          autoComplete="off"
           role="combobox"
           aria-expanded={shouldShowSuggestions}
           aria-controls="search-suggestions"
@@ -108,8 +125,13 @@ export default function SearchBox({
         />
         {value && (
           <button
-            onClick={onClear}
-            className="absolute right-3 p-1 text-gray-400 hover:text-gray-600 
+            onClick={() => {
+              onClear();
+              setShowSuggestions(false);
+              setSelectedIndex(-1);
+              inputRef.current?.focus();
+            }}
+            className="absolute right-3 p-1.5 text-gray-400 hover:text-gray-600 
               rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Clear search"
           >
@@ -118,13 +140,15 @@ export default function SearchBox({
         )}
       </div>
 
-      {/* Suggestions Dropdown - Only show when typing initial term */}
+      {/* Suggestions Dropdown */}
       {shouldShowSuggestions && (
         <ul
+          ref={suggestionsRef}
           id="search-suggestions"
           role="listbox"
-          className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg 
-            border border-gray-200 max-h-48 overflow-auto"
+          className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg 
+            border border-gray-200 max-h-48 overflow-auto py-1"
+          onMouseLeave={() => setSelectedIndex(-1)}
         >
           {suggestions.map((suggestion, index) => (
             <li
@@ -132,13 +156,12 @@ export default function SearchBox({
               id={`suggestion-${index}`}
               role="option"
               aria-selected={index === selectedIndex}
-              className={`px-4 py-2 cursor-pointer transition-colors text-sm ${
-                index === selectedIndex ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50'
-              }`}
-              onClick={() => {
-                onSuggestionSelect?.(suggestion);
-                setShowSuggestions(false);
-              }}
+              onClick={() => handleSuggestionClick(suggestion)}
+              onMouseEnter={() => setSelectedIndex(index)}
+              className={`px-4 py-2 cursor-pointer text-sm transition-colors
+                ${index === selectedIndex 
+                  ? 'bg-blue-50 text-blue-700' 
+                  : 'hover:bg-gray-50'}`}
             >
               {suggestion}
             </li>

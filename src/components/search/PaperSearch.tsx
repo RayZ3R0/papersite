@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useSearch } from '@/hooks/useSearch';
 import SearchBox from './SearchBox';
@@ -18,26 +18,44 @@ export default function PaperSearch() {
   // Get trending searches
   const [trendingSearches, setTrendingSearches] = React.useState<string[]>([]);
   
-  // Generate search suggestions
+  // Format suggestions for the search box
   const searchSuggestions = useMemo(() => {
-    const allSuggestions = [
-      ...suggestions.map(s => s.text),
-      ...trendingSearches.filter(t => t.toLowerCase().includes(query.text.toLowerCase()))
-    ];
-    return Array.from(new Set(allSuggestions));
+    // When user is typing, show search suggestions
+    if (query.text) {
+      return suggestions.map(s => s.text);
+    }
+    // When search is empty, show trending searches
+    return trendingSearches;
   }, [suggestions, trendingSearches, query.text]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setTrendingSearches(getTrendingSearches());
   }, []);
 
   // Log successful searches
-  useEffect(() => {
+  React.useEffect(() => {
     if (results.length > 0 && query.text) {
       logSearchQuery(query.text);
-      setTrendingSearches(getTrendingSearches()); // Refresh trending searches
+      setTrendingSearches(getTrendingSearches()); // Refresh trending
     }
   }, [results.length, query.text]);
+
+  const handleSuggestionSelect = (text: string) => {
+    if (suggestions.find(s => s.text === text)) {
+      // Handle suggestion selection
+      const suggestion = suggestions.find(s => s.text === text);
+      if (suggestion) {
+        if (suggestion.type === 'subject') {
+          updateQuery({ subject: suggestion.value });
+        } else if (suggestion.type === 'unit') {
+          updateQuery({ unit: suggestion.value });
+        }
+      }
+    } else {
+      // Handle trending search selection
+      updateQuery({ text });
+    }
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -48,7 +66,7 @@ export default function PaperSearch() {
         onClear={clearSearch}
         placeholder="Try: 'phy mech jan 24' or 'chem u1 oct'"
         suggestions={searchSuggestions}
-        onSuggestionSelect={(text) => updateQuery({ text })}
+        onSuggestionSelect={handleSuggestionSelect}
       />
 
       {/* Active Filters */}
@@ -82,7 +100,7 @@ export default function PaperSearch() {
         )}
       </div>
 
-      {/* Results or Empty State */}
+      {/* Results Section */}
       <div className="mt-4">
         {isSearching ? (
           <div className="flex justify-center py-8">
@@ -132,27 +150,6 @@ export default function PaperSearch() {
         ) : query.text ? (
           <div className="py-8">
             <p className="text-center text-gray-500 mb-4">No papers found</p>
-            {suggestions.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm text-gray-600 text-center">Suggestions:</p>
-                {suggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      if (suggestion.type === 'subject') {
-                        updateQuery({ subject: suggestion.value });
-                      } else if (suggestion.type === 'unit') {
-                        updateQuery({ unit: suggestion.value });
-                      }
-                    }}
-                    className="block w-full text-center px-4 py-2 text-blue-600 
-                      hover:bg-blue-50 rounded transition-colors"
-                  >
-                    {suggestion.text}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         ) : (
           <div className="py-4 space-y-6">

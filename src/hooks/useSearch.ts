@@ -10,7 +10,6 @@ interface UseSearchOptions {
   maxRecentSearches?: number;
 }
 
-// Recent searches are stored in localStorage
 const RECENT_SEARCHES_KEY = 'papersite:recent-searches';
 
 function getStoredSearches(): SearchQuery[] {
@@ -23,29 +22,8 @@ function getStoredSearches(): SearchQuery[] {
   }
 }
 
-function storeRecentSearch(query: SearchQuery, maxItems: number) {
-  if (typeof window === 'undefined') return;
-  try {
-    const searches = getStoredSearches();
-    // Only store if there's actual search text
-    if (query.text.trim()) {
-      const newSearches = [
-        query,
-        ...searches.filter(s => s.text !== query.text)
-      ].slice(0, maxItems);
-      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
-    }
-  } catch {
-    // Ignore storage errors
-  }
-}
-
 export function useSearch(options: UseSearchOptions = {}) {
-  const { 
-    debounceMs = 300, 
-    maxResults = 20,
-    maxRecentSearches = 5
-  } = options;
+  const { debounceMs = 300, maxResults = 20, maxRecentSearches = 5 } = options;
   
   const [query, setQuery] = useState<SearchQuery>({ text: '' });
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -61,6 +39,70 @@ export function useSearch(options: UseSearchOptions = {}) {
     setRecentSearches(getStoredSearches());
   }, []);
 
+  // Generate quick suggestions based on current input
+  const generateSuggestions = useCallback((searchQuery: SearchQuery) => {
+    const text = searchQuery.text.toLowerCase().trim();
+    if (!text) return [];
+
+    const suggestions: SearchSuggestion[] = [];
+
+    // Check for subject matches
+    Object.keys(subjectsData.subjects).forEach(subject => {
+      const subjectData = (subjectsData as SubjectsData).subjects[subject];
+      if (subject.startsWith(text) || subjectData.name.toLowerCase().startsWith(text)) {
+        suggestions.push({
+          type: 'subject',
+          text: `Search in ${subjectData.name}`,
+          value: subjectData.name,
+          score: 1.0
+        });
+      }
+    });
+
+    // Check for common patterns
+    if (text.match(/^(phy|phys)/)) {
+      suggestions.push({
+        type: 'subject',
+        text: 'Search in Physics',
+        value: 'Physics',
+        score: 0.9
+      });
+    }
+    if (text.match(/^(chem)/)) {
+      suggestions.push({
+        type: 'subject',
+        text: 'Search in Chemistry',
+        value: 'Chemistry',
+        score: 0.9
+      });
+    }
+    if (text.match(/^(math|maths)/)) {
+      suggestions.push({
+        type: 'subject',
+        text: 'Search in Mathematics',
+        value: 'Mathematics',
+        score: 0.9
+      });
+    }
+
+    // Unit suggestions if subject is known
+    if (searchQuery.subject) {
+      const subject = (subjectsData as SubjectsData).subjects[searchQuery.subject.toLowerCase()];
+      if (subject) {
+        subject.units.forEach(unit => {
+          suggestions.push({
+            type: 'unit',
+            text: unit.name,
+            value: unit.name,
+            score: 0.8
+          });
+        });
+      }
+    }
+
+    return suggestions.sort((a, b) => b.score - a.score).slice(0, 5);
+  }, []);
+
   // Memoized search function
   const performSearch = useCallback((searchQuery: SearchQuery) => {
     setIsSearching(true);
@@ -71,21 +113,30 @@ export function useSearch(options: UseSearchOptions = {}) {
         searchPapers(searchQuery, subjectsData as SubjectsData);
 
       setResults(searchResults.slice(0, maxResults));
-      setSuggestions(searchSuggestions);
 
-      // Store in recent searches if we got results
-      if (searchResults.length > 0) {
-        storeRecentSearch(searchQuery, maxRecentSearches);
-        setRecentSearches(getStoredSearches());
+      // Merge search suggestions with quick suggestions
+      const quickSuggestions = generateSuggestions(searchQuery);
+      setSuggestions([...quickSuggestions, ...searchSuggestions]);
+
+      // Store successful searches
+      if (searchResults.length > 0 && searchQuery.text) {
+        const searches = getStoredSearches();
+        const newSearches = [
+          searchQuery,
+          ...searches.filter(s => s.text !== searchQuery.text)
+        ].slice(0, maxRecentSearches);
+        
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
+        setRecentSearches(newSearches);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
       setResults([]);
-      setSuggestions([]);
+      setSuggestions(generateSuggestions(searchQuery));
     } finally {
       setIsSearching(false);
     }
-  }, [maxResults, maxRecentSearches]);
+  }, [maxResults, maxRecentSearches, generateSuggestions]);
 
   // Debounced search
   const debouncedSearch = useCallback((searchQuery: SearchQuery) => {
@@ -93,10 +144,13 @@ export function useSearch(options: UseSearchOptions = {}) {
       clearTimeout(debounceTimer.current);
     }
 
+    // Always update suggestions immediately for better UX
+    setSuggestions(generateSuggestions(searchQuery));
+
     debounceTimer.current = setTimeout(() => {
       performSearch(searchQuery);
     }, debounceMs);
-  }, [debounceMs, performSearch]);
+  }, [debounceMs, performSearch, generateSuggestions]);
 
   // Update search when query changes
   useEffect(() => {
