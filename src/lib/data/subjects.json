@@ -1,0 +1,88 @@
+{
+  "subjects": {
+    "physics": {
+      "id": "physics",
+      "name": "Physics",
+      "units": [
+        {
+          "id": "unit1",
+          "name": "Mechanics",
+          "order": 1,
+          "description": "Forces, motion, and energy"
+        },
+        {
+          "id": "unit2",
+          "name": "Waves",
+          "order": 2,
+          "description": "Wave phenomena and properties"
+        }
+      ],
+      "papers": [
+        {
+          "id": "phys-2024-jan-u1",
+          "unitId": "unit1",
+          "year": 2024,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 1 - January 2024"
+        },
+        {
+          "id": "phys-2024-jan-u2",
+          "unitId": "unit2",
+          "year": 2024,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Physics Unit 2 - January 2024"
+        }
+      ]
+    },
+    "chemistry": {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "units": [
+        {
+          "id": "unit1",
+          "name": "Atomic Structure",
+          "order": 1,
+          "description": "Atoms, electrons, and periodic table"
+        }
+      ],
+      "papers": [
+        {
+          "id": "chem-2024-jan-u1",
+          "unitId": "unit1",
+          "year": 2024,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Chemistry Unit 1 - January 2024"
+        }
+      ]
+    },
+    "mathematics": {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "units": [
+        {
+          "id": "unit1",
+          "name": "Pure Mathematics",
+          "order": 1,
+          "description": "Algebra and calculus"
+        }
+      ],
+      "papers": [
+        {
+          "id": "math-2024-jan-u1",
+          "unitId": "unit1",
+          "year": 2024,
+          "session": "January",
+          "pdfUrl": "#",
+          "markingSchemeUrl": "#",
+          "title": "Mathematics Unit 1 - January 2024"
+        }
+      ]
+    }
+  }
+}

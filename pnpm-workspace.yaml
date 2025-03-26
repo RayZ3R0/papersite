@@ -1,0 +1,6 @@
+packages:
+  - "src/**"
+  - "scripts/**"
+  - "!**/node_modules"
+  - "!**/dist"
+  - "!**/.next"
