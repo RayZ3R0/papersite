@@ -17,20 +17,26 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-text hover:text-text-muted transition-colors"
             >
               Home
             </Link>
-            <Link 
-              href="/subjects" 
+            <Link
+              href="/subjects"
               className="text-text hover:text-text-muted transition-colors"
             >
               Subjects
             </Link>
-            <Link 
-              href="/search" 
+            <Link
+              href="/books"
+              className="text-text hover:text-text-muted transition-colors"
+            >
+              Books
+            </Link>
+            <Link
+              href="/search"
               className="text-text hover:text-text-muted transition-colors"
             >
               Search

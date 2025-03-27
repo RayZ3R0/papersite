@@ -15,6 +15,7 @@ export const MobileNav = ({ className = '' }: MobileNavProps) => {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Subjects', href: '/subjects' },
+    { name: 'Books', href: '/books' },
     { name: 'Search', href: '/search' },
   ];
 
