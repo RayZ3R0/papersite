@@ -36,7 +36,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 
   return (
     <div className={className}>
-      <h3 className="text-xs font-medium text-gray-500 mb-2 px-4 md:px-2">{title}</h3>
+      <h3 className="text-xs font-medium text-text-muted mb-2 px-4 md:px-2">{title}</h3>
 
       {/* Main container with padding to protect focus rings */}
       <div className="relative px-4 md:px-2">
@@ -45,7 +45,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
           {/* Scroll container with inner padding */}
           <div 
             className="flex md:flex-wrap gap-2 overflow-x-auto px-4 md:px-2 py-1
-              scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent"
+              scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent"
             role="group"
             aria-label={`${title} filters`}
           >
@@ -55,9 +55,10 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                 onClick={() => handleClick(item)}
                 className={`flex items-center shrink-0 gap-1.5 px-3 py-1.5 rounded-full text-sm 
                   transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+                  focus:ring-offset-background
                   ${item.isSelected 
-                    ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-400' 
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 focus:ring-gray-400'}`}
+                    ? 'bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/70' 
+                    : 'bg-surface text-text hover:bg-surface-alt focus:ring-text/30'}`}
                 type="button"
                 role="checkbox"
                 aria-checked={item.isSelected}
@@ -71,8 +72,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                   <span 
                     className={`inline-flex items-center justify-center min-w-[20px] px-1.5 
                       text-xs rounded-full ${item.isSelected 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-gray-100 text-gray-700'}`}
+                        ? 'bg-primary/20 text-primary' 
+                        : 'bg-surface-alt text-text-muted'}`}
                     aria-label={`${item.count} papers available`}
                   >
                     {item.count}
@@ -86,7 +87,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
 
       {/* No Items Message */}
       {items.length === 0 && (
-        <p className="text-sm text-gray-400 italic px-4 md:px-2">No items available</p>
+        <p className="text-sm text-text-muted italic px-4 md:px-2">No items available</p>
       )}
     </div>
   );

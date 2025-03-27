@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearch } from '@/hooks/useSearch';
 import SearchBox from './SearchBox';
-import FilterBox, { FilterItem } from './FilterBox';
+import FilterBox from './FilterBox';
 import { getTrendingSearches, logSearchQuery } from '@/utils/search/trending';
 import subjectsData from '@/lib/data/subjects.json';
-import { Subject } from '@/types/subject';
+import type { Subject } from '@/types/subject';
+import type { SearchQuery, SearchResult } from '@/types/search';
 
 interface SubjectsData {
   subjects: {
@@ -29,10 +30,10 @@ export default function PaperSearch() {
   } = useSearch({ debounceMs: 300 });
 
   // Filter states
-  const [selectedSubject, setSelectedSubject] = React.useState<string | null>(null);
-  const [selectedUnits, setSelectedUnits] = React.useState<string[]>([]);
-  const [selectedSession, setSelectedSession] = React.useState<string | null>(null);
-  const [showFilters, setShowFilters] = React.useState(() => {
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedUnits, setSelectedUnits] = useState<string[]>([]);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem(FILTERS_VISIBLE_KEY) === 'true';
     }
@@ -40,10 +41,10 @@ export default function PaperSearch() {
   });
 
   // Get trending searches
-  const [trendingSearches, setTrendingSearches] = React.useState<string[]>([]);
+  const [trendingSearches, setTrendingSearches] = useState<string[]>([]);
 
   // Save filter visibility preference
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem(FILTERS_VISIBLE_KEY, showFilters.toString());
   }, [showFilters]);
 
@@ -140,12 +141,12 @@ export default function PaperSearch() {
   }, [updateQuery]);
 
   // Load trending searches on mount
-  React.useEffect(() => {
+  useEffect(() => {
     setTrendingSearches(getTrendingSearches());
   }, []);
 
   // Log successful searches
-  React.useEffect(() => {
+  useEffect(() => {
     if (results.length > 0 && query.text) {
       logSearchQuery(query.text);
       setTrendingSearches(getTrendingSearches());
@@ -157,10 +158,12 @@ export default function PaperSearch() {
       {/* Filter Toggle */}
       <button
         onClick={() => setShowFilters(prev => !prev)}
-        className="w-full mb-4 px-4 py-2.5 text-sm text-gray-600 hover:text-gray-800 
+        className={`w-full mb-4 px-4 py-2.5 text-sm
           flex items-center justify-between transition-colors
-          rounded-lg border border-gray-200 hover:border-gray-300 bg-white
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+          rounded-lg border border-border hover:border-border-light
+          bg-surface hover:bg-surface-alt
+          focus:outline-none focus:ring-2 focus:ring-primary/30
+          text-text`}
       >
         <span className="flex items-center gap-2">
           <svg
@@ -177,157 +180,190 @@ export default function PaperSearch() {
           {showFilters ? 'Hide filters' : 'Show filters'}
         </span>
         {hasActiveFilters && (
-          <span className="px-2 py-0.5 text-xs bg-blue-50 text-blue-600 rounded-full">
+          <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
             Filters active
           </span>
         )}
       </button>
 
-      {/* Filter Section with proper spacing */}
-      <div 
-        className={`overflow-hidden transition-all duration-300 ease-in-out bg-white
-          ${showFilters 
-            ? 'max-h-[500px] opacity-100 mb-6 border border-gray-100 rounded-lg py-4' 
-            : 'max-h-0 opacity-0'}`}
-      >
-        <div className="space-y-3">
-          <FilterBox
-            title="Subjects"
-            items={subjectFilters}
-            onSelect={handleSubjectSelect}
-            onDeselect={handleSubjectDeselect}
-          />
-
-          {selectedSubject && (
+      {/* Main Content Container */}
+      <div className="rounded-lg bg-surface border border-border p-4">
+        {/* Filter Section */}
+        <div 
+          className={`overflow-hidden transition-all duration-300 ease-in-out mb-4
+            ${showFilters 
+              ? 'max-h-[500px] opacity-100' 
+              : 'max-h-0 opacity-0'}`}
+        >
+          <div className="space-y-3">
             <FilterBox
-              title="Units"
-              items={unitFilters}
-              onSelect={handleUnitSelect}
-              onDeselect={handleUnitDeselect}
-              multiSelect={true}
+              title="Subjects"
+              items={subjectFilters}
+              onSelect={handleSubjectSelect}
+              onDeselect={handleSubjectDeselect}
             />
-          )}
 
-          <FilterBox
-            title="Recent Sessions"
-            items={sessionFilters}
-            onSelect={handleSessionSelect}
-            onDeselect={handleSessionDeselect}
-          />
+            {selectedSubject && (
+              <FilterBox
+                title="Units"
+                items={unitFilters}
+                onSelect={handleUnitSelect}
+                onDeselect={handleUnitDeselect}
+                multiSelect={true}
+              />
+            )}
+
+            <FilterBox
+              title="Recent Sessions"
+              items={sessionFilters}
+              onSelect={handleSessionSelect}
+              onDeselect={handleSessionDeselect}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Search Box */}
-      <SearchBox
-        value={query.text}
-        onChange={(text) => updateQuery({ text })}
-        onClear={clearSearch}
-        placeholder="Try: 'phy mech jan 24' or 'chem u1 oct'"
-        suggestions={suggestions.map(s => s.text)}
-      />
+        {/* Search Box */}
+        <SearchBox
+          value={query.text}
+          onChange={(text: string) => updateQuery({ text })}
+          onClear={clearSearch}
+          placeholder="Try: 'phy mech jan 24' or 'chem u1 oct'"
+          suggestions={suggestions.map(s => s.text)}
+        />
 
-      {/* Results Section */}
-      <div className="mt-4">
-        {isSearching ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
-          </div>
-        ) : results.length > 0 ? (
-          <div className="divide-y" role="list">
-            {results.map((result) => (
-              <div 
-                key={result.paper.id} 
-                className="py-4 hover:bg-gray-50 transition-colors"
-                role="listitem"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">
-                      {result.subject.name} - {result.unit.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {result.paper.session} {result.paper.year}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Link
-                      href={result.paper.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded 
-                        hover:bg-blue-100 transition-colors"
-                    >
-                      Paper
-                    </Link>
-                    <Link
-                      href={result.paper.markingSchemeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1 text-sm bg-green-50 text-green-700 rounded
-                        hover:bg-green-100 transition-colors"
-                    >
-                      MS
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : query.text ? (
-          <div className="py-8">
-            <p className="text-center text-gray-500 mb-4">No papers found</p>
-          </div>
-        ) : (
-          <div className="py-4 space-y-6">
-            {/* Recent Searches */}
-            {recentSearches?.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Recent Searches:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {recentSearches.map((recent, index) => (
-                    <button
-                      key={index}
-                      onClick={() => updateQuery(recent)}
-                      className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full
-                        hover:bg-gray-200 transition-colors"
-                    >
-                      {recent.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Trending Searches */}
-            {trendingSearches.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Popular Searches:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {trendingSearches.map((search, index) => (
-                    <button
-                      key={index}
-                      onClick={() => updateQuery({ text: search })}
-                      className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded-full
-                        hover:bg-blue-100 transition-colors group"
-                    >
-                      <span className="group-hover:underline">{search}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quick Tips */}
-            <div className="text-center text-sm text-gray-500 pt-4 border-t">
-              <p className="font-medium mb-2">Quick Search Tips:</p>
-              <ul className="space-y-1">
-                <li>• Type to search any paper</li>
-                <li>• Or use filters above for quick access</li>
-                <li>• Try searching by subject, unit, or year</li>
-              </ul>
+        {/* Results Section */}
+        <div className="mt-4 -mx-4">
+          {isSearching ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
-          </div>
-        )}
+          ) : results.length > 0 ? (
+            <div className="divide-y divide-border" role="list">
+              {results.map((result: SearchResult) => (
+                <div 
+                  key={result.paper.id} 
+                  className="px-4 py-4 hover:bg-surface-alt transition-colors"
+                  role="listitem"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-text truncate">
+                        {result.subject.name} - {result.unit.name}
+                      </h3>
+                      <p className="text-sm text-text-muted">
+                        {result.paper.session} {result.paper.year}
+                      </p>
+                    </div>
+                    <div className="flex gap-3 ml-6">
+                      <Link
+                        href={result.paper.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-1.5 text-sm font-medium 
+                          bg-primary text-white rounded-full hover:opacity-90
+                          transition-all shadow-sm hover:shadow
+                          dark:bg-primary dark:text-white dark:hover:bg-primary-dark"
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                          />
+                        </svg>
+                        Paper
+                      </Link>
+                      <Link
+                        href={result.paper.markingSchemeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-1.5 text-sm font-medium 
+                          bg-secondary text-white rounded-full hover:opacity-90
+                          transition-all shadow-sm hover:shadow
+                          dark:bg-secondary dark:text-white dark:hover:bg-secondary-dark"
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" 
+                          />
+                        </svg>
+                        MS
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : query.text ? (
+            <div className="py-8 px-4">
+              <p className="text-center text-text-muted">No papers found</p>
+            </div>
+          ) : (
+            <div className="py-4 px-4 space-y-6">
+              {/* Recent Searches */}
+              {recentSearches?.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-text-muted mb-2">Recent Searches:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {recentSearches.map((recent: SearchQuery, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => updateQuery(recent)}
+                        className="px-3 py-1 text-sm bg-surface-alt text-text rounded-full
+                          hover:bg-surface-alt/80 transition-colors"
+                      >
+                        {recent.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Trending Searches */}
+              {trendingSearches.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-text-muted mb-2">Popular Searches:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {trendingSearches.map((search: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => updateQuery({ text: search })}
+                        className="px-3 py-1 text-sm bg-primary/10 text-primary rounded-full
+                          hover:bg-primary/20 transition-colors group"
+                      >
+                        <span className="group-hover:underline">{search}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Tips */}
+              <div className="text-center text-sm text-text-muted pt-4 border-t border-border">
+                <p className="font-medium mb-2">Quick Search Tips:</p>
+                <ul className="space-y-1">
+                  <li>• Type to search any paper</li>
+                  <li>• Or use filters above for quick access</li>
+                  <li>• Try searching by subject, unit, or year</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

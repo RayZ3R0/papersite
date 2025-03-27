@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, KeyboardEvent, useEffect } from 'react';
 
 interface SearchBoxProps {
@@ -114,9 +116,12 @@ export default function SearchBox({
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(true)}
           placeholder={placeholder}
-          className={`w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 
-            focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none 
-            transition-colors ${className}`}
+          className={`w-full px-4 py-3 pr-10 rounded-lg
+            bg-surface border border-border
+            focus:border-primary focus:ring-1 focus:ring-primary
+            dark:focus:border-primary-light dark:focus:ring-primary-light
+            text-text placeholder-text-muted
+            outline-none transition-colors ${className}`}
           autoComplete="off"
           role="combobox"
           aria-expanded={shouldShowSuggestions}
@@ -131,8 +136,8 @@ export default function SearchBox({
               setSelectedIndex(-1);
               inputRef.current?.focus();
             }}
-            className="absolute right-3 p-1.5 text-gray-400 hover:text-gray-600 
-              rounded-full hover:bg-gray-100 transition-colors"
+            className="absolute right-3 p-1.5 text-text-muted hover:text-text 
+              rounded-full hover:bg-surface-alt transition-colors"
             aria-label="Clear search"
           >
             ✕
@@ -146,8 +151,8 @@ export default function SearchBox({
           ref={suggestionsRef}
           id="search-suggestions"
           role="listbox"
-          className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg 
-            border border-gray-200 max-h-48 overflow-auto py-1"
+          className="absolute z-50 w-full mt-1 bg-surface rounded-lg shadow-lg 
+            border border-border dark:border-border-light max-h-48 overflow-auto py-1"
           onMouseLeave={() => setSelectedIndex(-1)}
         >
           {suggestions.map((suggestion, index) => (
@@ -160,8 +165,8 @@ export default function SearchBox({
               onMouseEnter={() => setSelectedIndex(index)}
               className={`px-4 py-2 cursor-pointer text-sm transition-colors
                 ${index === selectedIndex 
-                  ? 'bg-blue-50 text-blue-700' 
-                  : 'hover:bg-gray-50'}`}
+                  ? 'bg-primary/10 text-primary dark:bg-primary/20' 
+                  : 'hover:bg-surface-alt text-text'}`}
             >
               {suggestion}
             </li>

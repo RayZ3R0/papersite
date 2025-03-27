@@ -2,6 +2,8 @@
 
 import { ReactNode } from 'react';
 import MobileNav from './MobileNav';
+import ThemeToggle from './ThemeToggle';
+import Link from 'next/link';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -9,21 +11,40 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-text">
       {/* Header - Hidden on mobile when viewing PDFs */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-surface border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="/" className="text-gray-900 hover:text-gray-600">Home</a>
-            <a href="/subjects" className="text-gray-900 hover:text-gray-600">Subjects</a>
-            <a href="/search" className="text-gray-900 hover:text-gray-600">Search</a>
+            <Link 
+              href="/" 
+              className="text-text hover:text-text-muted transition-colors"
+            >
+              Home
+            </Link>
+            <Link 
+              href="/subjects" 
+              className="text-text hover:text-text-muted transition-colors"
+            >
+              Subjects
+            </Link>
+            <Link 
+              href="/search" 
+              className="text-text hover:text-text-muted transition-colors"
+            >
+              Search
+            </Link>
           </nav>
           
           {/* Mobile Header Content */}
           <div className="flex md:hidden items-center justify-between w-full">
-            <h1 className="text-xl font-bold">Past Papers</h1>
-            {/* Add mobile search toggle button here if needed */}
+            <h1 className="text-xl font-bold text-text">Past Papers</h1>
+          </div>
+
+          {/* Theme Toggle - Show on all screen sizes */}
+          <div className="flex items-center">
+            <ThemeToggle />
           </div>
         </div>
       </header>
