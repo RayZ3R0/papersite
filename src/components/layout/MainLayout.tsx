@@ -1,63 +1,78 @@
 'use client';
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import MobileNav from './MobileNav';
-import ThemePicker from './ThemePicker';
+import { useNavigation } from '@/hooks/useNavigation';
+import { Sidebar } from './Sidebar';
 
-interface MainLayoutProps {
-  children: ReactNode;
-}
+export function MainLayout({ children }: { children: React.ReactNode }) {
+  const { isSidebarOpen, isMobile, toggleSidebar } = useNavigation();
 
-const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-text">
-      {/* Header - Hidden on mobile when viewing PDFs */}
-      <header className="sticky top-0 z-50 bg-surface border-b border-border">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/" 
-              className="text-text hover:text-text-muted transition-colors"
-            >
-              Home
-            </Link>
-            <Link 
-              href="/subjects" 
-              className="text-text hover:text-text-muted transition-colors"
-            >
-              Subjects
-            </Link>
-            <Link 
-              href="/search" 
-              className="text-text hover:text-text-muted transition-colors"
-            >
-              Search
-            </Link>
-          </nav>
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation - Desktop Only */}
+      {!isMobile && (
+        <header className="h-16 fixed top-0 right-0 left-64 z-20 bg-surface 
+          border-b border-border px-4 flex items-center justify-between transition-all">
+          {/* Page Title - Could be made dynamic */}
+          <h1 className="text-xl font-semibold text-text">PaperSite</h1>
           
-          {/* Mobile Header Content */}
-          <div className="flex md:hidden items-center justify-between w-full">
-            <h1 className="text-xl font-bold text-text">Past Papers</h1>
+          {/* Right side actions could go here */}
+          <div className="flex items-center space-x-4">
+            {/* Add any header actions here */}
           </div>
+        </header>
+      )}
 
-          {/* Theme Picker - Show on all screen sizes */}
-          <div className="flex items-center">
-            <ThemePicker />
-          </div>
-        </div>
-      </header>
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => toggleSidebar()}
+        isMobile={isMobile}
+      />
+
+      {/* Mobile Header */}
+      {isMobile && (
+        <header className="fixed top-0 left-0 right-0 h-16 bg-surface border-b 
+          border-border px-4 flex items-center justify-between z-20">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => toggleSidebar()}
+            className="p-2 rounded-lg hover:bg-surface-alt transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="w-6 h-6 text-text"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          <h1 className="text-xl font-semibold text-text">PaperSite</h1>
+
+          {/* Placeholder for right side of mobile header */}
+          <div className="w-10" />
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-6">
-        {children}
+      <main
+        className={`transition-all duration-300 min-h-screen ${
+          isMobile
+            ? 'pt-16 pb-6' // Mobile padding
+            : 'pt-16 pl-64' // Desktop padding (with sidebar)
+        }`}
+      >
+        <div className="container mx-auto">
+          {children}
+        </div>
       </main>
-
-      {/* Mobile Navigation */}
-      <MobileNav />
     </div>
   );
-};
-
-export default MainLayout;
+}
