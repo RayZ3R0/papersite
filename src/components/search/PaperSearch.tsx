@@ -16,9 +16,14 @@ interface SubjectsData {
   };
 }
 
+interface PaperSearchProps {
+  autoFocus?: boolean;
+  initialQuery?: string;
+}
+
 const FILTERS_VISIBLE_KEY = 'papersite:filters-visible';
 
-export default function PaperSearch() {
+export default function PaperSearch({ autoFocus = false, initialQuery = '' }: PaperSearchProps) {
   const {
     query,
     results,
@@ -47,6 +52,13 @@ export default function PaperSearch() {
   useEffect(() => {
     localStorage.setItem(FILTERS_VISIBLE_KEY, showFilters.toString());
   }, [showFilters]);
+
+  // Set initial query if provided
+  useEffect(() => {
+    if (initialQuery) {
+      updateQuery({ text: initialQuery });
+    }
+  }, [initialQuery, updateQuery]);
 
   // Check if any filters are active
   const hasActiveFilters = selectedSubject || selectedUnits.length > 0 || selectedSession;
@@ -229,6 +241,7 @@ export default function PaperSearch() {
           onClear={clearSearch}
           placeholder="Try: 'phy mech jan 24' or 'chem u1 oct'"
           suggestions={suggestions.map(s => s.text)}
+          autoFocus={autoFocus}
         />
 
         {/* Results Section */}

@@ -9,8 +9,8 @@ export default function SimpleSearch() {
 
   const handleSearch = (text: string) => {
     if (text.trim()) {
-      // Navigate to search page with query
-      router.push(`/search?q=${encodeURIComponent(text)}`);
+      // Navigate to search page with query and focus flag
+      router.push(`/search?q=${encodeURIComponent(text)}&focus=true`);
     }
   };
 
@@ -26,7 +26,7 @@ export default function SimpleSearch() {
       {/* Advanced Search Link */}
       <div className="mt-2 flex justify-end">
         <button
-          onClick={() => router.push('/search')}
+          onClick={() => router.push('/search?focus=true')}
           className="text-sm text-primary hover:text-primary-dark dark:hover:text-primary-light
             transition-colors"
         >

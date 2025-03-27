@@ -46,44 +46,7 @@ export function useSearch(options: UseSearchOptions = {}) {
 
     const suggestions: SearchSuggestion[] = [];
 
-    // Check for subject matches
-    Object.keys(subjectsData.subjects).forEach(subject => {
-      const subjectData = (subjectsData as SubjectsData).subjects[subject];
-      if (subject.startsWith(text) || subjectData.name.toLowerCase().startsWith(text)) {
-        suggestions.push({
-          type: 'subject',
-          text: `Search in ${subjectData.name}`,
-          value: subjectData.name,
-          score: 1.0
-        });
-      }
-    });
-
-    // Check for common patterns
-    if (text.match(/^(phy|phys)/)) {
-      suggestions.push({
-        type: 'subject',
-        text: 'Search in Physics',
-        value: 'Physics',
-        score: 0.9
-      });
-    }
-    if (text.match(/^(chem)/)) {
-      suggestions.push({
-        type: 'subject',
-        text: 'Search in Chemistry',
-        value: 'Chemistry',
-        score: 0.9
-      });
-    }
-    if (text.match(/^(math|maths)/)) {
-      suggestions.push({
-        type: 'subject',
-        text: 'Search in Mathematics',
-        value: 'Mathematics',
-        score: 0.9
-      });
-    }
+    // Subject matches and common patterns sections removed
 
     // Unit suggestions if subject is known
     if (searchQuery.subject) {

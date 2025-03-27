@@ -10,6 +10,7 @@ interface SearchBoxProps {
   className?: string;
   suggestions?: string[];
   onSuggestionSelect?: (suggestion: string) => void;
+  autoFocus?: boolean;
 }
 
 export default function SearchBox({
@@ -19,13 +20,21 @@ export default function SearchBox({
   placeholder = "Search papers...",
   className = "",
   suggestions = [],
-  onSuggestionSelect
+  onSuggestionSelect,
+  autoFocus = false
 }: SearchBoxProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Autofocus on mount if enabled
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   // Show suggestions when there's input and suggestions are available
   const shouldShowSuggestions = showSuggestions && 
