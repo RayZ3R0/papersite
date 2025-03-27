@@ -1,17 +1,42 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import subjectsData from '@/lib/data/subjects.json';
-import type { Subject, SubjectsData } from '@/types/subject';
+import type { Subject, SubjectsData, Paper } from '@/types/subject';
 
 export default function SubjectPage() {
   const params = useParams();
   const subjectId = params.subject as string;
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
   
   // Get subject data
   const subject = (subjectsData as SubjectsData).subjects[subjectId];
+
+  // Get unique years and normalize sessions (combine May/June)
+  const { years, sessions } = useMemo(() => {
+    const yearsSet = new Set<number>();
+    const sessionsMap = new Map<string, Set<string>>();
+    
+    subject?.papers.forEach(paper => {
+      yearsSet.add(paper.year);
+      // Normalize May/June into a single session option
+      const normalizedSession = paper.session === 'May' || paper.session === 'June' 
+        ? 'May/June' 
+        : paper.session;
+      if (!sessionsMap.has(normalizedSession)) {
+        sessionsMap.set(normalizedSession, new Set());
+      }
+      sessionsMap.get(normalizedSession)?.add(paper.session);
+    });
+
+    return {
+      years: Array.from(yearsSet).sort((a, b) => b - a),
+      sessions: Array.from(sessionsMap.keys()).sort()
+    };
+  }, [subject]);
 
   if (!subject) {
     return (
@@ -21,9 +46,24 @@ export default function SubjectPage() {
     );
   }
 
-  // Get papers for the selected unit
+  // Get papers for the selected unit with filters
   const getUnitPapers = (unitId: string) => {
-    return subject.papers.filter(paper => paper.unitId === unitId);
+    return subject.papers.filter(paper => {
+      const matchesUnit = paper.unitId === unitId;
+      const matchesYear = selectedYear ? paper.year === selectedYear : true;
+      const matchesSession = selectedSession ? (
+        selectedSession === 'May/June' 
+          ? (paper.session === 'May' || paper.session === 'June')
+          : paper.session === selectedSession
+      ) : true;
+      return matchesUnit && matchesYear && matchesSession;
+    });
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setSelectedYear(null);
+    setSelectedSession(null);
   };
 
   return (
@@ -37,6 +77,63 @@ export default function SubjectPage() {
           {subject.units.length} units available • Select a unit to view papers
         </p>
       </header>
+
+      {/* Quick Filters */}
+      <div className="mb-6 p-4 bg-surface rounded-lg border border-border">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-text">Quick Filters</h2>
+          <button
+            onClick={resetFilters}
+            className="text-sm text-primary hover:text-primary-dark transition-colors"
+          >
+            Reset Filters
+          </button>
+        </div>
+        
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Year Filter */}
+          <div>
+            <label className="block text-sm font-medium text-text-muted mb-2">
+              Year
+            </label>
+            <select
+              value={selectedYear || ''}
+              onChange={(e) => setSelectedYear(e.target.value ? Number(e.target.value) : null)}
+              className="w-full p-2 bg-surface border border-border rounded-md 
+                text-text focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="">All Years</option>
+              {years.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Session Filter */}
+          <div>
+            <label className="block text-sm font-medium text-text-muted mb-2">
+              Session
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {sessions.map(session => (
+                <button
+                  key={session}
+                  onClick={() => setSelectedSession(
+                    selectedSession === session ? null : session
+                  )}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors
+                    ${selectedSession === session
+                      ? 'bg-primary text-white'
+                      : 'bg-surface-alt text-text hover:bg-surface-alt/80'
+                    }`}
+                >
+                  {session}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Vertical layout */}
       <div className="space-y-6">
@@ -80,6 +177,7 @@ export default function SubjectPage() {
                     >
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="font-medium text-text">
+                          {/* Display original session name in the paper details */}
                           {paper.session} {paper.year}
                         </h3>
                       </div>
@@ -92,8 +190,7 @@ export default function SubjectPage() {
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2 p-3 
                             bg-primary text-white rounded-lg hover:opacity-90 
-                            transition-colors shadow-sm hover:shadow
-                            dark:bg-primary dark:text-white dark:hover:bg-primary-dark"
+                            transition-colors shadow-sm hover:shadow"
                         >
                           <svg 
                             className="w-4 h-4" 
@@ -116,8 +213,7 @@ export default function SubjectPage() {
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2 p-3
                             bg-secondary text-white rounded-lg hover:opacity-90
-                            transition-colors shadow-sm hover:shadow
-                            dark:bg-secondary dark:text-white dark:hover:bg-secondary-dark"
+                            transition-colors shadow-sm hover:shadow"
                         >
                           <svg 
                             className="w-4 h-4" 
@@ -143,7 +239,7 @@ export default function SubjectPage() {
               {/* No papers message */}
               {isSelected && unitPapers.length === 0 && (
                 <div className="p-4 text-center text-text-muted">
-                  No papers available for this unit
+                  No papers available for this unit with selected filters
                 </div>
               )}
             </div>
