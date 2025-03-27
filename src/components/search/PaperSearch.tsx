@@ -258,16 +258,16 @@ export default function PaperSearch({ autoFocus = false, initialQuery = '' }: Pa
                   className="px-4 py-4 hover:bg-surface-alt transition-colors"
                   role="listitem"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-medium text-text truncate">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                    <div className="min-w-0 flex-1 mb-3 sm:mb-0">
+                      <h3 className="font-medium text-text break-words">
                         {result.subject.name} - {result.unit.name}
                       </h3>
                       <p className="text-sm text-text-muted">
                         {result.paper.session} {result.paper.year}
                       </p>
                     </div>
-                    <div className="flex gap-3 ml-6">
+                    <div className="flex gap-3 sm:ml-6">
                       <Link
                         href={result.paper.pdfUrl}
                         target="_blank"
