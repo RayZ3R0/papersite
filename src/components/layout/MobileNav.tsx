@@ -1,51 +1,57 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { IconHome, IconSearch, IconBook, IconMessages } from './icons';
 
-interface MobileNavProps {
-  className?: string;
-}
-
-export const MobileNav = ({ className = '' }: MobileNavProps) => {
+export default function MobileNav() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Subjects', href: '/subjects' },
-    { name: 'Books', href: '/books' },
-    { name: 'Search', href: '/search' },
-  ];
 
   return (
-    <nav 
-      className={`fixed bottom-0 left-0 right-0 bg-surface border-t 
-        border-border md:hidden ${className}`}
-    >
-      <div className="flex justify-around items-center h-16">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex flex-col items-center justify-center w-full h-full 
-                text-sm transition-colors ${
-                  isActive 
-                    ? 'text-primary font-medium' 
-                    : 'text-text-muted hover:text-text'
-                }`}
-            >
-              <span>{item.name}</span>
-            </Link>
-          );
-        })}
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-around items-center h-16">
+          <Link
+            href="/"
+            className={`flex flex-col items-center ${
+              pathname === '/' ? 'text-primary' : 'text-text-muted'
+            }`}
+          >
+            <IconHome className="w-6 h-6" />
+            <span className="text-xs mt-1">Home</span>
+          </Link>
+
+          <Link
+            href="/books"
+            className={`flex flex-col items-center ${
+              pathname.startsWith('/books') ? 'text-primary' : 'text-text-muted'
+            }`}
+          >
+            <IconBook className="w-6 h-6" />
+            <span className="text-xs mt-1">Books</span>
+          </Link>
+
+          <Link
+            href="/forum"
+            className={`flex flex-col items-center ${
+              pathname.startsWith('/forum') ? 'text-primary' : 'text-text-muted'
+            }`}
+          >
+            <IconMessages className="w-6 h-6" />
+            <span className="text-xs mt-1">Forum</span>
+          </Link>
+
+          <Link
+            href="/search"
+            className={`flex flex-col items-center ${
+              pathname === '/search' ? 'text-primary' : 'text-text-muted'
+            }`}
+          >
+            <IconSearch className="w-6 h-6" />
+            <span className="text-xs mt-1">Search</span>
+          </Link>
+        </div>
       </div>
     </nav>
   );
-};
-
-export default MobileNav;
+}

@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/hooks/useTheme';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Past Papers',
+  title: 'Paper Void',
   description: 'Access past papers and marking schemes across multiple subjects and sessions',
 };
 
