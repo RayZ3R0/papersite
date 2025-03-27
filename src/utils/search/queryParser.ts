@@ -6,6 +6,14 @@ interface ParsedQuery {
   text: string;
 }
 
+// Session mappings for equivalent sessions
+const SESSION_MAPPINGS: Record<string, string[]> = {
+  'may': ['may', 'june'],
+  'june': ['may', 'june'],
+  'january': ['january'],
+  'october': ['october']
+};
+
 const SUBJECT_ALIASES: Record<string, string> = {
   'phy': 'physics',
   'chem': 'chemistry',
@@ -74,7 +82,7 @@ const UNIT_ALIASES: Record<string, Record<string, string>> = {
     'fp2': 'Further Pure 2',
     'furtherpure2': 'Further Pure 2',
     'fp3': 'Further Pure 3',
-    'furtherpure3': 'Further Pure 3', 
+    'furtherpure3': 'Further Pure 3',
   },
   'chemistry': {
     'u1': 'Unit 1',
@@ -103,35 +111,7 @@ const UNIT_ALIASES: Record<string, Record<string, string>> = {
     'unit5': 'Unit 5',
     'u6': 'Unit 6',
     'unit6': 'Unit 6',
-  },
-  'accounting': {
-    'u1': 'Unit 1',
-    'unit1': 'Unit 1',
-    'u2': 'Unit 2',
-    'unit2': 'Unit 2',
-    'u3': 'Unit 3',
-    'unit3': 'Unit 3',
-    'u4': 'Unit 4',
-    'unit4': 'Unit 4',
-    'u5': 'Unit 5',
-    'unit5': 'Unit 5',
-    'u6': 'Unit 6',
-    'unit6': 'Unit 6',
-  },
-  'business': {
-    'u1': 'Unit 1',
-    'unit1': 'Unit 1',
-    'u2': 'Unit 2',
-    'unit2': 'Unit 2',
-    'u3': 'Unit 3',
-    'unit3': 'Unit 3',
-    'u4': 'Unit 4',
-    'unit4': 'Unit 4',
-    'u5': 'Unit 5',
-    'unit5': 'Unit 5',
-    'u6': 'Unit 6',
-    'unit6': 'Unit 6',
-  },
+  }
 };
 
 const MONTH_ALIASES: Record<string, string> = {
@@ -139,6 +119,7 @@ const MONTH_ALIASES: Record<string, string> = {
   'feb': 'february',
   'mar': 'march',
   'apr': 'april',
+  'may': 'may',
   'jun': 'june',
   'jul': 'july',
   'aug': 'august',
@@ -162,6 +143,13 @@ function getYearFromString(str: string): number | null {
     return num;
   }
   return null;
+}
+
+// Helper function to get all equivalent sessions
+export function getEquivalentSessions(session: string): string[] {
+  const normalizedSession = session.toLowerCase();
+  // Check if this session has mappings
+  return SESSION_MAPPINGS[normalizedSession] || [normalizedSession];
 }
 
 export function parseSearchQuery(query: string): ParsedQuery {
@@ -207,7 +195,8 @@ export function parseSearchQuery(query: string): ParsedQuery {
   );
 
   if (monthIndex !== -1) {
-    result.session = MONTH_ALIASES[words[monthIndex]] || words[monthIndex];
+    const session = MONTH_ALIASES[words[monthIndex]] || words[monthIndex];
+    result.session = session;  // Store the actual session mentioned
     words = [...words.slice(0, monthIndex), ...words.slice(monthIndex + 1)];
   }
 

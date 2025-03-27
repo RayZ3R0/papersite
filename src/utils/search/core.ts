@@ -1,7 +1,7 @@
 import { SearchQuery, SearchResult, SearchSuggestion } from '@/types/search';
 import { Subject, Paper, Unit } from '@/types/subject';
 import { SubjectsData } from '@/types/subject';
-import { parseSearchQuery, normalizeSearchTerm } from './queryParser';
+import { parseSearchQuery, normalizeSearchTerm, getEquivalentSessions } from './queryParser';
 
 function calculateScore(matches: SearchResult['matches'], year: number): number {
   const weights = {
@@ -49,6 +49,21 @@ function matchesText(searchTerm: string, paper: Paper, unit: Unit, subject: Subj
   return searchFields.some(field => field.includes(normalizedSearch));
 }
 
+function matchesSession(paperSession: string, querySession: string | undefined): boolean {
+  if (!querySession) return true;
+  
+  const normalizedPaperSession = normalizeSearchTerm(paperSession);
+  const normalizedQuerySession = normalizeSearchTerm(querySession);
+  
+  // Get all equivalent sessions for the query session
+  const equivalentSessions = getEquivalentSessions(normalizedQuerySession);
+  
+  // Check if paper session matches any of the equivalent sessions
+  return equivalentSessions.some(session => 
+    normalizeSearchTerm(session) === normalizedPaperSession
+  );
+}
+
 export function searchPapers(
   rawQuery: SearchQuery,
   data: SubjectsData
@@ -90,8 +105,8 @@ export function searchPapers(
         return;
       }
 
-      // Skip if session filter doesn't match
-      if (query.session && normalizeSearchTerm(paper.session) !== normalizeSearchTerm(query.session)) {
+      // Skip if session filter doesn't match (now using matchesSession)
+      if (query.session && !matchesSession(paper.session, query.session)) {
         return;
       }
 
@@ -100,7 +115,7 @@ export function searchPapers(
         subject: !query.subject || normalizeSearchTerm(subject.name) === normalizeSearchTerm(query.subject),
         unit: !query.unit || normalizeSearchTerm(unit.name) === normalizeSearchTerm(query.unit),
         year: !query.year || paper.year === query.year,
-        session: !query.session || normalizeSearchTerm(paper.session) === normalizeSearchTerm(query.session)
+        session: !query.session || matchesSession(paper.session, query.session)
       };
 
       // Only include results that match the criteria
