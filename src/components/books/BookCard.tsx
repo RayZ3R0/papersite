@@ -31,7 +31,7 @@ const BookCard = ({ book, onSelect, isSelected }: BookCardProps) => {
         className="w-full text-left focus:outline-none focus:ring-2 
           focus:ring-primary rounded-lg"
       >
-        <div className="relative h-48 w-full bg-surface-alt flex items-center justify-center">
+        <div className="relative h-36 md:h-48 w-full bg-surface-alt flex items-center justify-center">
           {book.imageUrl ? (
             <Image
               src={book.imageUrl}
@@ -59,11 +59,11 @@ const BookCard = ({ book, onSelect, isSelected }: BookCardProps) => {
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-text line-clamp-2 mb-2">
+        <div className="p-2 md:p-4">
+          <h3 className="text-sm md:text-lg font-semibold text-text line-clamp-2 mb-2">
             {book.title}
           </h3>
-          <span className="inline-block px-2 py-1 rounded-md text-xs bg-surface-alt text-text-muted">
+          <span className="inline-block px-1.5 py-0.5 md:px-2 md:py-1 rounded-md text-[10px] md:text-xs bg-surface-alt text-text-muted">
             {book.subject}
           </span>
         </div>
