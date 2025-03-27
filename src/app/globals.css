@@ -164,50 +164,6 @@
   to { opacity: 0; }
 }
 
-/* Mobile padding and layout adjustments */
-@media (max-width: 1024px) {
-  main {
-    /* Use safe-area-inset for devices with notches/rounded corners */
-    padding-bottom: env(safe-area-inset-bottom, 1.5rem);
-  }
-
-  /* Hide scrollbar but keep functionality */
-  .hide-scrollbar {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-}
-
-/* Base layout rules */
-body {
-  margin: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Slide animations for mobile menu */
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes slideOut {
-  from { transform: translateX(0); }
-  to { transform: translateX(-100%); }
-}
-
-.slide-in {
-  animation: slideIn 200ms ease-out;
-}
-
-.slide-out {
-  animation: slideOut 200ms ease-in;
-}
-
 .theme-fade-in {
   animation: fadeIn 200ms ease-in-out;
 }
