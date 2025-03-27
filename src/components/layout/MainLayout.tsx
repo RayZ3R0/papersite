@@ -1,9 +1,9 @@
 'use client';
 
 import { ReactNode } from 'react';
-import MobileNav from './MobileNav';
-import ThemeToggle from './ThemeToggle';
 import Link from 'next/link';
+import MobileNav from './MobileNav';
+import ThemePicker from './ThemePicker';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -42,9 +42,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <h1 className="text-xl font-bold text-text">Past Papers</h1>
           </div>
 
-          {/* Theme Toggle - Show on all screen sizes */}
+          {/* Theme Picker - Show on all screen sizes */}
           <div className="flex items-center">
-            <ThemeToggle />
+            <ThemePicker />
           </div>
         </div>
       </header>

@@ -3,7 +3,21 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Theme = 'light' | 'dark';
+// Define all available themes
+export type Theme = 'light' | 'dark' | 'catppuccin-latte' | 'catppuccin-frappe' | 'catppuccin-macchiato' | 'catppuccin-mocha';
+
+// Theme display names for UI
+export const themeNames: Record<Theme, string> = {
+  'light': 'Light',
+  'dark': 'Dark',
+  'catppuccin-latte': 'Catppuccin Latte',
+  'catppuccin-frappe': 'Catppuccin Frappé',
+  'catppuccin-macchiato': 'Catppuccin Macchiato',
+  'catppuccin-mocha': 'Catppuccin Mocha'
+};
+
+// Define which themes are dark mode
+export const darkThemes: Theme[] = ['dark', 'catppuccin-frappe', 'catppuccin-macchiato', 'catppuccin-mocha'];
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,6 +25,7 @@ interface ThemeContextType {
 }
 
 const THEME_STORAGE_KEY = 'papersite:theme';
+const DEFAULT_THEME: Theme = 'catppuccin-mocha'; // Set default to Catppuccin Mocha
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -19,7 +34,7 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -28,10 +43,12 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     
     // Check for saved theme or system preference
-    if (savedTheme) {
+    if (savedTheme && Object.keys(themeNames).includes(savedTheme)) {
       setTheme(savedTheme);
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
+      setTheme(DEFAULT_THEME); // Use Catppuccin Mocha as default dark theme
+    } else {
+      setTheme('catppuccin-latte'); // Use Catppuccin Latte as default light theme
     }
   }, []);
 
@@ -41,9 +58,22 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
 
     localStorage.setItem(THEME_STORAGE_KEY, theme);
     
-    // Remove previous theme class and add new one
-    document.documentElement.classList.remove('light', 'dark');
+    // Remove all theme classes
+    document.documentElement.classList.remove(
+      'light', 'dark', 
+      'catppuccin-latte', 'catppuccin-frappe', 
+      'catppuccin-macchiato', 'catppuccin-mocha'
+    );
+    
+    // Add new theme class
     document.documentElement.classList.add(theme);
+    
+    // Also add dark/light class for base styling
+    if (darkThemes.includes(theme)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.add('light');
+    }
   }, [theme]);
 
   // Listen for system theme changes
@@ -55,7 +85,7 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
     const handleChange = (e: MediaQueryListEvent) => {
       // Only update if there's no saved preference
       if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-        setTheme(e.matches ? 'dark' : 'light');
+        setTheme(e.matches ? DEFAULT_THEME : 'catppuccin-latte');
       }
     };
 

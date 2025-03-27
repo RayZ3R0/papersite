@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Light theme variables */
+  /* Default Light Theme */
+  .light {
     --color-primary: #3b82f6;
     --color-primary-light: #60a5fa;
     --color-primary-dark: #2563eb;
@@ -26,8 +26,8 @@
     --color-border-light: #f3f4f6;
   }
 
+  /* Default Dark Theme */
   .dark {
-    /* Dark theme variables */
     --color-primary: #60a5fa;
     --color-primary-light: #93c5fd;
     --color-primary-dark: #3b82f6;
@@ -49,6 +49,98 @@
     --color-border-light: #4b5563;
   }
 
+  /* Catppuccin Latte */
+  .catppuccin-latte {
+    --color-primary: #8839ef;
+    --color-primary-light: #9c4dff;
+    --color-primary-dark: #7426d6;
+    
+    --color-secondary: #7c7f93;
+    --color-secondary-light: #9ca0b0;
+    --color-secondary-dark: #6c6f82;
+    
+    --color-background: #eff1f5;
+    --color-background-alt: #e6e9ef;
+    
+    --color-surface: #ffffff;
+    --color-surface-alt: #ccd0da;
+    
+    --color-text: #4c4f69;
+    --color-text-muted: #8c8fa1;
+    
+    --color-border: #ccd0da;
+    --color-border-light: #bcc0cc;
+  }
+
+  /* Catppuccin Frappe */
+  .catppuccin-frappe {
+    --color-primary: #ca9ee6;
+    --color-primary-light: #e5c2ff;
+    --color-primary-dark: #b57edc;
+    
+    --color-secondary: #a5adce;
+    --color-secondary-light: #b5bfe2;
+    --color-secondary-dark: #949cbb;
+    
+    --color-background: #303446;
+    --color-background-alt: #292c3c;
+    
+    --color-surface: #414559;
+    --color-surface-alt: #51576d;
+    
+    --color-text: #c6d0f5;
+    --color-text-muted: #a5adce;
+    
+    --color-border: #51576d;
+    --color-border-light: #626880;
+  }
+
+  /* Catppuccin Macchiato */
+  .catppuccin-macchiato {
+    --color-primary: #c6a0f6;
+    --color-primary-light: #ddb6ff;
+    --color-primary-dark: #b18cdc;
+    
+    --color-secondary: #a5adcb;
+    --color-secondary-light: #b8c0dc;
+    --color-secondary-dark: #939ab7;
+    
+    --color-background: #24273a;
+    --color-background-alt: #1e2030;
+    
+    --color-surface: #363a4f;
+    --color-surface-alt: #494d64;
+    
+    --color-text: #cad3f5;
+    --color-text-muted: #a5adcb;
+    
+    --color-border: #494d64;
+    --color-border-light: #5b6078;
+  }
+
+  /* Catppuccin Mocha */
+  .catppuccin-mocha {
+    --color-primary: #cba6f7;
+    --color-primary-light: #e4bbff;
+    --color-primary-dark: #b591dd;
+    
+    --color-secondary: #a6adc8;
+    --color-secondary-light: #bac2de;
+    --color-secondary-dark: #9399b2;
+    
+    --color-background: #1e1e2e;
+    --color-background-alt: #181825;
+    
+    --color-surface: #313244;
+    --color-surface-alt: #45475a;
+    
+    --color-text: #cdd6f4;
+    --color-text-muted: #a6adc8;
+    
+    --color-border: #45475a;
+    --color-border-light: #585b70;
+  }
+
   /* Smooth transitions when switching themes */
   html {
     @apply antialiased;
@@ -60,45 +152,6 @@
                 color 200ms ease-in-out;
   }
 }
-
-@layer components {
-  .pdf-button.inactive {
-    @apply bg-surface-alt hover:bg-surface-alt/80;
-  }
-}
-
-/* Custom styles */
-body {
-  @apply bg-background text-text;
-}
-
-.container {
-  @apply mx-auto px-4 max-w-7xl;
-}
-
-/* Mobile Navigation */
-.mobile-nav {
-  @apply fixed bottom-0 left-0 right-0 bg-surface border-t border-border py-2;
-}
-
-/* PDF Viewer */
-.pdf-container {
-  @apply h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)];
-}
-
-.pdf-controls {
-  @apply flex justify-center gap-4 mb-4;
-}
-
-.pdf-button {
-  @apply px-4 py-2 rounded transition-colors;
-}
-
-.pdf-button.active {
-  @apply bg-primary text-white;
-}
-
-/* Remove the problematic style here since we've moved it to @layer components */
 
 /* Theme transition helper */
 @keyframes fadeIn {

@@ -4,6 +4,8 @@ node_modules
 .pnp.js
 .yarn/install-state.gz
 
+/src/lib/data/subjects.json
+
 # testing
 /coverage
 /test-results
@@ -34,6 +36,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+.husky
 
 # vercel
 .vercel
