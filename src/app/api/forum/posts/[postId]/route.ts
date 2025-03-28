@@ -62,6 +62,9 @@ export async function POST(
       );
     }
 
+    // Get IP from header (set by middleware)
+    const ip = request.headers.get('x-real-ip') || '127.0.0.1';
+
     await connectToDatabase();
 
     // Verify post exists
@@ -77,10 +80,15 @@ export async function POST(
       postId: params.postId,
       content: body.content.trim(),
       authorName: body.authorName.trim(),
-      authorId: body.authorId
+      authorId: body.authorId,
+      ip
     });
 
-    return NextResponse.json(reply, { status: 201 });
+    // Don't send back the IP address
+    const replyObject = reply.toObject();
+    delete replyObject.ip;
+
+    return NextResponse.json(replyObject, { status: 201 });
   } catch (error) {
     console.error('Failed to create reply:', error);
     return NextResponse.json(
@@ -90,7 +98,7 @@ export async function POST(
   }
 }
 
-// Delete a post
+// Delete a post (for user self-deletion)
 export async function DELETE(
   request: Request,
   { params }: { params: { postId: string } }
@@ -98,6 +106,7 @@ export async function DELETE(
   try {
     const { searchParams } = new URL(request.url);
     const authorId = searchParams.get('authorId');
+    const ip = request.headers.get('x-real-ip') || '127.0.0.1';
 
     if (!mongoose.Types.ObjectId.isValid(params.postId)) {
       return NextResponse.json(
@@ -117,13 +126,23 @@ export async function DELETE(
 
     const post = await Post.findOne({
       _id: params.postId,
-      authorId: authorId
+      authorId: authorId,
+      ip: ip // Verify IP matches
     });
 
     if (!post) {
       return NextResponse.json(
         { error: 'Post not found or unauthorized' },
         { status: 404 }
+      );
+    }
+
+    // Check if post is within delete window (15 minutes)
+    const deleteWindow = 15 * 60 * 1000; // 15 minutes in milliseconds
+    if (Date.now() - post.createdAt.getTime() > deleteWindow) {
+      return NextResponse.json(
+        { error: 'Post can only be deleted within 15 minutes of creation' },
+        { status: 403 }
       );
     }
 

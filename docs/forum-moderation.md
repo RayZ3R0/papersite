@@ -4,133 +4,138 @@
 
 A lightweight moderation system combining IP tracking, user identity verification, and admin capabilities.
 
-## User Identity Components
+## Setup Instructions
 
-### IP Tracking
+### Admin Token
 
-- Store IP address with each post and reply
-- Use IP + username combination for edit/delete verification
-- Rate limiting based on IP address
+1. Set the `ADMIN_TOKEN` environment variable in your .env file:
 
-### User Identity Storage
-
-```typescript
-interface UserIdentity {
-  name: string;
-  id: string;
-  ip: string;
-  lastAction: Date;
-}
+```bash
+ADMIN_TOKEN=your-secure-token-here
 ```
 
-## Admin System
+2. To enable admin controls in the browser, open the browser console and run:
 
-### Admin Authentication
+```javascript
+localStorage.setItem("forum_admin_token", "your-secure-token-here");
+```
 
-- Environment variable `ADMIN_TOKEN` for admin access
-- Admin header `X-Admin-Token` for API requests
-- Keep token secure in Vercel environment variables
+3. To disable admin access:
 
-### Admin Capabilities
-
-- Delete any post or reply
-- View IP addresses
-- Ban IPs/usernames
-- Override rate limits
-
-## Anti-Abuse Measures
+```javascript
+localStorage.removeItem("forum_admin_token");
+```
 
 ### Rate Limiting
 
+The system includes built-in rate limiting:
+
 - 5 posts per hour per IP
 - 20 replies per hour per IP
+- 15-minute window for self-deletion
 - Cooldown period between posts (2 minutes)
 
-### Content Filtering
+## Security Features
 
-- Basic profanity filter
-- Link limiting (max 3 per post)
+### IP Tracking
+
+- IP addresses are stored securely and never exposed to clients
+- IP + username combination required for content modification
+- Rate limiting based on IP addresses
+
+### Content Moderation
+
+- Basic profanity filter and content sanitization
+- Link limiting
 - Maximum content length enforcement
 - Minimum content length requirement
 
-### User Restrictions
+### User Verification
 
-- User can only edit/delete their own content
+- Users can only edit/delete their own content
 - Must match original IP and username
-- 15-minute edit window for posts/replies
+- 15-minute edit/delete window
 - Cannot create similar posts within 1 hour
 
-## Implementation Details
+## Admin Capabilities
 
-### Database Updates
+### Content Management
 
-```typescript
-// Post Schema Addition
-{
-  ip: String,
-  editedAt: Date,
-  editCount: Number,
-  lastEditWindow: Date
-}
+- Delete any post or reply
+- View moderation logs
+- Override rate limits
+- Access to IP information
 
-// Reply Schema Addition
-{
-  ip: String,
-  editedAt: Date
-}
+### API Endpoints
+
+- `DELETE /api/forum/admin?postId=[id]` - Delete a post
+- `PATCH /api/forum/admin?replyId=[id]` - Delete a reply
+
+### Security Headers
+
+All admin requests must include:
+
+```
+X-Admin-Token: your-token-here
 ```
 
-### API Routes
+## User Self-Management
 
-```typescript
-// Admin routes
-DELETE /api/forum/admin/posts/:id
-DELETE /api/forum/admin/replies/:id
-POST /api/forum/admin/ban
+### Time Windows
 
-// User routes with verification
-PUT /api/forum/posts/:id    // Edit post
-DELETE /api/forum/posts/:id  // Delete post
-PUT /api/forum/replies/:id   // Edit reply
-DELETE /api/forum/replies/:id // Delete reply
-```
+- Posts can be deleted within 15 minutes of creation
+- Replies can be deleted within 15 minutes of creation
+- Rate limits reset hourly
 
-### Rate Limiting Implementation
+### IP Verification
 
-1. Use Redis or similar for rate limit tracking
-2. Fallback to in-memory storage for simpler setup
-3. Track limits by IP + action type
-4. Reset counters on fixed intervals
+- Actions require matching IP address
+- Username must match original poster
+- Automatic cleanup of expired sessions
 
-### Security Considerations
+## Technical Implementation
 
-- Store IP addresses securely
-- Don't expose IP addresses to clients
-- Validate all user input
-- Sanitize content before storage
-- Log all moderation actions
+### Models
 
-## Usage Examples
+Both Post and Reply models include:
 
-### Admin Deletion
+- IP address (hidden from queries)
+- Creation timestamp
+- Edit history
+- User verification data
 
-```typescript
-// Admin API call
-const response = await fetch(`/api/forum/posts/${postId}`, {
-  method: "DELETE",
-  headers: {
-    "X-Admin-Token": process.env.ADMIN_TOKEN,
-  },
-});
-```
+### Middleware
 
-### User Edit Verification
+- Rate limiting
+- IP tracking
+- Admin token verification
+- Request sanitization
 
-```typescript
-// Check user permissions
-const canEdit =
-  post.authorId === userId &&
-  post.authorName === userName &&
-  post.ip === userIp &&
-  isWithinEditWindow(post.createdAt);
-```
+### Error Handling
+
+- Clear user feedback
+- Secure error messages
+- Detailed admin logging
+- Rate limit notifications
+
+## Production Considerations
+
+### Scaling
+
+- Replace in-memory rate limiting with Redis
+- Add request caching
+- Implement database indexing
+
+### Security
+
+- Use secure environment variables
+- Regularly rotate admin tokens
+- Monitor for abuse patterns
+- Implement IP ban system if needed
+
+### Maintenance
+
+- Regular cleanup of old data
+- Monitor system performance
+- Update security measures
+- Maintain moderation logs

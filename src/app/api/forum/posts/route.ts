@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Rate limiting check could be added here
+    // Get IP from header (set by middleware)
+    const ip = request.headers.get('x-real-ip') || '127.0.0.1';
     
     await connectToDatabase();
     
@@ -60,10 +61,15 @@ export async function POST(request: Request) {
       content: body.content.trim(),
       authorName: body.authorName.trim(),
       authorId: body.authorId,
+      ip,
       tags: body.tags?.filter((tag: string) => tag.trim()) || []
     });
 
-    return NextResponse.json(post, { status: 201 });
+    // Don't send back the IP address
+    const postObject = post.toObject();
+    delete postObject.ip;
+
+    return NextResponse.json(postObject, { status: 201 });
   } catch (error) {
     console.error('Failed to create post:', error);
     return NextResponse.json(

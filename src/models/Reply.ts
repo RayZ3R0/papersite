@@ -24,6 +24,23 @@ const ReplySchema = new mongoose.Schema({
     required: true,
     index: true 
   },
+  ip: {
+    type: String,
+    required: true,
+    select: false // Don't return IP in normal queries
+  },
+  editedAt: {
+    type: Date,
+    default: null
+  },
+  editCount: {
+    type: Number,
+    default: 0
+  },
+  lastEditWindow: {
+    type: Date,
+    default: null
+  },
   createdAt: { 
     type: Date, 
     default: Date.now 
@@ -31,13 +48,13 @@ const ReplySchema = new mongoose.Schema({
 });
 
 // Update post's reply count when a reply is added
-ReplySchema.post('save', async function(this: ReplyDocument) {
+ReplySchema.post('save', async function(doc) {
   const Post = mongoose.model('Post');
-  await Post.findByIdAndUpdate(this.postId, { $inc: { replyCount: 1 } });
+  await Post.findByIdAndUpdate(doc.postId, { $inc: { replyCount: 1 } });
 });
 
 // Decrease post's reply count when a reply is deleted
-ReplySchema.pre('deleteOne', { document: true, query: false }, async function(this: ReplyDocument) {
+ReplySchema.pre('deleteOne', { document: true, query: false }, async function() {
   const Post = mongoose.model('Post');
   await Post.findByIdAndUpdate(this.postId, { $inc: { replyCount: -1 } });
 });
@@ -47,6 +64,10 @@ export interface ReplyDocument extends mongoose.Document {
   content: string;
   authorName: string;
   authorId: string;
+  ip: string;
+  editedAt: Date | null;
+  editCount: number;
+  lastEditWindow: Date | null;
   createdAt: Date;
 }
 

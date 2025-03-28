@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForumUser, requireUser } from '@/hooks/useForumUser';
 import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
-import { AdminControls } from '@/components/forum/AdminControls';
+import { PostContent } from '@/components/forum/PostContent';
+import { ReplyContent } from '@/components/forum/ReplyContent';
+import { sanitizeContent } from '@/lib/forumUtils';
 
 interface Post {
   _id: string;
@@ -64,13 +66,18 @@ export default function PostPage({ params }: { params: { postId: string } }) {
     try {
       requireUser(user);
 
+      const cleanContent = sanitizeContent(replyContent);
+      if (!cleanContent) {
+        throw new Error('Reply content cannot be empty');
+      }
+
       const response = await fetch(`/api/forum/posts/${params.postId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: replyContent.trim(),
+          content: cleanContent,
           authorName: user.name,
           authorId: user.id,
         }),
@@ -103,7 +110,11 @@ export default function PostPage({ params }: { params: { postId: string } }) {
   };
 
   if (isLoading || isLoadingPost) {
-    return <LoadingSpinner />;
+    return (
+      <div className="container mx-auto p-4">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (!post) {
@@ -118,37 +129,12 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
-      <article className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
-        <div className="flex items-center text-sm text-text-muted mb-4">
-          <span>By {post.authorName}</span>
-          <span className="mx-2">•</span>
-          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-        </div>
-        {post.tags.length > 0 && (
-          <div className="mb-4 space-x-2">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-block px-2 py-1 text-xs bg-surface-alt rounded"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="prose dark:prose-invert max-w-none">
-          {post.content.split('\n').map((paragraph, index) => (
-            <p key={index} className="mb-4">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-        <AdminControls postId={post._id} onDelete={handlePostDelete} />
-      </article>
+      <PostContent post={post} onDelete={handlePostDelete} />
 
       <div className="border-t border-border pt-8">
-        <h2 className="text-xl font-semibold mb-6">Replies</h2>
+        <h2 className="text-xl font-semibold mb-6">
+          Replies ({post.replyCount})
+        </h2>
         
         {!user ? (
           <div className="text-center py-4 text-text-muted">
@@ -183,25 +169,12 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 
         <div className="space-y-6">
           {replies.map((reply) => (
-            <div key={reply._id} className="p-4 bg-surface rounded">
-              <div className="flex items-center text-sm text-text-muted mb-2">
-                <span>{reply.authorName}</span>
-                <span className="mx-2">•</span>
-                <span>{new Date(reply.createdAt).toLocaleDateString()}</span>
-              </div>
-              <div className="prose dark:prose-invert max-w-none">
-                {reply.content.split('\n').map((paragraph, index) => (
-                  <p key={index} className="mb-2 last:mb-0">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-              <AdminControls 
-                postId={post._id}
-                replyId={reply._id}
-                onDelete={() => handleReplyDelete(reply._id)}
-              />
-            </div>
+            <ReplyContent
+              key={reply._id}
+              reply={reply}
+              postId={post._id}
+              onDelete={() => handleReplyDelete(reply._id)}
+            />
           ))}
           {replies.length === 0 && (
             <div className="text-center py-4 text-text-muted">
