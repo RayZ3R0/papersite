@@ -1,10 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 export function useSearchTransition() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -14,23 +15,6 @@ export function useSearchTransition() {
   useEffect(() => {
     isMobileRef.current = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   }, []);
-
-  // Handle focus preservation during transition
-  useEffect(() => {
-    if (isTransitioning && inputRef.current) {
-      // Restore focus after transition
-      const input = inputRef.current;
-      requestAnimationFrame(() => {
-        input.focus();
-        
-        // Move cursor to end of input
-        const length = input.value.length;
-        input.setSelectionRange(length, length);
-        
-        setIsTransitioning(false);
-      });
-    }
-  }, [isTransitioning]);
 
   // Handle mobile keyboard persistence
   useEffect(() => {
@@ -59,7 +43,7 @@ export function useSearchTransition() {
     params.set('q', value);
     
     // Only add focus parameter if transitioning from homepage
-    if (window.location.pathname === '/') {
+    if (pathname === '/') {
       params.set('focus', 'true');
     }
 
@@ -67,7 +51,12 @@ export function useSearchTransition() {
     router.push(`/search?${params.toString()}`, {
       scroll: false
     });
-  }, [router]);
+
+    // Reset transition state after navigation
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 100);
+  }, [router, pathname]);
 
   return {
     inputRef,
