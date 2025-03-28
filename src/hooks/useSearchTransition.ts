@@ -52,8 +52,8 @@ export function useSearchTransition() {
 
     setIsTransitioning(true);
     
-    // Update URL with search query and focus parameter
-    router.push(`/search?q=${encodeURIComponent(value)}&focus=true`, {
+    // Update URL with search query
+    router.push(`/search?q=${encodeURIComponent(value)}`, {
       scroll: false
     });
   }, [router]);
