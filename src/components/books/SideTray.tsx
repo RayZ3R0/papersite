@@ -36,68 +36,67 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
   const downloadUrl = book.downloadUrl || book.pdfUrl;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-40">
+    <div className="absolute inset-0 z-40">
       <div
         ref={overlayRef}
         className={`
-          fixed top-0 bottom-0 bg-surface p-6 shadow-xl 
-          transform transition-transform duration-300 ease-in-out
-          w-[80%] left-[10%] md:w-1/2 md:left-auto md:right-0
-          overflow-y-auto
+          absolute inset-0 bg-surface shadow-lg
+          overflow-y-auto rounded-lg
+          transform transition-all duration-300 ease-in-out
+          scale-[0.85] sm:scale-100
         `}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-text-muted hover:text-text"
+          className="absolute top-2 right-2 text-text-muted hover:text-text p-1"
         >
           ✕
         </button>
 
-        <div className="mt-8 space-y-6">
-          <div className="relative w-48 h-64 mx-auto">
+        <div className="p-4 space-y-4">
+          <div className="relative w-32 h-44 mx-auto sm:w-36 sm:h-48">
             <Image
               src={imageSource}
               alt={book.title}
               fill
               className="object-cover rounded"
-              sizes="(max-width: 768px) 80vw, 192px"
+              sizes="(max-width: 640px) 128px, 144px"
             />
           </div>
 
           <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
+            <h2 className="text-lg font-semibold mb-1 sm:text-xl">{book.title}</h2>
             {book.subject && (
-              <p className="text-text-muted mb-4">{book.subject}</p>
+              <p className="text-sm text-text-muted">{book.subject}</p>
             )}
           </div>
 
-          <div className="prose dark:prose-invert max-w-none">
-            <h3 className="text-lg font-medium mb-2">Description</h3>
-            <p className="text-text-muted">
-              {book.description || 'No description available.'}
-            </p>
-          </div>
-
-          {downloadUrl && (
-            <div className="flex flex-col gap-4 pt-4">
+          <div className="flex flex-col gap-2">
+            {downloadUrl && (
               <a
                 href={downloadUrl}
-                className="block w-full px-4 py-2 text-center bg-primary text-white rounded hover:bg-primary/90"
+                className="block w-full px-3 py-1.5 text-center text-sm bg-primary text-white rounded hover:bg-primary/90 sm:text-base sm:py-2"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Download PDF
               </a>
-              {book.solutionUrl && (
-                <a
-                  href={book.solutionUrl}
-                  className="block w-full px-4 py-2 text-center bg-surface-alt text-text rounded hover:bg-surface-alt/90"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Download Solutions
-                </a>
-              )}
+            )}
+            {book.solutionUrl && (
+              <a
+                href={book.solutionUrl}
+                className="block w-full px-3 py-1.5 text-center text-sm bg-surface-alt text-text rounded hover:bg-surface-alt/90 sm:text-base sm:py-2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Download Solutions
+              </a>
+            )}
+          </div>
+
+          {book.description && (
+            <div className="text-sm sm:text-base">
+              <p className="text-text-muted">{book.description}</p>
             </div>
           )}
         </div>
