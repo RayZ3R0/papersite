@@ -3,25 +3,26 @@
 @tailwind utilities;
 
 @layer base {
+
   /* Default Light Theme */
   .light {
     --color-primary: #3b82f6;
     --color-primary-light: #60a5fa;
     --color-primary-dark: #2563eb;
-    
+
     --color-secondary: #6b7280;
     --color-secondary-light: #9ca3af;
     --color-secondary-dark: #4b5563;
-    
+
     --color-background: #f9fafb;
     --color-background-alt: #ffffff;
-    
+
     --color-surface: #ffffff;
     --color-surface-alt: #f3f4f6;
-    
+
     --color-text: #1f2937;
     --color-text-muted: #6b7280;
-    
+
     --color-border: #e5e7eb;
     --color-border-light: #f3f4f6;
   }
@@ -31,20 +32,20 @@
     --color-primary: #60a5fa;
     --color-primary-light: #93c5fd;
     --color-primary-dark: #3b82f6;
-    
+
     --color-secondary: #9ca3af;
     --color-secondary-light: #d1d5db;
     --color-secondary-dark: #6b7280;
-    
+
     --color-background: #111827;
     --color-background-alt: #1f2937;
-    
+
     --color-surface: #1f2937;
     --color-surface-alt: #374151;
-    
+
     --color-text: #f9fafb;
     --color-text-muted: #9ca3af;
-    
+
     --color-border: #374151;
     --color-border-light: #4b5563;
   }
@@ -54,20 +55,20 @@
     --color-primary: #8839ef;
     --color-primary-light: #9c4dff;
     --color-primary-dark: #7426d6;
-    
+
     --color-secondary: #7c7f93;
     --color-secondary-light: #9ca0b0;
     --color-secondary-dark: #6c6f82;
-    
+
     --color-background: #eff1f5;
     --color-background-alt: #e6e9ef;
-    
+
     --color-surface: #ffffff;
     --color-surface-alt: #ccd0da;
-    
+
     --color-text: #4c4f69;
     --color-text-muted: #8c8fa1;
-    
+
     --color-border: #ccd0da;
     --color-border-light: #bcc0cc;
   }
@@ -77,20 +78,20 @@
     --color-primary: #ca9ee6;
     --color-primary-light: #e5c2ff;
     --color-primary-dark: #b57edc;
-    
+
     --color-secondary: #a5adce;
     --color-secondary-light: #b5bfe2;
     --color-secondary-dark: #949cbb;
-    
+
     --color-background: #303446;
     --color-background-alt: #292c3c;
-    
+
     --color-surface: #414559;
     --color-surface-alt: #51576d;
-    
+
     --color-text: #c6d0f5;
     --color-text-muted: #a5adce;
-    
+
     --color-border: #51576d;
     --color-border-light: #626880;
   }
@@ -100,20 +101,20 @@
     --color-primary: #c6a0f6;
     --color-primary-light: #ddb6ff;
     --color-primary-dark: #b18cdc;
-    
+
     --color-secondary: #a5adcb;
     --color-secondary-light: #b8c0dc;
     --color-secondary-dark: #939ab7;
-    
+
     --color-background: #24273a;
     --color-background-alt: #1e2030;
-    
+
     --color-surface: #363a4f;
     --color-surface-alt: #494d64;
-    
+
     --color-text: #cad3f5;
     --color-text-muted: #a5adcb;
-    
+
     --color-border: #494d64;
     --color-border-light: #5b6078;
   }
@@ -123,20 +124,20 @@
     --color-primary: #cba6f7;
     --color-primary-light: #e4bbff;
     --color-primary-dark: #b591dd;
-    
+
     --color-secondary: #a6adc8;
     --color-secondary-light: #bac2de;
     --color-secondary-dark: #9399b2;
-    
+
     --color-background: #1e1e2e;
     --color-background-alt: #181825;
-    
+
     --color-surface: #313244;
     --color-surface-alt: #45475a;
-    
+
     --color-text: #cdd6f4;
     --color-text-muted: #a6adc8;
-    
+
     --color-border: #45475a;
     --color-border-light: #585b70;
   }
@@ -146,7 +147,7 @@
     --color-primary: #7FA650;
     --color-primary-light: #A6C977;
     --color-primary-dark: #5F7F3C;
-    
+
     --color-secondary: #6F755F;
     --color-secondary-light: #8A907A;
     --color-secondary-dark: #545A44;
@@ -169,7 +170,7 @@
     --color-primary: #88C0D0;
     --color-primary-light: #A3BE8C;
     --color-primary-dark: #5E81AC;
-    
+
     --color-secondary: #81A1C1;
     --color-secondary-light: #88C0D0;
     --color-secondary-dark: #5E81AC;
@@ -192,7 +193,7 @@
     --color-primary: #8ec07c;
     --color-primary-light: #b8bb26;
     --color-primary-dark: #83a598;
-    
+
     --color-secondary: #928374;
     --color-secondary-light: #a89984;
     --color-secondary-dark: #7c6f64;
@@ -210,143 +211,143 @@
     --color-border-light: #928374;
   }
 
-    /* Dracula Theme (Dark) */
-    .dracula {
-      --color-primary: #bd93f9;
-      --color-primary-light: #d6baff;
-      --color-primary-dark: #9e6cf0;
-  
-      --color-secondary: #ff79c6;
-      --color-secondary-light: #ff9bdb;
-      --color-secondary-dark: #db5bb0;
-  
-      --color-background: #282a36;
-      --color-background-alt: #343746;
-  
-      --color-surface: #44475a;
-      --color-surface-alt: #4d5171;
-  
-      --color-text: #f8f8f2;
-      --color-text-muted: #bfbfbf;
-  
-      --color-border: #44475a;
-      --color-border-light: #565869;
-    }
-  
-    /* Solarized Light */
-    .solarized-light {
-      --color-primary: #268bd2;
-      --color-primary-light: #4ca4e4;
-      --color-primary-dark: #0969a2;
-  
-      --color-secondary: #2aa198;
-      --color-secondary-light: #44c3b9;
-      --color-secondary-dark: #1a817a;
-  
-      --color-background: #fdf6e3;
-      --color-background-alt: #eee8d5;
-  
-      --color-surface: #fefefe;
-      --color-surface-alt: #efefef;
-  
-      --color-text: #073642;
-      --color-text-muted: #586e75;
-  
-      --color-border: #e0e0e0;
-      --color-border-light: #eeeeee;
-    }
-  
-    /* Solarized Dark */
-    .solarized-dark {
-      --color-primary: #268bd2;
-      --color-primary-light: #4ca4e4;
-      --color-primary-dark: #0969a2;
-  
-      --color-secondary: #2aa198;
-      --color-secondary-light: #44c3b9;
-      --color-secondary-dark: #1a817a;
-  
-      --color-background: #002b36;
-      --color-background-alt: #073642;
-  
-      --color-surface: #073642;
-      --color-surface-alt: #114752;
-  
-      --color-text: #fdf6e3;
-      --color-text-muted: #93a1a1;
-  
-      --color-border: #586e75;
-      --color-border-light: #657b83;
-    }
-  
-    /* Rose Pine (Dark) */
-    .rose-pine {
-      --color-primary: #ebbcba;
-      --color-primary-light: #f4cbc9;
-      --color-primary-dark: #e4a8a8;
-  
-      --color-secondary: #f6c177;
-      --color-secondary-light: #fbcd8d;
-      --color-secondary-dark: #e0a755;
-  
-      --color-background: #191724;
-      --color-background-alt: #1f1d2e;
-  
-      --color-surface: #26233a;
-      --color-surface-alt: #2a273f;
-  
-      --color-text: #e0def4;
-      --color-text-muted: #908caa;
-  
-      --color-border: #403d58;
-      --color-border-light: #524f67;
-    }
-  
-    /* Tokyo Night (Dark) */
-    .tokyo-night {
-      --color-primary: #7aa2f7;
-      --color-primary-light: #96b1fa;
-      --color-primary-dark: #5d87e6;
-  
-      --color-secondary: #bb9af7;
-      --color-secondary-light: #c9affa;
-      --color-secondary-dark: #a577f3;
-  
-      --color-background: #1a1b26;
-      --color-background-alt: #24283b;
-  
-      --color-surface: #2f3549;
-      --color-surface-alt: #353b54;
-  
-      --color-text: #c0caf5;
-      --color-text-muted: #a9b1d6;
-  
-      --color-border: #414868;
-      --color-border-light: #545c7e;
-    }
+  /* Dracula Theme (Dark) */
+  .dracula {
+    --color-primary: #bd93f9;
+    --color-primary-light: #d6baff;
+    --color-primary-dark: #9e6cf0;
 
-        /* Crimson Theme (Dark) */
-    .crimson {
-      --color-primary: #e53935;
-      --color-primary-light: #ff6659;
-      --color-primary-dark: #ab000d;
-      
-      --color-secondary: #ff8a80;
-      --color-secondary-light: #ffbcaf;
-      --color-secondary-dark: #c85a54;
-      
-      --color-background: #1a1a1a;
-      --color-background-alt: #252525;
-      
-      --color-surface: #2d2d2d;
-      --color-surface-alt: #353535;
-      
-      --color-text: #f5f5f5;
-      --color-text-muted: #b3b3b3;
-      
-      --color-border: #444444;
-      --color-border-light: #555555;
-    }
+    --color-secondary: #ff79c6;
+    --color-secondary-light: #ff9bdb;
+    --color-secondary-dark: #db5bb0;
+
+    --color-background: #282a36;
+    --color-background-alt: #343746;
+
+    --color-surface: #44475a;
+    --color-surface-alt: #4d5171;
+
+    --color-text: #f8f8f2;
+    --color-text-muted: #bfbfbf;
+
+    --color-border: #44475a;
+    --color-border-light: #565869;
+  }
+
+  /* Solarized Light */
+  .solarized-light {
+    --color-primary: #268bd2;
+    --color-primary-light: #4ca4e4;
+    --color-primary-dark: #0969a2;
+
+    --color-secondary: #2aa198;
+    --color-secondary-light: #44c3b9;
+    --color-secondary-dark: #1a817a;
+
+    --color-background: #fdf6e3;
+    --color-background-alt: #eee8d5;
+
+    --color-surface: #fefefe;
+    --color-surface-alt: #efefef;
+
+    --color-text: #073642;
+    --color-text-muted: #586e75;
+
+    --color-border: #e0e0e0;
+    --color-border-light: #eeeeee;
+  }
+
+  /* Solarized Dark */
+  .solarized-dark {
+    --color-primary: #268bd2;
+    --color-primary-light: #4ca4e4;
+    --color-primary-dark: #0969a2;
+
+    --color-secondary: #2aa198;
+    --color-secondary-light: #44c3b9;
+    --color-secondary-dark: #1a817a;
+
+    --color-background: #002b36;
+    --color-background-alt: #073642;
+
+    --color-surface: #073642;
+    --color-surface-alt: #114752;
+
+    --color-text: #fdf6e3;
+    --color-text-muted: #93a1a1;
+
+    --color-border: #586e75;
+    --color-border-light: #657b83;
+  }
+
+  /* Rose Pine (Dark) */
+  .rose-pine {
+    --color-primary: #ebbcba;
+    --color-primary-light: #f4cbc9;
+    --color-primary-dark: #e4a8a8;
+
+    --color-secondary: #f6c177;
+    --color-secondary-light: #fbcd8d;
+    --color-secondary-dark: #e0a755;
+
+    --color-background: #191724;
+    --color-background-alt: #1f1d2e;
+
+    --color-surface: #26233a;
+    --color-surface-alt: #2a273f;
+
+    --color-text: #e0def4;
+    --color-text-muted: #908caa;
+
+    --color-border: #403d58;
+    --color-border-light: #524f67;
+  }
+
+  /* Tokyo Night (Dark) */
+  .tokyo-night {
+    --color-primary: #7aa2f7;
+    --color-primary-light: #96b1fa;
+    --color-primary-dark: #5d87e6;
+
+    --color-secondary: #bb9af7;
+    --color-secondary-light: #c9affa;
+    --color-secondary-dark: #a577f3;
+
+    --color-background: #1a1b26;
+    --color-background-alt: #24283b;
+
+    --color-surface: #2f3549;
+    --color-surface-alt: #353b54;
+
+    --color-text: #c0caf5;
+    --color-text-muted: #a9b1d6;
+
+    --color-border: #414868;
+    --color-border-light: #545c7e;
+  }
+
+  /* Crimson Theme (Dark) */
+  .crimson {
+    --color-primary: #e53935;
+    --color-primary-light: #ff6659;
+    --color-primary-dark: #ab000d;
+
+    --color-secondary: #ff8a80;
+    --color-secondary-light: #ffbcaf;
+    --color-secondary-dark: #c85a54;
+
+    --color-background: #1a1a1a;
+    --color-background-alt: #252525;
+
+    --color-surface: #2d2d2d;
+    --color-surface-alt: #353535;
+
+    --color-text: #f5f5f5;
+    --color-text-muted: #b3b3b3;
+
+    --color-border: #444444;
+    --color-border-light: #555555;
+  }
 
   /* Base HTML */
   html {
@@ -370,6 +371,22 @@
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+/* Search animations */
+@keyframes searchFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: searchFadeIn 0.6s ease-out 0.3s forwards;
 }
 
 .theme-fade-in {

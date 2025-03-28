@@ -1,30 +1,22 @@
+'use client';
+
+import { Suspense } from 'react';
+import HeroSection from '@/components/home/HeroSection';
+
 export default function HomePage() {
   return (
-    <div className="mt-4 md:mt-0">
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome to PaperSite</h1>
-        <p className="text-text-muted mb-6">
-          Find papers, books, and study materials
-        </p>
+    <main className="min-h-screen">
+      {/* Hero Banner with Suspense */}
+      <Suspense fallback={
+        <div className="h-[60vh] bg-background-alt animate-pulse" />
+      }>
+        <HeroSection />
+      </Suspense>
+
+      {/* Content Container - Will be used in future phases */}
+      <div className="container mx-auto px-4 py-12">
+        {/* Feature grid and other content will go here */}
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {/* Quick access sections */}
-        <section className="p-4 bg-surface rounded-lg hover:bg-surface-alt transition-colors">
-          <h2 className="text-lg font-semibold mb-2">Books</h2>
-          <p className="text-text-muted">Access textbooks and solutions</p>
-        </section>
-
-        <section className="p-4 bg-surface rounded-lg hover:bg-surface-alt transition-colors">
-          <h2 className="text-lg font-semibold mb-2">Papers</h2>
-          <p className="text-text-muted">Browse past papers by subject</p>
-        </section>
-
-        <section className="p-4 bg-surface rounded-lg hover:bg-surface-alt transition-colors">
-          <h2 className="text-lg font-semibold mb-2">Notes</h2>
-          <p className="text-text-muted">Study materials and resources</p>
-        </section>
-      </div>
-    </div>
+    </main>
   );
 }
