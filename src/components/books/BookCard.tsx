@@ -12,6 +12,12 @@ interface BookCardProps {
 export default function BookCard({ book }: BookCardProps) {
   const [isTrayOpen, setIsTrayOpen] = useState(false);
 
+  // Use coverImage if available, otherwise fallback to imageUrl or placeholder
+  const imageSource = 
+    book.coverImage || 
+    book.imageUrl || 
+    '/books/book-placeholder.svg';
+
   return (
     <>
       <div 
@@ -20,7 +26,7 @@ export default function BookCard({ book }: BookCardProps) {
       >
         <div className="relative aspect-[3/4] w-full">
           <Image
-            src={book.coverImage}
+            src={imageSource}
             alt={book.title}
             fill
             className="object-cover rounded-t-lg"

@@ -1,39 +1,41 @@
 'use client';
 
-import { SubjectFilter as SubjectFilterType } from '@/types/book';
-
 interface SubjectFilterProps {
-  subjects: SubjectFilterType[];
+  subjects: string[];
   selectedSubject: string | null;
-  onSubjectChange: (subject: string | null) => void;
+  onChange: (subject: string | null) => void;
 }
 
-const SubjectFilter = ({ subjects, selectedSubject, onSubjectChange }: SubjectFilterProps) => {
+export default function SubjectFilter({
+  subjects,
+  selectedSubject,
+  onChange
+}: SubjectFilterProps) {
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex flex-wrap gap-2">
       <button
-        onClick={() => onSubjectChange(null)}
-        className={`px-3 py-1 rounded-full text-sm transition-colors
+        onClick={() => onChange(null)}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
           ${!selectedSubject
             ? 'bg-primary text-white'
-            : 'bg-surface text-text hover:bg-surface-alt'}`}
+            : 'bg-surface hover:bg-surface-alt text-text'
+          }`}
       >
         All
       </button>
       {subjects.map((subject) => (
         <button
-          key={subject.value}
-          onClick={() => onSubjectChange(subject.value)}
-          className={`px-3 py-1 rounded-full text-sm transition-colors
-            ${selectedSubject === subject.value
+          key={subject}
+          onClick={() => onChange(subject)}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+            ${selectedSubject === subject
               ? 'bg-primary text-white'
-              : 'bg-surface text-text hover:bg-surface-alt'}`}
+              : 'bg-surface hover:bg-surface-alt text-text'
+            }`}
         >
-          {subject.label} ({subject.count})
+          {subject}
         </button>
       ))}
     </div>
   );
-};
-
-export default SubjectFilter;
+}

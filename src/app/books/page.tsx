@@ -1,28 +1,33 @@
 'use client';
 
-import { useEffect } from 'react';
-import booksData from '@/lib/data/books.json';
+import { useState } from 'react';
+import SubjectFilter from '@/components/books/SubjectFilter';
 import BooksGrid from '@/components/books/BooksGrid';
+import booksData from '@/lib/data/books.json';
+
+const allSubjects = Array.from(
+  new Set(booksData.books.map(book => book.subject))
+).filter(Boolean) as string[];
 
 export default function BooksPage() {
-  // Close any open side trays when navigating away
-  useEffect(() => {
-    return () => {
-      // Cleanup on unmount
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+
+  const filteredBooks = selectedSubject
+    ? booksData.books.filter(book => book.subject === selectedSubject)
+    : booksData.books;
 
   return (
-    <div>
+    <div className="container mx-auto px-4 py-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-text">Books</h1>
-        <p className="mt-2 text-text-muted">
-          Access textbooks and their solutions. Click on a book to view available resources.
-        </p>
+        <h1 className="text-2xl font-bold mb-4">Books</h1>
+        <SubjectFilter
+          subjects={allSubjects}
+          selectedSubject={selectedSubject}
+          onChange={setSelectedSubject}
+        />
       </div>
 
-      <BooksGrid books={booksData.books} />
+      <BooksGrid books={filteredBooks} />
     </div>
   );
 }

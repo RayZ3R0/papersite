@@ -31,6 +31,10 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
 
   if (!isOpen) return null;
 
+  // Use appropriate image and download URLs
+  const imageSource = book.coverImage || book.imageUrl || '/books/book-placeholder.svg';
+  const downloadUrl = book.downloadUrl || book.pdfUrl;
+
   return (
     <div className="fixed inset-0 bg-black/50 z-40">
       <div
@@ -52,7 +56,7 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
         <div className="mt-8 space-y-6">
           <div className="relative w-48 h-64 mx-auto">
             <Image
-              src={book.coverImage}
+              src={imageSource}
               alt={book.title}
               fill
               className="object-cover rounded"
@@ -74,16 +78,26 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
             </p>
           </div>
 
-          {book.downloadUrl && (
-            <div className="pt-4">
+          {downloadUrl && (
+            <div className="flex flex-col gap-4 pt-4">
               <a
-                href={book.downloadUrl}
+                href={downloadUrl}
                 className="block w-full px-4 py-2 text-center bg-primary text-white rounded hover:bg-primary/90"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Download PDF
               </a>
+              {book.solutionUrl && (
+                <a
+                  href={book.solutionUrl}
+                  className="block w-full px-4 py-2 text-center bg-surface-alt text-text rounded hover:bg-surface-alt/90"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download Solutions
+                </a>
+              )}
             </div>
           )}
         </div>
