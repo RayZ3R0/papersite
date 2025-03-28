@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { SearchIcon } from '@/components/layout/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useSearchTransition } from '@/hooks/useSearchTransition';
@@ -13,6 +13,7 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
   const [isFocused, setIsFocused] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { inputRef, isTransitioning, handleSearch } = useSearchTransition();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle keyboard shortcut
   useEffect(() => {
@@ -26,6 +27,21 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [inputRef]);
+
+  // Handle tap on container to focus input
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleTap = () => {
+      if (inputRef.current && !isFocused) {
+        inputRef.current.focus();
+      }
+    };
+
+    container.addEventListener('click', handleTap);
+    return () => container.removeEventListener('click', handleTap);
+  }, [inputRef, isFocused]);
 
   // Handle input change
   const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,19 +58,33 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
       `}
     >
       <div 
+        ref={containerRef}
         className={`
-          relative backdrop-blur-lg transition-all duration-200
+          relative backdrop-blur-lg transition-all duration-200 cursor-text
           ${isFocused 
             ? 'bg-white/15 shadow-lg' 
-            : 'bg-white/10 shadow'
+            : 'bg-white/10 shadow hover:bg-white/12'
           }
           rounded-xl border border-white/20
           ${isFocused ? 'border-white/30' : 'border-white/20'}
+          overflow-hidden
         `}
       >
+        {/* Input field - Using a button to trigger focus on mobile */}
+        {isMobile && !isFocused && (
+          <button
+            aria-label="Tap to search"
+            className="absolute inset-0 z-10 w-full h-full"
+            onClick={() => {
+              inputRef.current?.focus();
+            }}
+          />
+        )}
+        
         <input
           ref={inputRef}
-          type="text"
+          type="search"
+          enterKeyHint="search"
           placeholder="Search papers, books, and notes..."
           className={`
             w-full bg-transparent px-12 h-14
@@ -62,19 +92,26 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
             focus:outline-none focus:ring-0
             transition-all duration-200
           `}
+          style={{ 
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
+            appearance: 'none',
+            fontSize: isMobile ? '16px' : 'inherit'
+          }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onChange={onInputChange}
           disabled={isTransitioning}
         />
         
+        {/* Search Icon */}
         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
           <SearchIcon className={`w-5 h-5 text-white/70 transition-opacity duration-200
             ${isTransitioning ? 'opacity-50' : 'opacity-100'}`} 
           />
         </div>
 
-        {/* Keyboard Shortcut Hint */}
+        {/* Keyboard Shortcut Hint - Only on Desktop */}
         {!isMobile && !isFocused && !isTransitioning && (
           <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
             <span className="text-sm text-white/50">
@@ -83,18 +120,6 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
           </div>
         )}
       </div>
-
-      {/* Focus Ring Animation */}
-      <div 
-        className={`
-          absolute -inset-px rounded-xl transition-all duration-300
-          ${isFocused 
-            ? 'bg-white/20 blur-lg opacity-100' 
-            : 'blur-md opacity-0'
-          }
-        `} 
-        aria-hidden="true"
-      />
     </div>
   );
 }

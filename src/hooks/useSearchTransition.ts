@@ -32,7 +32,7 @@ export function useSearchTransition() {
     }
   }, [isTransitioning]);
 
-  // Handle mobile keyboard preservation
+  // Handle mobile keyboard persistence
   useEffect(() => {
     if (isMobileRef.current && isTransitioning) {
       // Prevent mobile keyboard from dismissing
@@ -52,8 +52,19 @@ export function useSearchTransition() {
 
     setIsTransitioning(true);
     
-    // Update URL with search query
-    router.push(`/search?q=${encodeURIComponent(value)}`, {
+    // Create URL with search query
+    const params = new URLSearchParams();
+    
+    // Set search query
+    params.set('q', value);
+    
+    // Only add focus parameter if transitioning from homepage
+    if (window.location.pathname === '/') {
+      params.set('focus', 'true');
+    }
+
+    // Navigate to search page
+    router.push(`/search?${params.toString()}`, {
       scroll: false
     });
   }, [router]);

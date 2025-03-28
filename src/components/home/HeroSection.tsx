@@ -37,7 +37,7 @@ export default function HeroSection({
       <ParallaxBanner />
 
       {/* Content Overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-10">
         <h1 
           ref={titleRef}
           className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
@@ -48,13 +48,15 @@ export default function HeroSection({
           {subtitle}
         </p>
 
-        {/* Search Component */}
-        <HomeSearch className="mt-2 opacity-0 animate-fade-in" />
+        {/* Search Component - Add higher z-index and pointer events */}
+        <div className="w-full max-w-2xl relative z-20" style={{ touchAction: 'auto' }}>
+          <HomeSearch className="mt-2 opacity-0 animate-fade-in" />
+        </div>
       </div>
 
       {/* Bottom Fade */}
       <div 
-        className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent"
+        className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none"
         aria-hidden="true"
       />
     </div>

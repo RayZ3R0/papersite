@@ -1,187 +1,127 @@
 'use client';
 
-import React, { useRef, KeyboardEvent, useEffect } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import { SearchIcon } from '@/components/layout/icons';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface SearchBoxProps {
-  value: string;
-  onChange: (text: string) => void;
-  onClear: () => void;
-  placeholder?: string;
+  defaultValue?: string;
+  value?: string;
   className?: string;
-  suggestions?: string[];
-  onSuggestionSelect?: (suggestion: string) => void;
+  onChange?: (value: string) => void;
+  onClear?: () => void;
   autoFocus?: boolean;
+  placeholder?: string;
+  suggestions?: string[];
 }
 
-export default function SearchBox({
-  value,
+const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(({
+  defaultValue = '',
+  value: controlledValue,
+  className = '',
   onChange,
   onClear,
-  placeholder = "Search papers...",
-  className = "",
-  suggestions = [],
-  onSuggestionSelect,
-  autoFocus = false
-}: SearchBoxProps) {
-  const [selectedIndex, setSelectedIndex] = React.useState(-1);
-  const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const suggestionsRef = useRef<HTMLUListElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  autoFocus = false,
+  placeholder = "Search everything...",
+  suggestions = []
+}, ref) => {
+  const [internalValue, setInternalValue] = useState(defaultValue);
+  const value = controlledValue !== undefined ? controlledValue : internalValue;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isFocused, setIsFocused] = useState(false);
 
-  // Autofocus on mount if enabled
+  // Auto focus from URL parameter or prop
   useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus]);
-
-  // Show suggestions when there's input and suggestions are available
-  const shouldShowSuggestions = showSuggestions && 
-    value.length > 0 && 
-    suggestions.length > 0;
-
-  // Handle clicks outside the search component
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!suggestions.length) return;
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex(prev => prev > -1 ? prev - 1 : -1);
-        break;
-      
-      case 'Enter':
-        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          e.preventDefault();
-          onSuggestionSelect?.(suggestions[selectedIndex]);
-          setShowSuggestions(false);
-          setSelectedIndex(-1);
+    const shouldFocus = searchParams.get('focus') === 'true' || autoFocus;
+    if (shouldFocus && ref && typeof ref === 'object' && ref.current) {
+      // Small delay can help with mobile focusing
+      setTimeout(() => {
+        if (ref.current) {
+          ref.current.focus();
+          // Move cursor to end
+          const length = ref.current.value.length;
+          ref.current.setSelectionRange(length, length);
         }
-        break;
-      
-      case 'Escape':
-        setShowSuggestions(false);
-        setSelectedIndex(-1);
-        inputRef.current?.blur();
-        break;
+      }, 100);
     }
-  };
+  }, [ref, searchParams, autoFocus]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-    setShowSuggestions(true);
-    setSelectedIndex(-1);
-  };
+    const newValue = e.target.value;
+    setInternalValue(newValue);
+    onChange?.(newValue);
 
-  const handleSuggestionClick = (suggestion: string) => {
-    onSuggestionSelect?.(suggestion);
-    setShowSuggestions(false);
-    setSelectedIndex(-1);
-    inputRef.current?.focus();
-  };
-
-  // Scroll suggestion into view when using keyboard navigation
-  useEffect(() => {
-    if (selectedIndex >= 0 && suggestionsRef.current) {
-      const suggestionEl = suggestionsRef.current.children[selectedIndex] as HTMLElement;
-      if (suggestionEl) {
-        suggestionEl.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth'
-        });
+    // Update URL if not controlled
+    if (controlledValue === undefined) {
+      const params = new URLSearchParams();
+      // Copy existing params
+      searchParams.forEach((value, key) => {
+        params.set(key, value);
+      });
+      
+      if (newValue) {
+        params.set('q', newValue);
+      } else {
+        params.delete('q');
+        onClear?.();
       }
+      router.replace(`/search?${params.toString()}`);
     }
-  }, [selectedIndex]);
+  };
 
   return (
-    <div ref={containerRef} className="relative">
-      <div className="relative flex items-center">
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setShowSuggestions(true)}
-          placeholder={placeholder}
-          className={`w-full px-4 py-3 pr-10 rounded-lg
-            bg-surface border border-border
-            focus:border-primary focus:ring-1 focus:ring-primary
-            dark:focus:border-primary-light dark:focus:ring-primary-light
-            text-text placeholder-text-muted
-            outline-none transition-colors ${className}`}
-          autoComplete="off"
-          role="combobox"
-          aria-expanded={shouldShowSuggestions}
-          aria-controls="search-suggestions"
-          aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
-        />
-        {value && (
-          <button
-            onClick={() => {
-              onClear();
-              setShowSuggestions(false);
-              setSelectedIndex(-1);
-              inputRef.current?.focus();
-            }}
-            className="absolute right-3 p-1.5 text-text-muted hover:text-text 
-              rounded-full hover:bg-surface-alt transition-colors"
-            aria-label="Clear search"
-          >
-            ✕
-          </button>
-        )}
+    <div 
+      className={`relative touch-auto ${className}`}
+      onClick={() => {
+        // Focus the input when container is clicked (helpful for mobile)
+        if (ref && typeof ref === 'object' && ref.current) {
+          ref.current.focus();
+        }
+      }}
+    >
+      <input
+        ref={ref}
+        type="search"
+        enterKeyHint="search"
+        value={value}
+        onChange={handleChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={placeholder}
+        className="w-full h-12 pl-12 pr-4 rounded-lg bg-surface 
+                   border border-border focus:border-primary
+                   text-text placeholder:text-text-muted
+                   transition-colors duration-200
+                   touch-auto"
+        role="searchbox"
+        style={{ WebkitTapHighlightColor: 'rgba(0,0,0,0)' }}
+      />
+      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+        <SearchIcon className="w-5 h-5 text-text-muted" />
       </div>
-
-      {/* Suggestions Dropdown */}
-      {shouldShowSuggestions && (
-        <ul
-          ref={suggestionsRef}
-          id="search-suggestions"
-          role="listbox"
-          className="absolute z-50 w-full mt-1 bg-surface rounded-lg shadow-lg 
-            border border-border dark:border-border-light max-h-48 overflow-auto py-1"
-          onMouseLeave={() => setSelectedIndex(-1)}
-        >
+      
+      {/* Suggestions Panel */}
+      {isFocused && suggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-lg shadow-lg z-10">
           {suggestions.map((suggestion, index) => (
-            <li
-              key={suggestion}
-              id={`suggestion-${index}`}
-              role="option"
-              aria-selected={index === selectedIndex}
-              onClick={() => handleSuggestionClick(suggestion)}
-              onMouseEnter={() => setSelectedIndex(index)}
-              className={`px-4 py-2 cursor-pointer text-sm transition-colors
-                ${index === selectedIndex 
-                  ? 'bg-primary/10 text-primary dark:bg-primary/20' 
-                  : 'hover:bg-surface-alt text-text'}`}
+            <button
+              key={index}
+              className="w-full px-4 py-2 text-left text-text hover:bg-surface-alt transition-colors"
+              onClick={() => {
+                setInternalValue(suggestion);
+                onChange?.(suggestion);
+              }}
             >
               {suggestion}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
-}
+});
+
+SearchBox.displayName = 'SearchBox';
+
+export default SearchBox;

@@ -396,3 +396,30 @@
 .theme-fade-out {
   animation: fadeOut 200ms ease-in-out;
 }
+
+
+/* Fix for mobile inputs */
+input,
+textarea,
+button,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  touch-action: manipulation; /* Enable pinch-to-zoom */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure body has proper touch behavior */
+body {
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent pointer event issues on iOS */
+@supports (-webkit-touch-callout: none) {
+  input[type="search"],
+  input[type="text"] {
+    font-size: 16px; /* Prevent iOS zoom when focusing inputs */
+  }
+}
