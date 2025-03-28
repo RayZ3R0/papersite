@@ -1,0 +1,119 @@
+{
+  "subjects": [
+    {
+      "id": "physics",
+      "name": "Physics",
+      "description": "Physics notes covering mechanics, electromagnetism, and more",
+      "units": [
+        {
+          "id": "mechanics",
+          "name": "Mechanics",
+          "number": 1,
+          "description": "Study of motion, forces, and energy",
+          "unitPdf": {
+            "id": "mechanics-full",
+            "title": "Complete Mechanics Notes",
+            "type": "pdf",
+            "downloadUrl": "https://example.com/notes/physics/mechanics-full.pdf",
+            "previewImage": "/previews/mechanics-full.png",
+            "tags": ["physics", "mechanics", "complete"]
+          },
+          "topics": [
+            {
+              "id": "kinematics",
+              "name": "Kinematics",
+              "description": "Motion in one and two dimensions",
+              "resources": [
+                {
+                  "id": "kinematics-basics",
+                  "title": "Kinematics Basics",
+                  "type": "pdf",
+                  "downloadUrl": "https://example.com/notes/physics/kinematics-1.pdf",
+                  "tags": ["physics", "mechanics", "kinematics"]
+                },
+                {
+                  "id": "kinematics-advanced",
+                  "title": "Advanced Kinematics Problems",
+                  "type": "pdf",
+                  "downloadUrl": "https://example.com/notes/physics/kinematics-2.pdf",
+                  "previewImage": "/previews/kinematics-2.png",
+                  "tags": ["physics", "mechanics", "kinematics", "advanced"]
+                }
+              ]
+            },
+            {
+              "id": "dynamics",
+              "name": "Dynamics",
+              "description": "Forces and Newton's Laws",
+              "resources": [
+                {
+                  "id": "dynamics-notes",
+                  "title": "Dynamics Complete Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://example.com/notes/physics/dynamics.pdf",
+                  "tags": ["physics", "mechanics", "dynamics"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "em",
+          "name": "Electromagnetism",
+          "number": 2,
+          "description": "Electric and magnetic fields",
+          "topics": [
+            {
+              "id": "electric-fields",
+              "name": "Electric Fields",
+              "resources": [
+                {
+                  "id": "electric-fields-1",
+                  "title": "Electric Fields and Forces",
+                  "type": "pdf",
+                  "downloadUrl": "https://example.com/notes/physics/ef-1.pdf",
+                  "tags": ["physics", "em", "electric fields"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "description": "Mathematics notes covering calculus and algebra",
+      "units": [
+        {
+          "id": "calculus",
+          "name": "Calculus",
+          "number": 1,
+          "unitPdf": {
+            "id": "calculus-full",
+            "title": "Complete Calculus Notes",
+            "type": "pdf",
+            "downloadUrl": "https://example.com/notes/math/calculus-full.pdf",
+            "previewImage": "/previews/calculus-full.png",
+            "tags": ["mathematics", "calculus", "complete"]
+          },
+          "topics": [
+            {
+              "id": "limits",
+              "name": "Limits and Continuity",
+              "resources": [
+                {
+                  "id": "limits-basics",
+                  "title": "Introduction to Limits",
+                  "type": "pdf",
+                  "downloadUrl": "https://example.com/notes/math/limits.pdf",
+                  "tags": ["mathematics", "calculus", "limits"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

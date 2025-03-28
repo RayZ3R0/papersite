@@ -3,21 +3,56 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-// Define all available themes
-export type Theme = 'light' | 'dark' | 'catppuccin-latte' | 'catppuccin-frappe' | 'catppuccin-macchiato' | 'catppuccin-mocha';
+export type Theme = 
+  'light' | 
+  'dark' | 
+  'catppuccin-latte' | 
+  'catppuccin-frappe' | 
+  'catppuccin-macchiato' | 
+  'catppuccin-mocha' | 
+  'matcha' | 
+  'nord' |
+  'dracula' |
+  'solarized-light' |
+  'solarized-dark' |
+  'rose-pine' |
+  'tokyo-night' |
+  'gruvbox' |
+  'crimson';
 
-// Theme display names for UI
 export const themeNames: Record<Theme, string> = {
   'light': 'Light',
   'dark': 'Dark',
   'catppuccin-latte': 'Catppuccin Latte',
   'catppuccin-frappe': 'Catppuccin Frappé',
   'catppuccin-macchiato': 'Catppuccin Macchiato',
-  'catppuccin-mocha': 'Catppuccin Mocha'
+  'catppuccin-mocha': 'Catppuccin Mocha',
+  'matcha': 'Matcha',
+  'nord': 'Nord',
+  'dracula': 'Dracula',
+  'solarized-light': 'Solarized Light',
+  'solarized-dark': 'Solarized Dark',
+  'rose-pine': 'Rose Pine',
+  'tokyo-night': 'Tokyo Night',
+  'gruvbox': 'Gruvbox',
+  'crimson': 'Crimson'
 };
 
-// Define which themes are dark mode
-export const darkThemes: Theme[] = ['dark', 'catppuccin-frappe', 'catppuccin-macchiato', 'catppuccin-mocha'];
+// Dark themes list
+export const darkThemes: Theme[] = [
+  'dark',
+  'catppuccin-frappe',
+  'catppuccin-macchiato',
+  'catppuccin-mocha',
+  'nord',
+  'dracula',
+  'solarized-dark',
+  'rose-pine',
+  'tokyo-night',
+  'gruvbox',
+  'crimson'
+];
+
 
 interface ThemeContextType {
   theme: Theme;
@@ -58,11 +93,26 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
 
     localStorage.setItem(THEME_STORAGE_KEY, theme);
     
+    // Add transitioning class before changing themes
+    document.documentElement.classList.add('transitioning');
+    
     // Remove all theme classes
     document.documentElement.classList.remove(
-      'light', 'dark', 
-      'catppuccin-latte', 'catppuccin-frappe', 
-      'catppuccin-macchiato', 'catppuccin-mocha'
+      "light",
+      "dark",
+      "catppuccin-latte",
+      "catppuccin-frappe",
+      "catppuccin-macchiato",
+      "catppuccin-mocha",
+      "matcha",
+      "nord",
+      "dracula",
+      "solarized-light",
+      "solarized-dark",
+      "rose-pine",
+      "tokyo-night",
+      "gruvbox",
+      "crimson"
     );
     
     // Add new theme class
@@ -74,6 +124,13 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
     } else {
       document.documentElement.classList.add('light');
     }
+
+    // Remove transitioning class after animations complete
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove('transitioning');
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [theme]);
 
   // Listen for system theme changes

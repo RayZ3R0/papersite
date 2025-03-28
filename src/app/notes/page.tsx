@@ -1,30 +1,61 @@
 'use client';
 
 import { useState } from 'react';
-import SubjectFilter from '@/components/books/SubjectFilter';
+import NotesFilter from '@/components/notes/NotesFilter';
+import NotesGrid from '@/components/notes/NotesGrid';
+import { Subject, Unit, NotesData } from '@/types/note';
+import rawNotesData from '@/lib/data/notes.json';
 
-// Temporary data structure - move to proper data file later
-const subjects = ['Mathematics', 'Physics', 'Chemistry', 'Biology'];
+// Type assertion for the imported JSON
+const notesData = rawNotesData as NotesData;
 
 export default function NotesPage() {
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Notes</h1>
-        <SubjectFilter
-          subjects={subjects}
-          selectedSubject={selectedSubject}
-          onChange={setSelectedSubject}
-        />
+    <div className="pt-4 md:pt-6">
+      {/* Page Header */}
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl font-bold">Notes</h1>
+        <p className="text-text-muted mt-1">
+          Browse study notes by subject and unit
+        </p>
       </div>
 
-      {/* Grid will be similar to books but with different card design */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <div className="bg-surface p-4 rounded-lg">
-          {/* Placeholder for note cards */}
-          <p className="text-text-muted">Notes coming soon...</p>
+      <div className="flex flex-col sm:flex-row gap-6">
+        {/* Filters Section */}
+        <div className="w-full sm:w-64 flex-shrink-0">
+          <NotesFilter
+            subjects={notesData.subjects}
+            selectedSubject={selectedSubject}
+            selectedUnit={selectedUnit}
+            onSubjectChange={(subject) => {
+              setSelectedSubject(subject);
+              setSelectedUnit(null);
+            }}
+            onUnitChange={setSelectedUnit}
+          />
+        </div>
+
+        {/* Notes Grid */}
+        <div className="flex-1">
+          {selectedSubject ? (
+            <NotesGrid
+              subject={selectedSubject}
+              selectedUnit={selectedUnit}
+            />
+          ) : (
+            // Subject Selection Message
+            <div className="text-center py-12 px-4">
+              <h3 className="text-lg font-medium text-text-muted">
+                Select a subject to view notes
+              </h3>
+              <p className="mt-2 text-sm text-text-muted">
+                Choose from the available subjects to browse notes and resources
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

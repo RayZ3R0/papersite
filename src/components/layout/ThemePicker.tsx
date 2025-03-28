@@ -3,6 +3,26 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useTheme, themeNames, Theme } from '@/hooks/useTheme';
 
+// Get theme-specific colors without CSS variables
+// Get theme-specific colors without CSS variables
+const themePreviewColors: Record<Theme, string[]> = {
+  'light': ['#3b82f6', '#f9fafb', '#ffffff', '#1f2937'],
+  'dark': ['#60a5fa', '#111827', '#1f2937', '#f9fafb'],
+  'catppuccin-latte': ['#8839ef', '#eff1f5', '#ffffff', '#4c4f69'],
+  'catppuccin-frappe': ['#ca9ee6', '#303446', '#414559', '#c6d0f5'],
+  'catppuccin-macchiato': ['#c6a0f6', '#24273a', '#363a4f', '#cad3f5'],
+  'catppuccin-mocha': ['#cba6f7', '#1e1e2e', '#313244', '#cdd6f4'],
+  'matcha': ['#4caf50', '#f1f8e9', '#ffffff', '#2e3440'],
+  'nord': ['#88c0d0', '#2e3440', '#434c5e', '#eceff4'],
+  'gruvbox': ['#fe8019', '#282828', '#3c3836', '#ebdbb2'],
+  'dracula': ['#bd93f9', '#282a36', '#44475a', '#f8f8f2'],
+  'solarized-light': ['#268bd2', '#fdf6e3', '#fefefe', '#073642'],
+  'solarized-dark': ['#268bd2', '#002b36', '#073642', '#fdf6e3'],
+  'rose-pine': ['#ebbcba', '#191724', '#26233a', '#e0def4'],
+  'tokyo-night': ['#7aa2f7', '#1a1b26', '#2f3549', '#c0caf5'],
+  'crimson': ['#e53935', '#1a1a1a', '#2d2d2d', '#f5f5f5'],
+};
+
 export default function ThemePicker() {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -20,28 +40,19 @@ export default function ThemePicker() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Theme preview colors for each theme
-  const themePreviewColors: Record<Theme, string[]> = {
-    'light': ['#ffffff', '#f3f4f6', '#3b82f6'],
-    'dark': ['#1f2937', '#374151', '#60a5fa'],
-    'catppuccin-latte': ['#eff1f5', '#e6e9ef', '#8839ef'],
-    'catppuccin-frappe': ['#303446', '#414559', '#ca9ee6'],
-    'catppuccin-macchiato': ['#24273a', '#363a4f', '#c6a0f6'],
-    'catppuccin-mocha': ['#1e1e2e', '#313244', '#cba6f7'],
-  };
-
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Theme Toggle Button */}
+      {/* Theme Toggle Button with enhanced tooltip */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-lg hover:bg-surface-alt focus:outline-none 
+        className="group p-2.5 rounded-lg hover:bg-surface-alt focus:outline-none 
           focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background
-          text-text transition-colors"
+          text-text transition-all duration-200 relative"
         aria-label="Change theme"
       >
-        <div className="w-6 h-6 rounded-md border border-border overflow-hidden grid grid-cols-2 gap-px">
-          {themePreviewColors[theme].slice(0, 4).map((color, i) => (
+        <div className="w-7 h-7 rounded-md border border-border overflow-hidden grid grid-cols-2 gap-px
+          transition-transform duration-200 group-hover:scale-105">
+          {themePreviewColors[theme].map((color, i) => (
             <div
               key={i}
               className="w-full h-full"
@@ -49,18 +60,27 @@ export default function ThemePicker() {
             />
           ))}
         </div>
+        {/* Enhanced Tooltip */}
+        <span className="absolute hidden group-hover:block -bottom-1 left-1/2 transform -translate-x-1/2 translate-y-full 
+          px-3 py-1.5 bg-surface text-sm text-text rounded-lg shadow-lg whitespace-nowrap z-50
+          border border-border">
+          <span className="font-medium">Theme:</span> {themeNames[theme]}
+          <span className="block text-xs text-text-muted mt-0.5">Click to customize</span>
+        </span>
       </button>
 
-      {/* Theme Dropdown */}
+      {/* Theme Dropdown - Improved mobile layout */}
       {isOpen && (
         <div 
-          className="absolute right-0 mt-2 w-64 py-2 bg-surface border border-border 
+          className="absolute right-0 mt-2 w-72 sm:w-64 py-2 bg-surface border border-border 
             rounded-lg shadow-lg z-50 theme-fade-in"
         >
-          <div className="px-3 py-2">
-            <h3 className="text-sm font-medium text-text-muted mb-2">Select Theme</h3>
+          <div className="px-4 py-2 border-b border-border">
+            <h3 className="text-sm font-medium">Select Theme</h3>
+            <p className="text-xs text-text-muted mt-0.5">Choose your preferred color scheme</p>
           </div>
-          <div className="max-h-80 overflow-y-auto">
+          
+          <div className="max-h-[min(420px,70vh)] overflow-y-auto py-1">
             {Object.entries(themeNames).map(([themeKey, themeName]) => (
               <button
                 key={themeKey}
@@ -68,12 +88,14 @@ export default function ThemePicker() {
                   setTheme(themeKey as Theme);
                   setIsOpen(false);
                 }}
-                className={`w-full px-3 py-2 flex items-center gap-3 hover:bg-surface-alt
-                  transition-colors text-left ${theme === themeKey ? 'text-primary' : 'text-text'}`}
+                className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-surface-alt
+                  transition-all duration-200 text-left group
+                  ${theme === themeKey ? 'bg-surface-alt text-primary' : 'text-text'}`}
               >
-                {/* Theme Preview */}
-                <div className="w-8 h-8 rounded-md border border-border overflow-hidden grid grid-cols-2 gap-px">
-                  {themePreviewColors[themeKey as Theme].slice(0, 4).map((color, i) => (
+                {/* Theme Preview with hover effect */}
+                <div className="w-9 h-9 rounded-md border border-border overflow-hidden grid grid-cols-2 gap-px
+                  transition-transform duration-200 group-hover:scale-105">
+                  {themePreviewColors[themeKey as Theme].map((color, i) => (
                     <div
                       key={i}
                       className="w-full h-full"
@@ -82,19 +104,24 @@ export default function ThemePicker() {
                   ))}
                 </div>
 
-                {/* Theme Name */}
-                <span className="flex-1">
-                  {themeName}
-                  {theme === themeKey && (
-                    <span className="text-xs text-text-muted ml-1">(Active)</span>
-                  )}
-                </span>
+                {/* Theme Name with description */}
+                <div className="flex-1">
+                  <div className="font-medium">
+                    {themeName}
+                    {theme === themeKey && (
+                      <span className="text-xs text-primary ml-2">(Active)</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-text-muted mt-0.5">
+                    {themeKey.includes('catppuccin') ? 'Catppuccin Theme' : 'Base Theme'}
+                  </div>
+                </div>
               </button>
             ))}
           </div>
 
-          {/* Footer */}
-          <div className="px-3 pt-2 mt-2 border-t border-border">
+          {/* Footer with attribution */}
+          <div className="px-4 pt-2 mt-1 border-t border-border">
             <p className="text-xs text-text-muted">
               Colors from{' '}
               <a
