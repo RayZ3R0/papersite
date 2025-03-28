@@ -53,19 +53,20 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
           ✕
         </button>
 
-        <div className="p-4 space-y-4">
-          <div className="relative w-32 h-44 mx-auto sm:w-36 sm:h-48">
+        {/* Desktop version */}
+        <div className="hidden sm:block p-4 space-y-4">
+          <div className="relative w-36 h-48 mx-auto">
             <Image
               src={imageSource}
               alt={book.title}
               fill
               className="object-cover rounded"
-              sizes="(max-width: 640px) 128px, 144px"
+              sizes="144px"
             />
           </div>
 
           <div className="text-center">
-            <h2 className="text-lg font-semibold mb-1 sm:text-xl">{book.title}</h2>
+            <h2 className="text-lg font-semibold mb-1">{book.title}</h2>
             {book.subject && (
               <p className="text-sm text-text-muted">{book.subject}</p>
             )}
@@ -75,7 +76,7 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
             {downloadUrl && (
               <a
                 href={downloadUrl}
-                className="block w-full px-3 py-1.5 text-center text-sm bg-primary text-white rounded hover:bg-primary/90 sm:text-base sm:py-2"
+                className="block w-full px-3 py-2 text-center bg-primary text-white rounded hover:bg-primary/90"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -85,7 +86,7 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
             {book.solutionUrl && (
               <a
                 href={book.solutionUrl}
-                className="block w-full px-3 py-1.5 text-center text-sm bg-surface-alt text-text rounded hover:bg-surface-alt/90 sm:text-base sm:py-2"
+                className="block w-full px-3 py-2 text-center bg-surface-alt text-text rounded hover:bg-surface-alt/90"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -93,12 +94,33 @@ export default function SideTray({ book, isOpen, onClose }: SideTrayProps) {
               </a>
             )}
           </div>
+        </div>
 
-          {book.description && (
-            <div className="text-sm sm:text-base">
-              <p className="text-text-muted">{book.description}</p>
-            </div>
-          )}
+        {/* Mobile version - Simplified with more top padding */}
+        <div className="block sm:hidden px-3 pt-12 pb-3 space-y-2">
+          <h3 className="text-sm font-medium text-center mb-3">{book.title}</h3>
+          <div className="flex flex-col gap-2">
+            {downloadUrl && (
+              <a
+                href={downloadUrl}
+                className="block w-full px-3 py-1.5 text-center text-sm bg-primary text-white rounded hover:bg-primary/90"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Download PDF
+              </a>
+            )}
+            {book.solutionUrl && (
+              <a
+                href={book.solutionUrl}
+                className="block w-full px-3 py-1.5 text-center text-sm bg-surface-alt text-text rounded hover:bg-surface-alt/90"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Download Solutions
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,45 +1,89 @@
 # Mobile View Improvements
 
-## Books Page Side Tray
+## Navigation Changes
 
-### Current Issues
+### Top Navbar
 
-- Side tray covers entire card on mobile view
-- Content gets cut off on smaller screens
-- Overlay becomes too intrusive
+- Replace text title with logo (links to home)
+- Keep theme picker
+- Clean minimal design
+- Example:
 
-### Planned Improvements
+```
+[Logo] ---------------------- [Theme]
+```
 
-1. Scale down tray size on mobile:
+### Mobile Navigation
 
-   - Reduce width to 80% of screen on mobile
-   - Add padding to prevent content from touching edges
-   - Maintain half-card coverage on desktop
+- Remove redundant Home link
+- Add Subjects link
+- Keep other important links
+- Current order:
 
-2. Responsive styling:
+```
+- Books
+- Subjects
+- Papers
+- Forum
+- Search
+```
 
-   ```css
-   /* Desktop */
-   md:w-1/2 md:right-0
+## New Notes Section
 
-   /* Mobile */
-   w-[80%] right-[10%]
-   ```
+### Notes Page Structure
 
-3. Layout adjustments:
+1. Similar to books page:
 
-   - Add proper spacing around content
-   - Scale down text and image sizes for mobile
-   - Improve touch targets
+   - Subject filtering
+   - Grid layout
+   - Card-based design
 
-4. Animation tweaks:
-   - Smoother transitions
-   - Better positioning relative to parent card
-   - Maintain context while overlay is active
+2. Key differences:
 
-### Implementation Notes
+   - Different card design for notes
+   - Organization by chapters/topics
+   - Quick preview option
+   - Direct download links
 
-- Use Tailwind breakpoints for responsive design
-- Test on various mobile screen sizes
-- Ensure good UX on both portrait and landscape orientations
-- Maintain accessibility standards
+3. Mobile considerations:
+   - Easy navigation between topics
+   - Clear topic hierarchy
+   - Optimized preview for mobile
+
+### Implementation Plan
+
+1. Create new routes:
+
+   - /notes
+   - /notes/[subject]
+   - /notes/[subject]/[topic]
+
+2. Components needed:
+
+   - NotesGrid
+   - NoteCard
+   - TopicFilter
+   - NotesViewer
+
+3. Data structure:
+
+```typescript
+interface Note {
+  id: string;
+  title: string;
+  subject: string;
+  topic: string;
+  chapter?: string;
+  downloadUrl: string;
+  previewUrl?: string;
+  tags?: string[];
+}
+```
+
+### Mobile-First Design
+
+- Use grid-cols-2 on mobile
+- Larger touch targets
+- Clear visual hierarchy
+- Easy filtering system
+- Quick access to downloads
