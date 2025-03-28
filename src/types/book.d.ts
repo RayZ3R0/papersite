@@ -1,18 +1,18 @@
 export interface Book {
   id: string;
   title: string;
-  imageUrl?: string;
-  pdfUrl: string;
-  solutionUrl?: string;
-  subject: string;
+  subject?: string;
+  grade?: string;
+  year?: number;
+  term?: string;
+  edition?: string;
+  language?: string;
+  coverImage: string;
+  description?: string;
+  downloadUrl?: string;
+  tags?: string[];
+  publisher?: string;
+  authors?: string[];
+  isbn?: string;
+  pages?: number;
 }
-
-export type Books = Book[];
-
-export interface SubjectFilter {
-  label: string;
-  value: string;
-  count: number;
-}
-
-export type SubjectFilters = SubjectFilter[];
