@@ -201,6 +201,19 @@ export default function AnnotationLayer({
     };
   };
 
+  // Clear canvases when page changes
+  useEffect(() => {
+    if (ctx.current) {
+      ctx.current.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.current.clearRect(0, 0, width * scale, height * scale);
+    }
+    if (tempCtx.current) {
+      tempCtx.current.setTransform(1, 0, 0, 1, 0, 0);
+      tempCtx.current.clearRect(0, 0, width * scale, height * scale);
+    }
+    drawStrokes();
+  }, [pageNumber]);
+
   // Initialize canvas
   useEffect(() => {
     if (!canvasRef.current || !tempCanvasRef.current) return;
