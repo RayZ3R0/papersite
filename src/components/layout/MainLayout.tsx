@@ -57,6 +57,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               Books
             </Link>
             <Link
+              href="/notes"
+              className="text-text hover:text-text-muted transition-colors"
+            >
+              Notes
+            </Link>
+            <Link
               href="/forum"
               className="text-text hover:text-text-muted transition-colors"
             >

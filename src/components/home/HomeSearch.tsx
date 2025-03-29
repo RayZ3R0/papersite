@@ -51,9 +51,10 @@ export default function HomeSearch({ className = '' }: HomeSearchProps) {
   return (
     <div 
       className={`
-        relative w-full max-w-2xl mx-auto transition-all duration-200
+        relative w-full transition-all duration-200
         ${isFocused ? 'scale-[1.02]' : 'scale-100'}
         ${isTransitioning ? 'opacity-50' : 'opacity-100'}
+        md:max-w-2xl md:mx-auto px-4 md:px-0
         ${className}
       `}
     >

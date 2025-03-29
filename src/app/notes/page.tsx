@@ -14,10 +14,10 @@ export default function NotesPage() {
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
 
   return (
-    <div className="pt-4 md:pt-6">
+    <div className="container mx-auto px-4 py-6">
       {/* Page Header */}
       <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl font-bold">Notes</h1>
+        <h1 className="text-2xl font-bold text-text">Notes</h1>
         <p className="text-text-muted mt-1">
           Browse study notes by subject and unit
         </p>
@@ -39,7 +39,7 @@ export default function NotesPage() {
         </div>
 
         {/* Notes Grid */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {selectedSubject ? (
             <NotesGrid
               subject={selectedSubject}
@@ -47,8 +47,8 @@ export default function NotesPage() {
             />
           ) : (
             // Subject Selection Message
-            <div className="text-center py-12 px-4">
-              <h3 className="text-lg font-medium text-text-muted">
+            <div className="text-center py-12 px-4 bg-surface rounded-lg border border-border">
+              <h3 className="text-lg font-medium text-text">
                 Select a subject to view notes
               </h3>
               <p className="mt-2 text-sm text-text-muted">

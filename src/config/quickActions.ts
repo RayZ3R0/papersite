@@ -19,7 +19,7 @@ export const quickActions: QuickAction[] = [
     label: 'Past Papers',
     description: 'Access previous exam papers',
     icon: PaperIcon,
-    href: '/subjects',
+    href: '/papers',
     color: {
       bg: 'bg-gradient-to-br from-purple-500/10 to-purple-600/10',
       hover: 'hover:from-purple-500/20 hover:to-purple-600/20',
