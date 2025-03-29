@@ -17,7 +17,170 @@
             "previewImage": "/previews/p3.png",
             "tags": ["mathematics", "calculus", "p3", "pure 3", "graphs", "functions", "trigonometry"]
           },
-          "topics": [          ]
+          "topics": []
+        }
+      ]
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "description": "Cool Chemistry notes.",
+      "units": [
+        {
+          "id": "u4",
+          "name": "Unit 4",
+          "number": 1,
+          "description": "Chemistry Unit 4",
+          "topics": [
+            {
+              "id": "further-kinetics",
+              "name": "Further Kinetics",
+              "resources": [
+                {
+                  "id": "further-kinetics",
+                  "title": "Further Kinetics",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/vTz51y9nvR5dd",
+                  "previewImage": "/previews/kinetics.png",
+                  "tags": ["chemistry", "kinetics", "unit 4", "further kinetics"]
+                }
+              ]
+            },
+            {
+              "id": "organic-chemistry",
+              "name": "Organic Chemistry",
+              "resources": [
+                {
+                  "id": "organic-chemistry",
+                  "title": "Organic Chemistry",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/a5ljP5fVt7kYd",
+                  "previewImage": "/previews/organic.png",
+                  "tags": ["chemistry", "organic", "unit 4"]
+                }
+              ]
+            },
+            {
+              "id": "acid-base-equilibria",
+              "name": "Acid-Base Equilibria",
+              "resources": [
+                {
+                  "id": "acid-base-equilibria",
+                  "title": "Acid-Base Equilibria",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/7tmwgFG061zln",
+                  "previewImage": "/previews/acid-base.png",
+                  "tags": ["chemistry", "acid-base", "unit 4"]
+                }
+              ]
+            },
+            {
+              "id": "chemical-equilibria",
+              "name": "Chemical Equilibria",
+              "resources": [
+                {
+                  "id": "chemical-equilibria",
+                  "title": "Chemical Equilibria",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/WIYxynfKDBvG5",
+                  "previewImage": "/previews/equilibria.png",
+                  "tags": ["chemistry", "equilibria", "unit 4"]
+                }
+              ]
+            },
+            {
+              "id": "nmr",
+              "name": "Nuclear Magnetic Resonance (NMR)",
+              "resources": [
+                {
+                  "id": "nmr",
+                  "title": "Nuclear Magnetic Resonance (NMR)",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/pBIXfqc6xIlmd",
+                  "previewImage": "/previews/nmr.png",
+                  "tags": ["chemistry", "nmr", "unit 4"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u5",
+          "name": "Unit 5",
+          "number": 2,
+          "description": "Chemistry Unit 5",
+          "topics": [
+            {
+              "id": "transition-metals",
+              "name": "Transition Metals",
+              "resources": [
+                {
+                  "id": "transition-metals-notes",
+                  "title": "Transition Metals",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/UIEzd1PP4IEd7",
+                  "previewImage": "/previews/transition-metals.png",
+                  "tags": ["chemistry", "transition metals", "unit 5"]
+                }
+              ]
+            },
+            {
+              "id": "fuel-cells",
+              "name": "Fuel Cells",
+              "resources": [
+                {
+                  "id": "fuel-cells",
+                  "title": "Fuel Cells",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/QQP3plw36g5fC",
+                  "previewImage": "/previews/fuel-cells.png",
+                  "tags": ["chemistry", "fuel cells", "unit 5"]
+                }
+              ]
+            },
+            {
+              "id": "redox-reactions",
+              "name": "Redox Reactions",
+              "resources": [
+                {
+                  "id": "redox-reactions",
+                  "title": "Redox Reactions",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/BOw48K5NgTbfv",
+                  "previewImage": "/previews/redox-reactions.png",
+                  "tags": ["chemistry", "redox reactions", "unit 5"]
+                }
+              ]
+            },
+            {
+              "id": "organic-synthesis",
+              "name": "Organic Synthesis",
+              "resources": [
+                {
+                  "id": "organic-synthesis",
+                  "title": "Organic Synthesis",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/pgPyfO3EIVIXC",
+                  "previewImage": "/previews/organic-synthesis.png",
+                  "tags": ["chemistry", "electrolysis", "unit 5"]
+                }
+              ]
+            },
+            {
+              "id": "organic-chemistry-u5",
+              "name": "Organic Chemistry",
+              "resources": [
+                {
+                  "id": "organic-chemistry-u5",
+                  "title": "Organic Chemistry",
+                  "type": "pdf",
+                  "downloadUrl": "https://cyberdrop.me/f/B0M1tL2LnX1dz",
+                  "previewImage": "/previews/organic-chemistry.png",
+                  "tags": ["chemistry", "organic chemistry", "unit 5"]
+                }
+              ]
+            }
+          ]
         }
       ]
     }

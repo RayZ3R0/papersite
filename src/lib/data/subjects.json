@@ -1002,22 +1002,220 @@
       "name": "Mathematics",
       "units": [
         {
-          "id": "unit1",
-          "name": "Pure Mathematics",
+          "id": "s3",
+          "name": "Statistics 3",
           "order": 1,
-          "description": "Algebra and calculus"
+          "description": "Statistical methods and applications"
         }
       ],
       "papers": [
         {
-          "id": "math-2024-jan-u1",
-          "unitId": "unit1",
+          "id": "math-2024-jan-s3",
+          "unitId": "s3",
           "year": 2024,
           "session": "January",
-          "pdfUrl": "#",
-          "markingSchemeUrl": "#",
-          "title": "Mathematics Unit 1 - January 2024"
-        }
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/January%202024%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/January%202024%20MS.pdf",
+          "title": "Mathematics S3 - January 2024"
+        },
+        {
+          "id": "math-2023-jan-s3",
+          "unitId": "s3",
+          "year": 2023,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/January%202023%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/January%202023%20MS.pdf",
+          "title": "Mathematics S3 - January 2023"
+        },
+        {
+          "id": "math-2022-jan-s3",
+          "unitId": "s3",
+          "year": 2022,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/January%202022%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/January%202022%20MS.pdf",
+          "title": "Mathematics S3 - January 2022"
+        },
+        {
+          "id": "math-2021-jan-s3",
+          "unitId": "s3",
+          "year": 2021,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/January%202021%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/January%202021%20MS.pdf",
+          "title": "Mathematics S3 - January 2021"
+        },
+        {
+          "id": "math-2023-jun-s3",
+          "unitId": "s3",
+          "year": 2023,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/June%202023%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/June%202023%20MS.pdf",
+          "title": "Mathematics S3 - June 2023"
+        },
+        {
+          "id": "math-2022-jun-s3",
+          "unitId": "s3",
+          "year": 2022,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/June%202022%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/June%202022%20MS.pdf",
+          "title": "Mathematics S3 - June 2022"
+        },
+        {
+          "id": "math-2021-jun-s3",
+          "unitId": "s3",
+          "year": 2021,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/June%202021%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/June%202021%20MS.pdf",
+          "title": "Mathematics S3 - June 2021"
+        },
+        {
+          "id": "math-2018-jun-s3",
+          "unitId": "s3",
+          "year": 2018,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/June%202018%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/June%202018%20MS.pdf",
+          "title": "Mathematics S3 - June 2018"
+        },
+        {
+          "id": "math-2021-oct-s3",
+          "unitId": "s3",
+          "year": 2021,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/October%202021%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/October%202021%20MS.pdf",
+          "title": "Mathematics S3 - October 2021"
+        },
+        {
+          "id": "math-2020-oct-s3",
+          "unitId": "s3",
+          "year": 2020,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/October%202020%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/October%202020%20MS.pdf",
+          "title": "Mathematics S3 - October 2020"
+        },
+        {
+          "id": "math-2018-spec-s3",
+          "unitId": "s3",
+          "year": 2018,
+          "session": "Specimen",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/QP/Specimen%202018%20QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S3/MS/Specimen%202018%20MS.pdf",
+          "title": "Mathematics S3 - Specimen 2018"
+        },
+        {
+        "id": "math-2017-jun-s3",
+        "unitId": "s3",
+        "year": 2017,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202017%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202017%20MS.pdf",
+        "title": "Mathematics S3 - June 2017"
+      },
+      {
+        "id": "math-2016-jun-s3",
+        "unitId": "s3",
+        "year": 2016,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202016%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202016%20MS.pdf",
+        "title": "Mathematics S3 - June 2016"
+      },
+      {
+        "id": "math-2015-jun-s3",
+        "unitId": "s3",
+        "year": 2015,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202015%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202015%20MS.pdf",
+        "title": "Mathematics S3 - June 2015"
+      },
+      {
+        "id": "math-2014-jun-s3",
+        "unitId": "s3",
+        "year": 2014,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202014%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202014%20MS.pdf",
+        "title": "Mathematics S3 - June 2014"
+      },
+      {
+        "id": "math-2014-jun-r-s3",
+        "unitId": "s3",
+        "year": 2014,
+        "session": "June (R)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202014%20(R)%20MS.pdf",
+        "title": "Mathematics S3 - June 2014 (R)"
+      },
+      {
+        "id": "math-2013-jun-s3",
+        "unitId": "s3",
+        "year": 2013,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202013%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202013%20MS.pdf",
+        "title": "Mathematics S3 - June 2013"
+      },
+      {
+        "id": "math-2013-jun-r-s3",
+        "unitId": "s3",
+        "year": 2013,
+        "session": "June (R)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202013%20(R)%20MS.pdf",
+        "title": "Mathematics S3 - June 2013 (R)"
+      },
+      {
+        "id": "math-2012-jun-s3",
+        "unitId": "s3",
+        "year": 2012,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202012%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202012%20MS.pdf",
+        "title": "Mathematics S3 - June 2012"
+      },
+      {
+        "id": "math-2011-jun-s3",
+        "unitId": "s3",
+        "year": 2011,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202011%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202011%20MS.pdf",
+        "title": "Mathematics S3 - June 2011"
+      },
+      {
+        "id": "math-2010-jun-s3",
+        "unitId": "s3",
+        "year": 2010,
+        "session": "June",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/June%202010%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202010%20MS.pdf",
+        "title": "Mathematics S3 - June 2010"
+      },
+      {
+        "id": "math-2006-jan-s3",
+        "unitId": "s3",
+        "year": 2006,
+        "session": "January",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/January%202006%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/January%202006%20MS.pdf",
+        "title": "Mathematics S3 - January 2006"
+      },
+      {
+        "id": "math-spec-s3",
+        "unitId": "s3",
+        "year": null,
+        "session": "Specimen",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/Specimen%20QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/Specimen%20MS.pdf",
+        "title": "Mathematics S3 - Specimen"
+      }
       ]
     },
     "biology": {
