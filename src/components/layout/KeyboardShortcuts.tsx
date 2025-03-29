@@ -48,7 +48,7 @@ export default function KeyboardShortcuts({ onSearchFocus, onSearchClear }: Prop
     if (keysPressed.current.has('g')) {
       if (e.key.toLowerCase() === 'p') {
         e.preventDefault();
-        router.push('/papers');
+        router.push('/subjects');
       } else if (e.key.toLowerCase() === 's') {
         e.preventDefault();
         router.push('/subjects');

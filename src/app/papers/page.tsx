@@ -36,7 +36,7 @@ export default function SubjectsPage() {
           return (
             <Link
               key={id}
-              href={`/subjects/${id}`}
+              href={`/papers/${id}`}
               className="group block overflow-hidden rounded-lg border border-border 
                 bg-surface hover:shadow-lg transition-all"
             >
@@ -75,7 +75,7 @@ export default function SubjectsPage() {
                     Latest Papers
                   </Link>
                   <Link
-                    href={`/subjects/${id}`}
+                    href={`/papers/${id}`}
                     className="px-3 py-1 text-sm bg-surface-alt hover:bg-surface-alt/80
                       text-text rounded-full transition-colors"
                   >

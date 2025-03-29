@@ -41,6 +41,15 @@ function isRateLimited(ip: string, type: 'posts' | 'replies'): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+
+    const pathname = request.nextUrl.pathname;
+
+  // Redirect /subjects to /papers
+  if (pathname.startsWith('/subjects')) {
+    const newPathname = pathname.replace('/subjects', '/papers');
+    return NextResponse.redirect(new URL(newPathname, request.url));
+  }
+  
   // Only apply to forum API routes
   if (!request.nextUrl.pathname.startsWith('/api/forum')) {
     return NextResponse.next();

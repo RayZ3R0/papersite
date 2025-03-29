@@ -30,7 +30,7 @@
 const mainNavLinks = [
   { href: "/books", label: "Books" },
   { href: "/subjects", label: "Subjects" },
-  { href: "/papers", label: "Papers" },
+  { href: "/subjects", label: "Papers" },
   { href: "/forum", label: "Forum" },
   { href: "/search", label: "Search" },
 ];
