@@ -1,118 +1,105 @@
-# PDF Annotator Implementation Plan
+# PDF Annotator Implementation
 
 ## Overview
 
-Building a web-based PDF annotator with pressure sensitivity that works across devices. The implementation will be done in phases, with each phase building upon the previous one.
+A web-based PDF annotator with pressure sensitivity, supporting various annotation tools and working across devices. The implementation focuses on a native-like experience with smooth strokes and robust undo/redo functionality.
 
-## Project Structure
+## Features
 
-```
-src/
-  app/
-    annotate/
-      page.tsx           # PDF upload and viewer page
-      layout.tsx         # Layout for annotation page
-  components/
-    annotator/
-      PDFViewer.tsx     # PDF rendering component
-      AnnotationLayer.tsx # Drawing canvas overlay
-      Toolbar/          # (Coming soon)
-        index.tsx        # Main toolbar container
-        ColorPicker.tsx  # Color selection
-        BrushSettings.tsx # Size and opacity controls
-      PressureBrush.tsx  # Pressure-sensitive brush logic
-```
+### Core Features (✅ Completed)
 
-## Phase 1: Basic PDF Viewing ✅
+- PDF file upload and viewing
+- Responsive layout with proper page scaling
+- Touch and pressure sensitivity support
+- Multiple annotation tools:
+  - Pen with pressure sensitivity
+  - Highlighter with semi-transparency
+  - Eraser tool
+- Undo/redo functionality
+- Page-specific annotations
+- Keyboard shortcuts
 
-1. Dependencies:
+### Drawing Tools
 
-   - pdf.js for PDF rendering ✅
-   - react-pdf for React wrapper ✅
+1. Pen Tool
 
-2. Core Features:
+   - Pressure-sensitive stroke width
+   - Smooth lines using quadratic curves
+   - Direct color control
 
-   - PDF file upload page ✅
-   - Basic PDF rendering ✅
-   - Page navigation ✅
-   - Zoom controls ✅
-   - Responsive layout ✅
+2. Highlighter
 
-3. Components Created:
-   - Basic upload page ✅
-   - PDFViewer component ✅
-   - Navigation controls ✅
+   - Semi-transparent strokes (30% opacity)
+   - Wide stroke width
+   - Smooth rendering without visible segments
 
-## Phase 2: Drawing Layer & Pressure Support ⌛ (In Progress)
+3. Eraser
+   - Precision erasing with adjustable size
+   - Works with all annotation types
 
-1. Core Drawing Features:
+### User Interface
 
-   - Canvas overlay for annotations ✅
-   - Pointer Events API integration ✅
-   - Basic pressure detection ✅
-   - Basic stroke rendering ✅
+- Floating toolbar (desktop: left side, mobile: bottom)
+- Color picker with presets
+- Size controls for each tool
+- Page navigation
+- Zoom controls
 
-2. Next Steps:
+### Keyboard Shortcuts
 
-   - Add drawing toolbar with:
-     - Color selection
-     - Brush size control
-     - Opacity settings
-   - Add pressure sensitivity options:
-     - Minimum/maximum pressure thresholds
-     - Pressure to width mapping
-     - Pressure to opacity mapping
+- `P`: Switch to Pen tool
+- `H`: Switch to Highlighter
+- `E`: Switch to Eraser
+- `Ctrl/⌘ + Z`: Undo
+- `Ctrl/⌘ + Shift + Z` or `Ctrl/⌘ + Y`: Redo
 
-3. Device Support (To Test):
-   - iOS (Apple Pencil)
-   - Android tablets
-   - Graphics tablets
-   - Mouse/touch fallback
+## Technical Implementation
 
-## Phase 3: Enhanced Drawing Features ⏳
+### Canvas Management
 
-1. Advanced Tools:
+- Separate canvas layer for annotations
+- Pressure-sensitive drawing using Pointer Events API
+- Efficient stroke rendering with quadratic curves
+- View scaling independent of drawing coordinates
 
-   - Highlighter
-   - Eraser
-   - Shape tools
-   - Text annotations
+### Annotation Storage
 
-2. Features:
-   - Undo/redo system
-   - Layer management
-   - Tool presets
+- Page-specific stroke storage
+- Undo/redo history stacks per page
+- Stroke data structure:
+  ```typescript
+  interface Stroke {
+    points: { x: number; y: number; pressure: number }[];
+    color: string;
+    size: number;
+  }
+  ```
 
-## Phase 4: UI/UX Polish ⏳
+### Cross-Device Support
 
-1. Interface:
+- Desktop: Full pressure sensitivity with graphics tablets
+- Mobile: Touch and Apple Pencil support
+- Fallback to standard pressure for non-pressure devices
 
-   - Floating toolbar
-   - Quick actions
-   - Touch-friendly controls
-   - Keyboard shortcuts
+## Upcoming Features
 
-2. Visual Feedback:
-   - Tool cursors
-   - Active state indicators
-   - Loading states
-   - Error handling
+### Phase 1 (Next)
 
-## Phase 5: Export & Download ⏳
+- [ ] PDF export with annotations
+- [ ] Shape tools (rectangle, circle)
+- [ ] Text annotations
+- [ ] Custom pressure curve adjustment
 
-1. Features:
-   - Save annotations as separate layer
-   - Export annotated PDF
-   - Quick download
-   - Format options
+### Phase 2
 
-## Current Status
+- [ ] Multi-page view
+- [ ] Annotation thumbnails
+- [ ] Layer management
+- [ ] Tool presets
 
-Working on Phase 2: Implementing pressure-sensitive drawing toolbar and controls
+### Phase 3
 
-## Next Steps
-
-1. Create color picker component
-2. Add brush size control with pressure sensitivity options
-3. Add basic eraser tool
-4. Test drawing on different devices and browsers
+- [ ] Collaboration features
+- [ ] Cloud storage integration
+- [ ] Annotation search
+- [ ] Template support

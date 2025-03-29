@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { lazy, Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import AnnotationLayer from './AnnotationLayer';
-import Toolbar from './Toolbar';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import Toolbar, { ToolType } from './Toolbar';
+import annotationStore from '@/lib/annotationStore';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Dynamically import react-pdf to prevent SSR issues
+const PDFComponents = lazy(() => import('./PDFComponents'));
 
 interface PDFViewerProps {
   file: File;
@@ -25,8 +24,15 @@ export default function PDFViewer({ file }: PDFViewerProps) {
   const [scale, setScale] = useState<number>(1.0);
   const [pageDimensions, setPageDimensions] = useState<PageDimensions | null>(null);
   const [currentColor, setCurrentColor] = useState('#000000');
-  const [strokeSize, setStrokeSize] = useState(5);
+  const [currentTool, setCurrentTool] = useState<ToolType>('pen');
+  const [strokeSize, setStrokeSize] = useState(3);
+  const [opacity, setOpacity] = useState(0.3);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  // Force remount key to trigger canvas redraw
+  const [redrawKey, setRedrawKey] = useState(0);
   
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const containerRef = useRef<HTMLDivElement>(null);
   const hasCalculatedScale = useRef(false);
 
@@ -47,6 +53,72 @@ export default function PDFViewer({ file }: PDFViewerProps) {
     }
   };
 
+  // Update undo/redo state
+  const updateUndoRedoState = useCallback(() => {
+    setCanUndo(annotationStore.canUndo(currentPage));
+    setCanRedo(annotationStore.canRedo(currentPage));
+  }, [currentPage]);
+
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    updateUndoRedoState();
+  };
+
+  // Handle undo
+  const handleUndo = useCallback(() => {
+    const didUndo = annotationStore.undo(currentPage);
+    if (didUndo) {
+      updateUndoRedoState();
+      setRedrawKey(prev => prev + 1);
+    }
+  }, [currentPage, updateUndoRedoState]);
+
+  // Handle redo
+  const handleRedo = useCallback(() => {
+    const didRedo = annotationStore.redo(currentPage);
+    if (didRedo) {
+      updateUndoRedoState();
+      setRedrawKey(prev => prev + 1);
+    }
+  }, [currentPage, updateUndoRedoState]);
+
+  // Handle clear page
+  const handleClear = useCallback(() => {
+    if (window.confirm('Clear all annotations on this page?')) {
+      annotationStore.clearPage(currentPage);
+      updateUndoRedoState();
+      setRedrawKey(prev => prev + 1);
+    }
+  }, [currentPage, updateUndoRedoState]);
+
+  // Handle save
+  const handleSave = useCallback(() => {
+    // TODO: Implement PDF saving with annotations
+    console.log('Save functionality coming soon');
+  }, []);
+
+  // Update tool settings when changed
+  useEffect(() => {
+    // Apply default settings for tool when changing tools
+    if (currentTool === 'pen') {
+      setStrokeSize(3);
+      setOpacity(1.0);
+    } else if (currentTool === 'highlighter') {
+      setStrokeSize(20);
+      setOpacity(0.3);
+    } else if (currentTool === 'eraser') {
+      setStrokeSize(20);
+      setOpacity(1.0);
+    }
+  }, [currentTool]);
+
+  // Update undo/redo state after strokes change
+  useEffect(() => {
+    const interval = setInterval(updateUndoRedoState, 200);
+    return () => clearInterval(interval);
+  }, [updateUndoRedoState]);
+
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
@@ -62,6 +134,44 @@ export default function PDFViewer({ file }: PDFViewerProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, [pageDimensions]);
 
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Tool shortcuts
+      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+        switch (e.key.toLowerCase()) {
+          case 'p':
+            setCurrentTool('pen');
+            break;
+          case 'h':
+            setCurrentTool('highlighter');
+            break;
+          case 'e':
+            setCurrentTool('eraser');
+            break;
+        }
+      }
+
+      // Undo/Redo shortcuts
+      if (e.metaKey || e.ctrlKey) {
+        if (e.key === 'z') {
+          e.preventDefault();
+          if (e.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+        } else if (e.key === 'y') {
+          e.preventDefault();
+          handleRedo();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo, handleRedo]);
+
   // Handle zoom controls
   const handleZoom = (delta: number) => {
     setScale(current => {
@@ -74,25 +184,27 @@ export default function PDFViewer({ file }: PDFViewerProps) {
   return (
     <div className="flex flex-col h-full bg-surface">
       {/* Controls */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex flex-wrap items-center justify-between p-4 border-b border-border">
         {/* Page Navigation */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mb-2 sm:mb-0">
           <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage <= 1}
             className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
               disabled:cursor-not-allowed transition-colors"
+            aria-label="Previous page"
           >
             Previous
           </button>
-          <span className="text-sm">
-            Page {currentPage} of {numPages}
+          <span className="text-sm whitespace-nowrap">
+            Page {currentPage} of {numPages || '?'}
           </span>
           <button
-            onClick={() => setCurrentPage(p => Math.min(numPages, p + 1))}
+            onClick={() => handlePageChange(Math.min(numPages, currentPage + 1))}
             disabled={currentPage >= numPages}
             className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
               disabled:cursor-not-allowed transition-colors"
+            aria-label="Next page"
           >
             Next
           </button>
@@ -103,6 +215,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
           <button
             onClick={() => handleZoom(-0.1)}
             className="p-2 rounded hover:bg-surface-alt transition-colors"
+            aria-label="Zoom out"
           >
             Zoom Out
           </button>
@@ -112,6 +225,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
           <button
             onClick={() => handleZoom(0.1)}
             className="p-2 rounded hover:bg-surface-alt transition-colors"
+            aria-label="Zoom in"
           >
             Zoom In
           </button>
@@ -121,34 +235,27 @@ export default function PDFViewer({ file }: PDFViewerProps) {
       {/* PDF Document */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-auto bg-surface-alt/50 relative"
+        className="flex-1 overflow-auto bg-surface-alt/50 relative touch-pan-y"
       >
         <div className="min-h-full w-full flex justify-center p-6">
           <div className="relative bg-white shadow-lg">
-            <Document
-              file={file}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={
-                <div className="flex items-center justify-center min-h-[60vh]">
-                  Loading PDF...
-                </div>
-              }
-            >
-              <Page
-                pageNumber={currentPage}
+            <Suspense fallback={
+              <div className="flex items-center justify-center min-h-[60vh] bg-surface-alt animate-pulse">
+                Loading PDF...
+              </div>
+            }>
+              <PDFComponents
+                file={file}
+                currentPage={currentPage}
                 scale={scale}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-                onLoadSuccess={onPageLoadSuccess}
-                loading={
-                  <div className="w-full aspect-[1/1.414] bg-surface-alt animate-pulse" />
-                }
+                onDocumentLoadSuccess={onDocumentLoadSuccess}
+                onPageLoadSuccess={onPageLoadSuccess}
               />
-            </Document>
+            </Suspense>
 
             {/* Drawing Layer */}
             {pageDimensions && scale && (
-              <div className="absolute inset-0">
+              <div className="absolute inset-0" key={redrawKey}>
                 <AnnotationLayer
                   width={pageDimensions.width}
                   height={pageDimensions.height}
@@ -156,6 +263,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                   pageNumber={currentPage}
                   color={currentColor}
                   size={strokeSize}
+                  tool={currentTool}
+                  opacity={opacity}
                   onPressureChange={pressure => console.log('Pressure:', pressure)}
                 />
               </div>
@@ -163,11 +272,31 @@ export default function PDFViewer({ file }: PDFViewerProps) {
           </div>
         </div>
 
-        {/* Toolbar */}
-        <Toolbar
-          onColorChange={setCurrentColor}
-          onSizeChange={setStrokeSize}
-        />
+        {/* Toolbar - Position based on screen size */}
+        <div className={`
+          fixed z-50
+          ${isMobile 
+            ? 'bottom-4 left-1/2 -translate-x-1/2' 
+            : 'top-24 left-4'
+          }
+        `}>
+          <Toolbar
+            currentTool={currentTool}
+            currentColor={currentColor}
+            currentSize={strokeSize}
+            currentOpacity={opacity}
+            onToolChange={setCurrentTool}
+            onColorChange={setCurrentColor}
+            onSizeChange={setStrokeSize}
+            onOpacityChange={setOpacity}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onClear={handleClear}
+            onSave={handleSave}
+            canUndo={canUndo}
+            canRedo={canRedo}
+          />
+        </div>
       </div>
     </div>
   );

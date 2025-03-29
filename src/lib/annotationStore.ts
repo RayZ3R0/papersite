@@ -1,11 +1,23 @@
+export type ToolType = 'pen' | 'highlighter' | 'eraser';
+
+export interface Point {
+  x: number;
+  y: number;
+  pressure: number;
+}
+
 export interface Stroke {
-  points: { x: number; y: number; pressure: number }[];
+  points: Point[];
   color: string;
   size: number;
+  opacity: number;
+  tool: ToolType;
 }
 
 export interface PageAnnotations {
   strokes: Stroke[];
+  undoStack: Stroke[][];
+  redoStack: Stroke[][];
 }
 
 class AnnotationStore {
@@ -15,46 +27,111 @@ class AnnotationStore {
     this.annotations = new Map();
   }
 
-  // Initialize a page's annotations if they don't exist
-  initializePage(pageNumber: number) {
+  private initializePage(pageNumber: number) {
     if (!this.annotations.has(pageNumber)) {
-      this.annotations.set(pageNumber, { strokes: [] });
+      this.annotations.set(pageNumber, {
+        strokes: [],
+        undoStack: [],
+        redoStack: []
+      });
     }
   }
 
-  // Add a new stroke to a page
-  addStroke(pageNumber: number, stroke: Stroke) {
+  private getPage(pageNumber: number): PageAnnotations {
     this.initializePage(pageNumber);
-    const pageAnnotations = this.annotations.get(pageNumber)!;
-    pageAnnotations.strokes.push(stroke);
+    return this.annotations.get(pageNumber)!;
+  }
+
+  // Add a new stroke
+  addStroke(pageNumber: number, stroke: Stroke) {
+    const page = this.getPage(pageNumber);
+
+    // Save current state to undo stack
+    page.undoStack.push([...page.strokes]);
+    
+    // Add new stroke
+    page.strokes.push(stroke);
+    
+    // Clear redo stack
+    page.redoStack = [];
   }
 
   // Get all strokes for a page
   getStrokes(pageNumber: number): Stroke[] {
-    return this.annotations.get(pageNumber)?.strokes || [];
+    return this.getPage(pageNumber).strokes;
   }
 
-  // Clear all strokes for a page
+  // Undo last action
+  undo(pageNumber: number): boolean {
+    const page = this.getPage(pageNumber);
+    
+    if (page.undoStack.length === 0) return false;
+
+    // Save current state to redo stack
+    page.redoStack.push([...page.strokes]);
+    
+    // Restore previous state
+    page.strokes = page.undoStack.pop()!;
+    
+    return true;
+  }
+
+  // Redo last undone action
+  redo(pageNumber: number): boolean {
+    const page = this.getPage(pageNumber);
+    
+    if (page.redoStack.length === 0) return false;
+
+    // Save current state to undo stack
+    page.undoStack.push([...page.strokes]);
+    
+    // Restore next state
+    page.strokes = page.redoStack.pop()!;
+    
+    return true;
+  }
+
+  // Clear current page
   clearPage(pageNumber: number) {
-    this.annotations.set(pageNumber, { strokes: [] });
+    const page = this.getPage(pageNumber);
+    
+    if (page.strokes.length > 0) {
+      // Save current state to undo stack
+      page.undoStack.push([...page.strokes]);
+      page.strokes = [];
+      page.redoStack = [];
+    }
   }
 
-  // Clear all annotations
-  clearAll() {
-    this.annotations.clear();
+  // Check if undo is available
+  canUndo(pageNumber: number): boolean {
+    return (this.getPage(pageNumber).undoStack.length > 0);
   }
 
-  // Check if a page has any annotations
-  hasAnnotations(pageNumber: number): boolean {
-    return (this.annotations.get(pageNumber)?.strokes.length || 0) > 0;
+  // Check if redo is available
+  canRedo(pageNumber: number): boolean {
+    return (this.getPage(pageNumber).redoStack.length > 0);
   }
 
-  // Get all pages that have annotations
-  getAnnotatedPages(): number[] {
-    return Array.from(this.annotations.keys()).filter(page => this.hasAnnotations(page));
+  // Get tool settings
+  getToolSettings(tool: ToolType): { size: number; opacity: number; } {
+    switch (tool) {
+      case 'pen':
+        return { size: 2, opacity: 1 };
+      case 'highlighter':
+        return { size: 20, opacity: 0.3 };
+      case 'eraser':
+        return { size: 20, opacity: 1 };
+      default:
+        return { size: 2, opacity: 1 };
+    }
+  }
+
+  // Update tool settings (to be implemented)
+  updateToolSettings(tool: ToolType, settings: { size?: number; opacity?: number }) {
+    // TODO: Implement tool settings persistence
   }
 }
 
-// Create a singleton instance
 const annotationStore = new AnnotationStore();
 export default annotationStore;
