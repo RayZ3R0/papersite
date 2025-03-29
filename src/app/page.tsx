@@ -1,18 +1,27 @@
+'use client';
+
+import { Suspense } from 'react';
 import HeroSection from '@/components/home/HeroSection';
 import HomeSearch from '@/components/home/HomeSearch';
 import ActionGrid from '@/components/home/QuickAccess/ActionGrid';
 
+// Wrap HomeSearch in its own component to handle focus state
+function SearchWrapper() {
+  return (
+    <HomeSearch className="w-full" />
+  );
+}
+
 export default function HomePage() {
   return (
-    <div className="flex flex-col">
-      {/* Remove container padding for banner */}
-      <div className="-mx-4">
-        <HeroSection>
-          <HomeSearch className="w-full px-4" />
-        </HeroSection>
-      </div>
+    <main className="relative min-h-screen bg-background">
+      <HeroSection>
+        <Suspense>
+          <SearchWrapper />
+        </Suspense>
+      </HeroSection>
       
       <ActionGrid />
-    </div>
+    </main>
   );
 }
