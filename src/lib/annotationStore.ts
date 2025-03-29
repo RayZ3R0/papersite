@@ -1,3 +1,5 @@
+'use client';
+
 export type ToolType = 'pen' | 'highlighter' | 'eraser';
 
 export interface Point {
@@ -14,17 +16,76 @@ export interface Stroke {
   tool: ToolType;
 }
 
+export interface ToolSettings {
+  pen: {
+    size: number;
+    color: string;
+    opacity: number;
+  };
+  highlighter: {
+    size: number;
+    color: string;
+    opacity: number;
+  };
+  eraser: {
+    size: number;
+    opacity: number;
+  };
+}
+
 export interface PageAnnotations {
   strokes: Stroke[];
   undoStack: Stroke[][];
   redoStack: Stroke[][];
 }
 
+const defaultSettings: ToolSettings = {
+  pen: {
+    size: 2,
+    color: '#000000',
+    opacity: 1
+  },
+  highlighter: {
+    size: 12,
+    color: '#ffeb3b',
+    opacity: 0.3
+  },
+  eraser: {
+    size: 20,
+    opacity: 1
+  }
+};
+
 class AnnotationStore {
   private annotations: Map<number, PageAnnotations>;
+  private settings: ToolSettings;
 
   constructor() {
     this.annotations = new Map();
+    this.settings = this.loadSettings();
+  }
+
+  private loadSettings(): ToolSettings {
+    if (typeof window === 'undefined') return defaultSettings;
+
+    try {
+      const saved = localStorage.getItem('annotationToolSettings');
+      if (!saved) return defaultSettings;
+
+      const parsed = JSON.parse(saved);
+      return {
+        pen: { ...defaultSettings.pen, ...parsed.pen },
+        highlighter: { ...defaultSettings.highlighter, ...parsed.highlighter },
+        eraser: { ...defaultSettings.eraser, ...parsed.eraser }
+      };
+    } catch {
+      return defaultSettings;
+    }
+  }
+
+  private saveSettings() {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('annotationToolSettings', JSON.stringify(this.settings));
   }
 
   private initializePage(pageNumber: number) {
@@ -42,9 +103,35 @@ class AnnotationStore {
     return this.annotations.get(pageNumber)!;
   }
 
-  // Add a new stroke
+  // Add a new stroke with optimized points
   addStroke(pageNumber: number, stroke: Stroke) {
     const page = this.getPage(pageNumber);
+
+    // Optimize points to reduce data size and improve rendering
+    if (stroke.points.length > 2) {
+      const optimizedPoints: Point[] = [stroke.points[0]];
+      let lastPoint = stroke.points[0];
+
+      for (let i = 1; i < stroke.points.length; i++) {
+        const point = stroke.points[i];
+        const dx = point.x - lastPoint.x;
+        const dy = point.y - lastPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Only add points that are far enough apart
+        if (distance > (stroke.tool === 'pen' ? 2 : 4)) {
+          optimizedPoints.push(point);
+          lastPoint = point;
+        }
+      }
+
+      // Always include the last point
+      if (lastPoint !== stroke.points[stroke.points.length - 1]) {
+        optimizedPoints.push(stroke.points[stroke.points.length - 1]);
+      }
+
+      stroke.points = optimizedPoints;
+    }
 
     // Save current state to undo stack
     page.undoStack.push([...page.strokes]);
@@ -114,22 +201,26 @@ class AnnotationStore {
   }
 
   // Get tool settings
-  getToolSettings(tool: ToolType): { size: number; opacity: number; } {
-    switch (tool) {
-      case 'pen':
-        return { size: 2, opacity: 1 };
-      case 'highlighter':
-        return { size: 20, opacity: 0.3 };
-      case 'eraser':
-        return { size: 20, opacity: 1 };
-      default:
-        return { size: 2, opacity: 1 };
-    }
+  getToolSettings<T extends ToolType>(tool: T): typeof this.settings[T] {
+    return this.settings[tool];
   }
 
-  // Update tool settings (to be implemented)
-  updateToolSettings(tool: ToolType, settings: { size?: number; opacity?: number }) {
-    // TODO: Implement tool settings persistence
+  // Update tool settings
+  updateToolSettings<T extends ToolType>(
+    tool: T,
+    updates: Partial<typeof this.settings[T]>
+  ) {
+    this.settings[tool] = {
+      ...this.settings[tool],
+      ...updates
+    };
+    this.saveSettings();
+  }
+
+  // Reset tool settings to defaults
+  resetToolSettings() {
+    this.settings = { ...defaultSettings };
+    this.saveSettings();
   }
 }
 
