@@ -46,18 +46,35 @@ export default function SubjectPage() {
     );
   }
 
-  // Get papers for the selected unit with filters
+  // Get papers for the selected unit with filters and sort by year and session
   const getUnitPapers = (unitId: string) => {
-    return subject.papers.filter(paper => {
-      const matchesUnit = paper.unitId === unitId;
-      const matchesYear = selectedYear ? paper.year === selectedYear : true;
-      const matchesSession = selectedSession ? (
-        selectedSession === 'May/June' 
-          ? (paper.session === 'May' || paper.session === 'June')
-          : paper.session === selectedSession
-      ) : true;
-      return matchesUnit && matchesYear && matchesSession;
-    });
+    const sessionOrder: Record<string, number> = {
+      'January': 0,
+      'May': 1,
+      'June': 1,
+      'October': 2
+    };
+
+    return subject.papers
+      .filter(paper => {
+        const matchesUnit = paper.unitId === unitId;
+        const matchesYear = selectedYear ? paper.year === selectedYear : true;
+        const matchesSession = selectedSession ? (
+          selectedSession === 'May/June' 
+            ? (paper.session === 'May' || paper.session === 'June')
+            : paper.session === selectedSession
+        ) : true;
+        return matchesUnit && matchesYear && matchesSession;
+      })
+      .sort((a, b) => {
+        // Sort by year first (descending)
+        if (a.year !== b.year) {
+          return b.year - a.year;
+        }
+        
+        // Then by session (January, May/June, October)
+        return (sessionOrder[a.session] || 0) - (sessionOrder[b.session] || 0);
+      });
   };
 
   // Reset filters
@@ -67,7 +84,7 @@ export default function SubjectPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-6">
       {/* Subject Header */}
       <header className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold capitalize mb-2 text-text">

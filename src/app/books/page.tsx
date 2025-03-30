@@ -17,7 +17,7 @@ export default function BooksPage() {
     : booksData.books;
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 pb-20 md:pb-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-4">Books</h1>
         <SubjectFilter

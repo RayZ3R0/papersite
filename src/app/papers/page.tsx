@@ -17,7 +17,7 @@ export default function SubjectsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-20 md:pb-8">
       {/* Header Section */}
       <header className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
