@@ -1,69 +1,64 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import { useAuth } from '@/components/auth/AuthContext';
 
 interface AdminControlsProps {
-  postId: string;
-  replyId?: string;
-  onDelete: () => void;
+  onPinPost?: () => void;
+  onLockPost?: () => void;
+  onDeletePost?: () => void;
+  isPinned?: boolean;
+  isLocked?: boolean;
+  className?: string;
 }
 
-export function AdminControls({ postId, replyId, onDelete }: AdminControlsProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState('');
+export default function AdminControls({
+  onPinPost,
+  onLockPost,
+  onDeletePost,
+  isPinned = false,
+  isLocked = false,
+  className = '',
+}: AdminControlsProps) {
+  const { user } = useAuth();
 
-  // Get admin token from localStorage - set this manually for now
-  const adminToken = localStorage.getItem('forum_admin_token');
-
-  if (!adminToken) {
+  // Only show controls for admin and moderators
+  if (!user || (user.role !== 'admin' && user.role !== 'moderator')) {
     return null;
   }
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this?')) {
-      return;
-    }
-
-    setIsDeleting(true);
-    setError('');
-
-    try {
-      const endpoint = replyId
-        ? `/api/forum/admin?replyId=${replyId}`
-        : `/api/forum/admin?postId=${postId}`;
-
-      const response = await fetch(endpoint, {
-        method: replyId ? 'PATCH' : 'DELETE',
-        headers: {
-          'X-Admin-Token': adminToken
-        }
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to delete');
-      }
-
-      onDelete();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
   return (
-    <div className="mt-2">
-      {error && (
-        <div className="text-red-500 text-sm mb-2">{error}</div>
+    <div className={`flex gap-2 ${className}`}>
+      {onPinPost && (
+        <button
+          onClick={onPinPost}
+          className="px-3 py-1 text-sm rounded-md bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+          title={isPinned ? 'Unpin post' : 'Pin post'}
+        >
+          {isPinned ? 'Unpin' : 'Pin'}
+        </button>
       )}
-      <button
-        onClick={handleDelete}
-        disabled={isDeleting}
-        className="text-sm text-red-500 hover:text-red-700 disabled:opacity-50"
-      >
-        {isDeleting ? 'Deleting...' : 'Delete as Admin'}
-      </button>
+      
+      {onLockPost && (
+        <button
+          onClick={onLockPost}
+          className="px-3 py-1 text-sm rounded-md bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+          title={isLocked ? 'Unlock post' : 'Lock post'}
+        >
+          {isLocked ? 'Unlock' : 'Lock'}
+        </button>
+      )}
+      
+      {/* Delete button - Only shown to admins */}
+      {onDeletePost && user.role === 'admin' && (
+        <button
+          onClick={onDeletePost}
+          className="px-3 py-1 text-sm rounded-md bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300"
+          title="Delete post"
+        >
+          Delete
+        </button>
+      )}
     </div>
   );
 }

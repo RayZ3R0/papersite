@@ -1,71 +1,135 @@
-// Time windows for user actions (in milliseconds)
-export const TIME_WINDOWS = {
-  DELETE: 15 * 60 * 1000, // 15 minutes
-  EDIT: 15 * 60 * 1000,   // 15 minutes
-  RATE_LIMIT: 60 * 60 * 1000 // 1 hour
-};
+import { Post } from '@/models/Post';
+import { Reply } from '@/models/Reply';
+import { UserWithoutPassword } from './authTypes';
 
-// Verify user has rights to modify content
-export function canModifyContent(
-  content: { authorId: string; ip: string; createdAt: Date },
-  userId: string,
-  userIp: string,
-  isDelete: boolean = false
-): { allowed: boolean; reason?: string } {
-  // Check user ID matches
-  if (content.authorId !== userId) {
-    return { allowed: false, reason: 'Unauthorized' };
+export type ForumAction = 'create' | 'edit' | 'delete' | 'pin' | 'lock';
+
+interface ActionPermissions {
+  postActions: ForumAction[];
+  replyActions: ForumAction[];
+}
+
+/**
+ * Get allowed actions based on user role and ownership
+ */
+export function getForumPermissions(
+  user: UserWithoutPassword | null, 
+  authorId?: string
+): ActionPermissions {
+  const isOwner = user?._id === authorId;
+  const isAdmin = user?.role === 'admin';
+  const isModerator = user?.role === 'moderator';
+
+  // Default permissions (no user/not logged in)
+  const permissions: ActionPermissions = {
+    postActions: [],
+    replyActions: []
+  };
+
+  if (!user) return permissions;
+
+  // Basic user permissions
+  permissions.postActions = ['create'];
+  permissions.replyActions = ['create'];
+
+  // Owner permissions
+  if (isOwner) {
+    permissions.postActions.push('edit', 'delete');
+    permissions.replyActions.push('edit', 'delete');
   }
 
-  // Check IP matches
-  if (content.ip !== userIp) {
-    return { allowed: false, reason: 'IP address does not match' };
+  // Moderator permissions
+  if (isModerator) {
+    permissions.postActions.push('lock', 'edit');
+    permissions.replyActions.push('delete');
   }
 
-  // Check time window
-  const timeWindow = isDelete ? TIME_WINDOWS.DELETE : TIME_WINDOWS.EDIT;
-  if (Date.now() - content.createdAt.getTime() > timeWindow) {
-    const action = isDelete ? 'deleted' : 'edited';
-    return {
-      allowed: false,
-      reason: `Content can only be ${action} within ${timeWindow / 60000} minutes of creation`
-    };
+  // Admin permissions
+  if (isAdmin) {
+    permissions.postActions = ['create', 'edit', 'delete', 'pin', 'lock'];
+    permissions.replyActions = ['create', 'edit', 'delete'];
   }
 
-  return { allowed: true };
+  return permissions;
 }
 
-// Clean user-generated content
-export function sanitizeContent(content: string): string {
-  return content
-    .trim()
-    .replace(/[<>]/g, '') // Remove < and > to prevent HTML injection
-    .slice(0, 10000); // Enforce max length
-}
-
-// Clean user-generated titles
-export function sanitizeTitle(title: string): string {
-  return title
-    .trim()
-    .replace(/[<>]/g, '')
-    .slice(0, 200);
-}
-
-// Clean tags
-export function sanitizeTags(tags: string[]): string[] {
-  return tags
-    .map(tag => tag.trim().toLowerCase().replace(/[^a-z0-9-]/g, ''))
-    .filter(tag => tag.length > 0 && tag.length <= 30)
-    .slice(0, 5); // Maximum 5 tags
-}
-
-// Rate limit check (to be used with Redis in production)
-export function checkRateLimit(
-  key: string,
-  limit: number,
-  window: number = TIME_WINDOWS.RATE_LIMIT
+/**
+ * Check if user can perform a specific action
+ */
+export function canPerformAction(
+  action: ForumAction,
+  user: UserWithoutPassword | null,
+  authorId?: string,
+  type: 'post' | 'reply' = 'post'
 ): boolean {
-  // This is a placeholder for actual rate limiting logic
-  // In production, use Redis or similar to track request counts
-  return true;
+  const permissions = getForumPermissions(user, authorId);
+  return type === 'post' 
+    ? permissions.postActions.includes(action)
+    : permissions.replyActions.includes(action);
+}
+
+/**
+ * Populate a post with user info
+ */
+export async function populatePost(post: any) {
+  if (!post) return null;
+  
+  await Post.populate(post, {
+    path: 'userInfo',
+    select: 'username role verified'
+  });
+
+  return post;
+}
+
+/**
+ * Get a formatted post with populated user info
+ */
+export async function getFormattedPost(postId: string) {
+  const post = await Post.findById(postId);
+  if (!post) return null;
+
+  const populatedPost = await populatePost(post);
+  const replies = await Reply.find({ postId })
+    .sort('createdAt')
+    .populate('userInfo', 'username role verified');
+
+  return {
+    post: populatedPost,
+    replies
+  };
+}
+
+/**
+ * Format a date for display
+ */
+export function formatDate(date: Date | string): string {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+/**
+ * Check if a post exists and throw if not found
+ */
+export async function validatePostExists(postId: string): Promise<void> {
+  const exists = await Post.exists({ _id: postId });
+  if (!exists) {
+    throw new Error('Post not found');
+  }
+}
+
+/**
+ * Check if a reply exists and throw if not found
+ */
+export async function validateReplyExists(replyId: string): Promise<void> {
+  const exists = await Reply.exists({ _id: replyId });
+  if (!exists) {
+    throw new Error('Reply not found');
+  }
 }

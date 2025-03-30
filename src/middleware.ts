@@ -1,100 +1,114 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifyToken } from '@/lib/auth/jwt';
+import { AuthCookieManager } from '@/lib/auth/cookies';
 
-// In-memory rate limiting (can be replaced with Redis in production)
-const rateLimit = new Map<string, { count: number; resetTime: number }>();
-const WINDOW_SIZE = 60 * 60 * 1000; // 1 hour
-const MAX_REQUESTS = {
-  posts: 5,    // 5 posts per hour
-  replies: 20, // 20 replies per hour
-};
+// Paths that require authentication
+const PROTECTED_PATHS = [
+  '/api/forum/posts',
+  '/api/forum/replies',
+  '/api/annotate',
+  '/api/notes',
+];
 
-function getRateLimitKey(ip: string, type: 'posts' | 'replies'): string {
-  return `${ip}:${type}`;
-}
-
-function isRateLimited(ip: string, type: 'posts' | 'replies'): boolean {
-  const key = getRateLimitKey(ip, type);
-  const now = Date.now();
-  const limit = rateLimit.get(key);
-
-  // Clean up expired entries
-  if (limit && now > limit.resetTime) {
-    rateLimit.delete(key);
-    return false;
-  }
-
-  if (!limit) {
-    rateLimit.set(key, {
-      count: 1,
-      resetTime: now + WINDOW_SIZE,
-    });
-    return false;
-  }
-
-  if (limit.count >= MAX_REQUESTS[type]) {
-    return true;
-  }
-
-  limit.count++;
-  return false;
-}
+// Paths that don't need token refresh check
+const PUBLIC_PATHS = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/refresh',
+  '/api/auth/logout',
+];
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-    const pathname = request.nextUrl.pathname;
-
-  // Redirect /subjects to /papers
-  if (pathname.startsWith('/subjects')) {
-    const newPathname = pathname.replace('/subjects', '/papers');
-    return NextResponse.redirect(new URL(newPathname, request.url));
-  }
-  
-  // Only apply to forum API routes
-  if (!request.nextUrl.pathname.startsWith('/api/forum')) {
+  // Skip auth check for public paths
+  if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // Skip rate limiting for admin routes when admin token is present
-  if (
-    request.nextUrl.pathname.startsWith('/api/forum/admin') &&
-    request.headers.get('X-Admin-Token') === process.env.ADMIN_TOKEN
-  ) {
-    return NextResponse.next();
+  // Set security headers
+  const response = NextResponse.next();
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+  );
+
+  // Check if path requires authentication
+  const requiresAuth = PROTECTED_PATHS.some(path => pathname.startsWith(path));
+  if (!requiresAuth) {
+    return response;
   }
 
-  const ip = request.ip || request.headers.get('x-real-ip') || '127.0.0.1';
-  const requestType = request.nextUrl.pathname.includes('/posts/')
-    ? 'replies'
-    : 'posts';
+  // Get tokens from cookies
+  const { accessToken, refreshToken } = AuthCookieManager.getTokens();
 
-  // Check rate limit
-  if (
-    request.method === 'POST' &&
-    isRateLimited(ip, requestType)
-  ) {
-    return NextResponse.json(
-      {
-        error: `Too many ${requestType}. Please try again later.`,
-      },
-      { status: 429 }
+  // If no tokens, deny access
+  if (!accessToken || !refreshToken) {
+    return new NextResponse(
+      JSON.stringify({ error: 'Authentication required' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
-  // Add IP to request headers for tracking
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('X-Real-IP', ip);
+  // Verify access token
+  const payload = await verifyToken(accessToken);
 
-  // Continue with modified headers
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  // If access token is valid, continue
+  if (payload) {
+    return response;
+  }
 
-  return response;
+  // If access token is invalid, try refresh
+  try {
+    const refreshResponse = await fetch(`${request.nextUrl.origin}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Cookie': `refresh_token=${refreshToken}`,
+      },
+    });
+
+    if (!refreshResponse.ok) {
+      // If refresh fails, clear cookies and deny access
+      AuthCookieManager.clearTokens();
+      return new NextResponse(
+        JSON.stringify({ error: 'Session expired' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get the new access token from refresh response cookies
+    const setCookieHeader = refreshResponse.headers.get('set-cookie');
+    if (!setCookieHeader) {
+      throw new Error('No cookies in refresh response');
+    }
+
+    // Forward the new cookies and continue
+    response.headers.set('Set-Cookie', setCookieHeader);
+    return response;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Authentication failed' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }
 
+// Configure middleware to run on specific paths
 export const config = {
-  matcher: '/api/forum/:path*',
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public directory files
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+  ],
 };

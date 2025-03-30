@@ -1,141 +1,148 @@
-# Forum Moderation & Anti-Abuse System
+# Forum Moderation System
 
-## Overview
+## Role-Based Access Control
 
-A lightweight moderation system combining IP tracking, user identity verification, and admin capabilities.
+The forum uses a three-tier role system:
 
-## Setup Instructions
+1. **User** (Basic)
 
-### Admin Token
+   - Can create posts and replies
+   - Can edit/delete their own content
+   - Cannot moderate other users' content
 
-1. Set the `ADMIN_TOKEN` environment variable in your .env file:
+2. **Moderator**
 
-```bash
-ADMIN_TOKEN=your-secure-token-here
+   - All user permissions
+   - Can lock/unlock posts
+   - Can edit any post or reply
+   - Can delete inappropriate replies
+   - Cannot delete posts (admin only)
+
+3. **Admin**
+   - All moderator permissions
+   - Can pin/unpin posts
+   - Can delete any post or reply
+   - Can manage user roles
+
+## Moderation Features
+
+### Post Management
+
+- **Pinning**: Admin-only feature to pin important posts to the top
+- **Locking**: Moderators and admins can lock posts to prevent new replies
+- **Deletion**: Admins can delete posts, users can delete their own
+
+### Reply Management
+
+- **Editing**: Users can edit their own replies, moderators can edit any reply
+- **Deletion**: Users can delete their own replies, moderators and admins can delete any reply
+
+### User Content Controls
+
+- Post authors can edit/delete their own posts
+- Reply authors can edit/delete their own replies
+- Content history tracks edits with timestamps
+
+## Implementation Details
+
+### Auth Integration
+
+```typescript
+// Check user permissions
+canPerformAction("pin", user, authorId, "post"); // Admin only
+canPerformAction("lock", user, authorId, "post"); // Mod and Admin
+canPerformAction("delete", user, authorId, "post"); // Author and Admin
 ```
 
-2. To enable admin controls in the browser, open the browser console and run:
+### UI Components
 
-```javascript
-localStorage.setItem("forum_admin_token", "your-secure-token-here");
+- `UserActionMenu`: Context menu for post/reply actions
+- `AdminControls`: Dedicated moderation controls
+- `PostContent`: Displays post with moderation status
+- `ReplyContent`: Displays reply with moderation options
+
+### Protected Routes
+
+All moderation actions are protected at both UI and API levels:
+
+```typescript
+// UI Protection
+<ProtectedContent roles={["moderator", "admin"]}>
+  <ModeratorControls />
+</ProtectedContent>;
+
+// API Protection
+await requireRole(["admin"]); // Admin-only endpoints
+await requireRole(["moderator", "admin"]); // Mod+ endpoints
 ```
 
-3. To disable admin access:
+## Usage Examples
 
-```javascript
-localStorage.removeItem("forum_admin_token");
+### Pinning a Post (Admin)
+
+```typescript
+await fetch(`/api/forum/posts/${postId}`, {
+  method: "PATCH",
+  body: JSON.stringify({ isPinned: true }),
+});
 ```
 
-### Rate Limiting
+### Locking a Post (Moderator)
 
-The system includes built-in rate limiting:
-
-- 5 posts per hour per IP
-- 20 replies per hour per IP
-- 15-minute window for self-deletion
-- Cooldown period between posts (2 minutes)
-
-## Security Features
-
-### IP Tracking
-
-- IP addresses are stored securely and never exposed to clients
-- IP + username combination required for content modification
-- Rate limiting based on IP addresses
-
-### Content Moderation
-
-- Basic profanity filter and content sanitization
-- Link limiting
-- Maximum content length enforcement
-- Minimum content length requirement
-
-### User Verification
-
-- Users can only edit/delete their own content
-- Must match original IP and username
-- 15-minute edit/delete window
-- Cannot create similar posts within 1 hour
-
-## Admin Capabilities
-
-### Content Management
-
-- Delete any post or reply
-- View moderation logs
-- Override rate limits
-- Access to IP information
-
-### API Endpoints
-
-- `DELETE /api/forum/admin?postId=[id]` - Delete a post
-- `PATCH /api/forum/admin?replyId=[id]` - Delete a reply
-
-### Security Headers
-
-All admin requests must include:
-
-```
-X-Admin-Token: your-token-here
+```typescript
+await fetch(`/api/forum/posts/${postId}`, {
+  method: "PATCH",
+  body: JSON.stringify({ isLocked: true }),
+});
 ```
 
-## User Self-Management
+### Deleting Content
 
-### Time Windows
+```typescript
+// Delete post (Admin or author)
+await fetch(`/api/forum/posts/${postId}`, {
+  method: "DELETE",
+});
 
-- Posts can be deleted within 15 minutes of creation
-- Replies can be deleted within 15 minutes of creation
-- Rate limits reset hourly
+// Delete reply (Admin, moderator, or author)
+await fetch(`/api/forum/replies/${replyId}`, {
+  method: "DELETE",
+});
+```
 
-### IP Verification
+## Best Practices
 
-- Actions require matching IP address
-- Username must match original poster
-- Automatic cleanup of expired sessions
+1. **Deletion Policy**
 
-## Technical Implementation
+   - Soft delete for user content when possible
+   - Hard delete for spam or harmful content
+   - Maintain deletion logs
 
-### Models
+2. **Lock vs Delete**
 
-Both Post and Reply models include:
+   - Lock posts for archival or cooling down discussions
+   - Delete only for serious violations
 
-- IP address (hidden from queries)
-- Creation timestamp
-- Edit history
-- User verification data
+3. **Moderation Actions**
+   - Log all moderation actions
+   - Provide reason for moderation when possible
+   - Use consistent enforcement of rules
 
-### Middleware
+## Future Improvements
 
-- Rate limiting
-- IP tracking
-- Admin token verification
-- Request sanitization
+1. **Reporting System**
 
-### Error Handling
+   - User content reporting
+   - Report management interface
+   - Automated content flagging
 
-- Clear user feedback
-- Secure error messages
-- Detailed admin logging
-- Rate limit notifications
+2. **Enhanced Moderation Tools**
 
-## Production Considerations
+   - Batch moderation actions
+   - Temporary post/user suspension
+   - Moderation action history
 
-### Scaling
-
-- Replace in-memory rate limiting with Redis
-- Add request caching
-- Implement database indexing
-
-### Security
-
-- Use secure environment variables
-- Regularly rotate admin tokens
-- Monitor for abuse patterns
-- Implement IP ban system if needed
-
-### Maintenance
-
-- Regular cleanup of old data
-- Monitor system performance
-- Update security measures
-- Maintain moderation logs
+3. **User Management**
+   - Warning system
+   - Temporary bans
+   - User reputation system

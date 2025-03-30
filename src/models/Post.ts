@@ -1,86 +1,116 @@
 import mongoose from 'mongoose';
+import { UserWithoutPassword } from '@/lib/authTypes';
 
-const PostSchema = new mongoose.Schema({
-  title: { 
-    type: String, 
-    required: true,
-    trim: true,
-    maxlength: 200 
-  },
-  content: { 
-    type: String, 
-    required: true,
-    maxlength: 10000 
-  },
-  authorName: { 
-    type: String, 
-    required: true,
-    trim: true,
-    maxlength: 50 
-  },
-  authorId: { 
-    type: String, 
-    required: true,
-    index: true 
-  },
-  ip: {
+export interface IPost {
+  title: string;
+  content: string;
+  author: mongoose.Types.ObjectId;
+  username: string;
+  createdAt: Date;
+  edited: boolean;
+  editedAt?: Date;
+  likes: string[];
+  views: number;
+  isPinned: boolean;
+  isLocked: boolean;
+  tags: string[];
+  lastReplyAt?: Date;
+  replyCount: number;
+  userInfo?: Partial<UserWithoutPassword>;
+}
+
+const postSchema = new mongoose.Schema<IPost>({
+  title: {
     type: String,
     required: true,
-    select: false // Don't return IP in normal queries
-  },
-  tags: [{ 
-    type: String,
     trim: true,
-    maxlength: 30 
-  }],
-  replyCount: { 
-    type: Number, 
-    default: 0 
+    minlength: 3,
+    maxlength: 200
+  },
+  content: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 1,
+    maxlength: 50000
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  username: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  edited: {
+    type: Boolean,
+    default: false
   },
   editedAt: {
-    type: Date,
-    default: null
+    type: Date
   },
-  editCount: {
+  likes: [{
+    type: String,
+    ref: 'User'
+  }],
+  views: {
     type: Number,
     default: 0
   },
-  lastEditWindow: {
-    type: Date,
-    default: null
+  isPinned: {
+    type: Boolean,
+    default: false
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  isLocked: {
+    type: Boolean,
+    default: false
   },
-  updatedAt: { 
-    type: Date, 
-    default: Date.now 
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  lastReplyAt: {
+    type: Date
+  },
+  replyCount: {
+    type: Number,
+    default: 0
   }
+}, {
+  // Enable virtual population
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
-// Add text index for search
-PostSchema.index({ title: 'text', content: 'text' });
+// Virtual fields for user info
+postSchema.virtual('userInfo', {
+  ref: 'User',
+  localField: 'author',
+  foreignField: '_id',
+  justOne: true,
+  options: { select: 'username role verified' }
+});
 
-// Update the timestamps before saving
-PostSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
+// Create indexes
+postSchema.index({ createdAt: -1 });
+postSchema.index({ author: 1 });
+postSchema.index({ username: 1 });
+postSchema.index({ tags: 1 });
+postSchema.index({ isPinned: -1, createdAt: -1 });
+
+// Update lastReplyAt on reply count change
+postSchema.pre('save', function(next) {
+  if (this.isModified('replyCount')) {
+    this.lastReplyAt = new Date();
+  }
   next();
 });
 
-export type PostDocument = mongoose.Document & {
-  title: string;
-  content: string;
-  authorName: string;
-  authorId: string;
-  ip: string;
-  tags: string[];
-  replyCount: number;
-  editedAt: Date | null;
-  editCount: number;
-  lastEditWindow: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
+export const Post = mongoose.models.Post || mongoose.model<IPost>('Post', postSchema);
 
-export const Post = mongoose.models.Post || mongoose.model<PostDocument>('Post', PostSchema);
+export default Post;

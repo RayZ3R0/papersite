@@ -1,39 +1,20 @@
-import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { NextRequest, NextResponse } from 'next/server';
 import { Reply } from '@/models/Reply';
-import { Post } from '@/models/Post';
-import { canModifyContent } from '@/lib/forumUtils';
+import { withDb, handleOptions } from '@/lib/api-middleware';
+import { requireAuth } from '@/lib/auth/validation';
 import mongoose from 'mongoose';
 
-// Delete a reply (for user self-deletion)
-export async function DELETE(
-  request: Request,
-  { params }: { params: { replyId: string } }
-) {
+export const GET = withDb(async (request: NextRequest) => {
   try {
-    const { searchParams } = new URL(request.url);
-    const authorId = searchParams.get('authorId');
-    const ip = request.headers.get('x-real-ip') || '127.0.0.1';
-
-    if (!mongoose.Types.ObjectId.isValid(params.replyId)) {
+    const replyId = request.url.split('/').pop();
+    if (!mongoose.isValidObjectId(replyId)) {
       return NextResponse.json(
         { error: 'Invalid reply ID' },
         { status: 400 }
       );
     }
 
-    if (!authorId) {
-      return NextResponse.json(
-        { error: 'Author ID is required' },
-        { status: 400 }
-      );
-    }
-
-    await connectToDatabase();
-
-    const reply = await Reply.findById(params.replyId)
-      .select('+ip'); // Include IP field which is normally hidden
-
+    const reply = await Reply.findById(replyId);
     if (!reply) {
       return NextResponse.json(
         { error: 'Reply not found' },
@@ -41,30 +22,114 @@ export async function DELETE(
       );
     }
 
-    // Verify user can modify this reply
-    const verification = canModifyContent(reply, authorId, ip, true);
-    if (!verification.allowed) {
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error('Error fetching reply:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch reply' },
+      { status: 500 }
+    );
+  }
+});
+
+export const DELETE = withDb(async (request: NextRequest) => {
+  try {
+    // Verify user authentication
+    const payload = await requireAuth();
+
+    const replyId = request.url.split('/').pop();
+    if (!mongoose.isValidObjectId(replyId)) {
       return NextResponse.json(
-        { error: verification.reason },
+        { error: 'Invalid reply ID' },
+        { status: 400 }
+      );
+    }
+
+    const reply = await Reply.findById(replyId);
+    if (!reply) {
+      return NextResponse.json(
+        { error: 'Reply not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if user is author or admin
+    if (reply.author.toString() !== payload.userId && payload.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Not authorized to delete this reply' },
         { status: 403 }
       );
     }
 
-    // Delete the reply and update post's reply count
     await reply.deleteOne();
-    await Post.findByIdAndUpdate(reply.postId, {
-      $inc: { replyCount: -1 }
-    });
 
-    return NextResponse.json(
-      { message: 'Reply deleted successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      success: true,
+      message: 'Reply deleted successfully'
+    });
   } catch (error) {
-    console.error('Failed to delete reply:', error);
+    console.error('Error deleting reply:', error);
     return NextResponse.json(
       { error: 'Failed to delete reply' },
       { status: 500 }
     );
   }
-}
+});
+
+export const PATCH = withDb(async (request: NextRequest) => {
+  try {
+    // Verify user authentication
+    const payload = await requireAuth();
+
+    const replyId = request.url.split('/').pop();
+    if (!mongoose.isValidObjectId(replyId)) {
+      return NextResponse.json(
+        { error: 'Invalid reply ID' },
+        { status: 400 }
+      );
+    }
+
+    const reply = await Reply.findById(replyId);
+    if (!reply) {
+      return NextResponse.json(
+        { error: 'Reply not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if user is author or admin
+    if (reply.author.toString() !== payload.userId && payload.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Not authorized to edit this reply' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { content } = body;
+
+    if (!content) {
+      return NextResponse.json(
+        { error: 'Content is required' },
+        { status: 400 }
+      );
+    }
+
+    reply.content = content;
+    reply.edited = true;
+    reply.editedAt = new Date();
+
+    await reply.save();
+
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error('Error updating reply:', error);
+    return NextResponse.json(
+      { error: 'Failed to update reply' },
+      { status: 500 }
+    );
+  }
+});
+
+// Handle preflight requests
+export const OPTIONS = () => handleOptions(['GET', 'DELETE', 'PATCH', 'OPTIONS']);

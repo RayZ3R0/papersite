@@ -1,25 +1,36 @@
-import { headers } from 'next/headers';
+// Re-export all authentication functionality
+export * from './auth/index';
 
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+// Note: The legacy admin token system has been replaced by role-based authentication.
+// Use the new auth system with user roles: 'user', 'moderator', 'admin'
+// 
+// Example:
+// ```typescript
+// const { requireRole } = await import('@/lib/auth');
+// const adminOnly = await requireRole(['admin']);
+// ```
 
-if (!ADMIN_TOKEN) {
-  console.warn('ADMIN_TOKEN is not set in environment variables');
-}
+// For backwards compatibility, we keep these functions but they use the new system
+import { requireRole } from './auth/validation';
 
-export function isAdmin(token?: string): boolean {
-  if (!ADMIN_TOKEN) return false;
-  if (!token) return false;
-  return token === ADMIN_TOKEN;
-}
-
-export function getIsAdminFromHeaders(): boolean {
-  const headersList = headers();
-  const adminToken = headersList.get('X-Admin-Token');
-  return isAdmin(adminToken || undefined);
-}
-
-export function validateAdminToken(token?: string): void {
-  if (!isAdmin(token)) {
-    throw new Error('Unauthorized');
+export async function isAdmin(userId: string): Promise<boolean> {
+  try {
+    const payload = await requireRole(['admin']);
+    return payload.userId === userId;
+  } catch {
+    return false;
   }
 }
+
+export async function validateAdminToken(userId: string): Promise<void> {
+  await requireRole(['admin']);
+}
+
+// These will be removed in future updates
+export function getIsAdminFromHeaders(): boolean {
+  console.warn('getIsAdminFromHeaders is deprecated. Use requireRole instead.');
+  return false;
+}
+
+// Export type for convenience
+export type UserRole = 'user' | 'moderator' | 'admin';
