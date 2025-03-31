@@ -18,7 +18,10 @@ export type Theme =
   'rose-pine' |
   'tokyo-night' |
   'gruvbox' |
-  'crimson';
+  'crimson' |
+  'one-dark' |
+  'kanagawa' |
+  'everforest';
 
 export const themeNames: Record<Theme, string> = {
   'light': 'Light',
@@ -35,7 +38,10 @@ export const themeNames: Record<Theme, string> = {
   'rose-pine': 'Rose Pine',
   'tokyo-night': 'Tokyo Night',
   'gruvbox': 'Gruvbox',
-  'crimson': 'Crimson'
+  'crimson': 'Crimson',
+  'one-dark': 'One Dark',
+  'everforest': 'Everforest',
+  'kanagawa': 'Kanagawa',
 };
 
 // Dark themes list
@@ -112,7 +118,10 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
       "rose-pine",
       "tokyo-night",
       "gruvbox",
-      "crimson"
+      "crimson",
+      "one-dark",
+      "kanagawa",
+      "everforest",
     );
     
     // Add new theme class

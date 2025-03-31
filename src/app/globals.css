@@ -349,6 +349,166 @@
     --color-border-light: #555555;
   }
 
+.kanagawa {
+  /* Primary accent (e.g., buttons, links) - crystalBlue */
+  --color-primary: #7e9cd8;
+  --color-primary-light: #a3c1f0;
+  /* Lightened variant */
+  --color-primary-dark: #5c7ab0;
+  /* Darkened variant */
+
+  /* Secondary accent (e.g., secondary elements) - sakuraPink */
+  --color-secondary: #d27e99;
+  --color-secondary-light: #e8a6ba;
+  /* Lightened variant */
+  --color-secondary-dark: #a85c75;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #1f1f28;
+  /* sumiInk1 - main background */
+  --color-background-alt: #2a2a37;
+  /* sumiInk2 - alternate background */
+
+  /* Surface colors (e.g., cards, panels) */
+  --color-surface: #54546d;
+  /* sumiInk4 */
+  --color-surface-alt: #696984;
+  /* Slightly lighter custom shade */
+
+  /* Text colors */
+  --color-text: #dcd7ba;
+  /* fujiWhite - main text */
+  --color-text-muted: #a3a3a3;
+  /* Custom muted gray for contrast */
+
+  /* Border colors */
+  --color-border: #54546d;
+  /* sumiInk4 */
+  --color-border-light: #727289;
+  /* katanaGray adjusted */
+}
+
+.one-dark {
+  /* Primary accent - blue used for functions */
+  --color-primary: #61afef;
+  --color-primary-light: #89c7ff;
+  /* Lightened variant */
+  --color-primary-dark: #4285b4;
+  /* Darkened variant */
+
+  /* Secondary accent - red used for keywords */
+  --color-secondary: #e06c75;
+  --color-secondary-light: #ff8f99;
+  /* Lightened variant */
+  --color-secondary-dark: #b94e56;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #282c34;
+  /* Main editor background */
+  --color-background-alt: #2e333d;
+  /* Slightly lighter alternate */
+
+  /* Surface colors */
+  --color-surface: #3e4451;
+  /* Editor group header shade */
+  --color-surface-alt: #4b5263;
+  /* Lighter surface variant */
+
+  /* Text colors */
+  --color-text: #abb2bf;
+  /* Foreground text */
+  --color-text-muted: #828997;
+  /* Muted text (comments adjusted) */
+
+  /* Border colors */
+  --color-border: #3e4451;
+  /* Matches surface */
+  --color-border-light: #545b6b;
+  /* Lighter border */
+}
+
+.one-light {
+  /* Primary accent - blue for functions */
+  --color-primary: #4078f2;
+  --color-primary-light: #699cff;
+  /* Lightened variant */
+  --color-primary-dark: #1a5ad7;
+  /* Darkened variant */
+
+  /* Secondary accent - green for strings */
+  --color-secondary: #50a14f;
+  --color-secondary-light: #7bc67a;
+  /* Lightened variant */
+  --color-secondary-dark: #388038;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #fafafa;
+  /* Main background */
+  --color-background-alt: #f0f0f0;
+  /* Slightly darker alternate */
+
+  /* Surface colors */
+  --color-surface: #e5e5e5;
+  /* Light gray surface */
+  --color-surface-alt: #eeeeee;
+  /* Even lighter surface */
+
+  /* Text colors */
+  --color-text: #383a42;
+  /* Foreground text */
+  --color-text-muted: #a0a1a7;
+  /* Comments/muted text */
+
+  /* Border colors */
+  --color-border: #e5e5e5;
+  /* Matches surface */
+  --color-border-light: #d0d0d0;
+  /* Darker border */
+}
+
+.everforest {
+  /* Primary accent - green for prominence */
+  --color-primary: #a7c080;
+  --color-primary-light: #c3d9a0;
+  /* Lightened variant */
+  --color-primary-dark: #829966;
+  /* Darkened variant */
+
+  /* Secondary accent - red for contrast */
+  --color-secondary: #e67e80;
+  --color-secondary-light: #f4a4a6;
+  /* Lightened variant */
+  --color-secondary-dark: #c15f61;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #2f383e;
+  /* Main background */
+  --color-background-alt: #374247;
+  /* Slightly lighter alternate */
+
+  /* Surface colors */
+  --color-surface: #3c464d;
+  /* Dark surface */
+  --color-surface-alt: #4b565c;
+  /* Lighter surface */
+
+  /* Text colors */
+  --color-text: #d3c6aa;
+  /* Foreground text */
+  --color-text-muted: #4c514a;
+  /* Comments/muted text */
+
+  /* Border colors */
+  --color-border: #4b565c;
+  /* Matches surface-alt */
+  --color-border-light: #626e73;
+  /* Lighter border */
+}
+
   /* Base HTML */
   html {
     @apply antialiased;
