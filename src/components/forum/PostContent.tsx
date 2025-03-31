@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
 import UserActionMenu from './UserActionMenu';
-import { formatDate } from '@/lib/forumUtils';
+import EditPostDialog from './EditPostDialog';
+import { formatDate, canPerformAction } from '@/lib/forumUtils';
 
 interface PostContentProps {
   post: {
@@ -22,10 +23,10 @@ interface PostContentProps {
       verified: boolean;
     };
   };
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onPin?: () => void;
-  onLock?: () => void;
+  onEdit?: (title: string, content: string) => Promise<void>;
+  onDelete?: () => Promise<void>;
+  onPin?: () => Promise<void>;
+  onLock?: () => Promise<void>;
 }
 
 export default function PostContent({
@@ -37,6 +38,8 @@ export default function PostContent({
 }: PostContentProps) {
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [error, setError] = useState('');
 
   const contentLength = post.content.length;
   const isLongContent = contentLength > 500;
@@ -44,16 +47,25 @@ export default function PostContent({
     ? post.content.slice(0, 500) + '...' 
     : post.content;
 
+  const handleEdit = async (title: string, content: string) => {
+    try {
+      if (!onEdit) return;
+      await onEdit(title, content);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to edit post');
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+    <div className="bg-surface rounded-lg shadow overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="px-6 py-4 border-b border-divider">
         <div className="flex justify-between items-start">
-          <div>
+          <div className="flex-1 min-w-0"> {/* Add min-width to enable text wrapping */}
             {/* Title */}
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-text break-words pr-4">
               {post.isPinned && (
-                <span className="inline-block mr-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+                <span className="inline-block mr-2 text-sm font-medium text-primary">
                   📌
                 </span>
               )}
@@ -62,54 +74,62 @@ export default function PostContent({
 
             {/* Author info */}
             <div className="mt-1 text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Posted by </span>
-              <span className="font-medium text-gray-900 dark:text-white">
+              <span className="text-text-muted">Posted by </span>
+              <span className="font-medium text-text">
                 {post.username}
                 {post.userInfo?.verified && (
-                  <span className="ml-1 text-blue-500" title="Verified user">
+                  <span className="ml-1 text-primary" title="Verified user">
                     ✓
                   </span>
                 )}
               </span>
               {post.userInfo?.role !== 'user' && (
-                <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-surface-alt text-text-muted">
                   {post.userInfo?.role}
                 </span>
               )}
-              <span className="ml-2 text-gray-500">
+              <span className="ml-2 text-text-muted whitespace-nowrap">
                 {formatDate(post.createdAt)}
               </span>
               {post.edited && (
-                <span className="ml-2 text-gray-500" title={post.editedAt ? formatDate(post.editedAt) : undefined}>
+                <span className="ml-2 text-text-muted" title={post.editedAt ? formatDate(post.editedAt) : undefined}>
                   (edited)
                 </span>
               )}
             </div>
           </div>
 
-          {/* Action menu */}
-          <UserActionMenu
-            authorId={post.author}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onPin={onPin}
-            onLock={onLock}
-            isPinned={post.isPinned}
-            isLocked={post.isLocked}
-            type="post"
-          />
+          {/* Action Menu - Keep it from shrinking */}
+          <div className="flex-shrink-0">
+            <UserActionMenu
+              authorId={post.author}
+              onEdit={() => setIsEditOpen(true)}
+              onDelete={onDelete}
+              onPin={onPin}
+              onLock={onLock}
+              isPinned={post.isPinned}
+              isLocked={post.isLocked}
+              type="post"
+            />
+          </div>
         </div>
 
         {post.isLocked && (
-          <div className="mt-2 text-sm text-yellow-600 dark:text-yellow-400">
+          <div className="mt-2 text-sm text-warning">
             🔒 This post has been locked
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-2 text-sm text-error">
+            {error}
           </div>
         )}
       </div>
 
-      {/* Content */}
+      {/* Content with word wrapping */}
       <div className="px-6 py-4">
-        <div className="prose dark:prose-invert max-w-none">
+        <div className="prose prose-text max-w-none break-words whitespace-pre-wrap">
           {displayContent.split('\n').map((paragraph, index) => (
             <p key={index} className="mb-4 last:mb-0">
               {paragraph}
@@ -121,12 +141,22 @@ export default function PostContent({
         {isLongContent && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors"
           >
             {isExpanded ? 'Show less' : 'Show more'}
           </button>
         )}
       </div>
+
+      {/* Edit Dialog */}
+      <EditPostDialog
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onSubmit={handleEdit}
+        initialTitle={post.title}
+        initialContent={post.content}
+        type="post"
+      />
     </div>
   );
 }

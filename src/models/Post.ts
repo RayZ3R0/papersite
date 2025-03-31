@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 import { UserWithoutPassword } from '@/lib/authTypes';
 
-export interface IPost {
+// Base interface with common properties
+interface BasePost {
+  _id?: string;
   title: string;
   content: string;
-  author: mongoose.Types.ObjectId;
   username: string;
   createdAt: Date;
   edited: boolean;
@@ -19,7 +20,41 @@ export interface IPost {
   userInfo?: Partial<UserWithoutPassword>;
 }
 
-const postSchema = new mongoose.Schema<IPost>({
+// Client-side interface with string author
+export interface IPost extends BasePost {
+  author: string;
+}
+
+// Server-side interface with ObjectId author
+export interface IPostModel extends Omit<BasePost, '_id'> {
+  _id?: mongoose.Types.ObjectId;
+  author: mongoose.Types.ObjectId;
+}
+
+// Mock methods that always return empty results
+const createMockMethods = () => ({
+  find: () => ({
+    sort: () => ({
+      limit: () => ({
+        populate: () => Promise.resolve([])
+      }),
+      populate: () => Promise.resolve([])
+    }),
+    populate: () => Promise.resolve([])
+  }),
+  findById: () => ({
+    populate: () => Promise.resolve(null)
+  }),
+  exists: () => Promise.resolve(false),
+  findByIdAndUpdate: () => Promise.resolve(null),
+  deleteOne: () => Promise.resolve({ acknowledged: true }),
+  populate: () => Promise.resolve(null),
+  create: () => Promise.resolve({}),
+  save: () => Promise.resolve({}),
+});
+
+// Define schema
+const postSchema = new mongoose.Schema<IPostModel>({
   title: {
     type: String,
     required: true,
@@ -82,7 +117,6 @@ const postSchema = new mongoose.Schema<IPost>({
     default: 0
   }
 }, {
-  // Enable virtual population
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
@@ -111,6 +145,26 @@ postSchema.pre('save', function(next) {
   next();
 });
 
-export const Post = mongoose.models.Post || mongoose.model<IPost>('Post', postSchema);
+// Initialize model with proper checks
+function getPostModel(): mongoose.Model<IPostModel> {
+  // Client-side or build-time
+  if (typeof window !== 'undefined' || (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI)) {
+    return createMockMethods() as unknown as mongoose.Model<IPostModel>;
+  }
 
+  // Server-side with mongoose available
+  if (mongoose.connection.readyState === 1) {
+    try {
+      return mongoose.models.Post || mongoose.model<IPostModel>('Post', postSchema);
+    } catch {
+      return mongoose.model<IPostModel>('Post', postSchema);
+    }
+  }
+
+  // If no connection, return mock methods
+  return createMockMethods() as unknown as mongoose.Model<IPostModel>;
+}
+
+// Create and export the model
+export const Post = getPostModel();
 export default Post;

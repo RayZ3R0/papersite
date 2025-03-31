@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForumUser } from '@/hooks/useForumUser';
+import { useAuth } from '@/components/auth/AuthContext';
+import ProtectedContent from '@/components/auth/ProtectedContent';
 import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
 import Link from 'next/link';
 
@@ -15,119 +16,122 @@ interface Post {
 }
 
 export default function ForumPage() {
-  const { user, setUsername, isLoading } = useForumUser();
-  const [username, setUsernameInput] = useState('');
+  const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
-  const [isPostsLoading, setIsPostsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchPosts() {
       try {
+        setIsLoading(true);
+        setError(null);
         const response = await fetch('/api/forum/posts');
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts');
+        }
         const data = await response.json();
-        setPosts(data.posts);
+        setPosts(data.posts || []);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load posts');
       } finally {
-        setIsPostsLoading(false);
+        setIsLoading(false);
       }
     }
 
+    // Only fetch posts if user is authenticated
     if (user) {
       fetchPosts();
-    } else {
-      setIsPostsLoading(false);
     }
-  }, [user]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (!user) {
-    return (
-      <div className="max-w-md mx-auto mt-8 p-6 bg-surface rounded-lg shadow">
-        <h1 className="text-xl font-semibold mb-4">Welcome to the Forum</h1>
-        <p className="mb-4 text-text-muted">
-          Please enter a username to start participating in discussions.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setUsername(username);
-          }}
-          className="space-y-4"
-        >
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            placeholder="Enter your username"
-            className="w-full p-2 border rounded bg-background text-text"
-            maxLength={50}
-            required
-          />
-          <button
-            type="submit"
-            className="w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-          >
-            Get Started
-          </button>
-        </form>
-      </div>
-    );
-  }
+  }, [user]); // Depend on user to refetch when auth state changes
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Forum Discussions</h1>
-        <Link
-          href="/forum/new"
-          className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-        >
-          New Post
-        </Link>
-      </div>
-
-      <div className="space-y-4">
-        {isPostsLoading ? (
-          <LoadingSpinner />
-        ) : posts.length === 0 ? (
-          <div className="text-center py-8 text-text-muted">
-            No posts yet. Be the first to start a discussion!
+    <ProtectedContent
+      roles={['user', 'moderator', 'admin']}
+      message="Please sign in to access the forum"
+      fallback={
+        <div className="container mx-auto p-4">
+          <div className="text-center py-12 max-w-2xl mx-auto">
+            <h1 className="text-3xl font-bold mb-4 text-text">Welcome to Our Forum</h1>
+            <p className="text-text-muted mb-8">
+              Join our community to participate in discussions, share your thoughts,
+              and connect with others.
+            </p>
+            <div className="p-6 bg-surface rounded-lg shadow-sm border border-divider mb-8">
+              <p className="text-lg font-medium mb-4 text-text">
+                What you can do in our forum:
+              </p>
+              <ul className="text-text-muted space-y-2 mb-6 text-left list-disc list-inside">
+                <li>Start interesting discussions</li>
+                <li>Share your knowledge and experiences</li>
+                <li>Connect with other members</li>
+                <li>Get help from the community</li>
+              </ul>
+            </div>
           </div>
-        ) : (
-          posts.map((post) => (
+        </div>
+      }
+    >
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-text">Forum Discussions</h1>
+          {user && (
             <Link
-              key={post._id}
-              href={`/forum/posts/${post._id}`}
-              className="block p-4 bg-surface rounded-lg hover:shadow transition-shadow"
+              href="/forum/new"
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
             >
-              <h2 className="text-lg font-semibold mb-2">{post.title}</h2>
-              <div className="flex items-center text-sm text-text-muted">
-                <span>By {post.authorName}</span>
-                <span className="mx-2">•</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                <span className="mx-2">•</span>
-                <span>{post.replyCount} replies</span>
-              </div>
-              {post.tags.length > 0 && (
-                <div className="mt-2 space-x-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-block px-2 py-1 text-xs bg-surface-alt rounded"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+              New Post
             </Link>
-          ))
-        )}
+          )}
+        </div>
+
+        <div className="space-y-4">
+          {isLoading ? (
+            <div className="text-center py-8">
+              <LoadingSpinner />
+              <p className="text-text-muted mt-2">Loading discussions...</p>
+            </div>
+          ) : error ? (
+            <div className="p-4 bg-error/10 border border-error/20 rounded text-error text-center">
+              {error}
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-8 text-text-muted">
+              No posts yet. Be the first to start a discussion!
+            </div>
+          ) : (
+            posts.map((post) => (
+              <Link
+                key={post._id}
+                href={`/forum/posts/${post._id}`}
+                className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
+              >
+                <h2 className="text-lg font-semibold mb-2 text-text">{post.title}</h2>
+                <div className="flex items-center text-sm text-text-muted">
+                  <span>By {post.authorName}</span>
+                  <span className="mx-2">•</span>
+                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                  <span className="mx-2">•</span>
+                  <span>{post.replyCount} replies</span>
+                </div>
+                {post.tags && post.tags.length > 0 && (
+                  <div className="mt-2 space-x-2">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-block px-2 py-1 text-xs bg-surface-alt rounded text-text-muted"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </Link>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </ProtectedContent>
   );
 }

@@ -40,7 +40,7 @@ export default function ProtectedContent({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
@@ -51,20 +51,27 @@ export default function ProtectedContent({
   if (!isAuthorized) {
     // Show fallback if provided
     if (fallback) {
-      return <>{fallback}</>;
+      return (
+        <>
+          {fallback}
+          <LoginModal
+            isOpen={showLogin}
+            onClose={() => setShowLogin(false)}
+            message={message}
+            returnTo={typeof window !== 'undefined' ? window.location.pathname : '/'}
+          />
+        </>
+      );
     }
 
-    // Show login modal if no fallback
+    // Show only login modal if no fallback
     return (
-      <>
-        {children}
-        <LoginModal
-          isOpen={showLogin}
-          onClose={() => setShowLogin(false)}
-          message={message}
-          returnTo={typeof window !== 'undefined' ? window.location.pathname : '/'}
-        />
-      </>
+      <LoginModal
+        isOpen={true}
+        onClose={() => {}} // No-op since we always want to show the modal without fallback
+        message={message}
+        returnTo={typeof window !== 'undefined' ? window.location.pathname : '/'}
+      />
     );
   }
 

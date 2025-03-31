@@ -2,53 +2,33 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForumUser, requireUser } from '@/hooks/useForumUser';
-import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
+import { useAuth } from '@/components/auth/AuthContext';
+import ProtectedContent from '@/components/auth/ProtectedContent';
 
 export default function NewPostPage() {
   const router = useRouter();
-  const { user, isLoading } = useForumUser();
+  const { user } = useAuth();
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    tags: ''
-  });
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  // Redirect to forum page if no user
-  if (!user) {
-    router.push('/forum');
-    return null;
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
+    if (!user) return;
+
     setIsSubmitting(true);
+    setError('');
 
     try {
-      requireUser(user);
-
       const response = await fetch('/api/forum/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: formData.title.trim(),
-          content: formData.content.trim(),
-          tags: formData.tags
-            .split(',')
-            .map(tag => tag.trim())
-            .filter(Boolean),
-          authorName: user.name,
-          authorId: user.id,
+          title,
+          content,
         }),
       });
 
@@ -63,82 +43,73 @@ export default function NewPostPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Create New Post</h1>
-      
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
-      )}
+    <ProtectedContent
+      roles={['user', 'moderator', 'admin']}
+      message="Please sign in to create a post"
+    >
+      <div className="container mx-auto p-4 max-w-2xl">
+        <h1 className="text-2xl font-bold mb-6">Create New Post</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block mb-1 font-medium">
-            Title
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full p-2 border rounded bg-background text-text"
-            required
-            maxLength={200}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 bg-red-100 text-red-700 rounded">
+              {error}
+            </div>
+          )}
 
-        <div>
-          <label htmlFor="content" className="block mb-1 font-medium">
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-            className="w-full p-2 border rounded bg-background text-text min-h-[200px]"
-            required
-            maxLength={10000}
-          />
-        </div>
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium mb-1">
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full p-2 border rounded bg-background text-text"
+              required
+              minLength={3}
+              maxLength={100}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="tags" className="block mb-1 font-medium">
-            Tags
-          </label>
-          <input
-            id="tags"
-            type="text"
-            value={formData.tags}
-            onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-            className="w-full p-2 border rounded bg-background text-text"
-            placeholder="Enter tags separated by commas"
-          />
-          <p className="mt-1 text-sm text-text-muted">
-            Separate tags with commas (e.g., chemistry, unit 1, exam)
-          </p>
-        </div>
+          <div>
+            <label htmlFor="content" className="block text-sm font-medium mb-1">
+              Content
+            </label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full p-2 border rounded bg-background text-text"
+              rows={8}
+              required
+              minLength={10}
+              maxLength={5000}
+            />
+          </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-4 py-2 text-text-muted hover:text-text"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 disabled:opacity-50"
-          >
-            {isSubmitting ? 'Creating...' : 'Create Post'}
-          </button>
-        </div>
-      </form>
-    </div>
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 disabled:opacity-50"
+            >
+              {isSubmitting ? 'Creating...' : 'Create Post'}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-4 py-2 bg-surface text-text rounded hover:bg-surface/90"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </ProtectedContent>
   );
 }

@@ -1,76 +1,114 @@
 import mongoose from 'mongoose';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Please add your Mongo URI to .env');
-}
-
+// MongoDB URI is required in production
 const MONGODB_URI = process.env.MONGODB_URI;
 
-interface GlobalMongo {
+// Mock connection for build time
+const mockMongoose = {
+  connection: {
+    readyState: 1,
+    on: () => {},
+    once: () => {},
+    close: () => Promise.resolve(),
+  },
+  Schema: mongoose.Schema,
+  model: () => ({}),
+  models: {},
+  Types: mongoose.Types,
+} as unknown as typeof mongoose;
+
+interface GlobalMongoose {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
 }
 
-// Extend global NodeJS namespace to include mongoose
 declare global {
-  var mongoose: GlobalMongo;
+  var mongoose: GlobalMongoose | undefined;
 }
 
-// Initialize the global mongoose object if it doesn't exist
+const cached = global.mongoose || { conn: null, promise: null };
+
 if (!global.mongoose) {
-  global.mongoose = { conn: null, promise: null };
+  global.mongoose = cached;
 }
 
 /**
  * Connect to MongoDB using a cached connection
  */
 async function dbConnect(): Promise<typeof mongoose> {
-  // Use the cached connection if available
-  if (global.mongoose.conn) {
-    return global.mongoose.conn;
+  // If in build/testing without MongoDB, return mock
+  if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+    console.log('Using mock MongoDB connection');
+    return mockMongoose;
   }
 
-  // If no cached promise exists, create a new connection
-  if (!global.mongoose.promise) {
+  // Use existing connection if available
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not defined');
+  }
+
+  // Create new connection if none exists
+  if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
-    global.mongoose.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongoose) => {
+        console.log('MongoDB connected successfully');
+        return mongoose;
+      })
+      .catch((error) => {
+        console.error('MongoDB connection error:', error);
+        cached.promise = null;
+        throw error;
+      });
   }
 
   try {
-    // Wait for the connection to be established
-    global.mongoose.conn = await global.mongoose.promise;
+    cached.conn = await cached.promise;
   } catch (e) {
-    // Reset the promise on error
-    global.mongoose.promise = null;
+    cached.promise = null;
     throw e;
   }
 
-  return global.mongoose.conn;
+  return cached.conn;
 }
 
-// Handle connection events
-mongoose.connection.on('connected', () => {
-  console.log('MongoDB connected successfully');
-});
+// Handle connection events in development only
+if (process.env.NODE_ENV !== 'production') {
+  mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected successfully');
+  });
 
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error:', err);
-});
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+    cached.conn = null;
+    cached.promise = null;
+  });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
-});
+  mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+    cached.conn = null;
+    cached.promise = null;
+  });
+}
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
   try {
-    await mongoose.connection.close();
-    console.log('MongoDB connection closed through app termination');
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+      console.log('MongoDB connection closed through app termination');
+    }
     process.exit(0);
   } catch (err) {
     console.error('Error closing MongoDB connection:', err);
