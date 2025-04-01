@@ -39,7 +39,7 @@ export default function RegisterForm({ onSuccess, returnTo }: RegisterFormProps)
       await register(
         formData.username,
         formData.password,
-        formData.email || undefined
+        formData.email || '' // Use empty string instead of undefined
       );
       onSuccess?.();
       

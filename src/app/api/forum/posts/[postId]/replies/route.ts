@@ -1,116 +1,144 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Reply } from '@/models/Reply';
-import { Post } from '@/models/Post';
-import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
 import { requireAuth } from '@/lib/auth/validation';
+import { withDb } from '@/lib/api-middleware';
+import { jwtToUser } from '@/lib/authTypes';
+import { Post } from '@/models/Post';
+import { Reply } from '@/models/Reply';
 import mongoose from 'mongoose';
 
-// Make route dynamic
 export const dynamic = 'force-dynamic';
 
-function getPostId(request: NextRequest): string | null {
-  const segments = request.url.split('/');
-  const idx = segments.findIndex(s => s === 'posts') + 1;
-  if (idx < segments.length) {
-    const postId = segments[idx];
-    return mongoose.isValidObjectId(postId) ? postId : null;
-  }
-  return null;
-}
-
-export const GET = withDb(async (request: NextRequest) => {
+const handleGet = async (request: NextRequest, context: { params?: { postId?: string } }) => {
   try {
+    // Verify user authentication
+    await requireAuth();
+
     // During build, return mock data
     if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({ replies: [] });
+      return NextResponse.json({
+        replies: [{
+          _id: 'mock-reply-id',
+          content: 'Mock reply content',
+          author: 'mock-author',
+          username: 'mock-user',
+          createdAt: new Date().toISOString(),
+          edited: false,
+          userInfo: {
+            username: 'mock-user',
+            role: 'user',
+            verified: false
+          }
+        }]
+      });
     }
 
-    const postId = getPostId(request);
-    if (!postId) {
-      return createErrorResponse('Invalid post ID', 400);
+    const { postId } = context.params || {};
+    if (!postId || !mongoose.isValidObjectId(postId)) {
+      return NextResponse.json(
+        { error: 'Invalid post ID' },
+        { status: 400 }
+      );
     }
 
     const replies = await Reply.find({ postId })
-      .sort({ createdAt: 1 })
+      .sort('createdAt')
       .populate('userInfo', 'username role verified');
 
     return NextResponse.json({ replies });
   } catch (error) {
     console.error('Error fetching replies:', error);
-    return createErrorResponse('Failed to fetch replies');
+    return NextResponse.json(
+      { error: 'Failed to fetch replies' },
+      { status: 500 }
+    );
   }
-}, { requireConnection: false }); // Allow static builds with empty data
+};
 
-export const POST = withDb(async (request: NextRequest) => {
+const handlePost = async (request: NextRequest, context: { params?: { postId?: string } }) => {
   try {
     // Verify user authentication
-    const payload = await requireAuth();
-    
-    const postId = getPostId(request);
-    if (!postId) {
-      return createErrorResponse('Invalid post ID', 400);
-    }
+    const user = await requireAuth();
 
-    // During build, return mock data
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({
-        reply: {
-          _id: 'mock-reply-id',
-          content: 'Mock Reply',
-          author: payload.userId,
-          username: payload.username,
-          postId,
-          createdAt: new Date(),
-          edited: false,
-          likes: []
-        }
-      });
+    // Get post ID and validate
+    const { postId } = context.params || {};
+    if (!postId || !mongoose.isValidObjectId(postId)) {
+      return NextResponse.json(
+        { error: 'Invalid post ID' },
+        { status: 400 }
+      );
     }
 
     // Check if post exists and is not locked
     const post = await Post.findById(postId);
     if (!post) {
-      return createErrorResponse('Post not found', 404);
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
     }
 
     if (post.isLocked) {
-      return createErrorResponse('This post is locked', 403);
+      return NextResponse.json(
+        { error: 'This post is locked' },
+        { status: 403 }
+      );
     }
 
+    // Get reply content
     const body = await request.json();
     const { content } = body;
 
-    if (!content) {
-      return createErrorResponse('Content is required', 400);
+    if (!content || typeof content !== 'string') {
+      return NextResponse.json(
+        { error: 'Content is required' },
+        { status: 400 }
+      );
     }
 
+    // Create reply
     const reply = new Reply({
       postId,
       content,
-      author: payload.userId,
-      username: payload.username
+      author: user._id || user.userId,
+      username: user.username
     });
 
     await reply.save();
 
-    // Increment reply count on the post
+    // Increment reply count on post
     await Post.findByIdAndUpdate(postId, {
       $inc: { replyCount: 1 },
       lastReplyAt: new Date()
     });
 
-    // Populate user info before returning
+    // Populate user info
     await Reply.populate(reply, {
       path: 'userInfo',
       select: 'username role verified'
     });
 
-    return NextResponse.json({ reply });
+    return NextResponse.json({ reply }, { status: 201 });
   } catch (error) {
     console.error('Error creating reply:', error);
-    return createErrorResponse('Failed to create reply');
+    return NextResponse.json(
+      { error: 'Failed to create reply' },
+      { status: 500 }
+    );
   }
-}, { requireConnection: true }); // Require DB connection for writes
+};
 
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'POST', 'OPTIONS']);
+// Export handlers with middleware
+export const GET = withDb(handleGet, { requireConnection: false });
+export const POST = withDb(handlePost, { requireConnection: true });
+
+// Handle CORS preflight requests
+export const OPTIONS = withDb(async () => {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}, { requireConnection: false });

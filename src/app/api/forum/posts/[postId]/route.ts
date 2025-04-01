@@ -1,135 +1,96 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/auth';
+import { withDb } from '@/lib/api-middleware';
 import { Post } from '@/models/Post';
-import { Reply } from '@/models/Reply';
-import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
-import { requireAuth } from '@/lib/auth/validation';
+import { canPerformAction } from '@/lib/forumUtils';
+import { UserTokenPayload, UserWithoutPassword, jwtToUser } from '@/lib/authTypes';
 import mongoose from 'mongoose';
 
-// Make route dynamic
 export const dynamic = 'force-dynamic';
 
-function getPostId(request: NextRequest): string | null {
-  const segments = request.url.split('/');
-  const postId = segments[segments.length - 1];
-  return mongoose.isValidObjectId(postId) ? postId : null;
-}
-
-export const GET = withDb(async (request: NextRequest) => {
+const handleGet = async (request: NextRequest, context: { params?: { postId?: string } }) => {
   try {
-    // During build, return mock data
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({
-        post: {
-          _id: 'mock-id',
-          title: 'Mock Post',
-          content: 'Mock Content',
-          author: 'mock-author',
-          username: 'mock-user',
-          createdAt: new Date(),
-          edited: false,
-          likes: [],
-          views: 0,
-          isPinned: false,
-          isLocked: false,
-          tags: [],
-          replyCount: 0
-        },
-        replies: []
-      });
+    // Verify user authentication
+    await requireAuth();
+
+    const { postId } = context.params || {};
+    if (!postId || !mongoose.isValidObjectId(postId)) {
+      return NextResponse.json(
+        { error: 'Invalid post ID' },
+        { status: 400 }
+      );
     }
 
-    const postId = getPostId(request);
-    if (!postId) {
-      return createErrorResponse('Invalid post ID', 400);
-    }
-
-    const post = await Post.findById(postId).populate('userInfo', 'username role verified');
-    if (!post) {
-      return createErrorResponse('Post not found', 404);
-    }
-
-    // Get replies for this post
-    const replies = await Reply.find({ postId })
-      .sort({ createdAt: 1 })
+    const post = await Post.findById(postId)
       .populate('userInfo', 'username role verified');
 
-    return NextResponse.json({ post, replies });
+    if (!post) {
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ post });
   } catch (error) {
     console.error('Error fetching post:', error);
-    return createErrorResponse('Failed to fetch post');
+    return NextResponse.json(
+      { error: 'Failed to fetch post' },
+      { status: 500 }
+    );
   }
-}, { requireConnection: false }); // Allow static builds with mock data
+};
 
-export const DELETE = withDb(async (request: NextRequest) => {
+const handlePatch = async (request: NextRequest, context: { params?: { postId?: string } }) => {
   try {
     // Verify user authentication
-    const payload = await requireAuth();
+    const authData = await requireAuth();
 
-    const postId = getPostId(request);
-    if (!postId) {
-      return createErrorResponse('Invalid post ID', 400);
+    const { postId } = context.params || {};
+    if (!postId || !mongoose.isValidObjectId(postId)) {
+      return NextResponse.json(
+        { error: 'Invalid post ID' },
+        { status: 400 }
+      );
     }
 
     const post = await Post.findById(postId);
     if (!post) {
-      return createErrorResponse('Post not found', 404);
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
     }
 
-    // Check if user is author or admin
-    if (post.author.toString() !== payload.userId && payload.role !== 'admin') {
-      return createErrorResponse('Not authorized to delete this post', 403);
+    // Convert auth data to UserWithoutPassword format
+    const user = jwtToUser(authData);
+
+    if (!canPerformAction('edit', user, post.author.toString(), 'post')) {
+      return NextResponse.json(
+        { error: 'Not authorized to edit this post' },
+        { status: 403 }
+      );
     }
 
-    // Delete all replies first
-    await Reply.deleteMany({ postId });
-
-    // Delete the post
-    await post.deleteOne();
-
-    return NextResponse.json({
-      success: true,
-      message: 'Post and replies deleted successfully'
-    });
-  } catch (error) {
-    console.error('Error deleting post:', error);
-    return createErrorResponse('Failed to delete post');
-  }
-}, { requireConnection: true }); // Require DB connection for writes
-
-export const PATCH = withDb(async (request: NextRequest) => {
-  try {
-    // Verify user authentication
-    const payload = await requireAuth();
-
-    const postId = getPostId(request);
-    if (!postId) {
-      return createErrorResponse('Invalid post ID', 400);
-    }
-
-    const post = await Post.findById(postId);
-    if (!post) {
-      return createErrorResponse('Post not found', 404);
-    }
-
-    // Check if user is author or admin
-    if (post.author.toString() !== payload.userId && payload.role !== 'admin') {
-      return createErrorResponse('Not authorized to edit this post', 403);
-    }
-
+    // Get and validate content
     const body = await request.json();
     const { title, content } = body;
 
-    if (!title && !content) {
-      return createErrorResponse('No changes provided', 400);
+    if (!title || !content) {
+      return NextResponse.json(
+        { error: 'Title and content are required' },
+        { status: 400 }
+      );
     }
 
-    // Update only provided fields
-    if (title) post.title = title;
-    if (content) post.content = content;
+    // Update post
+    post.title = title;
+    post.content = content;
     post.edited = true;
     post.editedAt = new Date();
-
     await post.save();
+
+    // Populate user info
     await Post.populate(post, {
       path: 'userInfo',
       select: 'username role verified'
@@ -138,9 +99,72 @@ export const PATCH = withDb(async (request: NextRequest) => {
     return NextResponse.json({ post });
   } catch (error) {
     console.error('Error updating post:', error);
-    return createErrorResponse('Failed to update post');
+    return NextResponse.json(
+      { error: 'Failed to update post' },
+      { status: 500 }
+    );
   }
-}, { requireConnection: true }); // Require DB connection for writes
+};
 
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'DELETE', 'PATCH', 'OPTIONS']);
+const handleDelete = async (request: NextRequest, context: { params?: { postId?: string } }) => {
+  try {
+    // Verify user authentication
+    const authData = await requireAuth();
+
+    const { postId } = context.params || {};
+    if (!postId || !mongoose.isValidObjectId(postId)) {
+      return NextResponse.json(
+        { error: 'Invalid post ID' },
+        { status: 400 }
+      );
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
+    }
+
+    // Convert auth data to UserWithoutPassword format
+    const user = jwtToUser(authData);
+
+    if (!canPerformAction('delete', user, post.author.toString(), 'post')) {
+      return NextResponse.json(
+        { error: 'Not authorized to delete this post' },
+        { status: 403 }
+      );
+    }
+
+    await post.deleteOne();
+
+    return NextResponse.json(
+      { message: 'Post deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete post' },
+      { status: 500 }
+    );
+  }
+};
+
+// Export handlers with middleware
+export const GET = withDb(handleGet, { requireConnection: false });
+export const PATCH = withDb(handlePatch, { requireConnection: true });
+export const DELETE = withDb(handleDelete, { requireConnection: true });
+
+// Handle CORS preflight requests
+export async function OPTIONS(): Promise<NextResponse> {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}

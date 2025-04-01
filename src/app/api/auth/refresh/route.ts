@@ -1,56 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { refreshUserToken } from '@/lib/auth';
-import { AuthCookieManager } from '@/lib/auth/cookies';
 import { AuthError } from '@/lib/authTypes';
-import { withDb, handleOptions } from '@/lib/api-middleware';
+import { refreshUserToken, getTokensFromCookies } from '@/lib/auth';
+import { withDb } from '@/lib/api-middleware';
+import { cookies } from 'next/headers';
 
-export const POST = withDb(async (request: NextRequest) => {
+export const dynamic = 'force-dynamic';
+
+const handleRefresh = async (request: NextRequest) => {
   try {
-    const { refreshToken } = AuthCookieManager.getTokens();
-
+    // Get refresh token from cookies
+    const { refreshToken } = await getTokensFromCookies();
     if (!refreshToken) {
       return NextResponse.json(
-        { error: 'No refresh token provided' },
+        { error: 'No refresh token found' },
         { status: 401 }
       );
     }
 
+    // Try to refresh the token
     const result = await refreshUserToken(refreshToken);
 
-    // Clear cookies if token refresh fails
-    if (!result) {
-      AuthCookieManager.clearTokens();
-      return NextResponse.json(
-        { error: 'Invalid refresh token' },
-        { status: 401 }
-      );
-    }
+    // Set new auth cookie
+    const cookieStore = cookies();
+    cookieStore.set('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      expires: new Date(result.expiresAt * 1000)
+    });
 
-    return NextResponse.json(result);
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Token refresh error:', error);
-
-    // Handle known auth errors
     if (error instanceof AuthError) {
-      // Always clear cookies on token errors
-      if (error.type === 'INVALID_TOKEN' || error.type === 'UNAUTHORIZED') {
-        AuthCookieManager.clearTokens();
-      }
-
       return NextResponse.json(
         { error: error.message },
-        { status: error.type === 'SERVER_ERROR' ? 500 : 401 }
+        { status: error.type === 'UNAUTHORIZED' ? 401 : 500 }
       );
     }
-
-    // Handle unexpected errors
-    AuthCookieManager.clearTokens();
     return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+      { error: 'Failed to refresh token' },
       { status: 500 }
     );
   }
-});
+};
 
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['POST', 'OPTIONS']);
+// Export handlers with middleware
+export const POST = withDb(handleRefresh);
+
+// Handle CORS preflight requests
+export async function OPTIONS(): Promise<NextResponse> {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}

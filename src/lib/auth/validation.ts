@@ -1,116 +1,164 @@
-import { getTokensFromCookies, verifyToken } from './jwt';
-import { AuthError, JWTPayload, LoginCredentials, RegisterData } from '../authTypes';
+import { cookies } from 'next/headers';
+import { verifyToken, JWTPayload } from './jwt';
+import { AuthError } from '@/lib/authTypes';
 import { User } from '@/models/User';
 
-// Validate login credentials
-export function validateLoginCredentials(credentials: LoginCredentials): void {
-  const { username, password } = credentials;
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
-  if (!username || typeof username !== 'string' || username.length < 3) {
-    throw new AuthError(
-      'INVALID_CREDENTIALS',
-      'Username must be at least 3 characters long'
-    );
+interface RegisterData extends LoginCredentials {
+  username: string;
+}
+
+export async function validateLoginCredentials(credentials: LoginCredentials) {
+  const { email, password } = credentials;
+
+  if (!email || !password) {
+    throw new AuthError('Email and password are required');
   }
 
-  if (!password || typeof password !== 'string' || password.length < 6) {
-    throw new AuthError(
-      'INVALID_CREDENTIALS',
-      'Password must be at least 6 characters long'
-    );
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    throw new AuthError('Invalid credentials format');
+  }
+
+  // Validate email format
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    throw new AuthError('Invalid email format');
+  }
+
+  // Validate password length
+  if (password.length < 8) {
+    throw new AuthError('Password must be at least 8 characters long');
   }
 }
 
-// Validate registration data
-export function validateRegisterData(data: RegisterData): void {
-  validateLoginCredentials(data);
+export async function validateRegisterData(data: RegisterData) {
+  const { email, password, username } = data;
 
-  if (data.email) {
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(data.email)) {
-      throw new AuthError('INVALID_CREDENTIALS', 'Invalid email format');
+  // First validate login credentials
+  await validateLoginCredentials({ email, password });
+
+  // Validate username
+  if (!username || typeof username !== 'string') {
+    throw new AuthError('Username is required');
+  }
+
+  if (username.length < 3 || username.length > 30) {
+    throw new AuthError('Username must be between 3 and 30 characters');
+  }
+
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+    throw new AuthError('Username can only contain letters, numbers, hyphens and underscores');
+  }
+
+  // Check if username or email is already taken
+  const existingUser = await User.findOne({
+    $or: [{ email }, { username }]
+  });
+
+  if (existingUser) {
+    if (existingUser.email === email) {
+      throw new AuthError('Email already in use');
+    }
+    if (existingUser.username === username) {
+      throw new AuthError('Username already taken');
     }
   }
 }
 
-// Verify user exists and is not banned
-export async function verifyUserStatus(user: { banned: boolean } | null) {
+export async function verifyUserStatus(user: any) {
   if (!user) {
-    throw new AuthError('USER_NOT_FOUND', 'User not found');
+    throw new AuthError('User not found');
   }
 
   if (user.banned) {
-    throw new AuthError('USER_BANNED', 'User is banned');
+    throw new AuthError('Account has been banned', 'FORBIDDEN');
+  }
+
+  // Optional: Check if email is verified
+  if (!user.verified) {
+    // You might want to handle unverified users differently
+    console.warn('Unverified user login:', user.email);
   }
 }
 
-// Check if username is available
-export async function checkUsernameAvailability(username: string): Promise<void> {
-  const existingUser = await User.findOne({ username });
-  if (existingUser) {
-    throw new AuthError('USERNAME_TAKEN', 'Username is already taken');
+/**
+ * Validates role access
+ */
+export function validateRoleAccess(
+  requiredRoles: string[],
+  userRole?: string
+): boolean {
+  if (!userRole || !requiredRoles.includes(userRole)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Get the token from cookies and verify it
+ */
+export async function getAuthUser(): Promise<JWTPayload> {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+
+  if (!token) {
+    throw new AuthError('No token found');
+  }
+
+  try {
+    const decoded = await verifyToken(token);
+    return decoded;
+  } catch (error) {
+    throw new AuthError('Invalid token');
   }
 }
 
-// Check if email is available
-export async function checkEmailAvailability(email: string): Promise<void> {
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new AuthError('EMAIL_TAKEN', 'Email is already registered');
-  }
-}
-
-// Require authentication middleware helper
+/**
+ * Require authentication for an endpoint
+ * Returns the authenticated user payload or throws AuthError
+ */
 export async function requireAuth(): Promise<JWTPayload> {
-  const { accessToken } = getTokensFromCookies();
-
-  if (!accessToken) {
-    throw new AuthError('UNAUTHORIZED', 'Authentication required');
+  try {
+    const user = await getAuthUser();
+    if (!user) {
+      throw new AuthError('Authentication required');
+    }
+    return user;
+  } catch (error) {
+    if (error instanceof AuthError) {
+      throw error;
+    }
+    throw new AuthError('Authentication failed', 'SERVER_ERROR');
   }
-
-  const payload = await verifyToken(accessToken);
-  if (!payload) {
-    throw new AuthError('INVALID_TOKEN', 'Invalid or expired token');
-  }
-
-  return payload;
 }
 
-// Require specific roles middleware helper
-export async function requireRole(allowedRoles: string[]): Promise<JWTPayload> {
-  const payload = await requireAuth();
+/**
+ * Require specific roles for an endpoint
+ * Returns the authenticated user payload or throws AuthError
+ */
+export async function requireRole(roles: string[]): Promise<JWTPayload> {
+  const user = await requireAuth();
 
-  if (!allowedRoles.includes(payload.role)) {
-    throw new AuthError(
-      'UNAUTHORIZED',
-      'You do not have permission to access this resource'
-    );
+  if (!validateRoleAccess(roles, user.role)) {
+    throw new AuthError('Insufficient permissions', 'FORBIDDEN');
   }
 
-  return payload;
+  return user;
 }
 
-// Validate password requirements
-export function validatePassword(password: string): void {
-  if (password.length < 6) {
-    throw new AuthError(
-      'INVALID_CREDENTIALS',
-      'Password must be at least 6 characters long'
-    );
+/**
+ * Require admin access for an endpoint
+ * Returns the authenticated user payload or throws AuthError
+ */
+export async function requireAdmin(): Promise<JWTPayload> {
+  const user = await requireAuth();
+
+  if (user.role !== 'admin') {
+    throw new AuthError('Admin access required', 'FORBIDDEN');
   }
 
-  // Add more password requirements as needed
-  // Example: require numbers, special characters, etc.
-}
-
-// Sanitize user input
-export function sanitizeUserInput(input: string): string {
-  // Remove any HTML tags
-  const withoutTags = input.replace(/<[^>]*>/g, '');
-  
-  // Remove multiple spaces
-  const withoutExtraSpaces = withoutTags.replace(/\s+/g, ' ');
-  
-  // Trim whitespace
-  return withoutExtraSpaces.trim();
+  return user;
 }

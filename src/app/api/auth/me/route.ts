@@ -1,26 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { User } from '@/models/User';
-import { requireAuth } from '@/lib/auth/validation';
 import { AuthError } from '@/lib/authTypes';
-import { withDb, handleOptions } from '@/lib/api-middleware';
+import { requireAuth } from '@/lib/auth';
+import { withDb } from '@/lib/api-middleware';
+import { User } from '@/models/User';
 
-export const GET = withDb(async (request: NextRequest) => {
+export const dynamic = 'force-dynamic';
+
+const handleGetMe = async (request: NextRequest) => {
   try {
-    // Verify authentication and get user ID
-    let payload;
-    try {
-      payload = await requireAuth();
-    } catch (error) {
-      // Return null for unauthorized users without error
-      if (error instanceof AuthError && error.type === 'UNAUTHORIZED') {
-        return NextResponse.json({ user: null }, { status: 401 });
-      }
-      throw error;
-    }
+    // Get authenticated user
+    const authUser = await requireAuth();
 
-    // Find user in database
-    const user = await User.findById(payload.userId);
-    
+    // Get full user data
+    const user = await User.findById(authUser.userId)
+      .select('-password -refreshToken');
+
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -28,31 +22,33 @@ export const GET = withDb(async (request: NextRequest) => {
       );
     }
 
-    // Convert to JSON to remove sensitive fields
-    const userData = user.toJSON();
-
-    return NextResponse.json({
-      user: userData
-    });
+    return NextResponse.json({ user });
   } catch (error) {
-    // Log only unexpected errors
-    if (!(error instanceof AuthError && error.type === 'UNAUTHORIZED')) {
-      console.error('Get user error:', error);
-    }
-
+    console.error('Get user error:', error);
     if (error instanceof AuthError) {
       return NextResponse.json(
         { error: error.message },
-        { status: error.type === 'SERVER_ERROR' ? 500 : 401 }
+        { status: error.type === 'UNAUTHORIZED' ? 401 : 500 }
       );
     }
-
     return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+      { error: 'Failed to get user data' },
       { status: 500 }
     );
   }
-});
+};
 
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'OPTIONS']);
+// Export handlers with middleware
+export const GET = withDb(handleGetMe);
+
+// Handle CORS preflight requests
+export async function OPTIONS(): Promise<NextResponse> {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}

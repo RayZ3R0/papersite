@@ -1,89 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from './mongodb';
+import { AuthError } from './authTypes';
 
-type ApiHandler = (req: NextRequest) => Promise<NextResponse>;
+export type ApiContext = {
+  params?: Record<string, string>;
+  searchParams?: Record<string, string>;
+};
 
-interface ApiMiddlewareOptions {
+export type ApiHandler = (
+  req: NextRequest,
+  ctx: ApiContext
+) => Promise<NextResponse>;
+
+interface WithDbOptions {
   requireConnection?: boolean;
 }
 
-/**
- * Higher-order function to wrap API route handlers with database connection
- * and error handling
- */
-export function withDb(handler: ApiHandler, options: ApiMiddlewareOptions = {}) {
-  return async function (req: NextRequest) {
+export function createErrorResponse(error: string | Error | AuthError, status = 500) {
+  if (error instanceof AuthError) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.type === 'UNAUTHORIZED' ? 401 : error.type === 'FORBIDDEN' ? 403 : 500 }
+    );
+  }
+
+  const message = error instanceof Error ? error.message : error;
+  return NextResponse.json({ error: message }, { status });
+}
+
+export function withDb(handler: ApiHandler, options: WithDbOptions = {}) {
+  return async function (req: NextRequest, ctx: ApiContext) {
     try {
-      // Skip DB connection during build
-      if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-        if (options.requireConnection) {
-          return NextResponse.json(
-            { error: 'Service unavailable during build' },
-            { status: 503 }
-          );
-        }
-        return handler(req);
+      // Connect to MongoDB if required
+      if (options.requireConnection || process.env.NODE_ENV !== 'production') {
+        await dbConnect();
       }
 
-      // Connect to database
-      await dbConnect();
-      
-      // Execute the handler
-      const response = await handler(req);
-      return response;
+      // Call the handler
+      return await handler(req, ctx);
     } catch (error) {
-      console.error('API Error:', error);
-      
-      // If MongoDB connection error during build, return 503
-      if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-        return NextResponse.json(
-          { error: 'Service temporarily unavailable' },
-          { status: 503 }
-        );
-      }
-
-      // Handle known errors
-      if (error instanceof Error) {
-        const status = error.name === 'ValidationError' ? 400 : 500;
-        return NextResponse.json(
-          { error: error.message },
-          { status }
-        );
-      }
-
-      // Handle unknown errors
-      return NextResponse.json(
-        { error: 'An unexpected error occurred' },
-        { status: 500 }
-      );
+      console.error('API error:', error);
+      return createErrorResponse(error instanceof Error ? error : 'Internal server error');
     }
   };
 }
 
-/**
- * Helper to handle OPTIONS requests for CORS
- */
-export function handleOptions(methods: string[] = ['GET', 'POST', 'OPTIONS']) {
-  return new NextResponse(null, {
-    headers: {
-      'Allow': methods.join(', ')
-    }
-  });
-}
-
-/**
- * Helper to create a JSON error response
- */
-export function createErrorResponse(message: string, status: number = 500) {
-  return NextResponse.json(
-    { error: message },
-    { status }
-  );
-}
-
-/**
- * Helper to create a JSON success response
- */
-export function createSuccessResponse(data: any, status: number = 200) {
-  return NextResponse.json(data, { status });
+// Typesafe handler for preflight requests
+export function handleOptions(allowedMethods: string[]) {
+  return async function(): Promise<NextResponse> {
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Allow': allowedMethods.join(', '),
+        'Access-Control-Allow-Methods': allowedMethods.join(', '),
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      }
+    });
+  };
 }

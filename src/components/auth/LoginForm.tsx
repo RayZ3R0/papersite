@@ -17,8 +17,8 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     clearError();
-
     try {
       await login(formData.username, formData.password);
       onSuccess?.();

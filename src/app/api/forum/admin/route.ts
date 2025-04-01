@@ -1,90 +1,82 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireRole } from '@/lib/auth/validation';
-import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
+import { requireAdmin } from '@/lib/auth';
+import { withDb } from '@/lib/api-middleware';
 import { Post } from '@/models/Post';
 import mongoose from 'mongoose';
 
-// Make route dynamic
 export const dynamic = 'force-dynamic';
 
-function isValidId(id: string): boolean {
-  return mongoose.isValidObjectId(id);
-}
-
-export const POST = withDb(async (request: NextRequest) => {
+const handleAction = async (request: NextRequest) => {
   try {
-    // Verify admin role
-    await requireRole(['admin']);
+    // Verify admin access
+    await requireAdmin();
 
-    // During build, return mock response
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({
-        success: true,
-        message: 'Mock admin action successful'
-      });
-    }
-
+    // Get action details
     const body = await request.json();
     const { action, targetId } = body;
 
-    if (!targetId || !isValidId(targetId)) {
-      return createErrorResponse('Invalid target ID', 400);
+    if (!targetId || !mongoose.isValidObjectId(targetId)) {
+      return NextResponse.json(
+        { error: 'Invalid target ID' },
+        { status: 400 }
+      );
     }
 
+    // Find target post
+    const post = await Post.findById(targetId);
+    if (!post) {
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
+    }
+
+    // Handle different actions
     switch (action) {
-      case 'pin': {
-        const post = await Post.findById(targetId);
-        if (!post) return createErrorResponse('Post not found', 404);
-        
+      case 'pin':
         post.isPinned = !post.isPinned;
-        await post.save();
-
-        return NextResponse.json({
-          success: true,
-          message: `Post ${post.isPinned ? 'pinned' : 'unpinned'} successfully`,
-          post
-        });
-      }
-
-      case 'lock': {
-        const post = await Post.findById(targetId);
-        if (!post) return createErrorResponse('Post not found', 404);
-        
+        break;
+      case 'lock':
         post.isLocked = !post.isLocked;
-        await post.save();
-
-        return NextResponse.json({
-          success: true,
-          message: `Post ${post.isLocked ? 'locked' : 'unlocked'} successfully`,
-          post
-        });
-      }
-
-      case 'delete': {
-        const post = await Post.findById(targetId);
-        if (!post) return createErrorResponse('Post not found', 404);
-        
-        await post.deleteOne();
-
-        return NextResponse.json({
-          success: true,
-          message: 'Post deleted successfully'
-        });
-      }
-
+        break;
       default:
-        return createErrorResponse('Invalid action', 400);
+        return NextResponse.json(
+          { error: 'Invalid action' },
+          { status: 400 }
+        );
     }
+
+    // Save changes
+    await post.save();
+
+    return NextResponse.json({
+      success: true,
+      post: {
+        id: post._id,
+        isPinned: post.isPinned,
+        isLocked: post.isLocked
+      }
+    });
   } catch (error) {
     console.error('Admin action error:', error);
-    return createErrorResponse(
-      error instanceof Error ? error.message : 'Admin action failed',
-      error instanceof Error && error.name === 'AuthError' ? 401 : 500
+    return NextResponse.json(
+      { error: 'Failed to perform action' },
+      { status: 500 }
     );
   }
-}, { requireConnection: true });
+};
 
-// Handle preflight requests
-export async function OPTIONS() {
-  return handleOptions(['POST', 'OPTIONS']);
+// Export handlers with middleware
+export const POST = withDb(handleAction);
+
+// Handle CORS preflight requests
+export async function OPTIONS(): Promise<NextResponse> {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
 }

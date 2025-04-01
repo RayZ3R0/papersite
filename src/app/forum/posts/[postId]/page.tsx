@@ -7,6 +7,7 @@ import ProtectedContent from '@/components/auth/ProtectedContent';
 import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
 import PostContent from '@/components/forum/PostContent';
 import ReplyContent from '@/components/forum/ReplyContent';
+import ReplyForm from '@/components/forum/ReplyForm';
 
 interface Post {
   _id: string;
@@ -97,7 +98,7 @@ export default function PostPage() {
       setPost(updatedPost);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update post');
-      throw err; // Re-throw to be caught by EditDialog
+      throw err;
     }
   }
 
@@ -147,7 +148,7 @@ export default function PostPage() {
     }
   }
 
-  async function handleDelete() {
+  async function handleDeletePost() {
     if (!window.confirm('Are you sure you want to delete this post?')) {
       return;
     }
@@ -215,24 +216,28 @@ export default function PostPage() {
     }
   }
 
+  const handleReplyAdded = (newReply: Reply) => {
+    setReplies(prev => [...prev, newReply]);
+  };
+
   return (
     <ProtectedContent
       roles={['user', 'moderator', 'admin']}
       message="Please sign in to view this post"
     >
-      <div className="container mx-auto p-4 max-w-4xl">
+      <div className="container mx-auto p-4 max-w-4xl space-y-6">
         {isLoading ? (
           <LoadingSpinner />
         ) : error ? (
-          <div className="p-4 bg-error/10 text-error rounded">
+          <div className="p-4 bg-error/10 text-error rounded-lg">
             {error}
           </div>
         ) : post ? (
-          <div className="space-y-6">
+          <>
             <PostContent
               post={post}
               onEdit={handleEditPost}
-              onDelete={handleDelete}
+              onDelete={handleDeletePost}
               onPin={handlePin}
               onLock={handleLock}
             />
@@ -248,7 +253,15 @@ export default function PostPage() {
                 />
               ))}
             </div>
-          </div>
+
+            <div className="pt-6">
+              <ReplyForm
+                postId={post._id}
+                isLocked={post.isLocked}
+                onReplyAdded={handleReplyAdded}
+              />
+            </div>
+          </>
         ) : (
           <div className="text-center py-8 text-text-muted">
             Post not found

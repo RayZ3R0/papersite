@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
 import { canPerformAction } from '@/lib/forumUtils';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { JWTPayload } from '@/lib/auth/jwt';
+import { UserWithoutPassword, jwtToUser } from '@/lib/authTypes';
 
 interface UserActionMenuProps {
   authorId: string;
@@ -29,21 +31,24 @@ export default function UserActionMenu({
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState('');
-  const [positionTop, setPositionTop] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [positionTop, setPositionTop] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const canEdit = canPerformAction('edit', user, authorId, type);
-  const canDelete = canPerformAction('delete', user, authorId, type);
-  const canPin = canPerformAction('pin', user, authorId, type);
-  const canLock = canPerformAction('lock', user, authorId, type);
+  // Convert JWT user to UserWithoutPassword format
+  const authUser = user ? jwtToUser(user) : null;
+
+  const canEdit = canPerformAction('edit', authUser, authorId, type);
+  const canDelete = canPerformAction('delete', authUser, authorId, type);
+  const canPin = canPerformAction('pin', authUser, authorId, type);
+  const canLock = canPerformAction('lock', authUser, authorId, type);
 
   const closeMenu = useCallback(() => setIsOpen(false), []);
   useClickOutside(menuRef, closeMenu, isOpen);
 
   // Calculate if the menu should appear above or below based on available space
-  useEffect(() => {
+  React.useEffect(() => {
     if (isOpen && buttonRef.current && dropdownRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const menuHeight = dropdownRef.current.offsetHeight;
@@ -72,7 +77,6 @@ export default function UserActionMenu({
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Action button with improved hover states */}
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -100,7 +104,6 @@ export default function UserActionMenu({
         </svg>
       </button>
 
-      {/* Dropdown menu positioned relative to button */}
       {isOpen && (
         <div 
           ref={dropdownRef}
@@ -183,7 +186,6 @@ export default function UserActionMenu({
         </div>
       )}
 
-      {/* Error message with animation */}
       {error && (
         <div 
           className="absolute right-0 mt-2 w-64 p-3 bg-error text-white text-sm rounded-lg z-[502] animate-in fade-in slide-in-from-top-1"

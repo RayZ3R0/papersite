@@ -1,94 +1,65 @@
 import mongoose from 'mongoose';
-import { UserWithoutPassword } from '@/lib/authTypes';
+import { User } from './User';
+import { UserRole } from '@/lib/auth/jwt';
 
-// Base interface with common properties
-interface BaseReply {
+export interface IReply {
+  _id: mongoose.Types.ObjectId;
+  postId: mongoose.Types.ObjectId;
   content: string;
+  author: mongoose.Types.ObjectId;
   username: string;
   createdAt: Date;
   edited: boolean;
   editedAt?: Date;
-  likes: string[];
-  userInfo?: Partial<UserWithoutPassword>;
+  userInfo?: {
+    username: string;
+    role: UserRole;
+    verified: boolean;
+  };
 }
 
-// Client-side interface
-export interface IReply extends BaseReply {
-  _id?: string;
-  author: string;
-  postId: string;
-}
+const replySchema = new mongoose.Schema<IReply>(
+  {
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+      required: true,
+      index: true
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 1,
+      maxlength: 10000
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    },
+    username: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    edited: {
+      type: Boolean,
+      default: false
+    },
+    editedAt: {
+      type: Date
+    }
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
+);
 
-// Server-side interface
-export interface IReplyModel extends BaseReply {
-  _id?: mongoose.Types.ObjectId;
-  author: mongoose.Types.ObjectId;
-  postId: mongoose.Types.ObjectId;
-}
-
-// Mock methods that always return empty results
-const createMockMethods = () => ({
-  find: () => ({
-    sort: () => ({
-      populate: () => Promise.resolve([])
-    }),
-    populate: () => Promise.resolve([])
-  }),
-  findById: () => ({
-    populate: () => Promise.resolve(null)
-  }),
-  exists: () => Promise.resolve(false),
-  deleteMany: () => Promise.resolve({ acknowledged: true }),
-  deleteOne: () => Promise.resolve({ acknowledged: true }),
-  populate: () => Promise.resolve(null),
-  create: () => Promise.resolve({}),
-  save: () => Promise.resolve({}),
-});
-
-// Define schema
-const replySchema = new mongoose.Schema<IReplyModel>({
-  content: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 1,
-    maxlength: 10000
-  },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  username: {
-    type: String,
-    required: true
-  },
-  postId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  edited: {
-    type: Boolean,
-    default: false
-  },
-  editedAt: {
-    type: Date
-  },
-  likes: [{
-    type: String,
-    ref: 'User'
-  }]
-}, {
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
-});
-
-// Virtual fields for user info
+// Virtual field for user info
 replySchema.virtual('userInfo', {
   ref: 'User',
   localField: 'author',
@@ -97,31 +68,46 @@ replySchema.virtual('userInfo', {
   options: { select: 'username role verified' }
 });
 
-// Create indexes
-replySchema.index({ postId: 1, createdAt: 1 });
-replySchema.index({ author: 1 });
-replySchema.index({ username: 1 });
-
-// Initialize model with proper checks
-function getReplyModel(): mongoose.Model<IReplyModel> {
-  // Client-side or build-time
-  if (typeof window !== 'undefined' || (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI)) {
-    return createMockMethods() as unknown as mongoose.Model<IReplyModel>;
+// Make sure virtuals are included when converting to JSON
+replySchema.set('toJSON', {
+  virtuals: true,
+  transform: function(doc, ret) {
+    delete ret.__v;
+    // Convert _id to string
+    if (ret._id) {
+      ret._id = ret._id.toString();
+    }
+    // Convert dates to ISO strings
+    if (ret.createdAt) {
+      ret.createdAt = ret.createdAt.toISOString();
+    }
+    if (ret.editedAt) {
+      ret.editedAt = ret.editedAt.toISOString();
+    }
+    return ret;
   }
+});
 
-  // Server-side with mongoose available
-  if (mongoose.connection.readyState === 1) {
-    try {
-      return mongoose.models.Reply || mongoose.model<IReplyModel>('Reply', replySchema);
-    } catch {
-      return mongoose.model<IReplyModel>('Reply', replySchema);
+// Clean content before save
+replySchema.pre('save', function(next) {
+  if (this.isModified('content')) {
+    // Basic XSS prevention
+    this.content = this.content
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    
+    // Set edited flag and timestamp
+    if (!this.isNew) {
+      this.edited = true;
+      this.editedAt = new Date();
     }
   }
+  next();
+});
 
-  // If no connection, return mock methods
-  return createMockMethods() as unknown as mongoose.Model<IReplyModel>;
-}
+// Create indexes
+replySchema.index({ postId: 1, createdAt: -1 });
+replySchema.index({ author: 1, createdAt: -1 });
 
-// Create and export the model
-export const Reply = getReplyModel();
-export default Reply;
+export const Reply = mongoose.models.Reply || 
+  mongoose.model<IReply>('Reply', replySchema);
