@@ -1,44 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth';
-import { withDb } from '@/lib/api-middleware';
 import { Post } from '@/models/Post';
+import { withDb, handleOptions } from '@/lib/api-middleware';
+import { requireAuth } from '@/lib/auth/validation';
 
+// Make route dynamic
 export const dynamic = 'force-dynamic';
 
-const handleGetPosts = async (request: NextRequest) => {
-  try {
-    // Verify user auth
-    await requireAuth();
-    
-    // Get query params
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const sort = searchParams.get('sort') || 'lastReplyAt';
-    const order = searchParams.get('order') || 'desc';
+function createMockPost() {
+  return {
+    _id: 'mock-id',
+    title: 'Mock Post',
+    content: 'Mock Content',
+    author: 'mock-author',
+    username: 'mock-user',
+    createdAt: new Date(),
+    edited: false,
+    likes: [],
+    views: 0,
+    isPinned: false,
+    isLocked: false,
+    tags: [],
+    replyCount: 0,
+    userInfo: {
+      username: 'mock-user',
+      role: 'user',
+      verified: false
+    }
+  };
+}
 
-    // Build query
-    const query = Post.find()
-      .sort({ [sort]: order === 'desc' ? -1 : 1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
+export const GET = withDb(async (request: NextRequest) => {
+  try {
+    // During build, return mock data
+    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+      return NextResponse.json({ 
+        posts: [createMockPost()]
+      });
+    }
+
+    // Check if Post model is available
+    if (!Post || typeof Post.find !== 'function') {
+      console.error('Post model not properly initialized');
+      return NextResponse.json({ posts: [] });
+    }
+
+    const posts = await Post.find()
+      .sort({ isPinned: -1, createdAt: -1 })
+      .limit(50)
       .populate('userInfo', 'username role verified');
 
-    // Get posts and total count
-    const [posts, total] = await Promise.all([
-      query.exec(),
-      Post.countDocuments()
-    ]);
-
-    return NextResponse.json({
-      posts,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    });
+    return NextResponse.json({ posts });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json(
@@ -46,14 +57,29 @@ const handleGetPosts = async (request: NextRequest) => {
       { status: 500 }
     );
   }
-};
+}, { requireConnection: false }); // Allow static builds with mock data
 
-const handleCreatePost = async (request: NextRequest) => {
+export const POST = withDb(async (request: NextRequest) => {
   try {
-    // Get authenticated user
-    const user = await requireAuth();
+    // Verify user authentication
+    const payload = await requireAuth();
 
-    // Get post data
+    // During build, return mock response
+    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+      return NextResponse.json({
+        post: {
+          ...createMockPost(),
+          author: payload.userId,
+          username: payload.username
+        }
+      });
+    }
+
+    // Check if Post model is available
+    if (!Post || typeof Post.create !== 'function') {
+      throw new Error('Post model not properly initialized');
+    }
+
     const body = await request.json();
     const { title, content } = body;
 
@@ -64,23 +90,20 @@ const handleCreatePost = async (request: NextRequest) => {
       );
     }
 
-    // Create post
     const post = new Post({
       title,
       content,
-      author: user._id || user.userId,
-      username: user.username
+      author: payload.userId,
+      username: payload.username
     });
 
     await post.save();
-
-    // Populate user info
     await Post.populate(post, {
       path: 'userInfo',
       select: 'username role verified'
     });
 
-    return NextResponse.json({ post }, { status: 201 });
+    return NextResponse.json({ post });
   } catch (error) {
     console.error('Error creating post:', error);
     return NextResponse.json(
@@ -88,20 +111,7 @@ const handleCreatePost = async (request: NextRequest) => {
       { status: 500 }
     );
   }
-};
+}, { requireConnection: true }); // Require DB connection for writes
 
-// Export handlers with middleware
-export const GET = withDb(handleGetPosts, { requireConnection: false });
-export const POST = withDb(handleCreatePost, { requireConnection: true });
-
-// Handle CORS preflight requests
-export async function OPTIONS(): Promise<NextResponse> {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
-}
+// Handle preflight requests
+export const OPTIONS = () => handleOptions(['GET', 'POST', 'OPTIONS']);

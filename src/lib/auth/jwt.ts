@@ -1,140 +1,115 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { JWTPayload } from '@/lib/authTypes';
 
-// Get JWT secret from environment
-const JWT_SECRET = process.env.JWT_SECRET || '';
-if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('JWT_SECRET is not defined');
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+const ACCESS_TOKEN_EXPIRY = '1h';
+const REFRESH_TOKEN_EXPIRY = '7d';
+
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET is not set in environment variables');
 }
 
-export type UserRole = 'user' | 'moderator' | 'admin';
+// Generate access token
+export async function signAccessToken(payload: JWTPayload): Promise<string> {
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(ACCESS_TOKEN_EXPIRY)
+    .sign(SECRET);
 
-export interface JWTPayload {
-  _id?: string;       // Optional for backward compatibility
-  userId: string;     // Main identifier
-  username: string;
-  email: string;
-  role: UserRole;
-  jti?: string;
-  iat?: number;
-  exp?: number;
-  // Optional fields for compatibility with UserWithoutPassword
-  createdAt?: Date;
-  banned?: boolean;
-  verified?: boolean;
-  lastLogin?: Date;
+  return token;
 }
 
-export interface TokenResponse {
-  token: string;
-  expiresAt: number;
+// Generate refresh token
+export async function signRefreshToken(payload: JWTPayload): Promise<string> {
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(REFRESH_TOKEN_EXPIRY)
+    .sign(SECRET);
+
+  return token;
 }
 
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
-export function isValidRole(role: string): role is UserRole {
-  return ['user', 'moderator', 'admin'].includes(role);
-}
-
-export async function signToken(payload: JWTPayload): Promise<TokenResponse> {
+// Verify token
+export async function verifyToken<T = JWTPayload>(token: string): Promise<T | null> {
   try {
-    const iat = Math.floor(Date.now() / 1000);
-    const exp = iat + 24 * 60 * 60; // 24 hours
-    const jti = crypto.randomUUID();
-
-    const token = await new SignJWT({
-      ...payload,
-      iat,
-      exp,
-      jti,
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setJti(jti)
-      .setIssuedAt(iat)
-      .setExpirationTime(exp)
-      .sign(new TextEncoder().encode(JWT_SECRET));
-
-    return {
-      token,
-      expiresAt: exp,
-    };
+    const { payload } = await jwtVerify(token, SECRET);
+    return payload as T;
   } catch (error) {
-    console.error('Error signing token:', error);
-    throw new Error('Failed to sign token');
+    return null;
   }
 }
 
-export async function verifyToken(token: string): Promise<JWTPayload> {
-  try {
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(JWT_SECRET),
-      {
-        algorithms: ['HS256'],
-      }
-    );
-
-    // Ensure required fields are present
-    if (!payload.userId || !payload.username || !payload.email || !payload.role) {
-      throw new Error('Invalid token payload');
-    }
-
-    // Validate role
-    if (!isValidRole(payload.role as string)) {
-      throw new Error('Invalid user role');
-    }
-
-    // Ensure _id is always present by using userId if _id is not provided
-    const verifiedPayload: JWTPayload = {
-      userId: payload.userId as string,
-      username: payload.username as string,
-      email: payload.email as string,
-      role: payload.role as UserRole,
-      _id: (payload._id || payload.userId) as string, // Use userId as fallback
-      jti: payload.jti as string,
-      iat: payload.iat,
-      exp: payload.exp,
-      createdAt: payload.createdAt as Date || new Date(),
-      banned: payload.banned as boolean || false,
-      verified: payload.verified as boolean || false,
-      lastLogin: payload.lastLogin as Date || new Date()
-    };
-    
-    return verifiedPayload;
-  } catch (error) {
-    console.error('Error verifying token:', error);
-    throw new Error('Invalid token');
-  }
-}
-
-export async function getToken(name = 'token'): Promise<string | null> {
+// Set token cookies
+export function setTokenCookies(accessToken: string, refreshToken: string) {
   const cookieStore = cookies();
-  return cookieStore.get(name)?.value || null;
+  const secure = process.env.NODE_ENV === 'production';
+
+  cookieStore.set('access_token', accessToken, {
+    httpOnly: true,
+    secure,
+    sameSite: 'strict',
+    maxAge: 60 * 60, // 1 hour
+    path: '/',
+  });
+
+  cookieStore.set('refresh_token', refreshToken, {
+    httpOnly: true,
+    secure,
+    sameSite: 'strict',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
+  });
 }
 
-export async function getTokensFromCookies(): Promise<TokenPair> {
-  const [accessToken, refreshToken] = await Promise.all([
-    getToken('token'),
-    getToken('refreshToken')
-  ]);
+// Clear token cookies
+export function clearTokenCookies() {
+  const cookieStore = cookies();
+  const secure = process.env.NODE_ENV === 'production';
 
+  cookieStore.set('access_token', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'strict',
+    maxAge: 0,
+    path: '/',
+  });
+
+  cookieStore.set('refresh_token', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'strict',
+    maxAge: 0,
+    path: '/',
+  });
+}
+
+// Get tokens from cookies
+export function getTokensFromCookies() {
+  const cookieStore = cookies();
+  
   return {
-    accessToken: accessToken || '',
-    refreshToken: refreshToken || ''
+    accessToken: cookieStore.get('access_token')?.value,
+    refreshToken: cookieStore.get('refresh_token')?.value,
   };
 }
 
-export async function getCurrentUser(): Promise<JWTPayload | null> {
-  try {
-    const token = await getToken();
-    if (!token) return null;
+// Set single cookie (utility function)
+export function setCookie(
+  name: string,
+  value: string,
+  options: { maxAge?: number; path?: string; } = {}
+) {
+  const cookieStore = cookies();
+  const secure = process.env.NODE_ENV === 'production';
 
-    return await verifyToken(token);
-  } catch (error) {
-    console.error('Error getting current user:', error);
-    return null;
-  }
+  cookieStore.set(name, value, {
+    httpOnly: true,
+    secure,
+    sameSite: 'strict',
+    path: '/',
+    ...options,
+  });
 }

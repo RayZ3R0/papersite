@@ -1,78 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthError } from '@/lib/authTypes';
 import { registerUser } from '@/lib/auth';
-import { withDb } from '@/lib/api-middleware';
-import { cookies } from 'next/headers';
+import { AuthError } from '@/lib/authTypes';
+import { withDb, handleOptions } from '@/lib/api-middleware';
 
-export const dynamic = 'force-dynamic';
-
-const handleRegister = async (request: NextRequest) => {
+export const POST = withDb(async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const {
-      email,
-      password,
-      username,
-      subjects,
-      session,
-      institution,
-      studyGoals,
-      notifications,
-      studyReminders,
-      profilePicture
-    } = body;
+    const { username, password, email } = body;
 
-    // Attempt registration with all data
-    const result = await registerUser({
-      email,
-      password,
-      username,
-      subjects,
-      session,
-      institution,
-      studyGoals,
-      notifications,
-      studyReminders,
-      profilePicture
-    });
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: 'Username and password are required' },
+        { status: 400 }
+      );
+    }
 
-    // Set auth cookie
-    const cookieStore = cookies();
-    cookieStore.set('token', result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      expires: new Date(result.expiresAt * 1000)
-    });
+    // Username validation
+    if (username.length < 3) {
+      return NextResponse.json(
+        { error: 'Username must be at least 3 characters long' },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ success: true });
+    // Password validation
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters long' },
+        { status: 400 }
+      );
+    }
+
+    // Email validation if provided
+    if (email && !email.match(/^\S+@\S+\.\S+$/)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    const result = await registerUser({ username, password, email });
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Registration error:', error);
+
     if (error instanceof AuthError) {
       return NextResponse.json(
         { error: error.message },
-        { status: error.type === 'UNAUTHORIZED' ? 401 : 500 }
+        { status: error.type === 'SERVER_ERROR' ? 500 : 400 }
       );
     }
+
+    // Handle duplicate key errors from MongoDB
+    if (error instanceof Error && 'code' in error && (error as any).code === 11000) {
+      return NextResponse.json(
+        { error: 'Username or email is already taken' },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Registration failed' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
-};
+});
 
-// Export handlers with middleware
-export const POST = withDb(handleRegister);
-
-// Handle CORS preflight requests
-export async function OPTIONS(): Promise<NextResponse> {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
-}
+// Handle preflight requests
+export const OPTIONS = () => handleOptions(['POST', 'OPTIONS']);

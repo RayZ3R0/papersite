@@ -1,56 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthError } from '@/lib/authTypes';
 import { loginUser } from '@/lib/auth';
-import { withDb } from '@/lib/api-middleware';
-import { cookies } from 'next/headers';
+import { AuthError } from '@/lib/authTypes';
+import { withDb, handleOptions } from '@/lib/api-middleware';
 
-export const dynamic = 'force-dynamic';
-
-const handleLogin = async (request: NextRequest) => {
+export const POST = withDb(async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { username, password } = body;
 
-    // Attempt login
-    const result = await loginUser(email, password);
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: 'Username and password are required' },
+        { status: 400 }
+      );
+    }
 
-    // Set auth cookie
-    const cookieStore = cookies();
-    cookieStore.set('token', result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      expires: new Date(result.expiresAt * 1000)
-    });
+    const result = await loginUser({ username, password });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Login error:', error);
+
     if (error instanceof AuthError) {
       return NextResponse.json(
         { error: error.message },
-        { status: error.type === 'UNAUTHORIZED' ? 401 : 500 }
+        { status: error.type === 'SERVER_ERROR' ? 500 : 400 }
       );
     }
+
     return NextResponse.json(
-      { error: 'An error occurred during login' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
-};
+});
 
-// Export handlers with middleware
-export const POST = withDb(handleLogin);
-
-// Handle CORS preflight requests
-export async function OPTIONS(): Promise<NextResponse> {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
-}
+// Handle preflight requests
+export const OPTIONS = () => handleOptions(['POST', 'OPTIONS']);

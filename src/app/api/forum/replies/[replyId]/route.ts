@@ -1,76 +1,121 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth/validation';
-import { withDb, handleOptions, ApiContext } from '@/lib/api-middleware';
-import { Post } from '@/models/Post';
 import { Reply } from '@/models/Reply';
-import { canPerformAction } from '@/lib/forumUtils';
-import { JWTPayload } from '@/lib/auth/jwt';
-import { UserWithoutPassword, jwtToUser } from '@/lib/authTypes';
+import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
+import { requireAuth } from '@/lib/auth/validation';
 import mongoose from 'mongoose';
 
+// Make route dynamic
 export const dynamic = 'force-dynamic';
 
-const handlePatch = async (request: NextRequest, context: ApiContext) => {
-  try {
-    // Verify user authentication and get token data
-    const authData = await requireAuth();
+function getReplyId(request: NextRequest): string | null {
+  const segments = request.url.split('/');
+  const replyId = segments[segments.length - 1];
+  return mongoose.isValidObjectId(replyId) ? replyId : null;
+}
 
-    // Get reply ID and validate
-    const { replyId } = context.params || {};
-    if (!replyId || !mongoose.isValidObjectId(replyId)) {
-      return NextResponse.json(
-        { error: 'Invalid reply ID' },
-        { status: 400 }
-      );
+export const GET = withDb(async (request: NextRequest) => {
+  try {
+    // During build, return mock data
+    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+      return NextResponse.json({
+        reply: {
+          _id: 'mock-reply-id',
+          content: 'Mock Reply Content',
+          author: 'mock-author',
+          username: 'mock-user',
+          postId: 'mock-post-id',
+          createdAt: new Date(),
+          edited: false,
+          likes: []
+        }
+      });
     }
 
-    // Find reply
+    const replyId = getReplyId(request);
+    if (!replyId) {
+      return createErrorResponse('Invalid reply ID', 400);
+    }
+
+    const reply = await Reply.findById(replyId)
+      .populate('userInfo', 'username role verified');
+
+    if (!reply) {
+      return createErrorResponse('Reply not found', 404);
+    }
+
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error('Error fetching reply:', error);
+    return createErrorResponse('Failed to fetch reply');
+  }
+}, { requireConnection: false }); // Allow static builds with mock data
+
+export const DELETE = withDb(async (request: NextRequest) => {
+  try {
+    // Verify user authentication
+    const payload = await requireAuth();
+
+    const replyId = getReplyId(request);
+    if (!replyId) {
+      return createErrorResponse('Invalid reply ID', 400);
+    }
+
     const reply = await Reply.findById(replyId);
     if (!reply) {
-      return NextResponse.json(
-        { error: 'Reply not found' },
-        { status: 404 }
-      );
+      return createErrorResponse('Reply not found', 404);
     }
 
-    // Check if post is locked
-    const post = await Post.findById(reply.postId);
-    if (post?.isLocked) {
-      return NextResponse.json(
-        { error: 'This thread is locked' },
-        { status: 403 }
-      );
+    // Check if user is author or admin
+    if (reply.author.toString() !== payload.userId && payload.role !== 'admin') {
+      return createErrorResponse('Not authorized to delete this reply', 403);
     }
 
-    // Convert auth data to UserWithoutPassword format
-    const user = jwtToUser(authData);
+    await reply.deleteOne();
 
-    // Check permissions
-    if (!canPerformAction('edit', user, reply.author.toString(), 'reply')) {
-      return NextResponse.json(
-        { error: 'Not authorized to edit this reply' },
-        { status: 403 }
-      );
+    return NextResponse.json({
+      success: true,
+      message: 'Reply deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting reply:', error);
+    return createErrorResponse('Failed to delete reply');
+  }
+}, { requireConnection: true }); // Require DB connection for writes
+
+export const PATCH = withDb(async (request: NextRequest) => {
+  try {
+    // Verify user authentication
+    const payload = await requireAuth();
+
+    const replyId = getReplyId(request);
+    if (!replyId) {
+      return createErrorResponse('Invalid reply ID', 400);
     }
 
-    // Get content
+    const reply = await Reply.findById(replyId);
+    if (!reply) {
+      return createErrorResponse('Reply not found', 404);
+    }
+
+    // Check if user is author or admin
+    if (reply.author.toString() !== payload.userId && payload.role !== 'admin') {
+      return createErrorResponse('Not authorized to edit this reply', 403);
+    }
+
     const body = await request.json();
     const { content } = body;
 
-    if (!content || typeof content !== 'string') {
-      return NextResponse.json(
-        { error: 'Content is required' },
-        { status: 400 }
-      );
+    if (!content) {
+      return createErrorResponse('Content is required', 400);
     }
 
-    // Update reply
     reply.content = content;
     reply.edited = true;
     reply.editedAt = new Date();
+
     await reply.save();
 
-    // Populate user info
+    // Populate user info before returning
     await Reply.populate(reply, {
       path: 'userInfo',
       select: 'username role verified'
@@ -79,80 +124,9 @@ const handlePatch = async (request: NextRequest, context: ApiContext) => {
     return NextResponse.json({ reply });
   } catch (error) {
     console.error('Error updating reply:', error);
-    return NextResponse.json(
-      { error: 'Failed to update reply' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to update reply');
   }
-};
-
-const handleDelete = async (request: NextRequest, context: ApiContext) => {
-  try {
-    // Verify user authentication and get token data
-    const authData = await requireAuth();
-
-    // Get reply ID and validate
-    const { replyId } = context.params || {};
-    if (!replyId || !mongoose.isValidObjectId(replyId)) {
-      return NextResponse.json(
-        { error: 'Invalid reply ID' },
-        { status: 400 }
-      );
-    }
-
-    // Find reply
-    const reply = await Reply.findById(replyId);
-    if (!reply) {
-      return NextResponse.json(
-        { error: 'Reply not found' },
-        { status: 404 }
-      );
-    }
-
-    // Check if post is locked
-    const post = await Post.findById(reply.postId);
-    if (post?.isLocked) {
-      return NextResponse.json(
-        { error: 'This thread is locked' },
-        { status: 403 }
-      );
-    }
-
-    // Convert auth data to UserWithoutPassword format
-    const user = jwtToUser(authData);
-
-    // Check permissions
-    if (!canPerformAction('delete', user, reply.author.toString(), 'reply')) {
-      return NextResponse.json(
-        { error: 'Not authorized to delete this reply' },
-        { status: 403 }
-      );
-    }
-
-    // Delete reply
-    await reply.deleteOne();
-
-    // Decrement reply count on post
-    await Post.findByIdAndUpdate(reply.postId, {
-      $inc: { replyCount: -1 }
-    });
-
-    return NextResponse.json(
-      { message: 'Reply deleted successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error deleting reply:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete reply' },
-      { status: 500 }
-    );
-  }
-};
-
-// Export the handlers with middleware
-export const PATCH = withDb(handlePatch, { requireConnection: true });
-export const DELETE = withDb(handleDelete, { requireConnection: true });
+}, { requireConnection: true }); // Require DB connection for writes
 
 // Handle preflight requests
-export const OPTIONS = handleOptions(['PATCH', 'DELETE', 'OPTIONS']);
+export const OPTIONS = () => handleOptions(['GET', 'DELETE', 'PATCH', 'OPTIONS']);

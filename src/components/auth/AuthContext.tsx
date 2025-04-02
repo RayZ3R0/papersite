@@ -1,163 +1,114 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { JWTPayload, UserRole } from '@/lib/auth/jwt';
-import { UserWithoutPassword, jwtToUser } from '@/lib/authTypes';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { UserWithoutPassword, AuthError } from '@/lib/authTypes';
 
 interface AuthContextType {
   user: UserWithoutPassword | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string, email?: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (email: string, password: string, username: string) => Promise<void>;
   clearError: () => void;
-  updateProfile: (data: Partial<UserWithoutPassword>) => Promise<void>;
-  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  isLoading: true,
-  error: null,
-  login: async () => {},
-  logout: async () => {},
-  register: async () => {},
-  clearError: () => {},
-  updateProfile: async () => {},
-  updatePassword: async () => {}
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserWithoutPassword | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check auth status on mount
   useEffect(() => {
-    checkAuth();
+    // Try to get current user on mount
+    fetchCurrentUser()
+      .then(user => {
+        setUser(user);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        // Only log errors that aren't authentication required
+        if (err instanceof AuthError && err.type !== 'UNAUTHORIZED') {
+          console.error('Auth error:', err);
+        }
+        setIsLoading(false);
+      });
   }, []);
 
-  async function checkAuth() {
+  const login = async (username: string, password: string) => {
     try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user ? jwtToUser(data.user) : null);
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      console.error('Auth check failed:', err);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+      setIsLoading(true);
+      setError(null);
 
-  async function login(email: string, password: string) {
-    setError(null);
-    try {
-      const res = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
+      const data = await response.json();
+
+      if (!response.ok) {
         throw new Error(data.error || 'Login failed');
       }
 
-      const data = await res.json();
-      setUser(data.user ? jwtToUser(data.user) : null);
+      setUser(data.user);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'An error occurred');
       throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
-  async function register(email: string, password: string, username: string) {
-    setError(null);
+  const register = async (username: string, password: string, email?: string) => {
     try {
-      const res = await fetch('/api/auth/register', {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, username })
+        body: JSON.stringify({ username, password, email }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
+      const data = await response.json();
+
+      if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      const data = await res.json();
-      setUser(data.user ? jwtToUser(data.user) : null);
+      setUser(data.user);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      setError(err instanceof Error ? err.message : 'An error occurred');
       throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
-  async function logout() {
+  const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      setIsLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+
       setUser(null);
     } catch (err) {
-      console.error('Logout failed:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   const clearError = () => setError(null);
-
-  const updateProfile = async (data: Partial<UserWithoutPassword>) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/profile', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to update profile');
-      }
-
-      const { user: updatedUser } = await res.json();
-      setUser(updatedUser);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
-      throw err;
-    }
-  };
-
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/profile/password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentPassword, newPassword })
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to update password');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update password');
-      throw err;
-    }
-  };
 
   return (
     <AuthContext.Provider
@@ -166,11 +117,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isLoading,
         error,
         login,
-        logout,
         register,
+        logout,
         clearError,
-        updateProfile,
-        updatePassword
       }}
     >
       {children}
@@ -178,22 +127,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// Hook to check if user has required role
-export function useRequireRole(requiredRole: UserRole) {
-  const { user, isLoading } = useAuth();
-  const [hasAccess, setHasAccess] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setHasAccess(user?.role === requiredRole);
-    }
-  }, [user, isLoading, requiredRole]);
-
-  return { hasAccess, isLoading };
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
 
-// Hook to check if user is author
-export function useIsAuthor(authorId: string) {
-  const { user } = useAuth();
-  return user?._id === authorId;
+async function fetchCurrentUser(): Promise<UserWithoutPassword | null> {
+  try {
+    const response = await fetch('/api/auth/me');
+    if (!response.ok) {
+      if (response.status === 401) {
+        return null;
+      }
+      throw new Error('Failed to fetch user');
+    }
+    const data = await response.json();
+    return data.user;
+  } catch (err) {
+    // Let the error propagate to be handled by the caller
+    throw err;
+  }
 }

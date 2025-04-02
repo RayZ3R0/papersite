@@ -1081,7 +1081,586 @@
         }
       ],
       "papers": [
-         {
+        {
+  "id": "maths-2019-jan-p1",
+  "unitId": "p1",
+  "year": 2019,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202019%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202019%20MS.pdf",
+  "title": "Pure 1 - January 2019"
+},
+{
+  "id": "maths-2020-jan-p1",
+  "unitId": "p1",
+  "year": 2020,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202020%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202020%20MS.pdf",
+  "title": "Pure 1 - January 2020"
+},
+{
+  "id": "maths-2021-jan-p1",
+  "unitId": "p1",
+  "year": 2021,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202021%20MS.pdf",
+  "title": "Pure 1 - January 2021"
+},
+{
+  "id": "maths-2022-jan-p1",
+  "unitId": "p1",
+  "year": 2022,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202022%20MS.pdf",
+  "title": "Pure 1 - January 2022"
+},
+{
+  "id": "maths-2023-jan-p1",
+  "unitId": "p1",
+  "year": 2023,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202023%20MS.pdf",
+  "title": "Pure 1 - January 2023"
+},
+{
+  "id": "maths-2024-jan-p1",
+  "unitId": "p1",
+  "year": 2024,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/January%202024%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/January%202024%20MS.pdf",
+  "title": "Pure 1 - January 2024"
+},
+{
+  "id": "maths-2019-jun-p1",
+  "unitId": "p1",
+  "year": 2019,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/June%202019%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/June%202019%20MS.pdf",
+  "title": "Pure 1 - June 2019"
+},
+{
+  "id": "maths-2021-jun-p1",
+  "unitId": "p1",
+  "year": 2021,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/June%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/June%202021%20MS.pdf",
+  "title": "Pure 1 - June 2021"
+},
+{
+  "id": "maths-2022-jun-p1",
+  "unitId": "p1",
+  "year": 2022,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/June%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/June%202022%20MS.pdf",
+  "title": "Pure 1 - June 2022"
+},
+{
+  "id": "maths-2023-jun-p1",
+  "unitId": "p1",
+  "year": 2023,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/June%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/June%202023%20MS.pdf",
+  "title": "Pure 1 - June 2023"
+},
+{
+  "id": "maths-2019-oct-p1",
+  "unitId": "p1",
+  "year": 2019,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/October%202019%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/October%202019%20MS.pdf",
+  "title": "Pure 1 - October 2019"
+},
+{
+  "id": "maths-2020-oct-p1",
+  "unitId": "p1",
+  "year": 2020,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/October%202020%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/October%202020%20MS.pdf",
+  "title": "Pure 1 - October 2020"
+},
+{
+  "id": "maths-2021-oct-p1",
+  "unitId": "p1",
+  "year": 2021,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/October%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/October%202021%20MS.pdf",
+  "title": "Pure 1 - October 2021"
+},
+{
+  "id": "maths-2022-oct-p1",
+  "unitId": "p1",
+  "year": 2022,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/October%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/October%202022%20MS.pdf",
+  "title": "Pure 1 - October 2022"
+},
+{
+  "id": "maths-2023-oct-p1",
+  "unitId": "p1",
+  "year": 2023,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/October%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/October%202023%20MS.pdf",
+  "title": "Pure 1 - October 2023"
+},
+{
+  "id": "maths-2018-spec-p1",
+  "unitId": "p1",
+  "year": 2018,
+  "session": "Specimen",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/QP/Specimen%202018%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P1/MS/Specimen%202018%20MS.pdf",
+  "title": "Pure 1 - Specimen 2018"
+},
+{
+  "id": "maths-2020-jan-p2",
+  "unitId": "p2",
+  "year": 2020,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/January%202020%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/January%202020%20MS.pdf",
+  "title": "Pure 2 - January 2020"
+},
+{
+  "id": "maths-2021-jan-p2",
+  "unitId": "p2",
+  "year": 2021,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/January%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/January%202021%20MS.pdf",
+  "title": "Pure 2 - January 2021"
+},
+{
+  "id": "maths-2022-jan-p2",
+  "unitId": "p2",
+  "year": 2022,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/January%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/January%202022%20MS.pdf",
+  "title": "Pure 2 - January 2022"
+},
+{
+  "id": "maths-2023-jan-p2",
+  "unitId": "p2",
+  "year": 2023,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/January%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/January%202023%20MS.pdf",
+  "title": "Pure 2 - January 2023"
+},
+{
+  "id": "maths-2024-jan-p2",
+  "unitId": "p2",
+  "year": 2024,
+  "session": "January",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/January%202024%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/January%202024%20MS.pdf",
+  "title": "Pure 2 - January 2024"
+},
+{
+  "id": "maths-2019-jun-p2",
+  "unitId": "p2",
+  "year": 2019,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/June%202019%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/June%202019%20MS.pdf",
+  "title": "Pure 2 - June 2019"
+},
+{
+  "id": "maths-2021-jun-p2",
+  "unitId": "p2",
+  "year": 2021,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/June%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/June%202021%20MS.pdf",
+  "title": "Pure 2 - June 2021"
+},
+{
+  "id": "maths-2022-jun-p2",
+  "unitId": "p2",
+  "year": 2022,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/June%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/June%202022%20MS.pdf",
+  "title": "Pure 2 - June 2022"
+},
+{
+  "id": "maths-2023-jun-p2",
+  "unitId": "p2",
+  "year": 2023,
+  "session": "June",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/June%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/June%202023%20MS.pdf",
+  "title": "Pure 2 - June 2023"
+},
+{
+  "id": "maths-2019-oct-p2",
+  "unitId": "p2",
+  "year": 2019,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/October%202019%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/October%202019%20MS.pdf",
+  "title": "Pure 2 - October 2019"
+},
+{
+  "id": "maths-2020-oct-p2",
+  "unitId": "p2",
+  "year": 2020,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/October%202020%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/October%202020%20MS.pdf",
+  "title": "Pure 2 - October 2020"
+},
+{
+  "id": "maths-2021-oct-p2",
+  "unitId": "p2",
+  "year": 2021,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/October%202021%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/October%202021%20MS.pdf",
+  "title": "Pure 2 - October 2021"
+},
+{
+  "id": "maths-2022-oct-p2",
+  "unitId": "p2",
+  "year": 2022,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/October%202022%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/October%202022%20MS.pdf",
+  "title": "Pure 2 - October 2022"
+},
+{
+  "id": "maths-2023-oct-p2",
+  "unitId": "p2",
+  "year": 2023,
+  "session": "October",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/October%202023%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/October%202023%20MS.pdf",
+  "title": "Pure 2 - October 2023"
+},
+{
+  "id": "maths-2018-spec-p2",
+  "unitId": "p2",
+  "year": 2018,
+  "session": "Specimen",
+  "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/QP/Specimen%202018%20QP.pdf",
+  "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P2/MS/Specimen%202018%20MS.pdf",
+  "title": "Pure 2 - Specimen 2018"
+},
+  {
+    "id": "maths-2020-jan-p3",
+    "unitId": "p3",
+    "year": 2020,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/January%202020%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/January%202020%20MS.pdf",
+    "title": "Pure 3 - January 2020"
+  },
+  {
+    "id": "maths-2021-jan-p3",
+    "unitId": "p3",
+    "year": 2021,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/January%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/January%202021%20MS.pdf",
+    "title": "Pure 3 - January 2021"
+  },
+  {
+    "id": "maths-2022-jan-p3",
+    "unitId": "p3",
+    "year": 2022,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/January%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/January%202022%20MS.pdf",
+    "title": "Pure 3 - January 2022"
+  },
+  {
+    "id": "maths-2023-jan-p3",
+    "unitId": "p3",
+    "year": 2023,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/January%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/January%202023%20MS.pdf",
+    "title": "Pure 3 - January 2023"
+  },
+  {
+    "id": "maths-2024-jan-p3",
+    "unitId": "p3",
+    "year": 2024,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/January%202024%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/January%202024%20MS.pdf",
+    "title": "Pure 3 - January 2024"
+  },
+  {
+    "id": "maths-2021-jun-p3",
+    "unitId": "p3",
+    "year": 2021,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/June%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/June%202021%20MS.pdf",
+    "title": "Pure 3 - June 2021"
+  },
+  {
+    "id": "maths-2022-jun-p3",
+    "unitId": "p3",
+    "year": 2022,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/June%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/June%202022%20MS.pdf",
+    "title": "Pure 3 - June 2022"
+  },
+  {
+    "id": "maths-2023-jun-p3",
+    "unitId": "p3",
+    "year": 2023,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/June%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/June%202023%20MS.pdf",
+    "title": "Pure 3 - June 2023"
+  },
+  {
+    "id": "maths-2020-oct-p3",
+    "unitId": "p3",
+    "year": 2020,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/October%202020%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/October%202020%20MS.pdf",
+    "title": "Pure 3 - October 2020"
+  },
+  {
+    "id": "maths-2021-oct-p3",
+    "unitId": "p3",
+    "year": 2021,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/October%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/October%202021%20MS.pdf",
+    "title": "Pure 3 - October 2021"
+  },
+  {
+    "id": "maths-2022-oct-p3",
+    "unitId": "p3",
+    "year": 2022,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/October%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/October%202022%20MS.pdf",
+    "title": "Pure 3 - October 2022"
+  },
+  {
+    "id": "maths-2023-oct-p3",
+    "unitId": "p3",
+    "year": 2023,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/October%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/October%202023%20MS.pdf",
+    "title": "Pure 3 - October 2023"
+  },
+  {
+    "id": "maths-2018-spec-p3",
+    "unitId": "p3",
+    "year": 2018,
+    "session": "Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/QP/Specimen%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P3/MS/Specimen%202018%20MS.pdf",
+    "title": "Pure 3 - Specimen 2018"
+  },
+  {
+    "id": "maths-2021-jan-p4",
+    "unitId": "p4",
+    "year": 2021,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/January%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/January%202021%20MS.pdf",
+    "title": "Pure 4 - January 2021"
+  },
+  {
+    "id": "maths-2022-jan-unused-p4",
+    "unitId": "p4",
+    "year": 2022,
+    "session": "January (Unused)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/January%202022%20QP%20(Unused).pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/January%202022%20MS%20(Unused).pdf",
+    "title": "Pure 4 - January 2022 (Unused)"
+  },
+  {
+    "id": "maths-2022-jan-p4",
+    "unitId": "p4",
+    "year": 2022,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/January%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/January%202022%20MS.pdf",
+    "title": "Pure 4 - January 2022"
+  },
+  {
+    "id": "maths-2023-jan-p4",
+    "unitId": "p4",
+    "year": 2023,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/January%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/January%202023%20MS.pdf",
+    "title": "Pure 4 - January 2023"
+  },
+  {
+    "id": "maths-2024-jan-p4",
+    "unitId": "p4",
+    "year": 2024,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/January%202024%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/January%202024%20MS.pdf",
+    "title": "Pure 4 - January 2024"
+  },
+  {
+    "id": "maths-2021-jun-p4",
+    "unitId": "p4",
+    "year": 2021,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/June%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/June%202021%20MS.pdf",
+    "title": "Pure 4 - June 2021"
+  },
+  {
+    "id": "maths-2022-jun-p4",
+    "unitId": "p4",
+    "year": 2022,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/June%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/June%202022%20MS.pdf",
+    "title": "Pure 4 - June 2022"
+  },
+  {
+    "id": "maths-2023-jun-p4",
+    "unitId": "p4",
+    "year": 2023,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/June%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/June%202023%20MS.pdf",
+    "title": "Pure 4 - June 2023"
+  },
+  {
+    "id": "maths-2020-oct-p4",
+    "unitId": "p4",
+    "year": 2020,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/October%202020%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/October%202020%20MS.pdf",
+    "title": "Pure 4 - October 2020"
+  },
+  {
+    "id": "maths-2021-oct-p4",
+    "unitId": "p4",
+    "year": 2021,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/October%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/October%202021%20MS.pdf",
+    "title": "Pure 4 - October 2021"
+  },
+  {
+    "id": "maths-2022-oct-p4",
+    "unitId": "p4",
+    "year": 2022,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/October%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/October%202022%20MS.pdf",
+    "title": "Pure 4 - October 2022"
+  },
+  {
+    "id": "maths-2023-oct-p4",
+    "unitId": "p4",
+    "year": 2023,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/October%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/October%202023%20MS.pdf",
+    "title": "Pure 4 - October 2023"
+  },
+  {
+    "id": "maths-2018-spec-p4",
+    "unitId": "p4",
+    "year": 2018,
+    "session": "Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/QP/Specimen%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Pure/P4/MS/Specimen%202018%20MS.pdf",
+    "title": "Pure 4 - Specimen 2018"
+  },
+  {"id": "maths-2014-january-m1", "unitId": "m1", "year": 2014, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202014%20MS.pdf", "title": "Mechanics 1 - January 2014"},
+{"id": "maths-2015-january-m1", "unitId": "m1", "year": 2015, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202015%20MS.pdf", "title": "Mechanics 1 - January 2015"},
+{"id": "maths-2016-january-m1", "unitId": "m1", "year": 2016, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202016%20MS.pdf", "title": "Mechanics 1 - January 2016"},
+{"id": "maths-2017-january-m1", "unitId": "m1", "year": 2017, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202017%20MS.pdf", "title": "Mechanics 1 - January 2017"},
+{"id": "maths-2018-january-m1", "unitId": "m1", "year": 2018, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202018%20MS.pdf", "title": "Mechanics 1 - January 2018"},
+{"id": "maths-2019-january-m1", "unitId": "m1", "year": 2019, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202019%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202019%20MS.pdf", "title": "Mechanics 1 - January 2019"},
+{"id": "maths-2020-january-m1", "unitId": "m1", "year": 2020, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202020%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202020%20MS.pdf", "title": "Mechanics 1 - January 2020"},
+{"id": "maths-2021-january-m1", "unitId": "m1", "year": 2021, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202021%20MS.pdf", "title": "Mechanics 1 - January 2021"},
+{"id": "maths-2022-january-m1", "unitId": "m1", "year": 2022, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202022%20MS.pdf", "title": "Mechanics 1 - January 2022"},
+{"id": "maths-2023-january-m1", "unitId": "m1", "year": 2023, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202023%20MS.pdf", "title": "Mechanics 1 - January 2023"},
+{"id": "maths-2024-january-m1", "unitId": "m1", "year": 2024, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/January%202024%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/January%202024%20MS.pdf", "title": "Mechanics 1 - January 2024"},
+{"id": "maths-2014-june-m1", "unitId": "m1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202014%20MS.pdf", "title": "Mechanics 1 - June 2014"},
+{"id": "maths-2015-june-m1", "unitId": "m1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202015%20MS.pdf", "title": "Mechanics 1 - June 2015"},
+{"id": "maths-2016-june-m1", "unitId": "m1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202016%20MS.pdf", "title": "Mechanics 1 - June 2016"},
+{"id": "maths-2017-june-m1", "unitId": "m1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202017%20MS.pdf", "title": "Mechanics 1 - June 2017"},
+{"id": "maths-2018-june-m1", "unitId": "m1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202018%20MS.pdf", "title": "Mechanics 1 - June 2018"},
+{"id": "maths-2020-june-m1", "unitId": "m1", "year": 2020, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202020%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202020%20MS.pdf", "title": "Mechanics 1 - June 2020"},
+{"id": "maths-2021-june-m1", "unitId": "m1", "year": 2021, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202021%20MS.pdf", "title": "Mechanics 1 - June 2021"},
+{"id": "maths-2022-june-m1", "unitId": "m1", "year": 2022, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202022%20MS.pdf", "title": "Mechanics 1 - June 2022"},
+{"id": "maths-2023-june-m1", "unitId": "m1", "year": 2023, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/June%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/June%202023%20MS.pdf", "title": "Mechanics 1 - June 2023"},
+{"id": "maths-2016-october-m1", "unitId": "m1", "year": 2016, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202016%20MS.pdf", "title": "Mechanics 1 - October 2016"},
+{"id": "maths-2017-october-m1", "unitId": "m1", "year": 2017, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202017%20MS.pdf", "title": "Mechanics 1 - October 2017"},
+{"id": "maths-2018-october-m1", "unitId": "m1", "year": 2018, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202018%20MS.pdf", "title": "Mechanics 1 - October 2018"},
+{"id": "maths-2021-october-m1", "unitId": "m1", "year": 2021, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202021%20MS.pdf", "title": "Mechanics 1 - October 2021"},
+{"id": "maths-2022-october-m1", "unitId": "m1", "year": 2022, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202022%20MS.pdf", "title": "Mechanics 1 - October 2022"},
+{"id": "maths-2023-october-m1", "unitId": "m1", "year": 2023, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/October%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/October%202023%20MS.pdf", "title": "Mechanics 1 - October 2023"},
+{"id": "maths-2018-specimen-m1", "unitId": "m1", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/Specimen%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/Specimen%202018%20MS.pdf", "title": "Mechanics 1 - Specimen 2018"},
+{"id": "maths-specimen-m1", "unitId": "m1", "year": "", "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M1/MS/Specimen%20MS.pdf", "title": "Mechanics 1 - Specimen"},
+{"id": "maths-2001-january-m1", "unitId": "m1", "year": 2001, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202001%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202001%20MS.pdf", "title": "Mechanics 1 - January 2001"},
+{"id": "maths-2002-january-m1", "unitId": "m1", "year": 2002, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202002%20MS.pdf", "title": "Mechanics 1 - January 2002"},
+{"id": "maths-2003-january-m1", "unitId": "m1", "year": 2003, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202003%20MS.pdf", "title": "Mechanics 1 - January 2003"},
+{"id": "maths-2004-january-m1", "unitId": "m1", "year": 2004, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202004%20MS.pdf", "title": "Mechanics 1 - January 2004"},
+{"id": "maths-2005-january-m1", "unitId": "m1", "year": 2005, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202005%20MS.pdf", "title": "Mechanics 1 - January 2005"},
+{"id": "maths-2006-january-m1", "unitId": "m1", "year": 2006, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202006%20MS.pdf", "title": "Mechanics 1 - January 2006"},
+{"id": "maths-2007-january-m1", "unitId": "m1", "year": 2007, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202007%20MS.pdf", "title": "Mechanics 1 - January 2007"},
+{"id": "maths-2008-january-m1", "unitId": "m1", "year": 2008, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202008%20MS.pdf", "title": "Mechanics 1 - January 2008"},
+{"id": "maths-2009-january-m1", "unitId": "m1", "year": 2009, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202009%20MS.pdf", "title": "Mechanics 1 - January 2009"},
+{"id": "maths-2010-january-m1", "unitId": "m1", "year": 2010, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202010%20MS.pdf", "title": "Mechanics 1 - January 2010"},
+{"id": "maths-2011-january-m1", "unitId": "m1", "year": 2011, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202011%20MS.pdf", "title": "Mechanics 1 - January 2011"},
+{"id": "maths-2012-january-m1", "unitId": "m1", "year": 2012, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202012%20MS.pdf", "title": "Mechanics 1 - January 2012"},
+{"id": "maths-2013-january-m1", "unitId": "m1", "year": 2013, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/January%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/January%202013%20MS.pdf", "title": "Mechanics 1 - January 2013"},
+{"id": "maths-2001-june-m1", "unitId": "m1", "year": 2001, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202001%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202001%20MS.pdf", "title": "Mechanics 1 - June 2001"},
+{"id": "maths-2002-june-m1", "unitId": "m1", "year": 2002, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202002%20MS.pdf", "title": "Mechanics 1 - June 2002"},
+{"id": "maths-2003-june-m1", "unitId": "m1", "year": 2003, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202003%20MS.pdf", "title": "Mechanics 1 - June 2003"},
+{"id": "maths-2004-june-m1", "unitId": "m1", "year": 2004, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202004%20MS.pdf", "title": "Mechanics 1 - June 2004"},
+{"id": "maths-2005-june-m1", "unitId": "m1", "year": 2005, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202005%20MS.pdf", "title": "Mechanics 1 - June 2005"},
+{"id": "maths-2006-june-m1", "unitId": "m1", "year": 2006, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202006%20MS.pdf", "title": "Mechanics 1 - June 2006"},
+{"id": "maths-2007-june-m1", "unitId": "m1", "year": 2007, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202007%20MS.pdf", "title": "Mechanics 1 - June 2007"},
+{"id": "maths-2008-june-m1", "unitId": "m1", "year": 2008, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202008%20MS.pdf", "title": "Mechanics 1 - June 2008"},
+{"id": "maths-2009-june-m1", "unitId": "m1", "year": 2009, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202009%20MS.pdf", "title": "Mechanics 1 - June 2009"},
+{"id": "maths-2010-june-m1", "unitId": "m1", "year": 2010, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202010%20MS.pdf", "title": "Mechanics 1 - June 2010"},
+{"id": "maths-2011-june-m1", "unitId": "m1", "year": 2011, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202011%20MS.pdf", "title": "Mechanics 1 - June 2011"},
+{"id": "maths-2012-june-m1", "unitId": "m1", "year": 2012, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202012%20MS.pdf", "title": "Mechanics 1 - June 2012"},
+{"id": "maths-2013-june-r-m1", "unitId": "m1", "year": 2013, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202013%20(R)%20MS.pdf", "title": "Mechanics 1 - June 2013 (R)"},
+{"id": "maths-2013-june-m1", "unitId": "m1", "year": 2013, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202013%20MS.pdf", "title": "Mechanics 1 - June 2013"},
+{"id": "maths-2014-june-r-m1", "unitId": "m1", "year": 2014, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202014%20(R)%20MS.pdf", "title": "Mechanics 1 - June 2014 (R)"},
+{"id": "maths-2014-june-m1", "unitId": "m1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202014%20MS.pdf", "title": "Mechanics 1 - June 2014"},
+{"id": "maths-2015-june-m1", "unitId": "m1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202015%20MS.pdf", "title": "Mechanics 1 - June 2015"},
+{"id": "maths-2016-june-m1", "unitId": "m1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202016%20MS.pdf", "title": "Mechanics 1 - June 2016"},
+{"id": "maths-2017-june-m1", "unitId": "m1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202017%20MS.pdf", "title": "Mechanics 1 - June 2017"},
+{"id": "maths-2018-june-m1", "unitId": "m1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202018%20MS.pdf", "title": "Mechanics 1 - June 2018"},
+{"id": "maths-mock-m1", "unitId": "m1", "year": "", "session": "Mock", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/Mock%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/Mock%20MS.pdf", "title": "Mechanics 1 - Mock"},
+{"id": "maths-2002-november-m1", "unitId": "m1", "year": 2002, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202002%20MS.pdf", "title": "Mechanics 1 - November 2002"},
+{"id": "maths-2003-november-m1", "unitId": "m1", "year": 2003, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202003%20MS.pdf", "title": "Mechanics 1 - November 2003"},
+{"id": "maths-2004-november-m1", "unitId": "m1", "year": 2004, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202004%20MS.pdf", "title": "Mechanics 1 - November 2004"},
+{"id": "maths-specimen-m1", "unitId": "m1", "year": "", "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Mechanics 1 - Specimen"},
+        {
           "id": "math-2024-jan-m2",
           "unitId": "m2",
           "year": 2024,
@@ -1558,6 +2137,72 @@
           "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M2/Papers-Edexcel/MS/June%202001%20MS.pdf",
           "title": "Mathematics M2 - June 2001"
         },
+  {"id": "maths-2014-january-s1-ial", "unitId": "s1", "year": 2014, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202014%20MS.pdf", "title": "Statistics 1 - January 2014"},
+  {"id": "maths-2015-january-s1-ial", "unitId": "s1", "year": 2015, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202015%20MS.pdf", "title": "Statistics 1 - January 2015"},
+  {"id": "maths-2016-january-s1-ial", "unitId": "s1", "year": 2016, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202016%20MS.pdf", "title": "Statistics 1 - January 2016"},
+  {"id": "maths-2017-january-s1-ial", "unitId": "s1", "year": 2017, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202017%20MS.pdf", "title": "Statistics 1 - January 2017"},
+  {"id": "maths-2018-january-s1-ial", "unitId": "s1", "year": 2018, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202018%20MS.pdf", "title": "Statistics 1 - January 2018"},
+  {"id": "maths-2019-january-s1-ial", "unitId": "s1", "year": 2019, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202019%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202019%20MS.pdf", "title": "Statistics 1 - January 2019"},
+  {"id": "maths-2021-january-s1-ial", "unitId": "s1", "year": 2021, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202021%20MS.pdf", "title": "Statistics 1 - January 2021"},
+  {"id": "maths-2022-january-s1-ial", "unitId": "s1", "year": 2022, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202022%20MS.pdf", "title": "Statistics 1 - January 2022"},
+  {"id": "maths-2023-january-s1-ial", "unitId": "s1", "year": 2023, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202023%20MS.pdf", "title": "Statistics 1 - January 2023"},
+  {"id": "maths-2024-january-s1-ial", "unitId": "s1", "year": 2024, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202024%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202024%20MS.pdf", "title": "Statistics 1 - January 2024"},
+  {"id": "maths-2014-june-s1-ial", "unitId": "s1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202014%20MS.pdf", "title": "Statistics 1 - June 2014"},
+  {"id": "maths-2015-june-s1-ial", "unitId": "s1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202015%20MS.pdf", "title": "Statistics 1 - June 2015"},
+  {"id": "maths-2016-june-s1-ial", "unitId": "s1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202016%20MS.pdf", "title": "Statistics 1 - June 2016"},
+  {"id": "maths-2017-june-s1-ial", "unitId": "s1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202017%20MS.pdf", "title": "Statistics 1 - June 2017"},
+  {"id": "maths-2018-june-s1-ial", "unitId": "s1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202018%20MS.pdf", "title": "Statistics 1 - June 2018"},
+  {"id": "maths-2019-june-s1-ial", "unitId": "s1", "year": 2019, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202019%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202019%20MS.pdf", "title": "Statistics 1 - June 2019"},
+  {"id": "maths-2020-june-s1-ial", "unitId": "s1", "year": 2020, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202020%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202020%20MS.pdf", "title": "Statistics 1 - June 2020"},
+  {"id": "maths-2021-june-s1-ial", "unitId": "s1", "year": 2021, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202021%20MS.pdf", "title": "Statistics 1 - June 2021"},
+  {"id": "maths-2022-june-s1-ial", "unitId": "s1", "year": 2022, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202022%20MS.pdf", "title": "Statistics 1 - June 2022"},
+  {"id": "maths-2023-june-s1-ial", "unitId": "s1", "year": 2023, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/June%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/June%202023%20MS.pdf", "title": "Statistics 1 - June 2023"},
+  {"id": "maths-2016-october-s1-ial", "unitId": "s1", "year": 2016, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202016%20MS.pdf", "title": "Statistics 1 - October 2016"},
+  {"id": "maths-2017-october-s1-ial", "unitId": "s1", "year": 2017, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202017%20MS.pdf", "title": "Statistics 1 - October 2017"},
+  {"id": "maths-2018-october-s1-ial", "unitId": "s1", "year": 2018, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202018%20MS.pdf", "title": "Statistics 1 - October 2018"},
+  {"id": "maths-2021-october-s1-ial", "unitId": "s1", "year": 2021, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202021%20MS.pdf", "title": "Statistics 1 - October 2021"},
+  {"id": "maths-2022-october-s1-ial", "unitId": "s1", "year": 2022, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202022%20MS.pdf", "title": "Statistics 1 - October 2022"},
+  {"id": "maths-2023-october-s1-ial", "unitId": "s1", "year": 2023, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/October%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/October%202023%20MS.pdf", "title": "Statistics 1 - October 2023"},
+  {"id": "maths-2018-specimen-s1-ial", "unitId": "s1", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/Specimen%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/Specimen%202018%20MS.pdf", "title": "Statistics 1 - Specimen 2018"},
+  {"id": "maths-0-specimen-s1-ial", "unitId": "s1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/Specimen%20MS.pdf", "title": "Statistics 1 - Specimen"},
+  {"id": "maths-2001-january-s1-uk", "unitId": "s1", "year": 2001, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202001%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202001%20MS.pdf", "title": "Statistics 1 - January 2001"},
+  {"id": "maths-2002-january-s1-uk", "unitId": "s1", "year": 2002, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202002%20MS.pdf", "title": "Statistics 1 - January 2002"},
+  {"id": "maths-2003-january-s1-uk", "unitId": "s1", "year": 2003, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202003%20MS.pdf", "title": "Statistics 1 - January 2003"},
+  {"id": "maths-2004-january-s1-uk", "unitId": "s1", "year": 2004, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202004%20MS.pdf", "title": "Statistics 1 - January 2004"},
+  {"id": "maths-2005-january-s1-uk", "unitId": "s1", "year": 2005, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202005%20MS.pdf", "title": "Statistics 1 - January 2005"},
+  {"id": "maths-2006-january-s1-uk", "unitId": "s1", "year": 2006, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202006%20MS.pdf", "title": "Statistics 1 - January 2006"},
+  {"id": "maths-2007-january-s1-uk", "unitId": "s1", "year": 2007, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202007%20MS.pdf", "title": "Statistics 1 - January 2007"},
+  {"id": "maths-2008-january-s1-uk", "unitId": "s1", "year": 2008, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202008%20MS.pdf", "title": "Statistics 1 - January 2008"},
+  {"id": "maths-2009-january-s1-uk", "unitId": "s1", "year": 2009, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202009%20MS.pdf", "title": "Statistics 1 - January 2009"},
+  {"id": "maths-2010-january-s1-uk", "unitId": "s1", "year": 2010, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202010%20MS.pdf", "title": "Statistics 1 - January 2010"},
+  {"id": "maths-2011-january-s1-uk", "unitId": "s1", "year": 2011, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202011%20MS.pdf", "title": "Statistics 1 - January 2011"},
+  {"id": "maths-2012-january-s1-uk", "unitId": "s1", "year": 2012, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/January%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202012%20MS.pdf", "title": "Statistics 1 - January 2012"},
+  {"id": "maths-2013-january-s1-uk", "unitId": "s1", "year": 2013, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Pairs-Edexcel/QP/January%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/January%202013%20MS.pdf", "title": "Statistics 1 - January 2013"},
+  {"id": "maths-2001-june-s1-uk", "unitId": "s1", "year": 2001, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202001%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202001%20MS.pdf", "title": "Statistics 1 - June 2001"},
+  {"id": "maths-2002-june-s1-uk", "unitId": "s1", "year": 2002, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202002%20MS.pdf", "title": "Statistics 1 - June 2002"},
+  {"id": "maths-2003-june-s1-uk", "unitId": "s1", "year": 2003, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202003%20MS.pdf", "title": "Statistics 1 - June 2003"},
+  {"id": "maths-2004-june-s1-uk", "unitId": "s1", "year": 2004, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202004%20MS.pdf", "title": "Statistics 1 - June 2004"},
+  {"id": "maths-2005-june-s1-uk", "unitId": "s1", "year": 2005, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202005%20MS.pdf", "title": "Statistics 1 - June 2005"},
+  {"id": "maths-2006-june-s1-uk", "unitId": "s1", "year": 2006, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202006%20MS.pdf", "title": "Statistics 1 - June 2006"},
+  {"id": "maths-2007-june-s1-uk", "unitId": "s1", "year": 2007, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202007%20MS.pdf", "title": "Statistics 1 - June 2007"},
+  {"id": "maths-2008-june-s1-uk", "unitId": "s1", "year": 2008, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202008%20MS.pdf", "title": "Statistics 1 - June 2008"},
+  {"id": "maths-2009-june-s1-uk", "unitId": "s1", "year": 2009, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202009%20MS.pdf", "title": "Statistics 1 - June 2009"},
+  {"id": "maths-2010-june-s1-uk", "unitId": "s1", "year": 2010, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202010%20MS.pdf", "title": "Statistics 1 - June 2010"},
+  {"id": "maths-2011-june-s1-uk", "unitId": "s1", "year": 2011, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202011%20MS.pdf", "title": "Statistics 1 - June 2011"},
+  {"id": "maths-2012-june-s1-uk", "unitId": "s1", "year": 2012, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202012%20MS.pdf", "title": "Statistics 1 - June 2012"},
+  {"id": "maths-2013-june-s1-uk", "unitId": "s1", "year": 2013, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202013%20MS.pdf", "title": "Statistics 1 - June 2013"},
+  {"id": "maths-2013-june-r-s1-uk", "unitId": "s1", "year": 2013, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202013%20(R)%20MS.pdf", "title": "Statistics 1 - June 2013 (R)"},
+  {"id": "maths-2014-june-s1-uk", "unitId": "s1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202014%20MS.pdf", "title": "Statistics 1 - June 2014"},
+  {"id": "maths-2014-june-r-s1-uk", "unitId": "s1", "year": 2014, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202014%20(R)%20MS.pdf", "title": "Statistics 1 - June 2014 (R)"},
+  {"id": "maths-2015-june-s1-uk", "unitId": "s1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202015%20MS.pdf", "title": "Statistics 1 - June 2015"},
+  {"id": "maths-2016-june-s1-uk", "unitId": "s1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202016%20MS.pdf", "title": "Statistics 1 - June 2016"},
+  {"id": "maths-2017-june-s1-uk", "unitId": "s1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202017%20MS.pdf", "title": "Statistics 1 - June 2017"},
+  {"id": "maths-2018-june-s1-uk", "unitId": "s1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/June%202018%20MS.pdf", "title": "Statistics 1 - June 2018"},
+  {"id": "maths-2002-november-s1-uk", "unitId": "s1", "year": 2002, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202002%20MS.pdf", "title": "Statistics 1 - November 2002"},
+  {"id": "maths-2003-november-s1-uk", "unitId": "s1", "year": 2003, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202003%20MS.pdf", "title": "Statistics 1 - November 2003"},
+  {"id": "maths-2004-november-s1-uk", "unitId": "s1", "year": 2004, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202004%20MS.pdf", "title": "Statistics 1 - November 2004"},
+  {"id": "maths-0-mock-s1-uk", "unitId": "s1", "year": 0, "session": "Mock", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/Mock%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/Mock%20MS.pdf", "title": "Statistics 1 - Mock"},
+  {"id": "maths-0-specimen-s1-uk", "unitId": "s1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Statistics 1 - Specimen"},
         {
           "id": "math-2024-jan-s2",
           "unitId": "s2",
@@ -2350,6 +2995,384 @@
         "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/June%202002%20MS.pdf",
         "title": "Mathematics S3 - June 2002"
       },
+  {
+    "id": "maths-2014-jan-f1",
+    "unitId": "f1",
+    "year": 2014,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202014%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202014%20MS.pdf",
+    "title": "Further Pure 1 - January 2014"
+  },
+  {
+    "id": "maths-2015-jan-f1",
+    "unitId": "f1",
+    "year": 2015,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202015%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202015%20MS.pdf",
+    "title": "Further Pure 1 - January 2015"
+  },
+  {
+    "id": "maths-2016-jan-f1",
+    "unitId": "f1",
+    "year": 2016,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202016%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202016%20MS.pdf",
+    "title": "Further Pure 1 - January 2016"
+  },
+  {
+    "id": "maths-2017-jan-f1",
+    "unitId": "f1",
+    "year": 2017,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202017%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202017%20MS.pdf",
+    "title": "Further Pure 1 - January 2017"
+  },
+  {
+    "id": "maths-2018-jan-f1",
+    "unitId": "f1",
+    "year": 2018,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202018%20MS.pdf",
+    "title": "Further Pure 1 - January 2018"
+  },
+  {
+    "id": "maths-2021-jan-f1",
+    "unitId": "f1",
+    "year": 2021,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202021%20MS.pdf",
+    "title": "Further Pure 1 - January 2021"
+  },
+  {
+    "id": "maths-2022-jan-f1",
+    "unitId": "f1",
+    "year": 2022,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202022%20MS.pdf",
+    "title": "Further Pure 1 - January 2022"
+  },
+  {
+    "id": "maths-2023-jan-f1",
+    "unitId": "f1",
+    "year": 2023,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202023%20MS.pdf",
+    "title": "Further Pure 1 - January 2023"
+  },
+  {
+    "id": "maths-2024-jan-f1",
+    "unitId": "f1",
+    "year": 2024,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/January%202024%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/January%202024%20MS.pdf",
+    "title": "Further Pure 1 - January 2024"
+  },
+  {
+    "id": "maths-2014-jun-f1",
+    "unitId": "f1",
+    "year": 2014,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202014%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202014%20MS.pdf",
+    "title": "Further Pure 1 - June 2014"
+  },
+  {
+    "id": "maths-2015-jun-f1",
+    "unitId": "f1",
+    "year": 2015,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202015%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202015%20MS.pdf",
+    "title": "Further Pure 1 - June 2015"
+  },
+  {
+    "id": "maths-2016-jun-f1",
+    "unitId": "f1",
+    "year": 2016,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202016%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202016%20MS.pdf",
+    "title": "Further Pure 1 - June 2016"
+  },
+  {
+    "id": "maths-2017-jun-f1",
+    "unitId": "f1",
+    "year": 2017,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202017%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202017%20MS.pdf",
+    "title": "Further Pure 1 - June 2017"
+  },
+  {
+    "id": "maths-2018-jun-f1",
+    "unitId": "f1",
+    "year": 2018,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202018%20MS.pdf",
+    "title": "Further Pure 1 - June 2018"
+  },
+  {
+    "id": "maths-2020-jun-f1",
+    "unitId": "f1",
+    "year": 2020,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202020%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202020%20MS.pdf",
+    "title": "Further Pure 1 - June 2020"
+  },
+  {
+    "id": "maths-2021-jun-f1",
+    "unitId": "f1",
+    "year": 2021,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202021%20MS.pdf",
+    "title": "Further Pure 1 - June 2021"
+  },
+  {
+    "id": "maths-2022-jun-f1",
+    "unitId": "f1",
+    "year": 2022,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202022%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202022%20MS.pdf",
+    "title": "Further Pure 1 - June 2022"
+  },
+  {
+    "id": "maths-2023-jun-f1",
+    "unitId": "f1",
+    "year": 2023,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/June%202023%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/June%202023%20MS.pdf",
+    "title": "Further Pure 1 - June 2023"
+  },
+  {
+    "id": "maths-2021-oct-f1",
+    "unitId": "f1",
+    "year": 2021,
+    "session": "October",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/October%202021%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/October%202021%20MS.pdf",
+    "title": "Further Pure 1 - October 2021"
+  },
+  {
+    "id": "maths-2018-spec-f1",
+    "unitId": "f1",
+    "year": 2018,
+    "session": "Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/Specimen%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/Specimen%202018%20MS.pdf",
+    "title": "Further Pure 1 - Specimen 2018"
+  },
+  {
+    "id": "maths-spec-f1",
+    "unitId": "f1",
+    "year": 0,
+    "session": "Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/QP/Specimen%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Further-Pure/F1/MS/Specimen%20MS.pdf",
+    "title": "Further Pure 1 - Specimen"
+  },
+  {
+    "id": "maths-2009-jan-fp1",
+    "unitId": "fp1",
+    "year": 2009,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202009%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/January%202009%20MS.pdf",
+    "title": "FP1 - January 2009"
+  },
+  {
+    "id": "maths-2010-jan-fp1",
+    "unitId": "fp1",
+    "year": 2010,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202010%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/January%202010%20MS.pdf",
+    "title": "FP1 - January 2010"
+  },
+  {
+    "id": "maths-2011-jan-fp1",
+    "unitId": "fp1",
+    "year": 2011,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202011%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/January%202011%20MS.pdf",
+    "title": "FP1 - January 2011"
+  },
+  {
+    "id": "maths-2012-jan-fp1",
+    "unitId": "fp1",
+    "year": 2012,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202012%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/January%202012%20MS.pdf",
+    "title": "FP1 - January 2012"
+  },
+  {
+    "id": "maths-2013-jan-fp1",
+    "unitId": "fp1",
+    "year": 2013,
+    "session": "January",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202013%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/January%202013%20MS.pdf",
+    "title": "FP1 - January 2013"
+  },
+  {
+    "id": "maths-2009-jun-fp1",
+    "unitId": "fp1",
+    "year": 2009,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202009%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202009%20MS.pdf",
+    "title": "FP1 - June 2009"
+  },
+  {
+    "id": "maths-2010-jun-fp1",
+    "unitId": "fp1",
+    "year": 2010,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202010%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202010%20MS.pdf",
+    "title": "FP1 - June 2010"
+  },
+  {
+    "id": "maths-2011-jun-fp1",
+    "unitId": "fp1",
+    "year": 2011,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202011%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202011%20MS.pdf",
+    "title": "FP1 - June 2011"
+  },
+  {
+    "id": "maths-2012-jun-fp1",
+    "unitId": "fp1",
+    "year": 2012,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202012%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202012%20MS.pdf",
+    "title": "FP1 - June 2012"
+  },
+  {
+    "id": "maths-2013-jun-r-fp1",
+    "unitId": "fp1",
+    "year": 2013,
+    "session": "June (R)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202013%20(R)%20MS.pdf",
+    "title": "FP1 - June 2013 (R)"
+  },
+  {
+    "id": "maths-2013-jun-withdrawn-fp1",
+    "unitId": "fp1",
+    "year": 2013,
+    "session": "June (Withdrawn)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20(Withdrawn)%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202013%20(Withdrawn)%20MS.pdf",
+    "title": "FP1 - June 2013 (Withdrawn)"
+  },
+  {
+    "id": "maths-2013-jun-fp1",
+    "unitId": "fp1",
+    "year": 2013,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202013%20MS.pdf",
+    "title": "FP1 - June 2013"
+  },
+  {
+    "id": "maths-2014-jun-r-fp1",
+    "unitId": "fp1",
+    "year": 2014,
+    "session": "June (R)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202014%20(R)%20MS.pdf",
+    "title": "FP1 - June 2014 (R)"
+  },
+  {
+    "id": "maths-2014-jun-fp1",
+    "unitId": "fp1",
+    "year": 2014,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202014%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202014%20MS.pdf",
+    "title": "FP1 - June 2014"
+  },
+  {
+    "id": "maths-2015-jun-fp1",
+    "unitId": "fp1",
+    "year": 2015,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202015%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202015%20MS.pdf",
+    "title": "FP1 - June 2015"
+  },
+  {
+    "id": "maths-2016-jun-fp1",
+    "unitId": "fp1",
+    "year": 2016,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202016%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202016%20MS.pdf",
+    "title": "FP1 - June 2016"
+  },
+  {
+    "id": "maths-2017-jun-fp1",
+    "unitId": "fp1",
+    "year": 2017,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202017%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202017%20MS.pdf",
+    "title": "FP1 - June 2017"
+  },
+  {
+    "id": "maths-2018-jun-fp1",
+    "unitId": "fp1",
+    "year": 2018,
+    "session": "June",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202018%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/June%202018%20MS.pdf",
+    "title": "FP1 - June 2018"
+  },
+  {
+    "id": "maths-mock-fp1",
+    "unitId": "fp1",
+    "year": 0,
+    "session": "Mock",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Mock%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Mock%20MS.pdf",
+    "title": "FP1 - Mock"
+  },
+  {
+    "id": "maths-oldpapers-fp1",
+    "unitId": "fp1",
+    "year": 0,
+    "session": "Old Papers",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Questions%20from%20Old%20Papers.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Questions%20from%20Old%20Papers%20MS.pdf",
+    "title": "FP1 - Questions from Old Papers"
+  },
+  {
+    "id": "maths-spec-fp1",
+    "unitId": "fp1",
+    "year": 0,
+    "session": "Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Specimen%20QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Specimen%20MS.pdf",
+    "title": "FP1 - Specimen"
+  },
       {
         "id": "math-2024-jan-f2",
         "unitId": "f2",

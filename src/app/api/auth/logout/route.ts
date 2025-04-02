@@ -1,41 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logoutUser } from '@/lib/auth';
-import { withDb } from '@/lib/api-middleware';
-import { cookies } from 'next/headers';
+import { AuthError } from '@/lib/authTypes';
+import { withDb, handleOptions } from '@/lib/api-middleware';
 
-export const dynamic = 'force-dynamic';
-
-const handleLogout = async (request: NextRequest) => {
+export const POST = withDb(async (request: NextRequest) => {
   try {
-    // Clear auth cookies
-    const cookieStore = cookies();
-    cookieStore.delete('token');
-    cookieStore.delete('refreshToken');
-
-    // Call logout handler
     await logoutUser();
-
-    return NextResponse.json({ success: true });
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Successfully logged out'
+    });
   } catch (error) {
     console.error('Logout error:', error);
+
+    if (error instanceof AuthError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.type === 'SERVER_ERROR' ? 500 : 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Failed to logout' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
-};
+});
 
-// Export handlers with middleware
-export const POST = withDb(handleLogout);
-
-// Handle CORS preflight requests
-export async function OPTIONS(): Promise<NextResponse> {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
-}
+// Handle preflight requests
+export const OPTIONS = () => handleOptions(['POST', 'OPTIONS']);

@@ -1,130 +1,86 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { UserRole } from '@/lib/auth/jwt';
 
 export interface IUser {
-  _id: mongoose.Types.ObjectId;
-  email: string;
   username: string;
   password: string;
-  role: UserRole;
-  refreshToken?: string;
-  createdAt: Date;
-  lastLogin?: Date;
+  role: 'user' | 'moderator' | 'admin';
   banned: boolean;
+  createdAt: Date;
+  lastLogin: Date;
+  refreshToken?: {
+    token: string;
+    expiresAt: Date;
+  };
+  email?: string;
   verified: boolean;
-  // Academic info
-  subjects?: string[];
-  session?: string;
-  institution?: string;
-  studyGoals?: string;
-  // Preferences
-  notifications?: boolean;
-  studyReminders?: boolean;
-  // Additional fields
-  profilePicture?: string;
 }
 
-interface IUserMethods {
+// Define methods interface
+export interface IUserMethods {
   comparePassword(candidatePassword: string): Promise<boolean>;
   updateLastLogin(): Promise<void>;
-  toSafeObject(): Partial<IUser>;
 }
 
-type UserModel = mongoose.Model<IUser, {}, IUserMethods>;
+// Create model type
+export type UserModel = Model<IUser, {}, IUserMethods>;
 
-const userSchema = new Schema<IUser, UserModel, IUserMethods>(
-  {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      minlength: [3, 'Username must be at least 3 characters long'],
-      maxlength: [30, 'Username cannot be longer than 30 characters'],
-      match: [/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens and underscores']
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: [8, 'Password must be at least 8 characters long'],
-      select: false // Don't include password in queries by default
-    },
-    role: {
-      type: String,
-      enum: ['user', 'moderator', 'admin'],
-      default: 'user'
-    },
-    refreshToken: {
-      type: String,
-      select: false // Don't include refresh token in queries by default
-    },
-    lastLogin: {
-      type: Date
-    },
-    banned: {
-      type: Boolean,
-      default: false
-    },
-    verified: {
-      type: Boolean,
-      default: false
-    },
-    // Academic info
-    subjects: {
-      type: [String],
-      default: []
-    },
-    session: {
-      type: String,
-      trim: true
-    },
-    institution: {
-      type: String,
-      trim: true
-    },
-    studyGoals: {
-      type: String,
-      trim: true
-    },
-    // Preferences
-    notifications: {
-      type: Boolean,
-      default: true
-    },
-    studyReminders: {
-      type: Boolean,
-      default: true
-    },
-    // Additional fields
-    profilePicture: {
-      type: String
-    }
+const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 30,
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'moderator', 'admin'],
+    default: 'user'
+  },
+  banned: {
+    type: Boolean,
+    default: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now
+  },
+  refreshToken: {
+    token: String,
+    expiresAt: Date
+  },
+  email: {
+    type: String,
+    sparse: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
+  },
+  verified: {
+    type: Boolean,
+    default: false
   }
-);
+});
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
-    next();
-    return;
+    return next();
   }
 
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
@@ -132,49 +88,26 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Compare password method
+// Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
-  try {
-    return await bcrypt.compare(candidatePassword, this.password);
-  } catch (error) {
-    throw new Error('Password comparison failed');
-  }
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Update lastLogin
+// Method to update last login
 userSchema.methods.updateLastLogin = async function(): Promise<void> {
   this.lastLogin = new Date();
   await this.save();
 };
 
-// Instance method to generate safe user object (without sensitive data)
-userSchema.methods.toSafeObject = function() {
-  const obj = this.toObject();
-  const safeObj = { ...obj };
-  // Type-safe way to remove sensitive fields
-  if ('password' in safeObj) delete (safeObj as any).password;
-  if ('refreshToken' in safeObj) delete (safeObj as any).refreshToken;
-  if ('__v' in safeObj) delete (safeObj as any).__v;
-  return safeObj;
+// Remove sensitive fields when converting to JSON
+userSchema.methods.toJSON = function() {
+  const userObject = this.toObject();
+  delete userObject.password;
+  delete userObject.refreshToken;
+  return userObject;
 };
 
-// Create indexes for non-unique fields
-userSchema.index({ role: 1 });
-userSchema.index({ createdAt: -1 });
+// Create model
+export const User = (mongoose.models.User || mongoose.model<IUser, UserModel>('User', userSchema)) as UserModel;
 
-// Virtual for user's posts
-userSchema.virtual('posts', {
-  ref: 'Post',
-  localField: '_id',
-  foreignField: 'author'
-});
-
-// Virtual for user's replies
-userSchema.virtual('replies', {
-  ref: 'Reply',
-  localField: '_id',
-  foreignField: 'author'
-});
-
-export const User = mongoose.models.User as UserModel || 
-  mongoose.model<IUser, UserModel>('User', userSchema);
+export default User;

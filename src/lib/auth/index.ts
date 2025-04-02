@@ -1,170 +1,164 @@
-import { User } from '@/models/User';
-import { AuthError } from '@/lib/authTypes';
-import { 
-  validateLoginCredentials,
-  validateRegisterData,
-  verifyUserStatus,
-  requireAuth,
-  requireRole,
-  requireAdmin
-} from './validation';
-import {
-  signToken,
-  verifyToken,
-  getToken,
-  getCurrentUser,
-  type JWTPayload,
-  type TokenResponse,
-  type UserRole,
-  getTokensFromCookies
-} from './jwt';
+export * from './jwt';
+export * from './cookies';
+export * from './validation';
+export * from '../authTypes';
 
-// Extended registration data interface
-interface ExtendedRegisterData {
-  email: string;
-  password: string;
-  username: string;
-  subjects?: string[];
-  session?: string;
-  institution?: string;
-  studyGoals?: string;
-  notifications?: boolean;
-  studyReminders?: boolean;
-  profilePicture?: string;
-}
+import { User, IUser } from '@/models/User';
+import { AuthError, LoginCredentials, RegisterData } from '../authTypes';
+import { signAccessToken, signRefreshToken } from './jwt';
+import { AuthCookieManager } from './cookies';
+import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
 
-export async function loginUser(email: string, password: string): Promise<TokenResponse> {
+// Core authentication functions
+export async function loginUser({ username, password }: LoginCredentials) {
   try {
-    // Validate credentials
-    await validateLoginCredentials({ email, password });
+    // Validate input
+    validateLoginCredentials({ username, password });
 
     // Find user
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ username });
+    
     if (!user) {
-      throw new AuthError('Invalid credentials');
+      throw new AuthError('INVALID_CREDENTIALS', 'Invalid username or password');
     }
 
-    // Verify password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      throw new AuthError('Invalid credentials');
-    }
-
-    // Check user status
     await verifyUserStatus(user);
 
-    // Generate token
-    const payload: JWTPayload = {
+    // Verify password
+    const isValid = await user.comparePassword(password);
+    if (!isValid) {
+      throw new AuthError('INVALID_CREDENTIALS', 'Invalid username or password');
+    }
+
+    // Generate tokens
+    const tokenPayload = {
       userId: user._id.toString(),
       username: user.username,
-      email: user.email,
-      role: user.role as UserRole
+      role: user.role,
     };
 
-    // Sign token
-    return await signToken(payload);
+    const [accessToken, refreshToken] = await Promise.all([
+      signAccessToken(tokenPayload),
+      signRefreshToken(tokenPayload),
+    ]);
+
+    // Store refresh token
+    user.refreshToken = {
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    };
+    await user.save();
+
+    // Set cookies
+    AuthCookieManager.setTokens(accessToken, refreshToken);
+
+    // Update last login
+    await user.updateLastLogin();
+
+    return { user: user.toJSON() };
   } catch (error) {
     if (error instanceof AuthError) {
       throw error;
     }
-    throw new AuthError('An error occurred during login', 'SERVER_ERROR');
+    throw new AuthError('SERVER_ERROR', 'An error occurred during login');
   }
 }
 
-export async function logoutUser(): Promise<void> {
-  // Nothing to do server-side, cookies are cleared client-side
+export async function registerUser(data: RegisterData) {
+  try {
+    // Validate input
+    validateRegisterData(data);
+
+    // Create user
+    const user = new User(data);
+    await user.save();
+
+    // Log user in
+    return loginUser(data);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      throw error;
+    }
+    throw new AuthError('SERVER_ERROR', 'An error occurred during registration');
+  }
 }
 
-export async function refreshUserToken(refreshToken: string): Promise<TokenResponse> {
+export async function logoutUser() {
   try {
-    // Verify refresh token
-    const decoded = await verifyToken(refreshToken);
+    const { refreshToken } = AuthCookieManager.getTokens();
     
-    // Find user
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      throw new AuthError('User not found');
+    if (refreshToken) {
+      // Find and update user
+      await User.updateOne(
+        { 'refreshToken.token': refreshToken },
+        { $unset: { refreshToken: 1 } }
+      );
     }
 
-    // Generate new token
-    const payload: JWTPayload = {
-      userId: user._id.toString(),
-      username: user.username,
-      email: user.email,
-      role: user.role as UserRole
-    };
-
-    return await signToken(payload);
+    // Clear cookies
+    AuthCookieManager.clearTokens();
   } catch (error) {
-    if (error instanceof AuthError) {
-      throw error;
-    }
-    throw new AuthError('Failed to refresh token', 'SERVER_ERROR');
+    throw new AuthError('SERVER_ERROR', 'An error occurred during logout');
   }
 }
 
-export async function registerUser(
-  data: ExtendedRegisterData
-): Promise<TokenResponse> {
+export async function refreshUserToken(oldRefreshToken: string) {
   try {
-    // Validate base registration data
-    await validateRegisterData({ 
-      email: data.email, 
-      password: data.password, 
-      username: data.username 
-    });
+    // Find user by refresh token
+    const user = await User.findOne({ 'refreshToken.token': oldRefreshToken });
+    
+    if (!user) {
+      throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
+    }
 
-    // Create user with all provided data
-    const user = await User.create({
-      email: data.email,
-      password: data.password,
-      username: data.username,
-      role: 'user',
-      // Optional academic info
-      subjects: data.subjects || [],
-      session: data.session,
-      institution: data.institution,
-      studyGoals: data.studyGoals,
-      // Optional preferences
-      notifications: data.notifications ?? true,
-      studyReminders: data.studyReminders ?? true,
-      // Additional fields
-      profilePicture: data.profilePicture
-    });
+    await verifyUserStatus(user);
 
-    // Generate token
-    const payload: JWTPayload = {
+    if (!user.refreshToken || user.refreshToken.expiresAt < new Date()) {
+      throw new AuthError('INVALID_TOKEN', 'Refresh token expired');
+    }
+
+    // Generate new tokens
+    const tokenPayload = {
       userId: user._id.toString(),
       username: user.username,
-      email: user.email,
-      role: user.role as UserRole
+      role: user.role,
     };
 
-    // Sign token
-    return await signToken(payload);
+    const [accessToken, refreshToken] = await Promise.all([
+      signAccessToken(tokenPayload),
+      signRefreshToken(tokenPayload),
+    ]);
+
+    // Update refresh token
+    user.refreshToken = {
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    };
+    await user.save();
+
+    // Set new cookies
+    AuthCookieManager.setTokens(accessToken, refreshToken);
+
+    return { user: user.toJSON() };
   } catch (error) {
     if (error instanceof AuthError) {
       throw error;
     }
-    throw new AuthError('Registration failed', 'SERVER_ERROR');
+    throw new AuthError('SERVER_ERROR', 'An error occurred while refreshing token');
   }
 }
 
-// Re-export types
-export type { JWTPayload, TokenResponse, UserRole };
-export type { AuthError };
-
-// Re-export auth utilities
-export {
-  requireAuth,
-  requireRole,
-  requireAdmin,
-  verifyToken,
-  getToken,
-  getCurrentUser,
-  getTokensFromCookies,
-  validateLoginCredentials,
-  validateRegisterData,
-  verifyUserStatus,
-  signToken
-};
+// Helper to create admin user
+export async function createAdminUser(adminData: {
+  username: string;
+  password: string;
+  email?: string;
+}) {
+  const user = new User({
+    ...adminData,
+    role: 'admin',
+    verified: true,
+  });
+  await user.save();
+  return user;
+}
