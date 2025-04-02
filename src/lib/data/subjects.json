@@ -950,51 +950,90 @@
       "units": [
         {
           "id": "unit1",
-          "name": "Atomic Structure",
+          "name": "Unit 1",
           "order": 1,
-          "description": "Atoms, electrons, and periodic table"
+          "description": "Structure, Bonding and Introduction to Organic Chemistry"
         },
         {
           "id": "unit2",
-          "name": "Bonding and Structure",
+          "name": "Unit 2",
           "order": 2,
-          "description": "Chemical bonding and molecular structure"
+          "description": "Energetics, Group Chemistry, Halogenoalkanes and Alcohols"
         },
         {
           "id": "unit3",
-          "name": "Redox Reactions",
+          "name": "Unit 3",
           "order": 3,
-          "description": "Oxidation and reduction reactions"
+          "description": "Practical Skills in Chemistry I"
         },
         {
           "id": "unit4",
-          "name": "Energetics",
+          "name": "Unit 4",
           "order": 4,
-          "description": "Energy changes in chemical reactions"
+          "description": "Rates, Equilibria and Further Organic Chemistry"
         },
         {
           "id": "unit5",
-          "name": "Kinetics",
+          "name": "Unit 5",
           "order": 5,
-          "description": "Rates of chemical reactions"
+          "description": "Transition Metals and Organic Nitrogen Chemistry"
         },
         {
           "id": "unit6",
-          "name": "Equilibrium",
+          "name": "Unit 6",
           "order": 6,
-          "description": "Dynamic equilibrium in chemical systems"
+          "description": "Practical Skills in Chemistry II"
         }
       ],
       "papers": [
-        {
-          "id": "chem-2024-jan-u1",
-          "unitId": "unit1",
-          "year": 2024,
-          "session": "January",
-          "pdfUrl": "#",
-          "markingSchemeUrl": "#",
-          "title": "Chemistry Unit 1 - January 2024"
-        }
+        {"id": "chem-2019-january-unit1", "unitId": "unit1", "year": 2019, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/January%202019%20(IAL)%20QP%20.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/January%202019%20(IAL)%20MS%20.pdf", "title": "Chemistry Unit 1 - January 2019"},
+{"id": "chem-2020-january-unit1", "unitId": "unit1", "year": 2020, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/January%202020%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/January%202020%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - January 2020"},
+{"id": "chem-2021-january-unit1", "unitId": "unit1", "year": 2021, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/January%202021%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/January%202021%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - January 2021"},
+{"id": "chem-2022-january-unit1", "unitId": "unit1", "year": 2022, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/January%202022%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/January%202022%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - January 2022"},
+{"id": "chem-2023-january-unit1", "unitId": "unit1", "year": 2023, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/January%202023%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/January%202023%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - January 2023"},
+{"id": "chem-2019-june-unit1", "unitId": "unit1", "year": 2019, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/June%202019%20(IAL)%20QP%20.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/June%202019%20(IAL)%20MS%20.pdf", "title": "Chemistry Unit 1 - June 2019"},
+{"id": "chem-2021-june-unit1", "unitId": "unit1", "year": 2021, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/June%202021%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/June%202021%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - June 2021"},
+{"id": "chem-2022-june-unit1", "unitId": "unit1", "year": 2022, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/June%202022%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/June%202022%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - June 2022"},
+{"id": "chem-2023-june-unit1", "unitId": "unit1", "year": 2023, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/June%202023%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/June%202023%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - June 2023"},
+{"id": "chem-2019-october-unit1", "unitId": "unit1", "year": 2019, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/October%202019%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/October%202019%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - October 2019"},
+{"id": "chem-2020-october-unit1", "unitId": "unit1", "year": 2020, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/October%202020%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/October%202020%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - October 2020"},
+{"id": "chem-2021-october-unit1", "unitId": "unit1", "year": 2021, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/October%202021%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/October%202021%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - October 2021"},
+{"id": "chem-2022-october-unit1", "unitId": "unit1", "year": 2022, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/October%202022%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/October%202022%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - October 2022"},
+{"id": "chem-2023-october-unit1", "unitId": "unit1", "year": 2023, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/October%202023%20(IAL)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/October%202023%20(IAL)%20MS.pdf", "title": "Chemistry Unit 1 - October 2023"},
+{"id": "chem-specimen-unit1", "unitId": "unit1", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/QP/Specimen%20(IAL)%20QP%20.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-1/MS/Specimen%20(IAL)%20MS%20.pdf", "title": "Chemistry Unit 1 - Specimen"},
+{"id": "chem-2010-january-unit1", "unitId": "unit1", "year": 2010, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202010%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202010%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2010"},
+{"id": "chem-2011-january-unit1", "unitId": "unit1", "year": 2011, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202011%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202011%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2011"},
+{"id": "chem-2012-january-unit1", "unitId": "unit1", "year": 2012, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202012%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202012%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2012"},
+{"id": "chem-2013-january-unit1", "unitId": "unit1", "year": 2013, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202013%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202013%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2013"},
+{"id": "chem-2014-january-unit1", "unitId": "unit1", "year": 2014, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202014%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202014%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2014"},
+{"id": "chem-2015-january-unit1", "unitId": "unit1", "year": 2015, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202015%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202015%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2015"},
+{"id": "chem-2016-january-unit1", "unitId": "unit1", "year": 2016, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202016%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202016%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2016"},
+{"id": "chem-2017-january-unit1", "unitId": "unit1", "year": 2017, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202017%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202017%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2017"},
+{"id": "chem-2018-january-unit1", "unitId": "unit1", "year": 2018, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202018%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202018%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - January 2018"},
+{"id": "chem-2019-january-paper1-unit1", "unitId": "unit1", "year": 2019, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202019%20(IAL)%20QP%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/January%202019%20(IAL)%20MS%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "title": "Chemistry Unit 1 - January 2019"},
+{"id": "chem-2009-june-unit1", "unitId": "unit1", "year": 2009, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202009%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202009%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2009"},
+{"id": "chem-2010-june-unit1", "unitId": "unit1", "year": 2010, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202010%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202010%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2010"},
+{"id": "chem-2011-june-unit1", "unitId": "unit1", "year": 2011, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202011%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202011%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2011"},
+{"id": "chem-2012-june-unit1", "unitId": "unit1", "year": 2012, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202012%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202012%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2012"},
+{"id": "chem-2013-june-r-unit1", "unitId": "unit1", "year": 2013, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202013%20(R)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202013%20(R)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2013 (R)"},
+{"id": "chem-2013-june-unit1", "unitId": "unit1", "year": 2013, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202013%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202013%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2013"},
+{"id": "chem-2014-june-unit1", "unitId": "unit1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2014 (IAL)"},
+{"id": "chem-2014-june-r-unit1", "unitId": "unit1", "year": 2014, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20(R)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20(R)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2014 (R)"},
+{"id": "chem-2014-june-unit1-2", "unitId": "unit1", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202014%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2014"},
+{"id": "chem-2015-june-unit1", "unitId": "unit1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202015%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202015%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2015 (IAL)"},
+{"id": "chem-2015-june-unit1-2", "unitId": "unit1", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202015%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202015%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2015"},
+{"id": "chem-2016-june-unit1", "unitId": "unit1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202016%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202016%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2016 (IAL)"},
+{"id": "chem-2016-june-unit1-2", "unitId": "unit1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202016%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202016%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2016"},
+{"id": "chem-2017-june-unit1", "unitId": "unit1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202017%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202017%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2017 (IAL)"},
+{"id": "chem-2017-june-unit1-2", "unitId": "unit1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202017%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202017%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2017"},
+{"id": "chem-2018-june-unit1", "unitId": "unit1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202018%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202018%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2018 (IAL)"},
+{"id": "chem-2018-june-unit1-2", "unitId": "unit1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202018%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202018%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2018"},
+{"id": "chem-2019-june-unit1-2", "unitId": "unit1", "year": 2019, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202019%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/June%202019%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - June 2019 (IAL)"},
+{"id": "chem-2016-october-unit1", "unitId": "unit1", "year": 2016, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202016%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202016%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - October 2016 (IAL)"},
+{"id": "chem-2017-october-paper1-unit1", "unitId": "unit1", "year": 2017, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202017%20(IAL)%20QP%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202017%20(IAL)%20MS%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "title": "Chemistry Unit 1 - October 2017 "},
+{"id": "chem-2018-october-paper1-unit1", "unitId": "unit1", "year": 2018, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202018%20(IAL)%20QP%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202018%20(IAL)%20MS%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "title": "Chemistry Unit 1 - October 2018"},
+{"id": "chem-specimen-unit1", "unitId": "unit1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - Specimen (IAL)"}
+
       ]
     },
     "mathematics": {
@@ -1004,80 +1043,86 @@
         {
           "id": "p1",
           "name": "Pure 1",
-          "order": 0,
-          "description": "Basic mathematical concepts"
+          "order": 1,
+          "description": "Algebra, coordinate geometry, differentiation and integration"
         },
         {
           "id": "p2",
           "name": "Pure 2",
-          "order": 0,
-          "description": "Advanced mathematical techniques"
+          "order": 2,
+          "description": "Logarithms, sequences, binomial expansion and trigonometry"
         },
         {
           "id": "p3",
           "name": "Pure 3",
-          "order": 0,
-          "description": "Further mathematical concepts"
+          "order": 3,
+          "description": "Proof, complex numbers, differential equations and vectors"
         },
         {
           "id": "p4",
           "name": "Pure 4",
-          "order": 0,
-          "description": "Complex numbers and matrices"
+          "order": 4,
+          "description": "Partial fractions, parametric equations and numerical methods"
         },
         {
           "id": "m1",
           "name": "Mechanics 1",
-          "order": 0,
-          "description": "Basic mechanics principles"
+          "order": 5,
+          "description": "Forces, motion, momentum and projectiles"
         },
         {
           "id": "m2",
           "name": "Mechanics 2",
-          "order": 0,
-          "description": "Advanced mechanics concepts"
+          "order": 6,
+          "description": "Moments, work-energy principle and circular motion"
         },
         {
           "id": "m3",
           "name": "Mechanics 3",
-          "order": 0,
-          "description": "Further mechanics applications"
+          "order": 7,
+          "description": "Elastic strings, elastic collisions and simple harmonic motion"
         },
         {
           "id": "s1",
           "name": "Statistics 1",
-          "order": 0,
-          "description": "Basic statistical methods"
+          "order": 8,
+          "description": "Probability, discrete random variables and hypothesis testing"
         },
         {
           "id": "s2",
           "name": "Statistics 2",
-          "order": 0,
-          "description": "Intermediate statistical methods"
+          "order": 9,
+          "description": "Continuous distributions, correlation and regression"
         },
         {
           "id": "s3",
           "name": "Statistics 3",
-          "order": 1,
-          "description": "Statistical methods and applications"
+          "order": 10,
+          "description": "Chi-squared tests, estimation and confidence intervals"
         },
         {
           "id": "f1",
           "name": "Further Pure 1",
-          "order": 2,
-          "description": "Advanced mathematical concepts"
+          "order": 11,
+          "description": "Series, complex numbers and matrices"
         },
         {
           "id": "f2",
           "name": "Further Pure 2",
-          "order": 2,
-          "description": "Complex analysis and applications"
+          "order": 12,
+          "description": "Hyperbolic functions, polar coordinates and differential equations"
         },
         {
           "id": "f3",
           "name": "Further Pure 3",
-          "order": 2,
-          "description": "Advanced mathematical concepts"
+          "order": 13,
+          "description": "Further calculus, number theory and group theory"
+        },
+        {
+          "id": "d1",
+          "name": "Decision 1",
+          "order": 14,
+          "description": "Algorithms, linear programming and critical path analysis"
         }
       ],
       "papers": [
@@ -1655,11 +1700,10 @@
 {"id": "maths-2016-june-m1", "unitId": "m1", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202016%20MS.pdf", "title": "Mechanics 1 - June 2016"},
 {"id": "maths-2017-june-m1", "unitId": "m1", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202017%20MS.pdf", "title": "Mechanics 1 - June 2017"},
 {"id": "maths-2018-june-m1", "unitId": "m1", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/June%202018%20MS.pdf", "title": "Mechanics 1 - June 2018"},
-{"id": "maths-mock-m1", "unitId": "m1", "year": "", "session": "Mock", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/Mock%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/Mock%20MS.pdf", "title": "Mechanics 1 - Mock"},
-{"id": "maths-2002-november-m1", "unitId": "m1", "year": 2002, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202002%20MS.pdf", "title": "Mechanics 1 - November 2002"},
-{"id": "maths-2003-november-m1", "unitId": "m1", "year": 2003, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202003%20MS.pdf", "title": "Mechanics 1 - November 2003"},
-{"id": "maths-2004-november-m1", "unitId": "m1", "year": 2004, "session": "November", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202004%20MS.pdf", "title": "Mechanics 1 - November 2004"},
-{"id": "maths-specimen-m1", "unitId": "m1", "year": "", "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Mechanics 1 - Specimen"},
+{"id": "maths-2002-november-m1", "unitId": "m1", "year": 2002, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202002%20MS.pdf", "title": "Mechanics 1 - November 2002"},
+{"id": "maths-2003-november-m1", "unitId": "m1", "year": 2003, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202003%20MS.pdf", "title": "Mechanics 1 - November 2003"},
+{"id": "maths-2004-november-m1", "unitId": "m1", "year": 2004, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/November%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/November%202004%20MS.pdf", "title": "Mechanics 1 - November 2004"},
+{"id": "maths-specimen-m1", "unitId": "m1", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M1/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Mechanics 1 - Specimen"},
         {
           "id": "math-2024-jan-m2",
           "unitId": "m2",
@@ -2137,6 +2181,61 @@
           "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M2/Papers-Edexcel/MS/June%202001%20MS.pdf",
           "title": "Mathematics M2 - June 2001"
         },
+  {"id": "maths-2014-january-m3", "unitId": "m3", "year": 2014, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202014%20MS.pdf", "title": "Mechanics 3 - January 2014"},
+{"id": "maths-2015-january-m3", "unitId": "m3", "year": 2015, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202015%20MS.pdf", "title": "Mechanics 3 - January 2015"},
+{"id": "maths-2016-january-m3", "unitId": "m3", "year": 2016, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202016%20MS.pdf", "title": "Mechanics 3 - January 2016"},
+{"id": "maths-2017-january-m3", "unitId": "m3", "year": 2017, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202017%20MS.pdf", "title": "Mechanics 3 - January 2017"},
+{"id": "maths-2018-january-m3", "unitId": "m3", "year": 2018, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202018%20MS.pdf", "title": "Mechanics 3 - January 2018"},
+{"id": "maths-2019-january-m3", "unitId": "m3", "year": 2019, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202019%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202019%20MS.pdf", "title": "Mechanics 3 - January 2019"},
+{"id": "maths-2021-january-m3", "unitId": "m3", "year": 2021, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202021%20MS.pdf", "title": "Mechanics 3 - January 2021"},
+{"id": "maths-2022-january-m3", "unitId": "m3", "year": 2022, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202022%20MS.pdf", "title": "Mechanics 3 - January 2022"},
+{"id": "maths-2023-january-m3", "unitId": "m3", "year": 2023, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202023%20MS.pdf", "title": "Mechanics 3 - January 2023"},
+{"id": "maths-2024-january-m3", "unitId": "m3", "year": 2024, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/January%202024%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/January%202024%20MS.pdf", "title": "Mechanics 3 - January 2024"},
+{"id": "maths-2014-june-m3", "unitId": "m3", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202014%20MS.pdf", "title": "Mechanics 3 - June 2014"},
+{"id": "maths-2015-june-m3", "unitId": "m3", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202015%20MS.pdf", "title": "Mechanics 3 - June 2015"},
+{"id": "maths-2016-june-m3", "unitId": "m3", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202016%20MS.pdf", "title": "Mechanics 3 - June 2016"},
+{"id": "maths-2017-june-m3", "unitId": "m3", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202017%20MS.pdf", "title": "Mechanics 3 - June 2017"},
+{"id": "maths-2018-june-m3", "unitId": "m3", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202018%20MS.pdf", "title": "Mechanics 3 - June 2018"},
+{"id": "maths-2020-june-m3", "unitId": "m3", "year": 2020, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202020%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202020%20MS.pdf", "title": "Mechanics 3 - June 2020"},
+{"id": "maths-2021-june-m3", "unitId": "m3", "year": 2021, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202021%20MS.pdf", "title": "Mechanics 3 - June 2021"},
+{"id": "maths-2022-june-m3", "unitId": "m3", "year": 2022, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202022%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202022%20MS.pdf", "title": "Mechanics 3 - June 2022"},
+{"id": "maths-2023-june-m3", "unitId": "m3", "year": 2023, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/June%202023%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/June%202023%20MS.pdf", "title": "Mechanics 3 - June 2023"},
+{"id": "maths-2021-october-m3", "unitId": "m3", "year": 2021, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/October%202021%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/October%202021%20MS.pdf", "title": "Mechanics 3 - October 2021"},
+{"id": "maths-2018-specimen-m3", "unitId": "m3", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/Specimen%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/Specimen%202018%20MS.pdf", "title": "Mechanics 3 - Specimen 2018"},
+{"id": "maths-specimen-m3", "unitId": "m3", "year": "0", "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Mechanics/M3/MS/Specimen%20MS.pdf", "title": "Mechanics 3 - Specimen"},
+{"id": "maths-2002-january-m3", "unitId": "m3", "year": 2002, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202002%20MS.pdf", "title": "Mechanics 3 - January 2002"},
+{"id": "maths-2003-january-m3", "unitId": "m3", "year": 2003, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202003%20MS.pdf", "title": "Mechanics 3 - January 2003"},
+{"id": "maths-2004-january-m3", "unitId": "m3", "year": 2004, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202004%20MS.pdf", "title": "Mechanics 3 - January 2004"},
+{"id": "maths-2005-january-m3", "unitId": "m3", "year": 2005, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202005%20MS.pdf", "title": "Mechanics 3 - January 2005"},
+{"id": "maths-2006-january-m3", "unitId": "m3", "year": 2006, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202006%20MS.pdf", "title": "Mechanics 3 - January 2006"},
+{"id": "maths-2007-january-m3", "unitId": "m3", "year": 2007, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202007%20MS.pdf", "title": "Mechanics 3 - January 2007"},
+{"id": "maths-2008-january-m3", "unitId": "m3", "year": 2008, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202008%20MS.pdf", "title": "Mechanics 3 - January 2008"},
+{"id": "maths-2009-january-m3", "unitId": "m3", "year": 2009, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202009%20MS.pdf", "title": "Mechanics 3 - January 2009"},
+{"id": "maths-2010-january-m3", "unitId": "m3", "year": 2010, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202010%20MS.pdf", "title": "Mechanics 3 - January 2010"},
+{"id": "maths-2011-january-m3", "unitId": "m3", "year": 2011, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202011%20MS.pdf", "title": "Mechanics 3 - January 2011"},
+{"id": "maths-2012-january-m3", "unitId": "m3", "year": 2012, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202012%20MS.pdf", "title": "Mechanics 3 - January 2012"},
+{"id": "maths-2013-january-m3", "unitId": "m3", "year": 2013, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/January%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/January%202013%20MS.pdf", "title": "Mechanics 3 - January 2013"},
+{"id": "maths-2001-june-m3", "unitId": "m3", "year": 2001, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202001%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202001%20MS.pdf", "title": "Mechanics 3 - June 2001"},
+{"id": "maths-2002-june-m3", "unitId": "m3", "year": 2002, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202002%20MS.pdf", "title": "Mechanics 3 - June 2002"},
+{"id": "maths-2003-june-m3", "unitId": "m3", "year": 2003, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202003%20MS.pdf", "title": "Mechanics 3 - June 2003"},
+{"id": "maths-2004-june-m3", "unitId": "m3", "year": 2004, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202004%20MS.pdf", "title": "Mechanics 3 - June 2004"},
+{"id": "maths-2005-june-m3", "unitId": "m3", "year": 2005, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202005%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202005%20MS.pdf", "title": "Mechanics 3 - June 2005"},
+{"id": "maths-2006-june-m3", "unitId": "m3", "year": 2006, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202006%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202006%20MS.pdf", "title": "Mechanics 3 - June 2006"},
+{"id": "maths-2007-june-m3", "unitId": "m3", "year": 2007, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202007%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202007%20MS.pdf", "title": "Mechanics 3 - June 2007"},
+{"id": "maths-2008-june-m3", "unitId": "m3", "year": 2008, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202008%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202008%20MS.pdf", "title": "Mechanics 3 - June 2008"},
+{"id": "maths-2009-june-m3", "unitId": "m3", "year": 2009, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202009%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202009%20MS.pdf", "title": "Mechanics 3 - June 2009"},
+{"id": "maths-2010-june-m3", "unitId": "m3", "year": 2010, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202010%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202010%20MS.pdf", "title": "Mechanics 3 - June 2010"},
+{"id": "maths-2011-june-m3", "unitId": "m3", "year": 2011, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202011%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202011%20MS.pdf", "title": "Mechanics 3 - June 2011"},
+{"id": "maths-2012-june-m3", "unitId": "m3", "year": 2012, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202012%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202012%20MS.pdf", "title": "Mechanics 3 - June 2012"},
+{"id": "maths-2013-june-r-m3", "unitId": "m3", "year": 2013, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202013%20(R)%20MS.pdf", "title": "Mechanics 3 - June 2013 (R)"},
+{"id": "maths-2013-june-m3", "unitId": "m3", "year": 2013, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202013%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202013%20MS.pdf", "title": "Mechanics 3 - June 2013"},
+{"id": "maths-2014-june-r-m3", "unitId": "m3", "year": 2014, "session": "June (R)", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202014%20(R)%20MS.pdf", "title": "Mechanics 3 - June 2014 (R)"},
+{"id": "maths-2014-june-m3", "unitId": "m3", "year": 2014, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202014%20MS.pdf", "title": "Mechanics 3 - June 2014"},
+{"id": "maths-2015-june-m3", "unitId": "m3", "year": 2015, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202015%20MS.pdf", "title": "Mechanics 3 - June 2015"},
+{"id": "maths-2016-june-m3", "unitId": "m3", "year": 2016, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202016%20MS.pdf", "title": "Mechanics 3 - June 2016"},
+{"id": "maths-2017-june-m3", "unitId": "m3", "year": 2017, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202017%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202017%20MS.pdf", "title": "Mechanics 3 - June 2017"},
+{"id": "maths-2018-june-m3", "unitId": "m3", "year": 2018, "session": "June", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/June%202018%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/June%202018%20MS.pdf", "title": "Mechanics 3 - June 2018"},
+{"id": "maths-specimen-m3", "unitId": "m3", "year": 2018, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/M3/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Mechanics 3 - Specimen"},
   {"id": "maths-2014-january-s1-ial", "unitId": "s1", "year": 2014, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202014%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202014%20MS.pdf", "title": "Statistics 1 - January 2014"},
   {"id": "maths-2015-january-s1-ial", "unitId": "s1", "year": 2015, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202015%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202015%20MS.pdf", "title": "Statistics 1 - January 2015"},
   {"id": "maths-2016-january-s1-ial", "unitId": "s1", "year": 2016, "session": "January", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/QP/January%202016%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/Papers/Edexcel-IAL/Statistics/S1/MS/January%202016%20MS.pdf", "title": "Statistics 1 - January 2016"},
@@ -2201,7 +2300,6 @@
   {"id": "maths-2002-november-s1-uk", "unitId": "s1", "year": 2002, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202002%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202002%20MS.pdf", "title": "Statistics 1 - November 2002"},
   {"id": "maths-2003-november-s1-uk", "unitId": "s1", "year": 2003, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202003%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202003%20MS.pdf", "title": "Statistics 1 - November 2003"},
   {"id": "maths-2004-november-s1-uk", "unitId": "s1", "year": 2004, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/November%202004%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/November%202004%20MS.pdf", "title": "Statistics 1 - November 2004"},
-  {"id": "maths-0-mock-s1-uk", "unitId": "s1", "year": 0, "session": "Mock", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/Mock%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/Mock%20MS.pdf", "title": "Statistics 1 - Mock"},
   {"id": "maths-0-specimen-s1-uk", "unitId": "s1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/QP/Specimen%20QP.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S1/Papers-Edexcel/MS/Specimen%20MS.pdf", "title": "Statistics 1 - Specimen"},
         {
           "id": "math-2024-jan-s2",
@@ -2917,7 +3015,7 @@
       {
         "id": "math-spec-s3",
         "unitId": "s3",
-        "year": null,
+        "year": 0,
         "session": "Specimen",
         "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/QP/Specimen%20QP.pdf",
         "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/S3/Papers-Edexcel/MS/Specimen%20MS.pdf",
@@ -3186,7 +3284,7 @@
   },
   {
     "id": "maths-2009-jan-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2009,
     "session": "January",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202009%20QP.pdf",
@@ -3195,7 +3293,7 @@
   },
   {
     "id": "maths-2010-jan-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2010,
     "session": "January",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202010%20QP.pdf",
@@ -3204,7 +3302,7 @@
   },
   {
     "id": "maths-2011-jan-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2011,
     "session": "January",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202011%20QP.pdf",
@@ -3213,7 +3311,7 @@
   },
   {
     "id": "maths-2012-jan-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2012,
     "session": "January",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202012%20QP.pdf",
@@ -3222,7 +3320,7 @@
   },
   {
     "id": "maths-2013-jan-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2013,
     "session": "January",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/January%202013%20QP.pdf",
@@ -3231,7 +3329,7 @@
   },
   {
     "id": "maths-2009-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2009,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202009%20QP.pdf",
@@ -3240,7 +3338,7 @@
   },
   {
     "id": "maths-2010-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2010,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202010%20QP.pdf",
@@ -3249,7 +3347,7 @@
   },
   {
     "id": "maths-2011-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2011,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202011%20QP.pdf",
@@ -3258,7 +3356,7 @@
   },
   {
     "id": "maths-2012-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2012,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202012%20QP.pdf",
@@ -3267,7 +3365,7 @@
   },
   {
     "id": "maths-2013-jun-r-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2013,
     "session": "June (R)",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20(R)%20QP.pdf",
@@ -3276,7 +3374,7 @@
   },
   {
     "id": "maths-2013-jun-withdrawn-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2013,
     "session": "June (Withdrawn)",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20(Withdrawn)%20QP.pdf",
@@ -3285,7 +3383,7 @@
   },
   {
     "id": "maths-2013-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2013,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202013%20QP.pdf",
@@ -3294,7 +3392,7 @@
   },
   {
     "id": "maths-2014-jun-r-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2014,
     "session": "June (R)",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202014%20(R)%20QP.pdf",
@@ -3303,7 +3401,7 @@
   },
   {
     "id": "maths-2014-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2014,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202014%20QP.pdf",
@@ -3312,7 +3410,7 @@
   },
   {
     "id": "maths-2015-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2015,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202015%20QP.pdf",
@@ -3321,7 +3419,7 @@
   },
   {
     "id": "maths-2016-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2016,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202016%20QP.pdf",
@@ -3330,7 +3428,7 @@
   },
   {
     "id": "maths-2017-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2017,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202017%20QP.pdf",
@@ -3339,7 +3437,7 @@
   },
   {
     "id": "maths-2018-jun-fp1",
-    "unitId": "fp1",
+    "unitId": "f1",
     "year": 2018,
     "session": "June",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/June%202018%20QP.pdf",
@@ -3347,27 +3445,9 @@
     "title": "FP1 - June 2018"
   },
   {
-    "id": "maths-mock-fp1",
-    "unitId": "fp1",
-    "year": 0,
-    "session": "Mock",
-    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Mock%20QP.pdf",
-    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Mock%20MS.pdf",
-    "title": "FP1 - Mock"
-  },
-  {
-    "id": "maths-oldpapers-fp1",
-    "unitId": "fp1",
-    "year": 0,
-    "session": "Old Papers",
-    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Questions%20from%20Old%20Papers.pdf",
-    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Questions%20from%20Old%20Papers%20MS.pdf",
-    "title": "FP1 - Questions from Old Papers"
-  },
-  {
     "id": "maths-spec-fp1",
-    "unitId": "fp1",
-    "year": 0,
+    "unitId": "f1",
+    "year": 2018,
     "session": "Specimen",
     "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/QP/Specimen%20QP.pdf",
     "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP1/Papers-Edexcel/MS/Specimen%20MS.pdf",
@@ -3835,20 +3915,11 @@
       {
         "id": "math-spec-f3",
         "unitId": "f3",
-        "year": null,
+        "year": 0,
         "session": "Specimen",
         "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP3/Papers-Edexcel/QP/Specimen%20QP.pdf",
         "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP3/Papers-Edexcel/MS/Specimen%20MS.pdf",
         "title": "Mathematics F3 - Specimen"
-      },
-      {
-        "id": "math-mock-f3",
-        "unitId": "f3",
-        "year": null,
-        "session": "Mock",
-        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP3/Papers-Edexcel/QP/Mock%20QP.pdf",
-        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Maths/A-level/FP3/Papers-Edexcel/MS/Mock%20MS.pdf",
-        "title": "Mathematics F3 - Mock"
       }
       ]
     },

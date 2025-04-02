@@ -5,6 +5,7 @@ import { useAuth } from '@/components/auth/AuthContext';
 import ProtectedContent from '@/components/auth/ProtectedContent';
 import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
 import Link from 'next/link';
+import ForumHeader from '@/components/forum/ForumHeader';
 
 interface Post {
   _id: string;
@@ -47,91 +48,115 @@ export default function ForumPage() {
   }, [user]); // Depend on user to refetch when auth state changes
 
   return (
-    <ProtectedContent
-      roles={['user', 'moderator', 'admin']}
-      message="Please sign in to access the forum"
-      fallback={
-        <div className="container mx-auto p-4">
-          <div className="text-center py-12 max-w-2xl mx-auto">
-            <h1 className="text-3xl font-bold mb-4 text-text">Welcome to Our Forum</h1>
-            <p className="text-text-muted mb-8">
-              Join our community to participate in discussions, share your thoughts,
-              and connect with others.
+    <>
+      <ForumHeader />
+      
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold mb-4 text-text">Welcome to Our Forum</h1>
+          <p className="text-text-muted mb-8">
+            Join our community to participate in discussions, share your thoughts,
+            and connect with others.
+          </p>
+          <div className="p-6 bg-surface rounded-lg shadow-sm border border-divider mb-8">
+            <p className="text-lg font-medium mb-4 text-text">
+              What you can do in our forum:
             </p>
-            <div className="p-6 bg-surface rounded-lg shadow-sm border border-divider mb-8">
-              <p className="text-lg font-medium mb-4 text-text">
-                What you can do in our forum:
-              </p>
-              <ul className="text-text-muted space-y-2 mb-6 text-left list-disc list-inside">
-                <li>Start interesting discussions</li>
-                <li>Share your knowledge and experiences</li>
-                <li>Connect with other members</li>
-                <li>Get help from the community</li>
-              </ul>
-            </div>
+            <ul className="text-text-muted space-y-2 mb-6 text-left list-disc list-inside">
+              <li>Start interesting discussions</li>
+              <li>Share your knowledge and experiences</li>
+              <li>Connect with other members</li>
+              <li>Get help from the community</li>
+            </ul>
           </div>
-        </div>
-      }
-    >
-      <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-text">Forum Discussions</h1>
-          {user && (
-            <Link
-              href="/forum/new"
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-            >
-              New Post
-            </Link>
+
+          {!user && (
+            <div className="mt-8">
+              <p className="text-text-muted mb-4">Ready to join the discussion?</p>
+              <div className="flex justify-center gap-4">
+                <Link
+                  href="/auth/login"
+                  className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="px-6 py-2 border border-primary text-primary rounded-md hover:bg-primary/10 transition-colors"
+                >
+                  Create account
+                </Link>
+              </div>
+            </div>
           )}
         </div>
 
-        <div className="space-y-4">
-          {isLoading ? (
-            <div className="text-center py-8">
-              <LoadingSpinner />
-              <p className="text-text-muted mt-2">Loading discussions...</p>
+        <ProtectedContent
+          roles={['user', 'moderator', 'admin']}
+          message="Please sign in to access the forum"
+          fallback={null}  // Add fallback to prevent redirect
+        >
+          <div className="mt-12">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-semibold text-text">Forum Discussions</h2>
+              {user && (
+                <Link
+                  href="/forum/new"
+                  className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  New Post
+                </Link>
+              )}
             </div>
-          ) : error ? (
-            <div className="p-4 bg-error/10 border border-error/20 rounded text-error text-center">
-              {error}
-            </div>
-          ) : posts.length === 0 ? (
-            <div className="text-center py-8 text-text-muted">
-              No posts yet. Be the first to start a discussion!
-            </div>
-          ) : (
-            posts.map((post) => (
-              <Link
-                key={post._id}
-                href={`/forum/posts/${post._id}`}
-                className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
-              >
-                <h2 className="text-lg font-semibold mb-2 text-text">{post.title}</h2>
-                <div className="flex items-center text-sm text-text-muted">
-                  <span>By {post.authorName}</span>
-                  <span className="mx-2">•</span>
-                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                  <span className="mx-2">•</span>
-                  <span>{post.replyCount} replies</span>
+
+            <div className="space-y-4">
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <LoadingSpinner />
+                  <p className="text-text-muted mt-2">Loading discussions...</p>
                 </div>
-                {post.tags && post.tags.length > 0 && (
-                  <div className="mt-2 space-x-2">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-block px-2 py-1 text-xs bg-surface-alt rounded text-text-muted"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </Link>
-            ))
-          )}
-        </div>
+              ) : error ? (
+                <div className="p-4 bg-error/10 border border-error/20 rounded text-error text-center">
+                  {error}
+                </div>
+              ) : posts.length === 0 ? (
+                <div className="text-center py-8 text-text-muted">
+                  No posts yet. Be the first to start a discussion!
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <Link
+                    key={post._id}
+                    href={`/forum/posts/${post._id}`}
+                    className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
+                  >
+                    <h2 className="text-lg font-semibold mb-2 text-text">{post.title}</h2>
+                    <div className="flex items-center text-sm text-text-muted">
+                      <span>By {post.authorName}</span>
+                      <span className="mx-2">•</span>
+                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <span className="mx-2">•</span>
+                      <span>{post.replyCount} replies</span>
+                    </div>
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="mt-2 space-x-2">
+                        {post.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-block px-2 py-1 text-xs bg-surface-alt rounded text-text-muted"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
+        </ProtectedContent>
       </div>
-    </ProtectedContent>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import subjectsData from '@/lib/data/subjects.json';
 import type { Subject, SubjectsData, Paper } from '@/types/subject';
+import { getPaperCode } from '@/utils/paperCodes';
 
 export default function SubjectPage() {
   const params = useParams();
@@ -193,12 +194,30 @@ export default function SubjectPage() {
                       className="p-4 hover:bg-surface-alt transition-colors"
                     >
                       <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-medium text-text">
-                          {/* Display original session name in the paper details */}
-                          {paper.session} {paper.year}
-                        </h3>
+                        <div>
+                          <h3 className="font-medium text-text">
+                            {/* Display original session name in the paper details */}
+                            {paper.session} {paper.year}
+                          </h3>
+                          {/* Add paper code in small, muted text */}
+                          {getPaperCode({
+                            subject: subjectId,
+                            unitId: paper.unitId,
+                            year: paper.year,
+                            title: paper.title
+                          }) && (
+                            <span className="text-xs text-text-muted">
+                              {getPaperCode({
+                                subject: subjectId,
+                                unitId: paper.unitId,
+                                year: paper.year,
+                                title: paper.title
+                              })}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      
+
                       {/* Paper and Marking Scheme */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <a

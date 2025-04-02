@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuth } from './AuthContext';
-import LoginModal from './LoginModal';
+import { usePathname } from 'next/navigation';
 import { UserWithoutPassword } from '@/lib/authTypes';
 
 interface ProtectedContentProps {
@@ -12,6 +12,7 @@ interface ProtectedContentProps {
   message?: string;
   onAuthFailure?: () => void;
   render?: (user: UserWithoutPassword) => React.ReactNode;
+  preventRedirect?: boolean;
 }
 
 export default function ProtectedContent({
@@ -21,20 +22,13 @@ export default function ProtectedContent({
   message = 'Please sign in to access this content',
   onAuthFailure,
   render,
+  preventRedirect = false,
 }: ProtectedContentProps) {
   const { user, isLoading } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
+  const pathname = usePathname();
 
-  useEffect(() => {
-    // If not loading and no user, or user doesn't have required role
-    if (!isLoading && (!user || (roles && !roles.includes(user.role)))) {
-      if (onAuthFailure) {
-        onAuthFailure();
-      } else {
-        setShowLogin(true);
-      }
-    }
-  }, [user, isLoading, roles, onAuthFailure]);
+  // Check user authentication and roles
+  const isAuthorized = user && (!roles || roles.includes(user.role));
 
   // Show loading state
   if (isLoading) {
@@ -45,34 +39,33 @@ export default function ProtectedContent({
     );
   }
 
-  // Check user authentication and roles
-  const isAuthorized = user && (!roles || roles.includes(user.role));
-
+  // If not authorized
   if (!isAuthorized) {
-    // Show fallback if provided
-    if (fallback) {
-      return (
-        <>
-          {fallback}
-          <LoginModal
-            isOpen={showLogin}
-            onClose={() => setShowLogin(false)}
-            message={message}
-            returnTo={typeof window !== 'undefined' ? window.location.pathname : '/'}
-          />
-        </>
-      );
+    // If we have a fallback, show it
+    if (fallback !== undefined) {
+      return <>{fallback}</>;
     }
 
-    // Show only login modal if no fallback
-    return (
-      <LoginModal
-        isOpen={true}
-        onClose={() => {}} // No-op since we always want to show the modal without fallback
-        message={message}
-        returnTo={typeof window !== 'undefined' ? window.location.pathname : '/'}
-      />
-    );
+    // If we have an onAuthFailure callback, use it
+    if (onAuthFailure) {
+      onAuthFailure();
+      return null;
+    }
+
+    // If preventRedirect is true, don't redirect
+    if (preventRedirect) {
+      return null;
+    }
+
+    // If no fallback and no callback, and we're in the browser, redirect to login
+    if (typeof window !== 'undefined') {
+      // Use current pathname instead of window.location.pathname
+      window.location.href = `/auth/login?returnTo=${encodeURIComponent(pathname)}`;
+      return null;
+    }
+
+    // If we're not in the browser or waiting for redirect, render nothing
+    return null;
   }
 
   // If authorized and render prop is provided, use it

@@ -4,6 +4,7 @@ import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSearch } from '@/hooks/useSearch';
+import { getPaperCode } from '@/utils/paperCodes';
 import SearchBox from './SearchBox';
 import FilterBox from './FilterBox';
 import { getTrendingSearches, logSearchQuery } from '@/utils/search/trending';
@@ -271,9 +272,26 @@ export default function PaperSearch({ initialQuery = '' }: PaperSearchProps) {
                     <h3 className="font-medium text-text break-words">
                       {result.subject.name} - {result.unit.name}
                     </h3>
-                    <p className="text-sm text-text-muted">
-                      {result.paper.session} {result.paper.year}
-                    </p>
+                    <div>
+                      <p className="text-sm text-text-muted">
+                        {result.paper.session} {result.paper.year}
+                        {getPaperCode({
+                          subject: result.subject.id,
+                          unitId: result.paper.unitId,
+                          year: result.paper.year,
+                          title: result.paper.title
+                        }) && (
+                          <span className="text-xs ml-2">
+                            {getPaperCode({
+                              subject: result.subject.id,
+                              unitId: result.paper.unitId,
+                              year: result.paper.year,
+                              title: result.paper.title
+                            })}
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-3 sm:ml-6">
                     <Link
