@@ -2,28 +2,27 @@
 export * from './auth/index';
 
 // Note: The legacy admin token system has been replaced by role-based authentication.
-// Use the new auth system with user roles: 'user', 'moderator', 'admin'
-// 
 // Example:
 // ```typescript
 // const { requireRole } = await import('@/lib/auth');
-// const adminOnly = await requireRole(['admin']);
+// const isAdmin = await requireRole(['admin']);
 // ```
 
-// For backwards compatibility, we keep these functions but they use the new system
 import { requireRole } from './auth/validation';
+import { JWTPayload } from './authTypes';
 
 export async function isAdmin(userId: string): Promise<boolean> {
   try {
     const payload = await requireRole(['admin']);
+    // We know payload is valid at this point
     return payload.userId === userId;
   } catch {
     return false;
   }
 }
 
-export async function validateAdminToken(userId: string): Promise<void> {
-  await requireRole(['admin']);
+export async function validateAdminToken(token: string): Promise<JWTPayload> {
+  return requireRole(['admin']);
 }
 
 // These will be removed in future updates
@@ -32,5 +31,5 @@ export function getIsAdminFromHeaders(): boolean {
   return false;
 }
 
-// Export type for convenience
-export type UserRole = 'user' | 'moderator' | 'admin';
+// Export types for convenience
+export type { UserRole, JWTPayload } from './authTypes';

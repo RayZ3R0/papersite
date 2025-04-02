@@ -1,58 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { User } from '@/models/User';
-import { requireAuth } from '@/lib/auth/validation';
+import { NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/auth';
 import { AuthError } from '@/lib/authTypes';
-import { withDb, handleOptions } from '@/lib/api-middleware';
+import { User } from '@/models/User';
 
-export const GET = withDb(async (request: NextRequest) => {
+export async function GET() {
   try {
-    // Verify authentication and get user ID
-    let payload;
-    try {
-      payload = await requireAuth();
-    } catch (error) {
-      // Return null for unauthorized users without error
-      if (error instanceof AuthError && error.type === 'UNAUTHORIZED') {
-        return NextResponse.json({ user: null }, { status: 401 });
-      }
-      throw error;
-    }
+    // Get verified payload from token
+    const payload = await requireAuth();
 
-    // Find user in database
-    const user = await User.findById(payload.userId);
+    // Find user and exclude password
+    const user = await User.findById(payload.userId).select('-password');
     
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ user: null }, { status: 404 });
     }
 
-    // Convert to JSON to remove sensitive fields
-    const userData = user.toJSON();
-
-    return NextResponse.json({
-      user: userData
-    });
+    return NextResponse.json({ user });
   } catch (error) {
-    // Log only unexpected errors
-    if (!(error instanceof AuthError && error.type === 'UNAUTHORIZED')) {
-      console.error('Get user error:', error);
+    // Return null for unauthorized users without error
+    if (error instanceof AuthError && error.code === 'INVALID_TOKEN') {
+      return NextResponse.json({ user: null }, { status: 401 });
     }
-
-    if (error instanceof AuthError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.type === 'SERVER_ERROR' ? 500 : 401 }
-      );
-    }
-
+    console.error('Error fetching user:', error);
     return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+      { error: 'Failed to fetch user' },
       { status: 500 }
     );
   }
-});
-
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'OPTIONS']);
+}

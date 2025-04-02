@@ -1,66 +1,107 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
 import FormInput from '@/components/auth/FormInput';
 import FormError from '@/components/auth/FormError';
 import LoadingButton from '@/components/auth/LoadingButton';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { 
+  validateLoginForm, 
+  LoginFormData, 
+  ValidationResult,
+  getErrorMessage 
+} from '@/lib/auth/login-validation';
+
+type FieldNames = 'identifier' | 'password' | 'rememberMe';
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
   
-  const [formData, setFormData] = useState({
-    email: '',
+  const [formData, setFormData] = useState<LoginFormData>({
+    identifier: '',
     password: '',
     rememberMe: false
   });
-  
-  const [error, setError] = useState<string | null>(null);
+
+  const [formErrors, setFormErrors] = useState<ValidationResult['errors']>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
+    setSubmitError(null);
+    setFormErrors({});
+
+    // Validate form
+    const validation = validateLoginForm(formData);
+    if (!validation.isValid) {
+      setFormErrors(validation.errors);
+      return;
+    }
 
     try {
-      await login(formData.email, formData.password);
+      setIsSubmitting(true);
+      
+      await login(
+        formData.identifier,
+        formData.password,
+        formData.rememberMe
+      );
+
       const returnTo = searchParams.get('returnTo') || '/';
       router.push(returnTo);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to login');
+      setSubmitError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [formData, login, router, searchParams]);
+
+  const handleFieldChange = useCallback((field: FieldNames, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear field-specific errors
+    if (field === 'identifier') {
+      setFormErrors(prev => {
+        const { identifier, ...rest } = prev;
+        return rest;
+      });
+    } else if (field === 'password') {
+      setFormErrors(prev => {
+        const { password, ...rest } = prev;
+        return rest;
+      });
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-theme(space.32))] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-text">Welcome back</h1>
           <p className="text-text-muted mt-2">
-            Sign in to your account to continue
+            Sign in to access your account
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <FormError error={error} className="mb-6" />
+          <FormError error={submitError} className="mb-6" />
 
           <FormInput
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            label="Email or Username"
+            type="text"
+            value={formData.identifier}
+            onChange={(e) => handleFieldChange('identifier', e.target.value)}
+            error={formErrors.identifier}
             required
-            autoComplete="email"
+            autoComplete="username"
             disabled={isSubmitting}
+            placeholder="Enter your email or username"
           />
 
           <FormInput
@@ -68,10 +109,12 @@ export default function LoginPage() {
             type="password"
             showPasswordToggle
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={(e) => handleFieldChange('password', e.target.value)}
+            error={formErrors.password}
             required
             autoComplete="current-password"
             disabled={isSubmitting}
+            placeholder="Enter your password"
           />
 
           {/* Remember Me & Forgot Password */}
@@ -80,8 +123,9 @@ export default function LoginPage() {
               <input
                 type="checkbox"
                 checked={formData.rememberMe}
-                onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                onChange={(e) => handleFieldChange('rememberMe', e.target.checked)}
                 className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                disabled={isSubmitting}
               />
               <span className="ml-2 text-sm text-text-muted">Remember me</span>
             </label>

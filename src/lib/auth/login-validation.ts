@@ -1,5 +1,5 @@
 export interface LoginFormData {
-  email: string;
+  identifier: string;
   password: string;
   rememberMe?: boolean;
 }
@@ -8,18 +8,20 @@ export interface ValidationResult {
   isValid: boolean;
   errors: {
     email?: string;
+    username?: string;
     password?: string;
+    identifier?: string;
   };
 }
 
 export function validateLoginForm(data: LoginFormData): ValidationResult {
   const errors: ValidationResult['errors'] = {};
 
-  // Email validation
-  if (!data.email) {
-    errors.email = 'Email is required';
-  } else if (!isValidEmail(data.email)) {
-    errors.email = 'Please enter a valid email address';
+  // Identifier validation (email or username)
+  if (!data.identifier) {
+    errors.identifier = 'Email or username is required';
+  } else if (data.identifier.includes('@') && !isValidEmail(data.identifier)) {
+    errors.identifier = 'Please enter a valid email address';
   }
 
   // Password validation
@@ -36,16 +38,17 @@ export function validateLoginForm(data: LoginFormData): ValidationResult {
 }
 
 function isValidEmail(email: string): boolean {
-  // Basic email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
-    // Handle specific error types or messages
     if (error.message.includes('credentials')) {
-      return 'Invalid email or password';
+      return 'Invalid email/username or password';
+    }
+    if (error.message.includes('verify')) {
+      return 'Please verify your email address';
     }
     return error.message;
   }

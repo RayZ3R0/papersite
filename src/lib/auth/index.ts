@@ -3,23 +3,81 @@ export * from './cookies';
 export * from './validation';
 export * from '../authTypes';
 
-import { User, IUser } from '@/models/User';
+import { User } from '@/models/User';
 import { AuthError, LoginCredentials, RegisterData } from '../authTypes';
-import { signAccessToken, signRefreshToken } from './jwt';
+import { signAccessToken, signRefreshToken, verifyToken } from './jwt';
 import { AuthCookieManager } from './cookies';
 import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
 
+export async function refreshUserToken(refreshToken: string) {
+  try {
+    // Verify the refresh token
+    const payload = await verifyToken(refreshToken);
+    if (!payload) {
+      throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
+    }
+
+    // Find user by refresh token
+    const user = await User.findOne({ 'refreshToken.token': refreshToken });
+    if (!user) {
+      throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
+    }
+
+    // Check token expiry
+    if (!user.refreshToken?.expiresAt || user.refreshToken.expiresAt < new Date()) {
+      throw new AuthError('INVALID_TOKEN', 'Refresh token expired');
+    }
+
+    // Generate new tokens
+    const tokenPayload = {
+      userId: user._id.toString(),
+      username: user.username,
+      role: user.role,
+    };
+
+    const [accessToken, newRefreshToken] = await Promise.all([
+      signAccessToken(tokenPayload),
+      signRefreshToken(tokenPayload),
+    ]);
+
+    // Update refresh token
+    user.refreshToken = {
+      token: newRefreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    };
+    await user.save();
+
+    // Set new cookies
+    AuthCookieManager.setTokens(accessToken, newRefreshToken);
+
+    return {
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        createdAt: user.createdAt,
+      }
+    };
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    throw new AuthError('INVALID_TOKEN', 'Failed to refresh token');
+  }
+}
+
 // Core authentication functions
-export async function loginUser({ username, password }: LoginCredentials) {
+export async function loginUser({ email, username, password, options }: LoginCredentials) {
   try {
     // Validate input
-    validateLoginCredentials({ username, password });
+    validateLoginCredentials({ email, username, password });
 
-    // Find user
-    const user = await User.findOne({ username });
+    // Find user by email or username
+    const query = email ? { email } : { username };
+    const user = await User.findOne(query).select('+password');
     
     if (!user) {
-      throw new AuthError('INVALID_CREDENTIALS', 'Invalid username or password');
+      throw new AuthError('USER_NOT_FOUND', 'Invalid credentials');
     }
 
     await verifyUserStatus(user);
@@ -27,7 +85,7 @@ export async function loginUser({ username, password }: LoginCredentials) {
     // Verify password
     const isValid = await user.comparePassword(password);
     if (!isValid) {
-      throw new AuthError('INVALID_CREDENTIALS', 'Invalid username or password');
+      throw new AuthError('INVALID_CREDENTIALS', 'Invalid credentials');
     }
 
     // Generate tokens
@@ -42,24 +100,46 @@ export async function loginUser({ username, password }: LoginCredentials) {
       signRefreshToken(tokenPayload),
     ]);
 
-    // Store refresh token
+    // Store refresh token with optional custom duration
+    const expiresAt = new Date();
+    expiresAt.setSeconds(
+      expiresAt.getSeconds() + (options?.sessionDuration || 24 * 60 * 60) // Default 24 hours
+    );
+
     user.refreshToken = {
       token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      expiresAt,
     };
     await user.save();
 
-    // Set cookies
+    // Set cookies with optional duration
     AuthCookieManager.setTokens(accessToken, refreshToken);
 
     // Update last login
-    await user.updateLastLogin();
+    await User.updateOne(
+      { _id: user._id },
+      { 
+        $set: { lastLogin: new Date() },
+        $inc: { loginCount: 1 }
+      }
+    );
 
-    return { user: user.toJSON() };
+    // Return user without sensitive data
+    return {
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        createdAt: user.createdAt,
+      }
+    };
   } catch (error) {
     if (error instanceof AuthError) {
       throw error;
     }
+    console.error('Login error:', error);
     throw new AuthError('SERVER_ERROR', 'An error occurred during login');
   }
 }
@@ -69,16 +149,36 @@ export async function registerUser(data: RegisterData) {
     // Validate input
     validateRegisterData(data);
 
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [
+        { email: data.email },
+        { username: data.username }
+      ]
+    });
+
+    if (existingUser) {
+      if (existingUser.email === data.email) {
+        throw new AuthError('INVALID_CREDENTIALS', 'Email already in use');
+      }
+      throw new AuthError('INVALID_CREDENTIALS', 'Username already taken');
+    }
+
     // Create user
     const user = new User(data);
     await user.save();
 
     // Log user in
-    return loginUser(data);
+    return loginUser({ 
+      email: data.email, 
+      password: data.password,
+      options: { sessionDuration: 24 * 60 * 60 } // 24 hours for new registrations
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       throw error;
     }
+    console.error('Registration error:', error);
     throw new AuthError('SERVER_ERROR', 'An error occurred during registration');
   }
 }
@@ -98,67 +198,7 @@ export async function logoutUser() {
     // Clear cookies
     AuthCookieManager.clearTokens();
   } catch (error) {
+    console.error('Logout error:', error);
     throw new AuthError('SERVER_ERROR', 'An error occurred during logout');
   }
-}
-
-export async function refreshUserToken(oldRefreshToken: string) {
-  try {
-    // Find user by refresh token
-    const user = await User.findOne({ 'refreshToken.token': oldRefreshToken });
-    
-    if (!user) {
-      throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
-    }
-
-    await verifyUserStatus(user);
-
-    if (!user.refreshToken || user.refreshToken.expiresAt < new Date()) {
-      throw new AuthError('INVALID_TOKEN', 'Refresh token expired');
-    }
-
-    // Generate new tokens
-    const tokenPayload = {
-      userId: user._id.toString(),
-      username: user.username,
-      role: user.role,
-    };
-
-    const [accessToken, refreshToken] = await Promise.all([
-      signAccessToken(tokenPayload),
-      signRefreshToken(tokenPayload),
-    ]);
-
-    // Update refresh token
-    user.refreshToken = {
-      token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    };
-    await user.save();
-
-    // Set new cookies
-    AuthCookieManager.setTokens(accessToken, refreshToken);
-
-    return { user: user.toJSON() };
-  } catch (error) {
-    if (error instanceof AuthError) {
-      throw error;
-    }
-    throw new AuthError('SERVER_ERROR', 'An error occurred while refreshing token');
-  }
-}
-
-// Helper to create admin user
-export async function createAdminUser(adminData: {
-  username: string;
-  password: string;
-  email?: string;
-}) {
-  const user = new User({
-    ...adminData,
-    role: 'admin',
-    verified: true,
-  });
-  await user.save();
-  return user;
 }

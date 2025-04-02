@@ -1,60 +1,40 @@
-import { IUser } from '@/models/User';
-import mongoose from 'mongoose';
-import { JWTPayload as JoseJWTPayload } from 'jose';
-
-// User without sensitive fields
-export type UserWithoutPassword = Omit<IUser, 'password' | 'refreshToken'> & {
-  _id: mongoose.Types.ObjectId;
-};
-
-// Login credentials
-export interface LoginCredentials {
+export interface UserWithoutPassword {
+  _id: string;
   username: string;
+  email: string;
+  role: UserRole;
+  verified: boolean;
+  createdAt: string;
+}
+
+export type UserRole = 'user' | 'moderator' | 'admin';
+
+export interface LoginCredentials {
+  username?: string;
+  email?: string;
+  password: string;
+  options?: {
+    sessionDuration?: number;  // Duration in seconds
+  };
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
   password: string;
 }
 
-// Register data
-export interface RegisterData extends LoginCredentials {
-  email?: string;
-}
-
-// JWT payload
-export interface JWTPayload extends JoseJWTPayload {
+export interface JWTPayload {
   userId: string;
   username: string;
-  role: IUser['role'];
-  [key: string]: string | string[] | number | boolean | null | undefined;
+  role: UserRole;
+  exp?: number;
+  iat?: number;
 }
 
-// Auth API responses
-export interface AuthResponse {
-  success: boolean;
-  message?: string;
-  user?: UserWithoutPassword;
-  error?: string;
-}
-
-// Login modal options
-export interface LoginModalOptions {
-  message?: string;
-  returnTo?: string;
-}
-
-// Auth error types
-export type AuthErrorType = 
-  | 'INVALID_CREDENTIALS'
-  | 'USER_NOT_FOUND'
-  | 'USERNAME_TAKEN'
-  | 'EMAIL_TAKEN'
-  | 'INVALID_TOKEN'
-  | 'USER_BANNED'
-  | 'UNAUTHORIZED'
-  | 'SERVER_ERROR';
-
-// Custom auth error
 export class AuthError extends Error {
   constructor(
-    public type: AuthErrorType,
+    public code: AuthErrorCode,
     message: string
   ) {
     super(message);
@@ -62,24 +42,10 @@ export class AuthError extends Error {
   }
 }
 
-// Protected route configuration
-export interface ProtectedRouteConfig {
-  roles?: IUser['role'][];
-  redirectTo?: string;
-  message?: string;
-}
-
-// Role levels for permission checks
-export const ROLE_LEVELS = {
-  user: 0,
-  moderator: 1,
-  admin: 2,
-} as const;
-
-// Helper function to check if role has sufficient permission level
-export function hasPermissionLevel(
-  userRole: IUser['role'], 
-  requiredRole: IUser['role']
-): boolean {
-  return ROLE_LEVELS[userRole] >= ROLE_LEVELS[requiredRole];
-}
+export type AuthErrorCode =
+  | 'INVALID_CREDENTIALS'
+  | 'USER_NOT_FOUND'
+  | 'USER_NOT_VERIFIED'
+  | 'ACCOUNT_DISABLED'
+  | 'INVALID_TOKEN'
+  | 'SERVER_ERROR';

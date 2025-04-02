@@ -1,39 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { loginUser } from '@/lib/auth';
+import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { AuthError } from '@/lib/authTypes';
-import { withDb, handleOptions } from '@/lib/api-middleware';
 
 export const POST = withDb(async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const { username, password } = body;
+    const { email, username, password, rememberMe } = body;
 
-    if (!username || !password) {
-      return NextResponse.json(
-        { error: 'Username and password are required' },
-        { status: 400 }
-      );
+    // Basic validation
+    if ((!email && !username) || !password) {
+      return createErrorResponse('Email/username and password are required', 400);
     }
 
-    const result = await loginUser({ username, password });
+    // Handle login
+    const { user } = await loginUser({ 
+      email, 
+      username,
+      password,
+      options: {
+        sessionDuration: rememberMe ? 30 * 24 * 60 * 60 : undefined // 30 days if remember me
+      }
+    });
 
-    return NextResponse.json(result);
+    // Return user data
+    return createSuccessResponse({ user });
   } catch (error) {
     console.error('Login error:', error);
 
     if (error instanceof AuthError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.type === 'SERVER_ERROR' ? 500 : 400 }
+      return createErrorResponse(
+        error.message, 
+        error.code === 'SERVER_ERROR' ? 500 : 401
       );
     }
 
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return createErrorResponse('An unexpected error occurred', 500);
   }
 });
-
-// Handle preflight requests
-export const OPTIONS = () => handleOptions(['POST', 'OPTIONS']);

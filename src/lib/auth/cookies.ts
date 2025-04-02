@@ -1,133 +1,47 @@
 import { cookies } from 'next/headers';
-import { serialize, SerializeOptions } from 'cookie';
 
-interface CookieOptions extends SerializeOptions {
-  path?: string;
-  domain?: string;
-  secure?: boolean;
-  httpOnly?: boolean;
-  maxAge?: number;
-  expires?: Date;
-  sameSite?: 'strict' | 'lax' | 'none';
-}
-
-const DEFAULT_OPTIONS: CookieOptions = {
-  path: '/',
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
-};
-
-// Server-side cookie operations
-export class ServerCookieManager {
-  static set(name: string, value: string, options: CookieOptions = {}) {
-    const cookieStore = cookies();
-    cookieStore.set(name, value, {
-      ...DEFAULT_OPTIONS,
-      ...options,
-    });
-  }
-
-  static get(name: string) {
-    const cookieStore = cookies();
-    return cookieStore.get(name);
-  }
-
-  static delete(name: string) {
-    const cookieStore = cookies();
-    cookieStore.delete(name);
-  }
-
-  static getAll() {
-    const cookieStore = cookies();
-    return cookieStore.getAll();
-  }
-}
-
-// Client-side cookie operations
-export class ClientCookieManager {
-  static set(name: string, value: string, options: CookieOptions = {}) {
-    const cookieString = serialize(name, value, {
-      ...DEFAULT_OPTIONS,
-      ...options,
-    });
-    if (typeof document !== 'undefined') {
-      document.cookie = cookieString;
-    }
-  }
-
-  static get(name: string): string | undefined {
-    if (typeof document === 'undefined') return undefined;
-    
-    const cookies = document.cookie.split(';');
-    const cookie = cookies.find(c => c.trim().startsWith(name + '='));
-    return cookie ? decodeURIComponent(cookie.split('=')[1]) : undefined;
-  }
-
-  static delete(name: string) {
-    this.set(name, '', { maxAge: 0 });
-  }
-
-  static getAll(): Record<string, string> {
-    if (typeof document === 'undefined') return {};
-
-    return document.cookie.split(';').reduce((acc, curr) => {
-      const [key, value] = curr.trim().split('=');
-      if (key && value) {
-        acc[key] = decodeURIComponent(value);
-      }
-      return acc;
-    }, {} as Record<string, string>);
-  }
-}
-
-// Auth-specific cookie operations
-export const AUTH_COOKIES = {
-  ACCESS_TOKEN: 'access_token',
-  REFRESH_TOKEN: 'refresh_token',
-  RETURN_TO: 'return_to',
-} as const;
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 
 export class AuthCookieManager {
-  static setTokens(accessToken: string, refreshToken: string) {
-    ServerCookieManager.set(AUTH_COOKIES.ACCESS_TOKEN, accessToken, {
-      maxAge: 60 * 60, // 1 hour
+  static getTokens() {
+    const cookieStore = cookies();
+    return {
+      accessToken: cookieStore.get(ACCESS_TOKEN_KEY)?.value,
+      refreshToken: cookieStore.get(REFRESH_TOKEN_KEY)?.value,
+    };
+  }
+
+  static setTokens(accessToken: string, refreshToken: string, maxAge?: number) {
+    const cookieStore = cookies();
+
+    // Set access token (short-lived)
+    cookieStore.set(ACCESS_TOKEN_KEY, accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60, // 15 minutes
+      path: '/',
     });
 
-    ServerCookieManager.set(AUTH_COOKIES.REFRESH_TOKEN, refreshToken, {
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+    // Set refresh token (long-lived)
+    cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: maxAge || 24 * 60 * 60, // Default 24 hours or custom duration
+      path: '/',
     });
   }
 
   static clearTokens() {
-    ServerCookieManager.delete(AUTH_COOKIES.ACCESS_TOKEN);
-    ServerCookieManager.delete(AUTH_COOKIES.REFRESH_TOKEN);
+    const cookieStore = cookies();
+    cookieStore.delete(ACCESS_TOKEN_KEY);
+    cookieStore.delete(REFRESH_TOKEN_KEY);
   }
 
-  static getTokens() {
-    return {
-      accessToken: ServerCookieManager.get(AUTH_COOKIES.ACCESS_TOKEN)?.value,
-      refreshToken: ServerCookieManager.get(AUTH_COOKIES.REFRESH_TOKEN)?.value,
-    };
-  }
-
-  static setReturnTo(url: string) {
-    ServerCookieManager.set(AUTH_COOKIES.RETURN_TO, url, {
-      maxAge: 60 * 5, // 5 minutes
-    });
-  }
-
-  static getReturnTo() {
-    return ServerCookieManager.get(AUTH_COOKIES.RETURN_TO)?.value;
-  }
-
-  static clearReturnTo() {
-    ServerCookieManager.delete(AUTH_COOKIES.RETURN_TO);
+  static getTokenHeader() {
+    const { accessToken } = this.getTokens();
+    return accessToken ? `Bearer ${accessToken}` : undefined;
   }
 }
-
-export default {
-  ServerCookieManager,
-  ClientCookieManager,
-  AuthCookieManager,
-};
