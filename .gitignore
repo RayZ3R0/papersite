@@ -6,6 +6,8 @@ node_modules
 
 /src/lib/data/subjects.json
 
+/scripts/
+
 # testing
 /coverage
 /test-results
