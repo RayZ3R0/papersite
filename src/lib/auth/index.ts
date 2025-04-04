@@ -2,12 +2,14 @@ export * from './jwt';
 export * from './cookies';
 export * from './validation';
 export * from '../authTypes';
+export * from './tokens';
 
 import { User } from '@/models/User';
 import { AuthError, LoginCredentials, RegisterData } from '../authTypes';
 import { signAccessToken, signRefreshToken, verifyToken } from './jwt';
 import { AuthCookieManager } from './cookies';
 import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
+import { sendVerificationEmail } from './tokens';
 
 export async function refreshUserToken(refreshToken: string) {
   try {
@@ -168,9 +170,17 @@ export async function registerUser(data: RegisterData) {
     const user = new User(data);
     await user.save();
 
+    // Send verification email
+    try {
+      await sendVerificationEmail(user._id.toString());
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      // Don't throw error here, just log it - we still want to create the account
+    }
+
     // Log user in
-    return loginUser({ 
-      email: data.email, 
+    return loginUser({
+      email: data.email,
       password: data.password,
       options: { sessionDuration: 24 * 60 * 60 } // 24 hours for new registrations
     });

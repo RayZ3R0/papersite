@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from './mongodb';
+import { withLogging } from './api-logger';
 
 type ApiHandler = (req: NextRequest) => Promise<NextResponse>;
 
@@ -12,30 +13,28 @@ interface ApiMiddlewareOptions {
  * and error handling
  */
 export function withDb(handler: ApiHandler, options: ApiMiddlewareOptions = {}) {
+  // Wrap the handler with logging
+  const handlerWithLogging = withLogging(handler);
   return async function (req: NextRequest) {
     try {
-      // Skip DB connection during build
-      if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-        if (options.requireConnection) {
-          return NextResponse.json(
-            { error: 'Service unavailable during build' },
-            { status: 503 }
-          );
-        }
-        return handler(req);
-      }
 
       // Connect to database
       await dbConnect();
       
-      // Execute the handler
-      const response = await handler(req);
+      // Execute the handler with logging
+      const response = await handlerWithLogging(req);
       return response;
     } catch (error) {
       console.error('API Error:', error);
       
-      // If MongoDB connection error during build, return 503
-      if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+      // If MongoDB connection error, return 503
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error.name === 'MongoNetworkError' || error.name === 'MongoServerSelectionError')
+      ) {
+        console.error('MongoDB connection error:', error);
         return NextResponse.json(
           { error: 'Service temporarily unavailable' },
           { status: 503 }

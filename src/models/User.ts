@@ -14,6 +14,10 @@ export interface IUser {
   };
   email?: string;
   verified: boolean;
+  verificationToken?: string;
+  verificationTokenExpires?: Date;
+  resetPasswordToken?: string;
+  resetPasswordTokenExpires?: Date;
 }
 
 // Define methods interface
@@ -70,7 +74,11 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
   verified: {
     type: Boolean,
     default: false
-  }
+  },
+  verificationToken: String,
+  verificationTokenExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordTokenExpires: Date
 });
 
 // Hash password before saving

@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 import { loginUser } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { AuthError } from '@/lib/authTypes';
 

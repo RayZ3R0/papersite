@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Set security headers
+  // Create base response with security headers
   const response = NextResponse.next();
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('X-Frame-Options', 'DENY');
@@ -47,27 +47,27 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Get tokens from cookies
-  const { accessToken, refreshToken } = AuthCookieManager.getTokens();
-
-  // If no tokens, deny access
-  if (!accessToken || !refreshToken) {
-    return new NextResponse(
-      JSON.stringify({ error: 'Authentication required' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
-
-  // Verify access token
-  const payload = await verifyToken(accessToken);
-
-  // If access token is valid, continue
-  if (payload) {
-    return response;
-  }
-
-  // If access token is invalid, try refresh
   try {
+    // Get tokens from cookies
+    const { accessToken, refreshToken } = AuthCookieManager.getTokens();
+
+    // If no tokens, deny access
+    if (!accessToken || !refreshToken) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify access token
+    const payload = await verifyToken(accessToken);
+
+    // If access token is valid, continue
+    if (payload) {
+      return response;
+    }
+
+    // If access token is invalid, try refresh
     const refreshResponse = await fetch(`${request.nextUrl.origin}/api/auth/refresh`, {
       method: 'POST',
       headers: {
@@ -102,9 +102,14 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-// Configure middleware to run only on API routes
+// Configure middleware to run on specific routes
 export const config = {
   matcher: [
-    '/api/:path*', // Only match API routes
+    // API routes
+    '/api/:path*',
+    // Auth routes
+    '/api/auth/:path*',
+    // Exclude static files and favicon
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };

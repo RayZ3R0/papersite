@@ -36,10 +36,9 @@ if (!global.mongoose) {
  * Connect to MongoDB using a cached connection
  */
 async function dbConnect(): Promise<typeof mongoose> {
-  // If in build/testing without MongoDB, return mock
-  if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-    console.log('Using mock MongoDB connection');
-    return mockMongoose;
+  if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI is not defined');
+    throw new Error('MONGODB_URI is not defined');
   }
 
   // Use existing connection if available
@@ -55,15 +54,31 @@ async function dbConnect(): Promise<typeof mongoose> {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      maxPoolSize: 10,
+      maxPoolSize: 5, // Reduced for serverless
+      minPoolSize: 1, // Ensure at least one connection
       serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      socketTimeoutMS: 30000, // Reduced timeout
+      family: 4 // Force IPv4
     };
 
     cached.promise = mongoose
       .connect(MONGODB_URI, opts)
       .then((mongoose) => {
         console.log('MongoDB connected successfully');
+        
+        // Add connection event handlers even in production
+        mongoose.connection.on('error', (err) => {
+          console.error('MongoDB connection error:', err);
+          cached.conn = null;
+          cached.promise = null;
+        });
+
+        mongoose.connection.on('disconnected', () => {
+          console.log('MongoDB disconnected');
+          cached.conn = null;
+          cached.promise = null;
+        });
+
         return mongoose;
       })
       .catch((error) => {

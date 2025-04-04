@@ -66,7 +66,7 @@ interface ThemeContextType {
 }
 
 const THEME_STORAGE_KEY = 'papersite:theme';
-const DEFAULT_THEME: Theme = 'catppuccin-mocha'; // Set default to Catppuccin Mocha
+const DEFAULT_THEME: Theme = "matcha"; // Set default to Matcha
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
