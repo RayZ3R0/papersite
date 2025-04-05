@@ -39,57 +39,70 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
 
   const passwordStrength = getPasswordStrength(data.password);
 
+  const inputClasses = (error?: string) => `
+    block w-full px-4 py-3 rounded-lg text-base
+    bg-surface border-2 transition duration-200 outline-none
+    placeholder:text-text-muted/60
+    focus-visible:outline-none
+    ${error
+      ? 'border-error'
+      : 'border-border hover:border-primary/50 focus:border-primary'
+    }
+  `;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-md mx-auto">
       {/* Username field */}
-      <div>
+      <div className="space-y-2">
         <label
           htmlFor="username"
-          className="block text-sm font-medium text-text dark:text-text"
+          className="block text-sm font-medium text-text"
         >
           Username
         </label>
-        <input
-          type="text"
-          id="username"
-          value={data.username}
-          onChange={handleChange('username')}
-          className={`mt-1 block w-full rounded-md border bg-surface dark:bg-surface-dark
-            focus:border-primary focus:ring-primary
-            ${errors.username ? 'border-error' : 'border-border'}`}
-        />
-        {errors.username && (
-          <p className="mt-1 text-sm text-error">{errors.username}</p>
-        )}
+        <div className="relative">
+          <input
+            type="text"
+            id="username"
+            value={data.username}
+            onChange={handleChange('username')}
+            className={inputClasses(errors.username)}
+            placeholder="Enter your username"
+          />
+          {errors.username && (
+            <p className="mt-2 text-sm text-error font-medium">{errors.username}</p>
+          )}
+        </div>
       </div>
 
       {/* Email field */}
-      <div>
+      <div className="space-y-2">
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-text dark:text-text"
+          className="block text-sm font-medium text-text"
         >
           Email
         </label>
-        <input
-          type="email"
-          id="email"
-          value={data.email}
-          onChange={handleChange('email')}
-          className={`mt-1 block w-full rounded-md border bg-surface dark:bg-surface-dark
-            focus:border-primary focus:ring-primary
-            ${errors.email ? 'border-error' : 'border-border'}`}
-        />
-        {errors.email && (
-          <p className="mt-1 text-sm text-error">{errors.email}</p>
-        )}
+        <div className="relative">
+          <input
+            type="email"
+            id="email"
+            value={data.email}
+            onChange={handleChange('email')}
+            className={inputClasses(errors.email)}
+            placeholder="Enter your email address"
+          />
+          {errors.email && (
+            <p className="mt-2 text-sm text-error font-medium">{errors.email}</p>
+          )}
+        </div>
       </div>
 
       {/* Password field */}
-      <div>
+      <div className="space-y-2">
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-text dark:text-text"
+          className="block text-sm font-medium text-text"
         >
           Password
         </label>
@@ -99,14 +112,13 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
             id="password"
             value={data.password}
             onChange={handleChange('password')}
-            className={`mt-1 block w-full rounded-md border bg-surface dark:bg-surface-dark
-              focus:border-primary focus:ring-primary
-              ${errors.password ? 'border-error' : 'border-border'}`}
+            className={inputClasses(errors.password) + ' pr-12'}
+            placeholder="Enter your password"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors"
           >
             {showPassword ? (
               <FiEyeOff className="h-5 w-5" />
@@ -115,34 +127,38 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
             )}
           </button>
         </div>
+        
         {/* Password strength indicator */}
-        <div className="mt-2">
-          <div className="flex space-x-1">
+        <div className="mt-3 space-y-2">
+          <div className="flex gap-1.5">
             {[1, 2, 3, 4, 5].map((level) => (
               <div
                 key={level}
-                className={`h-2 w-full rounded transition-colors ${
-                  passwordStrength >= level
-                    ? getStrengthClass(passwordStrength)
-                    : 'bg-border'
-                }`}
+                className={`
+                  h-1.5 flex-1 rounded-full transition-all duration-300
+                  ${passwordStrength >= level
+                    ? getStrengthClass(passwordStrength) + ' scale-y-100'
+                    : 'bg-border scale-y-75 opacity-50'
+                  }
+                `}
               />
             ))}
           </div>
-          <p className="mt-1 text-sm text-text-muted">
+          <p className={`text-sm ${getStrengthTextColor(passwordStrength)}`}>
             {getStrengthText(passwordStrength)}
           </p>
         </div>
+        
         {errors.password && (
-          <p className="mt-1 text-sm text-error">{errors.password}</p>
+          <p className="mt-2 text-sm text-error font-medium">{errors.password}</p>
         )}
       </div>
 
       {/* Confirm Password field */}
-      <div>
+      <div className="space-y-2">
         <label
           htmlFor="confirmPassword"
-          className="block text-sm font-medium text-text dark:text-text"
+          className="block text-sm font-medium text-text"
         >
           Confirm Password
         </label>
@@ -152,14 +168,13 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
             id="confirmPassword"
             value={data.confirmPassword}
             onChange={handleChange('confirmPassword')}
-            className={`mt-1 block w-full rounded-md border bg-surface dark:bg-surface-dark
-              focus:border-primary focus:ring-primary
-              ${errors.confirmPassword ? 'border-error' : 'border-border'}`}
+            className={inputClasses(errors.confirmPassword) + ' pr-12'}
+            placeholder="Confirm your password"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors"
           >
             {showConfirmPassword ? (
               <FiEyeOff className="h-5 w-5" />
@@ -169,7 +184,7 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="mt-1 text-sm text-error">{errors.confirmPassword}</p>
+          <p className="mt-2 text-sm text-error font-medium">{errors.confirmPassword}</p>
         )}
       </div>
     </div>
@@ -179,17 +194,34 @@ export function BasicInfoStep({ data, onChange, errors }: BasicInfoStepProps) {
 function getStrengthClass(strength: number): string {
   switch (strength) {
     case 1:
-      return 'bg-error';
+      return 'bg-red-500';
     case 2:
-      return 'bg-warning';
+      return 'bg-orange-500';
     case 3:
-      return 'bg-info';
+      return 'bg-yellow-500';
     case 4:
-      return 'bg-success';
+      return 'bg-lime-500';
     case 5:
-      return 'bg-success-dark';
+      return 'bg-green-500';
     default:
       return 'bg-border';
+  }
+}
+
+function getStrengthTextColor(strength: number): string {
+  switch (strength) {
+    case 1:
+      return 'text-red-500';
+    case 2:
+      return 'text-orange-500';
+    case 3:
+      return 'text-yellow-500';
+    case 4:
+      return 'text-lime-500';
+    case 5:
+      return 'text-green-500';
+    default:
+      return 'text-text-muted';
   }
 }
 

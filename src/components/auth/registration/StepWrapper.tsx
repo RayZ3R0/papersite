@@ -26,69 +26,89 @@ export function StepWrapper({
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4">
+    <div className="w-full max-w-2xl mx-auto px-4 py-8">
       {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="h-2 w-full bg-border dark:bg-border rounded-full overflow-hidden">
+      <div className="mb-10">
+        <div className="h-1.5 w-full bg-border/30 rounded-full overflow-hidden">
           <motion.div
             className="h-full rounded-full bg-primary"
             style={{ width: `${progress}%` }}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut"
+            }}
           />
         </div>
-        <div className="mt-2 text-sm text-text-muted">
-          Step {currentStep + 1} of {totalSteps}
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm font-medium text-text">
+            Step {currentStep + 1} of {totalSteps}
+          </div>
+          <div className="text-sm text-text-muted">
+            {Math.round(progress)}% Complete
+          </div>
         </div>
       </div>
 
       {/* Step Content */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-2 text-text">{title}</h2>
+      <div className="mb-10 text-center">
+        <h2 className="text-3xl font-bold mb-3 text-text">{title}</h2>
         {subtitle && (
-          <p className="text-text-muted">{subtitle}</p>
+          <p className="text-lg text-text-muted max-w-md mx-auto">{subtitle}</p>
         )}
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2 }}
-          className="mb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut"
+          }}
+          className="mb-10"
         >
           {children}
         </motion.div>
       </AnimatePresence>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-8">
-        <button
+      <div className="flex justify-between items-center mt-10">
+        <motion.button
           onClick={onBack}
           disabled={currentStep === 0}
-          className={`flex items-center px-4 py-2 rounded-lg transition-colors
-            ${
-              currentStep === 0
-                ? 'opacity-50 cursor-not-allowed text-text-muted'
-                : 'text-text hover:bg-surface-hover dark:hover:bg-surface-hover-dark'
+          whileTap={{ scale: 0.98 }}
+          className={`
+            flex items-center px-5 py-2.5 rounded-lg
+            font-medium transition-all duration-200
+            ${currentStep === 0
+              ? 'opacity-50 cursor-not-allowed text-text-muted'
+              : `text-text hover:text-primary
+                 hover:bg-primary/5 active:bg-primary/10
+                 focus:outline-none focus:ring-2 focus:ring-primary/30`
             }
           `}
         >
-          <FiArrowLeft className="mr-2" />
+          <FiArrowLeft className="mr-2 h-5 w-5" />
           Back
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
           onClick={onNext}
           disabled={!canProceed}
-          className={`flex items-center px-6 py-2 rounded-lg transition-colors
-            ${
-              canProceed
-                ? 'bg-primary hover:bg-primary-dark text-white'
-                : 'bg-border dark:bg-border cursor-not-allowed text-text-muted'
+          whileTap={{ scale: 0.98 }}
+          className={`
+            flex items-center px-6 py-2.5 rounded-lg
+            font-medium transition-all duration-200
+            ${canProceed
+              ? `bg-primary text-white
+                 hover:bg-primary/90 active:bg-primary/95
+                 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2
+                 focus:ring-offset-surface shadow-sm`
+              : 'bg-border/50 cursor-not-allowed text-text-muted'
             }
           `}
         >
@@ -97,10 +117,10 @@ export function StepWrapper({
           ) : (
             <>
               Next
-              <FiArrowRight className="ml-2" />
+              <FiArrowRight className="ml-2 h-5 w-5" />
             </>
           )}
-        </button>
+        </motion.button>
       </div>
     </div>
   );
