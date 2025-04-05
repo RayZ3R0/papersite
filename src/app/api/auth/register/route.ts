@@ -1,57 +1,48 @@
 import { NextResponse } from 'next/server';
-import { registerUser } from '@/lib/auth';
-import { AuthError } from '@/lib/authTypes';
 import { withDb } from '@/lib/api-middleware';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
+import { User } from '@/models/User';
+import bcrypt from 'bcryptjs';
 
-export const POST = withDb(async (request: Request) => {
+export const POST = withDb(async (req) => {
   try {
-    const body = await request.json();
-    const { username, email, password } = body;
+    const { username, email, password } = await req.json();
 
-    // Basic validation
+    // Validate input
     if (!username || !email || !password) {
-      return NextResponse.json(
-        { error: 'All fields are required' },
-        { status: 400 }
-      );
+      return createErrorResponse('All fields are required', 400);
     }
 
-    // Validate password length
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
-        { status: 400 }
-      );
+    // Check if username exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return createErrorResponse('Username already exists', 400);
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
+    // Check if email exists
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return createErrorResponse('Email already registered', 400);
     }
 
-    // Register user
-    const { user } = await registerUser({
+    // Create user
+    const user = await User.create({
       username,
       email,
-      password,
+      password, // Password will be hashed by the model pre-save hook
+      role: 'user',
+      verified: false,
     });
 
-    return NextResponse.json({ user });
+    // Remove sensitive data
+    const userData = user.toJSON();
+
+    return createSuccessResponse({
+      message: 'Registration successful',
+      user: userData,
+    });
   } catch (error) {
     console.error('Registration error:', error);
-    if (error instanceof AuthError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.code === 'SERVER_ERROR' ? 500 : 400 }
-      );
-    }
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return createErrorResponse('Registration failed', 500);
   }
 });

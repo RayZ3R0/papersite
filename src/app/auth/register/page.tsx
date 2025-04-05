@@ -1,190 +1,164 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useAuth } from '@/components/auth/AuthContext';
-import FormInput from '@/components/auth/FormInput';
-import FormError from '@/components/auth/FormError';
-import LoadingButton from '@/components/auth/LoadingButton';
-import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { StepWrapper } from '@/components/auth/registration/StepWrapper';
+import { BasicInfoStep } from '@/components/auth/registration/BasicInfoStep';
 
-interface RegisterFormData {
+interface BasicInfoData {
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-interface FormErrors {
-  username?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-  form?: string;
+interface RegistrationData {
+  basicInfo: BasicInfoData;
+}
+
+interface RegistrationErrors {
+  basicInfo: Partial<Record<keyof BasicInfoData, string>>;
 }
 
 export default function RegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { register } = useAuth();
-  
-  const [formData, setFormData] = useState<RegisterFormData>({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+  const [formData, setFormData] = useState<RegistrationData>({
+    basicInfo: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<RegistrationErrors>({
+    basicInfo: {},
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const validateForm = useCallback((): boolean => {
-    const errors: FormErrors = {};
+  const validateBasicInfo = () => {
+    const newErrors = { ...errors };
+    let isValid = true;
 
     // Username validation
-    if (!formData.username) {
-      errors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      errors.username = 'Username must be at least 3 characters';
+    if (!formData.basicInfo.username) {
+      newErrors.basicInfo.username = 'Username is required';
+      isValid = false;
+    } else if (formData.basicInfo.username.length < 3) {
+      newErrors.basicInfo.username = 'Username must be at least 3 characters';
+      isValid = false;
     }
 
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      errors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+    if (!formData.basicInfo.email) {
+      newErrors.basicInfo.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.basicInfo.email)) {
+      newErrors.basicInfo.email = 'Please enter a valid email';
+      isValid = false;
     }
 
     // Password validation
-    if (!formData.password) {
-      errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    if (!formData.basicInfo.password) {
+      newErrors.basicInfo.password = 'Password is required';
+      isValid = false;
+    } else if (formData.basicInfo.password.length < 8) {
+      newErrors.basicInfo.password = 'Password must be at least 8 characters';
+      isValid = false;
     }
 
     // Confirm password validation
-    if (!formData.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+    if (formData.basicInfo.password !== formData.basicInfo.confirmPassword) {
+      newErrors.basicInfo.confirmPassword = 'Passwords do not match';
+      isValid = false;
     }
 
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [formData]);
+    setErrors(newErrors);
+    return isValid;
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = async () => {
+    if (validateBasicInfo()) {
+      setIsLoading(true);
+      setApiError(null);
 
-    if (!validateForm()) {
-      return;
-    }
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: formData.basicInfo.username,
+            email: formData.basicInfo.email,
+            password: formData.basicInfo.password,
+          }),
+        });
 
-    try {
-      setIsSubmitting(true);
-      await register(formData.username, formData.email, formData.password);
-      const returnTo = searchParams.get('returnTo') || '/';
-      router.push(returnTo);
-    } catch (error) {
-      setFormErrors({
-        form: error instanceof Error ? error.message : 'Registration failed'
-      });
-    } finally {
-      setIsSubmitting(false);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        // Redirect to login with success message
+        router.push('/auth/login?registered=true');
+      } catch (error) {
+        setApiError(error instanceof Error ? error.message : 'Registration failed');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleFieldChange = useCallback((field: keyof RegisterFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setFormErrors(prev => ({ ...prev, [field]: undefined, form: undefined }));
-  }, []);
+  const updateBasicInfo = (data: BasicInfoData) => {
+    setFormData(prev => ({
+      ...prev,
+      basicInfo: data
+    }));
+    // Clear errors as user types
+    setErrors(prev => ({
+      ...prev,
+      basicInfo: {}
+    }));
+    // Clear API error when user makes changes
+    setApiError(null);
+  };
 
   return (
-    <div className="min-h-[calc(100vh-theme(space.32))] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-text">Create an Account</h1>
-          <p className="text-text-muted mt-2">
-            Join our community to access all features
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <FormError error={formErrors.form} className="mb-6" />
-
-          <FormInput
-            label="Username"
-            type="text"
-            value={formData.username}
-            onChange={(e) => handleFieldChange('username', e.target.value)}
-            error={formErrors.username}
-            required
-            autoComplete="username"
-            disabled={isSubmitting}
-            placeholder="Choose a username"
+    <div className="min-h-screen flex flex-col items-center justify-center py-12 bg-surface dark:bg-surface-dark">
+      <div className="w-full">
+        <StepWrapper
+          currentStep={0}
+          totalSteps={1}
+          onNext={handleNext}
+          onBack={() => {}}
+          canProceed={!isLoading}
+          title="Create Account"
+          subtitle="Enter your details to get started"
+        >
+          <BasicInfoStep
+            data={formData.basicInfo}
+            onChange={updateBasicInfo}
+            errors={errors.basicInfo}
           />
+        </StepWrapper>
 
-          <FormInput
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleFieldChange('email', e.target.value)}
-            error={formErrors.email}
-            required
-            autoComplete="email"
-            disabled={isSubmitting}
-            placeholder="Enter your email"
-          />
+        {/* API Error Display */}
+        {apiError && (
+          <div className="max-w-2xl mx-auto mt-4 p-3 bg-error/10 border border-error rounded text-error text-sm">
+            {apiError}
+          </div>
+        )}
 
-          <FormInput
-            label="Password"
-            type="password"
-            showPasswordToggle
-            value={formData.password}
-            onChange={(e) => handleFieldChange('password', e.target.value)}
-            error={formErrors.password}
-            required
-            autoComplete="new-password"
-            disabled={isSubmitting}
-            placeholder="Create a password"
-          />
-
-          <FormInput
-            label="Confirm Password"
-            type="password"
-            showPasswordToggle
-            value={formData.confirmPassword}
-            onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
-            error={formErrors.confirmPassword}
-            required
-            autoComplete="new-password"
-            disabled={isSubmitting}
-            placeholder="Confirm your password"
-          />
-
-          {/* Submit Button */}
-          <LoadingButton
-            type="submit"
-            loading={isSubmitting}
-            className="w-full"
-          >
-            Create Account
-          </LoadingButton>
-        </form>
-
-        {/* Footer */}
-        <p className="mt-8 text-center text-sm text-text-muted">
-          Already have an account?{' '}
-          <Link
-            href={`/auth/login${searchParams.get('returnTo') ? `?returnTo=${searchParams.get('returnTo')}` : ''}`}
-            className="text-primary hover:text-primary/90"
-          >
-            Sign in here
-          </Link>
-        </p>
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="max-w-2xl mx-auto mt-4 text-center text-text-muted">
+            Creating your account...
+          </div>
+        )}
       </div>
     </div>
   );

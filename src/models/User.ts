@@ -1,6 +1,28 @@
 import mongoose, { Model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+import { ExamSession } from '@/lib/data/subjects';
+
+interface UserSubjectConfig {
+  subjectCode: string;
+  level: 'AS' | 'A2';
+  units: {
+    unitCode: string;
+    planned: boolean;
+    completed: boolean;
+    targetGrade: 'A*' | 'A' | 'B' | 'C' | 'D' | 'E';
+    examSession: string;
+    actualGrade?: string;
+  }[];
+  overallTarget: 'A*' | 'A' | 'B' | 'C' | 'D' | 'E';
+}
+
+interface StudyPreferences {
+  dailyStudyHours?: number;
+  preferredStudyTime?: 'morning' | 'afternoon' | 'evening' | 'night';
+  notifications?: boolean;
+}
+
 export interface IUser {
   username: string;
   password: string;
@@ -18,6 +40,10 @@ export interface IUser {
   verificationTokenExpires?: Date;
   resetPasswordToken?: string;
   resetPasswordTokenExpires?: Date;
+  // New fields for subject tracking
+  subjects?: UserSubjectConfig[];
+  currentSession?: ExamSession;
+  studyPreferences?: StudyPreferences;
 }
 
 // Define methods interface
@@ -37,6 +63,38 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
     trim: true,
     minlength: 3,
     maxlength: 30,
+  },
+  // Subject tracking fields
+  subjects: [{
+    subjectCode: String,
+    level: {
+      type: String,
+      enum: ['AS', 'A2']
+    },
+    units: [{
+      unitCode: String,
+      planned: Boolean,
+      completed: Boolean,
+      targetGrade: {
+        type: String,
+        enum: ['A*', 'A', 'B', 'C', 'D', 'E']
+      },
+      examSession: String,
+      actualGrade: String
+    }],
+    overallTarget: {
+      type: String,
+      enum: ['A*', 'A', 'B', 'C', 'D', 'E']
+    }
+  }],
+  currentSession: String,
+  studyPreferences: {
+    dailyStudyHours: Number,
+    preferredStudyTime: {
+      type: String,
+      enum: ['morning', 'afternoon', 'evening', 'night']
+    },
+    notifications: Boolean
   },
   password: {
     type: String,

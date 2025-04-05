@@ -44,6 +44,9 @@ importers:
       critters:
         specifier: ^0.0.25
         version: 0.0.25
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -86,6 +89,9 @@ importers:
       react-dom:
         specifier: 19.1.0-canary-ef4bc8b4-20250328
         version: 19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.1.0-canary-ef4bc8b4-20250328)
       react-pdf:
         specifier: ^7.7.1
         version: 7.7.3(@types/react@18.2.67)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
@@ -1357,6 +1363,9 @@ packages:
   data-view-byte-offset@1.0.1:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -2902,6 +2911,11 @@ packages:
     resolution: {integrity: sha512-xU4tfVxbHEx45s8IzeFLvFH2hhSb1HI2pl+4J632YY1NPnhnBpETLJ8gUPYK2qzBJDJAdcQFeX6NDoZJkLJN8g==}
     peerDependencies:
       react: 19.1.0-canary-ef4bc8b4-20250328
+
+  react-icons@5.5.0:
+    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+    peerDependencies:
+      react: '*'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -4965,6 +4979,8 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
+  date-fns@4.1.0: {}
+
   debug@3.2.7:
     dependencies:
       ms: 2.1.3
@@ -6868,6 +6884,10 @@ snapshots:
     dependencies:
       react: 19.1.0-canary-ef4bc8b4-20250328
       scheduler: 0.26.0-canary-ef4bc8b4-20250328
+
+  react-icons@5.5.0(react@19.1.0-canary-ef4bc8b4-20250328):
+    dependencies:
+      react: 19.1.0-canary-ef4bc8b4-20250328
 
   react-is@16.13.1: {}
 

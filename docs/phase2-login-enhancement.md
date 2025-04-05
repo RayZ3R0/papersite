@@ -2,7 +2,7 @@
 
 ## Overview
 
-Enhance the login experience with a dedicated, feature-rich login page replacing the basic auth forms.
+Enhance the login experience with a dedicated, feature-rich login page and advanced registration system.
 
 ## Requirements
 
@@ -16,8 +16,7 @@ Enhance the login experience with a dedicated, feature-rich login page replacing
 
    - ✅ Email/username field
    - ✅ Password field with visibility toggle
-   - ⚠️ Remember me checkbox (fixed styling)
-   - ⏳ Forgot password link (UI only)
+   - ✅ Remember me checkbox
    - ✅ Clear error messages
    - ✅ Loading states
 
@@ -28,120 +27,86 @@ Enhance the login experience with a dedicated, feature-rich login page replacing
    - ✅ Real-time error feedback
    - ✅ Proper error message display
 
-4. Auth Flow Improvements
+4. ✅ Auth Flow Improvements
+
    - ✅ Preserve return URL
    - ✅ Loading states during auth
    - ✅ Success/error notifications
    - ✅ Smooth transitions
 
+5. 🚧 Enhanced Registration (In Progress)
+   - Multi-step registration form
+   - Subject and unit selection
+   - Exam session configuration
+   - Study preferences
+   - Theme-aware components
+
+## Implementation Status
+
+### Completed
+
+- Basic authentication
+- Login functionality
+- Password reset system
+- Email verification structure
+
+### In Progress
+
+- Multi-step registration
+- Subject selection UI
+- Theme integration
+- Profile settings
+
+### Upcoming
+
+- Study preferences
+- Notification settings
+- Profile page
+- Settings dashboard
+
+## Technical Updates
+
+1. User Model Enhancement
+
+   - Added subject tracking
+   - Added exam session fields
+   - Added study preferences
+
+2. Registration Flow
+
+   - Implementing multi-step form
+   - Adding subject selection
+   - Configuring exam sessions
+
+3. Theme Integration
+   - Using system-wide theme variables
+   - Dark/light mode support
+   - Responsive design
+
+See [Enhanced Registration Design](./enhanced-registration.md) for detailed implementation plan.
+
 ## Next Steps
 
-1. ✅ Login Page Layout
+1. User Model Updates
 
-   - ✅ Base page structure
-   - ✅ Form fields
-   - ✅ Error handling
-   - ✅ Styling improvements
+   - Update schema with subject fields
+   - Add session tracking
+   - Add preferences storage
 
-2. ✅ Form Validation
+2. Registration UI
 
-   - ✅ Email format validation
-   - ✅ Required field validation
-   - ✅ Real-time feedback
-   - ✅ Error display
+   - Create multi-step form component
+   - Implement subject selector
+   - Add unit configuration
+   - Build session picker
 
-3. ✅ Registration Flow
+3. API Endpoints
 
-   - ✅ Registration form
-   - ✅ Real-time validation
-   - ✅ Error handling
-   - ✅ Account creation
-   - ✅ Email verification implementation (can be enabled/disabled)
+   - Update registration endpoint
+   - Add subject data endpoints
+   - Add session management
 
-4. ✅ Additional Features
-   - ✅ Forgot password flow
-   - ✅ Email verification
-   - ⏳ Account recovery (future update)
-
-## Testing Plan
-
-### Visual Testing
-
-- [x] Form layout is responsive
-- [x] Dark mode works correctly
-- [x] Loading states are visible
-- [x] Error messages are clear
-- [x] Transitions are smooth
-
-### Functional Testing
-
-- [x] All form fields work
-- [x] Validation works (client & server)
-- [x] Remember me works
-- [x] Return URL preserved
-- [x] Error handling works
-
-### Edge Cases
-
-- [x] Network error handling
-- [x] Invalid credentials
-- [x] Form resubmission
-- [x] Browser back button
-- [x] Session handling
-
-## Files Modified
-
-- ✅ `src/components/auth/LoginForm.tsx`
-- ✅ `src/components/auth/FormInput.tsx`
-- ✅ `src/components/auth/FormError.tsx`
-- ✅ `src/components/auth/LoadingButton.tsx`
-- ✅ `src/app/auth/login/page.tsx`
-- ✅ `src/app/auth/login/loading.tsx`
-- ✅ `src/app/auth/login/error.tsx`
-- ✅ `src/lib/auth/validation.ts`
-- ✅ `src/lib/authTypes.ts`
-
-## Current Status
-
-- ✅ Login functionality complete
-- ✅ Registration implementation complete
-- ✅ Forgot password implemented
-- ✅ Email verification implemented
-- ✅ Vercel deployment fixes added
-
-## Email Service Notes
-
-1. Gmail SMTP Setup Required:
-
-   - Create Gmail App Password
-   - Configure SMTP environment variables
-   - Test email delivery in development
-
-2. Current Features:
-
-   - Email verification on registration
-   - Password reset functionality
-   - Secure token handling
-   - Error handling and logging
-
-3. Environment Variables Required:
-
-   ```
-   SMTP_HOST=smtp.gmail.com
-   SMTP_PORT=587
-   SMTP_USER=your-email@gmail.com
-   SMTP_PASS=your-gmail-app-password
-   ```
-
-4. Security Measures:
-   - Token hashing and expiration
-   - Rate limiting (to be implemented)
-   - Email enumeration prevention
-   - Secure error handling
-
-## Notes
-
-- Remember Me checkbox styling has been fixed
-- Email verification is temporarily disabled for testing
-- Registration flow to be implemented next
-- Forgot password functionality will be added in a future update
+4. Profile Features
+   - Create profile page
+   - Add settings interface
+   - Implement preferences management
