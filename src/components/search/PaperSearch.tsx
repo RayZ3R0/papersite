@@ -60,6 +60,16 @@ export default function PaperSearch({ initialQuery = '' }: PaperSearchProps) {
   // Get trending searches
   const [trendingSearches, setTrendingSearches] = useState<string[]>([]);
 
+  // Get all papers for paper code generation
+  const allPapers = useMemo(() => {
+    return Object.values((subjectsData as SubjectsData).subjects).flatMap(subject => 
+      subject.papers.map(paper => ({
+        ...paper,
+        subject: subject.id
+      }))
+    );
+  }, []);
+
   // Save filter visibility preference
   useEffect(() => {
     localStorage.setItem(FILTERS_VISIBLE_KEY, showFilters.toString());
@@ -177,6 +187,12 @@ export default function PaperSearch({ initialQuery = '' }: PaperSearchProps) {
     }
   }, [results.length, query.text]);
 
+  // Get subject papers for a specific subject
+  const getSubjectPapers = useCallback((subjectId: string) => {
+    const subject = (subjectsData as SubjectsData).subjects[subjectId];
+    return subject?.papers || [];
+  }, []);
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       {/* Filter Toggle */}
@@ -275,19 +291,29 @@ export default function PaperSearch({ initialQuery = '' }: PaperSearchProps) {
                     <div>
                       <p className="text-sm text-text-muted">
                         {result.paper.session} {result.paper.year}
-                        {getPaperCode({
-                          subject: result.subject.id,
-                          unitId: result.paper.unitId,
-                          year: result.paper.year,
-                          title: result.paper.title
-                        }) && (
+                        {getPaperCode(
+                          {
+                            subject: result.subject.id,
+                            unitId: result.paper.unitId,
+                            year: result.paper.year,
+                            title: result.paper.title,
+                            pdfUrl: result.paper.pdfUrl,
+                            session: result.paper.session
+                          },
+                          getSubjectPapers(result.subject.id)
+                        ) && (
                           <span className="text-xs ml-2">
-                            {getPaperCode({
-                              subject: result.subject.id,
-                              unitId: result.paper.unitId,
-                              year: result.paper.year,
-                              title: result.paper.title
-                            })}
+                            {getPaperCode(
+                              {
+                                subject: result.subject.id,
+                                unitId: result.paper.unitId,
+                                year: result.paper.year,
+                                title: result.paper.title,
+                                pdfUrl: result.paper.pdfUrl,
+                                session: result.paper.session
+                              },
+                              getSubjectPapers(result.subject.id)
+                            )}
                           </span>
                         )}
                       </p>

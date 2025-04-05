@@ -22,6 +22,7 @@ export default function SearchPage() {
         <h1 className="text-2xl md:text-3xl font-bold mb-8 text-center text-text">
           Find Past Papers
         </h1>
+        <p className="text-2xl md:text-3xl font-extralight mb-8 text-center text-text">The Unit Codes given may not be accurate. Check the files properly.</p>
         
         <Suspense fallback={
           <div className="bg-surface rounded-lg shadow-sm border border-border p-4 md:p-6 text-center">

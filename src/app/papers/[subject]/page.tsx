@@ -200,19 +200,25 @@ export default function SubjectPage() {
                             {paper.session} {paper.year}
                           </h3>
                           {/* Add paper code in small, muted text */}
-                          {getPaperCode({
-                            subject: subjectId,
-                            unitId: paper.unitId,
-                            year: paper.year,
-                            title: paper.title
-                          }) && (
+                          {getPaperCode(
+                            {
+                              subject: subjectId,
+                              unitId: paper.unitId,
+                              year: paper.year,
+                              title: paper.title
+                            },
+                            subject.papers // Pass all subject papers as the second argument
+                          ) && (
                             <span className="text-xs text-text-muted">
-                              {getPaperCode({
-                                subject: subjectId,
-                                unitId: paper.unitId,
-                                year: paper.year,
-                                title: paper.title
-                              })}
+                              {getPaperCode(
+                                {
+                                  subject: subjectId,
+                                  unitId: paper.unitId,
+                                  year: paper.year,
+                                  title: paper.title
+                                },
+                                subject.papers // Pass all subject papers as the second argument
+                              )}
                             </span>
                           )}
                         </div>

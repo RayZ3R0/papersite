@@ -2,30 +2,52 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyToken } from '@/lib/auth/jwt';
 
-export async function middleware(request: NextRequest) {
-  // Get token from cookie
-  const authCookie = request.cookies.get('auth_token');
+// Match cookie names with AuthCookieManager
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 
+export async function middleware(request: NextRequest) {
   // Get request path
   const { pathname } = request.nextUrl;
 
   // Admin routes protection
   if (pathname.startsWith('/admin')) {
-    if (!authCookie?.value) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+    // Check for access token
+    const accessToken = request.cookies.get(ACCESS_TOKEN_KEY);
+    // Check for refresh token as backup
+    const refreshToken = request.cookies.get(REFRESH_TOKEN_KEY);
+    
+    if (!accessToken?.value && !refreshToken?.value) {
+      // No tokens at all - redirect to login
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('returnTo', pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     try {
-      const payload = await verifyToken(authCookie.value);
-      
-      // Check for admin role
-      if (payload.role !== 'admin') {
-        // Redirect non-admins to home page
-        return NextResponse.redirect(new URL('/', request.url));
+      // Try to verify the access token first
+      if (accessToken?.value) {
+        const payload = await verifyToken(accessToken.value);
+        if (payload) {
+          // Valid access token, continue
+          return NextResponse.next();
+        }
       }
+
+      // If access token is invalid and we have a refresh token,
+      // let the request through - the client will handle refresh
+      if (refreshToken?.value) {
+        return NextResponse.next();
+      }
+
+      // No valid tokens - redirect to login
+      throw new Error('No valid tokens');
+
     } catch (error) {
-      // Invalid or expired token
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+      // Invalid or expired tokens - redirect to login
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('returnTo', pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 

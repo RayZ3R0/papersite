@@ -27,6 +27,16 @@ export default function ProtectedContent({
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
 
+  // Debug logs
+  console.log('ProtectedContent Debug:', {
+    user,
+    roles,
+    isLoading,
+    pathname,
+    isAuthorized: user && (!roles || roles.includes(user.role)),
+    userRole: user?.role
+  });
+
   // Check user authentication and roles
   const isAuthorized = user && (!roles || roles.includes(user.role));
 
@@ -41,6 +51,14 @@ export default function ProtectedContent({
 
   // If not authorized
   if (!isAuthorized) {
+    // Log unauthorized reason
+    console.log('Not authorized because:', {
+      hasUser: !!user,
+      userRole: user?.role,
+      requiredRoles: roles,
+      roleCheckPassed: !roles || (user && roles.includes(user.role))
+    });
+
     // If we have a fallback, show it
     if (fallback !== undefined) {
       return <>{fallback}</>;
@@ -52,6 +70,20 @@ export default function ProtectedContent({
       return null;
     }
 
+    // Don't redirect from admin pages (middleware handles that)
+    if (pathname?.startsWith('/admin')) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-surface dark:bg-surface-dark">
+          <div className="p-6 max-w-sm mx-auto bg-error/10 border border-error rounded-lg text-error text-center">
+            You must be an administrator to access this area.
+            <pre className="mt-4 text-xs text-left bg-black/5 p-2 rounded">
+              {JSON.stringify({ role: user?.role, required: 'admin' }, null, 2)}
+            </pre>
+          </div>
+        </div>
+      );
+    }
+
     // If preventRedirect is true, don't redirect
     if (preventRedirect) {
       return null;
@@ -59,8 +91,8 @@ export default function ProtectedContent({
 
     // If no fallback and no callback, and we're in the browser, redirect to login
     if (typeof window !== 'undefined') {
-      // Use current pathname instead of window.location.pathname
-      window.location.href = `/auth/login?returnTo=${encodeURIComponent(pathname)}`;
+      const returnUrl = encodeURIComponent(pathname || '/');
+      window.location.href = `/auth/login?returnTo=${returnUrl}`;
       return null;
     }
 

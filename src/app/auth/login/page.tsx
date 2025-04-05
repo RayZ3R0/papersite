@@ -17,6 +17,14 @@ export default function LoginPage() {
     }
   }, [searchParams]);
 
+  // Get return URL from query params
+  const returnTo = searchParams?.get('returnTo') || '/';
+
+  // Handle successful login
+  const handleLoginSuccess = () => {
+    router.replace(returnTo);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-surface dark:bg-surface-dark">
       <div className="max-w-md w-full space-y-8">
@@ -44,7 +52,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <LoginForm />
+        <LoginForm onSuccess={handleLoginSuccess} returnTo={returnTo} />
       </div>
     </div>
   );

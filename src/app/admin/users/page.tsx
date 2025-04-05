@@ -14,14 +14,10 @@ interface User {
   lastLogin: string;
 }
 
-export default function AdminUsersPage() {
+export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   const fetchUsers = async () => {
     try {
@@ -67,11 +63,23 @@ export default function AdminUsersPage() {
     }
   };
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface dark:bg-surface-dark">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="text-text">Loading...</div>
+      <div className="flex items-center justify-center p-6">
+        <div className="text-text">Loading users...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="p-4 bg-error/10 border border-error rounded text-error">
+          {error}
         </div>
       </div>
     );
@@ -81,12 +89,6 @@ export default function AdminUsersPage() {
     <div className="min-h-screen bg-surface dark:bg-surface-dark">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold text-text mb-6">User Management</h1>
-
-        {error && (
-          <div className="mb-4 p-3 bg-error/10 border border-error rounded text-error">
-            {error}
-          </div>
-        )}
 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">

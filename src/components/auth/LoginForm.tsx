@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from './AuthContext';
 import FormInput from './FormInput';
 import FormError from './FormError';
@@ -12,7 +13,8 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
-  const { login, error, isLoading, clearError } = useAuth();
+  const router = useRouter();
+  const { login, error, isLoading, clearError, user } = useAuth();
   const [formData, setFormData] = useState({
     identifier: '',
     password: '',
@@ -24,11 +26,29 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
     return () => clearError();
   }, [formData, clearError]);
 
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (user) {
+      // Check if trying to access admin page
+      if (returnTo?.startsWith('/admin')) {
+        if (user.role === 'admin') {
+          router.push(returnTo);
+        } else {
+          router.push('/'); // Non-admin users get redirected to home
+        }
+      } else if (onSuccess) {
+        onSuccess();
+      } else if (returnTo) {
+        router.push(returnTo);
+      }
+    }
+  }, [user, returnTo, onSuccess, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(formData.identifier, formData.password, formData.rememberMe);
-      onSuccess?.();
+      // Redirect is handled by the useEffect above
     } catch {
       // Error is handled by AuthContext
     }
@@ -39,6 +59,7 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
       {error && <FormError error={error} className="mb-6" />}
 
       <FormInput
+        id="login-identifier"
         label="Email or Username"
         type="text"
         value={formData.identifier}
@@ -50,6 +71,7 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
       />
 
       <FormInput
+        id="login-password"
         label="Password"
         type="password"
         showPasswordToggle

@@ -3,17 +3,21 @@ import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-mi
 import { User } from '@/models/User';
 import { verifyToken } from '@/lib/auth/jwt';
 
+const ACCESS_TOKEN_KEY = 'access_token';
+
 export const GET = withDb(async (req: NextRequest) => {
   try {
     // Get auth token from cookie
-    const authCookie = req.cookies.get('auth_token');
-    if (!authCookie?.value) {
+    const accessToken = req.cookies.get(ACCESS_TOKEN_KEY)?.value;
+    if (!accessToken) {
+      console.log('No access token found');
       return createErrorResponse('Unauthorized', 401);
     }
 
     // Verify token and check role
-    const payload = await verifyToken(authCookie.value);
+    const payload = await verifyToken(accessToken);
     if (!payload || payload.role !== 'admin') {
+      console.log('User not authorized:', payload);
       return createErrorResponse('Unauthorized', 403);
     }
 
@@ -37,13 +41,13 @@ export const GET = withDb(async (req: NextRequest) => {
 export const DELETE = withDb(async (req: NextRequest) => {
   try {
     // Get auth token from cookie
-    const authCookie = req.cookies.get('auth_token');
-    if (!authCookie?.value) {
+    const accessToken = req.cookies.get(ACCESS_TOKEN_KEY)?.value;
+    if (!accessToken) {
       return createErrorResponse('Unauthorized', 401);
     }
 
     // Verify token and check role
-    const payload = await verifyToken(authCookie.value);
+    const payload = await verifyToken(accessToken);
     if (!payload || payload.role !== 'admin') {
       return createErrorResponse('Unauthorized', 403);
     }

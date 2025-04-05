@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { verifyToken } from '@/lib/auth/jwt';
+import { useAuth } from '@/components/auth/AuthContext';
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -10,38 +10,17 @@ interface RouteGuardProps {
 
 export function RouteGuard({ children }: RouteGuardProps) {
   const router = useRouter();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      // Get token from cookie
-      const cookies = document.cookie.split(';');
-      const authCookie = cookies.find(c => c.trim().startsWith('auth_token='));
-      
-      if (!authCookie) {
-        throw new Error('No auth token');
-      }
-
-      const token = authCookie.split('=')[1];
-      const payload = await verifyToken(token);
-
-      if (payload.role !== 'admin') {
-        throw new Error('Not admin');
-      }
-
-      setIsAuthorized(true);
-    } catch (error) {
-      console.error('Auth check failed:', error);
+    if (!isLoading && !user) {
+      // No user is logged in, redirect to login
       router.replace('/auth/login');
-    } finally {
-      setIsLoading(false);
+    } else if (!isLoading && user && user.role !== 'admin') {
+      // User is logged in but not an admin, redirect to home
+      router.replace('/');
     }
-  };
+  }, [user, isLoading, router]);
 
   if (isLoading) {
     return (
@@ -51,9 +30,11 @@ export function RouteGuard({ children }: RouteGuardProps) {
     );
   }
 
-  if (!isAuthorized) {
+  // Don't show anything while redirecting
+  if (!user || user.role !== 'admin') {
     return null;
   }
 
+  // User is admin, show the protected content
   return <>{children}</>;
 }
