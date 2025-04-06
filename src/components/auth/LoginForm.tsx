@@ -83,17 +83,58 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
         placeholder="Enter your password"
       />
 
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="remember-me"
-          checked={formData.rememberMe}
-          onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-        />
-        <label htmlFor="remember-me" className="ml-2 block text-sm text-text-muted">
-          Remember me
-        </label>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="relative inline-flex items-center">
+            <input
+              type="checkbox"
+              id="remember-me"
+              checked={formData.rememberMe}
+              onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+              className="
+                sr-only peer
+              "
+            />
+            <div className={`
+              w-5 h-5 border-2 rounded transition-all duration-200
+              flex items-center justify-center
+              ${formData.rememberMe 
+                ? 'bg-primary border-primary' 
+                : 'border-border hover:border-primary/50'
+              }
+              peer-focus:ring-2 peer-focus:ring-primary/20
+            `}>
+              {formData.rememberMe && (
+                <svg 
+                  className="w-3 h-3 text-white" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5 13l4 4L19 7" 
+                  />
+                </svg>
+              )}
+            </div>
+            <label 
+              htmlFor="remember-me" 
+              className="ml-2 select-none text-sm text-text-muted cursor-pointer hover:text-text transition-colors duration-200"
+            >
+              Remember me
+            </label>
+          </div>
+        </div>
+
+        <a 
+          href="/auth/forgot-password" 
+          className="text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200"
+        >
+          Forgot password?
+        </a>
       </div>
 
       <LoadingButton

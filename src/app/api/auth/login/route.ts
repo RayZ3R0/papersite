@@ -1,9 +1,15 @@
 import { NextRequest } from 'next/server';
 import { loginUser } from '@/lib/auth';
-
-export const dynamic = 'force-dynamic';
 import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { AuthError } from '@/lib/authTypes';
+
+export const dynamic = 'force-dynamic';
+
+// Durations
+const DURATIONS = {
+  DEFAULT: 24 * 60 * 60, // 24 hours
+  REMEMBER_ME: 30 * 24 * 60 * 60 // 30 days
+} as const;
 
 export const POST = withDb(async (request: NextRequest) => {
   try {
@@ -15,18 +21,21 @@ export const POST = withDb(async (request: NextRequest) => {
       return createErrorResponse('Email/username and password are required', 400);
     }
 
-    // Handle login
+    // Handle login with session duration based on remember me
     const { user } = await loginUser({ 
       email, 
       username,
       password,
       options: {
-        sessionDuration: rememberMe ? 30 * 24 * 60 * 60 : undefined // 30 days if remember me
+        sessionDuration: rememberMe ? DURATIONS.REMEMBER_ME : DURATIONS.DEFAULT
       }
     });
 
     // Return user data
-    return createSuccessResponse({ user });
+    return createSuccessResponse({
+      user,
+      message: rememberMe ? 'Logged in with extended session' : 'Logged in successfully'
+    });
   } catch (error) {
     console.error('Login error:', error);
 

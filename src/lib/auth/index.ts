@@ -114,8 +114,9 @@ export async function loginUser({ email, username, password, options }: LoginCre
     };
     await user.save();
 
-    // Set cookies with optional duration
-    AuthCookieManager.setTokens(accessToken, refreshToken);
+    // Set cookies with remember me option
+    const isLongSession = options?.sessionDuration ? options.sessionDuration > 24 * 60 * 60 : false;
+    AuthCookieManager.setTokens(accessToken, refreshToken, isLongSession);
 
     // Update last login
     await User.updateOne(
