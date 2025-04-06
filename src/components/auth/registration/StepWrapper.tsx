@@ -11,6 +11,7 @@ interface StepWrapperProps {
   children: React.ReactNode;
   title: string;
   subtitle?: string;
+  nextButtonText?: string;
 }
 
 export function StepWrapper({
@@ -22,8 +23,26 @@ export function StepWrapper({
   children,
   title,
   subtitle,
+  nextButtonText,
 }: StepWrapperProps) {
   const progress = ((currentStep + 1) / totalSteps) * 100;
+
+  const getButtonText = () => {
+    if (nextButtonText) {
+      return nextButtonText;
+    }
+    
+    if (currentStep === totalSteps - 1) {
+      return 'Complete Registration';
+    }
+
+    return (
+      <>
+        Next
+        <FiArrowRight className="ml-2 h-5 w-5" />
+      </>
+    );
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
@@ -112,14 +131,7 @@ export function StepWrapper({
             }
           `}
         >
-          {currentStep === totalSteps - 1 ? (
-            'Complete'
-          ) : (
-            <>
-              Next
-              <FiArrowRight className="ml-2 h-5 w-5" />
-            </>
-          )}
+          {getButtonText()}
         </motion.button>
       </div>
     </div>

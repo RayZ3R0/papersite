@@ -4,24 +4,24 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { StepWrapper } from '@/components/auth/registration/StepWrapper';
 import { BasicInfoStep } from '@/components/auth/registration/BasicInfoStep';
+import { EnhancedSubjectSelector } from '@/components/auth/registration/EnhancedSubjectSelector';
+import { SessionSelector } from '@/components/auth/registration/SessionSelector';
+import { StudyPreferencesStep } from '@/components/auth/registration/StudyPreferencesStep';
+import { RegistrationData, RegistrationErrors, UserSubject, StudyPreferences, ExamSession } from '@/types/registration';
 
-interface BasicInfoData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+enum RegistrationStep {
+  BASIC_INFO,
+  SUBJECT_SELECTION,
+  EXAM_SESSION,
+  STUDY_PREFERENCES
 }
 
-interface RegistrationData {
-  basicInfo: BasicInfoData;
-}
-
-interface RegistrationErrors {
-  basicInfo: Partial<Record<keyof BasicInfoData, string>>;
-}
+const TOTAL_STEPS = 4;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>(RegistrationStep.BASIC_INFO);
+  
   const [formData, setFormData] = useState<RegistrationData>({
     basicInfo: {
       username: '',
@@ -29,49 +29,51 @@ export default function RegisterPage() {
       password: '',
       confirmPassword: '',
     },
+    subjects: [],
+    studyPreferences: undefined,
+    currentSession: undefined
   });
 
-  const [errors, setErrors] = useState<RegistrationErrors>({
-    basicInfo: {},
-  });
-  
+  const [errors, setErrors] = useState<RegistrationErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const validateBasicInfo = () => {
-    const newErrors = { ...errors };
+    const newErrors: RegistrationErrors = {
+      basicInfo: {}
+    };
     let isValid = true;
 
     // Username validation
     if (!formData.basicInfo.username) {
-      newErrors.basicInfo.username = 'Username is required';
+      newErrors.basicInfo!.username = 'Username is required';
       isValid = false;
     } else if (formData.basicInfo.username.length < 3) {
-      newErrors.basicInfo.username = 'Username must be at least 3 characters';
+      newErrors.basicInfo!.username = 'Username must be at least 3 characters';
       isValid = false;
     }
 
     // Email validation
     if (!formData.basicInfo.email) {
-      newErrors.basicInfo.email = 'Email is required';
+      newErrors.basicInfo!.email = 'Email is required';
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.basicInfo.email)) {
-      newErrors.basicInfo.email = 'Please enter a valid email';
+      newErrors.basicInfo!.email = 'Please enter a valid email';
       isValid = false;
     }
 
     // Password validation
     if (!formData.basicInfo.password) {
-      newErrors.basicInfo.password = 'Password is required';
+      newErrors.basicInfo!.password = 'Password is required';
       isValid = false;
     } else if (formData.basicInfo.password.length < 8) {
-      newErrors.basicInfo.password = 'Password must be at least 8 characters';
+      newErrors.basicInfo!.password = 'Password must be at least 8 characters';
       isValid = false;
     }
 
     // Confirm password validation
     if (formData.basicInfo.password !== formData.basicInfo.confirmPassword) {
-      newErrors.basicInfo.confirmPassword = 'Passwords do not match';
+      newErrors.basicInfo!.confirmPassword = 'Passwords do not match';
       isValid = false;
     }
 
@@ -80,70 +82,183 @@ export default function RegisterPage() {
   };
 
   const handleNext = async () => {
-    if (validateBasicInfo()) {
-      setIsLoading(true);
-      setApiError(null);
+    let canProceed = false;
 
-      try {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: formData.basicInfo.username,
-            email: formData.basicInfo.email,
-            password: formData.basicInfo.password,
-          }),
-        });
+    switch (currentStep) {
+      case RegistrationStep.BASIC_INFO:
+        canProceed = validateBasicInfo();
+        break;
+      default:
+        // All other steps are optional
+        canProceed = true;
+        break;
+    }
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Registration failed');
-        }
-
-        // Redirect to login with success message
-        router.push('/auth/login?registered=true');
-      } catch (error) {
-        setApiError(error instanceof Error ? error.message : 'Registration failed');
-      } finally {
-        setIsLoading(false);
+    if (canProceed) {
+      if (currentStep === RegistrationStep.STUDY_PREFERENCES) {
+        // Final step - submit form
+        await handleSubmit();
+      } else {
+        setCurrentStep(currentStep + 1);
+        setErrors({});
       }
     }
   };
 
-  const updateBasicInfo = (data: BasicInfoData) => {
-    setFormData(prev => ({
-      ...prev,
-      basicInfo: data
-    }));
-    // Clear errors as user types
-    setErrors(prev => ({
-      ...prev,
-      basicInfo: {}
-    }));
-    // Clear API error when user makes changes
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      setErrors({});
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setApiError(null);
+
+    // Clean up data before submission
+    const finalData = {
+      ...formData,
+      // Only include subjects if any are selected
+      subjects: formData.subjects.length > 0 ? formData.subjects : undefined,
+      // Only include other fields if they have values
+      currentSession: formData.currentSession || undefined,
+      studyPreferences: formData.studyPreferences || undefined
+    };
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      router.push('/auth/login?registered=true');
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : 'Registration failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateBasicInfo = (basicInfo: typeof formData.basicInfo) => {
+    setFormData(prev => ({ ...prev, basicInfo }));
+    setErrors({});
     setApiError(null);
   };
+
+  const updateSubjects = (subjects: UserSubject[]) => {
+    setFormData(prev => ({ ...prev, subjects }));
+    setErrors({});
+  };
+
+  const updateSession = (session: ExamSession) => {
+    setFormData(prev => ({ ...prev, currentSession: session }));
+    setErrors({});
+  };
+
+  const updatePreferences = (preferences: StudyPreferences) => {
+    setFormData(prev => ({ ...prev, studyPreferences: preferences }));
+    setErrors({});
+  };
+
+  const getStepContent = () => {
+    switch (currentStep) {
+      case RegistrationStep.BASIC_INFO:
+        return (
+          <BasicInfoStep
+            data={formData.basicInfo}
+            onChange={updateBasicInfo}
+            errors={errors.basicInfo || {}}
+          />
+        );
+      case RegistrationStep.SUBJECT_SELECTION:
+        return (
+          <EnhancedSubjectSelector
+            selectedSubjects={formData.subjects}
+            onSelectionChange={updateSubjects}
+            errors={errors}
+          />
+        );
+      case RegistrationStep.EXAM_SESSION:
+        return (
+          <SessionSelector
+            currentSession={formData.currentSession || "May 2025"}
+            onChange={updateSession}
+          />
+        );
+      case RegistrationStep.STUDY_PREFERENCES:
+        return (
+          <StudyPreferencesStep
+            preferences={formData.studyPreferences || {}}
+            onChange={updatePreferences}
+            errors={errors.studyPreferences}
+          />
+        );
+    }
+  };
+
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case RegistrationStep.BASIC_INFO:
+        return {
+          title: "Create Account",
+          subtitle: "Enter your details to get started"
+        };
+      case RegistrationStep.SUBJECT_SELECTION:
+        return {
+          title: "Choose Your Subjects (Optional)",
+          subtitle: "Select your subjects or skip to register"
+        };
+      case RegistrationStep.EXAM_SESSION:
+        return {
+          title: "Exam Session (Optional)",
+          subtitle: "Choose when you plan to take exams or skip"
+        };
+      case RegistrationStep.STUDY_PREFERENCES:
+        return {
+          title: "Study Preferences (Optional)",
+          subtitle: "Set your preferences or skip to complete registration"
+        };
+    }
+  };
+
+  const getStepButtonText = () => {
+    if (currentStep === RegistrationStep.BASIC_INFO) {
+      return "Next";
+    }
+    
+    if (currentStep === RegistrationStep.STUDY_PREFERENCES) {
+      return "Complete Registration";
+    }
+
+    return "Next (or Skip)";
+  };
+
+  const stepInfo = getStepTitle();
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-surface">
       <div className="w-full py-8 lg:py-12">
         <StepWrapper
-          currentStep={0}
-          totalSteps={1}
+          currentStep={currentStep}
+          totalSteps={TOTAL_STEPS}
           onNext={handleNext}
-          onBack={() => {}}
+          onBack={handleBack}
           canProceed={!isLoading}
-          title="Create Account"
-          subtitle="Enter your details to get started"
+          title={stepInfo?.title || ""}
+          subtitle={stepInfo?.subtitle}
+          nextButtonText={getStepButtonText()}
         >
-          <BasicInfoStep
-            data={formData.basicInfo}
-            onChange={updateBasicInfo}
-            errors={errors.basicInfo}
-          />
+          {getStepContent()}
         </StepWrapper>
 
         {/* API Error Display */}
