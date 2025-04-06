@@ -1,352 +1,153 @@
 # Profile Page Implementation Plan
 
-## Core Components Structure
+## Current Phase: 3 - Subject Management & UI Polish
 
-### 1. ProfileHeader
+### Phase 1: Core Structure and Authentication ✅
 
-```tsx
-<ProfileHeader className="mb-8">
-  <ProfileAvatar />
-  <ProfileInfo>
-    <ProfileStats />
-    <ProfileActions />
-  </ProfileInfo>
-</ProfileHeader>
-```
+- [x] Create profile layout with auth protection
+- [x] Set up error boundary wrapper
+- [x] Add loading state handler
+- [x] Implement basic profile data fetching
+- [x] Create API endpoint stubs
 
-#### Empty State
+### Phase 2: Core Components ✅
 
-- Default avatar with username initial
-- Join date and basic stats
-- Prompt to complete profile
+- [x] Profile Header Component
+  - [x] Basic user info display
+  - [x] Role and verification badges
+- [x] Profile Stats Component
+  - [x] Subject count
+  - [x] Study time display
+- [x] Subject Dashboard Component
+  - [x] Basic subject list
+  - [x] Subject card design
+- [x] Study Preferences Component
+  - [x] Study time settings
+  - [x] Notification preferences
+  - [x] Real-time updates
 
-### 2. SubjectDashboard
+### Phase 3: Subject Management (Current)
 
-```tsx
-<SubjectDashboard>
-  <SubjectFilter />
-  <SubjectGrid>
-    {subjects.map((subject) => (
-      <SubjectCard>
-        <SubjectHeader />
-        <SubjectProgress />
-        <SubjectActions />
-      </SubjectCard>
-    ))}
-  </SubjectGrid>
-</SubjectDashboard>
-```
+- [x] Enhanced Subject Management
+  - [x] New subject selection modal
+  - [x] Category-based organization
+  - [x] Common combinations support
+  - [x] Unit examination details
+- [ ] UI Improvements
+  - [ ] Add session selection in modal
+  - [ ] Add grade selection for units
+  - [ ] Improve mobile responsiveness
+  - [ ] Add tooltips and help text
+- [ ] Data Management
+  - [ ] Optimistic updates for subjects
+  - [ ] Proper error handling
+  - [ ] Loading states
+  - [ ] Validation
 
-#### Empty State
+### Phase 4: Final Polish (Future)
 
-- "Start Your Journey" card
-- Quick subject selection
-- Popular combinations display
-- Themed illustrations
+- [ ] Profile Enhancements
+  - [ ] Profile picture upload
+  - [ ] Bio/About section
+  - [ ] Activity history
+- [ ] Performance Optimizations
+  - [ ] Add request caching
+  - [ ] Implement lazy loading
+  - [ ] Optimize re-renders
+- [ ] Testing & Documentation
+  - [ ] Unit tests
+  - [ ] Integration tests
+  - [ ] User documentation
+  - [ ] API documentation
 
-### 3. StudyPreferences
+## Technical Details
 
-```tsx
-<StudyPreferences>
-  <TimePreference />
-  <GoalsSection />
-  <NotificationSettings />
-</StudyPreferences>
-```
-
-#### Empty State
-
-- Study tips and recommendations
-- Time management suggestions
-- Quick setup button
-
-## Implementation Phases
-
-### Phase 1: Core Profile
-
-1. Basic Layout
-
-   ```tsx
-   <div className="min-h-screen bg-surface">
-     <div className="max-w-7xl mx-auto px-4 py-8">
-       <ProfileHeader />
-       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         <SubjectDashboard />
-         <StudyInfo />
-       </main>
-     </div>
-   </div>
-   ```
-
-2. Profile Header
-
-   ```tsx
-   <div className="bg-surface-alt rounded-xl p-6 border border-border">
-     <div className="flex items-start gap-6">{/* Profile Content */}</div>
-   </div>
-   ```
-
-3. Quick Stats
-   ```tsx
-   <div className="grid grid-cols-3 gap-4">
-     <StatCard icon={<BookIcon />} value={subjects.length} label="Subjects" />
-     {/* More stats */}
-   </div>
-   ```
-
-### Phase 2: Subject Management
-
-1. Subject Grid
-
-   ```tsx
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-     {subjects.map((subject) => (
-       <SubjectCard
-         key={subject.id}
-         className="bg-surface hover:bg-surface-alt transition-colors"
-       >
-         {/* Subject content */}
-       </SubjectCard>
-     ))}
-   </div>
-   ```
-
-2. Progress Tracking
-   ```tsx
-   <div className="mt-4">
-     <ProgressBar
-       value={progress}
-       className="bg-primary/10"
-       barClassName="bg-primary"
-     />
-     <div className="flex justify-between text-sm text-text-muted">
-       <span>Current: {progress}%</span>
-       <span>Target: {target}%</span>
-     </div>
-   </div>
-   ```
-
-### Phase 3: Study Plan Integration
-
-1. Time Management
-
-   ```tsx
-   <div className="grid gap-4">
-     <TimeBlock
-       day="Monday"
-       slots={timeSlots}
-       className="bg-surface-alt p-4 rounded-lg"
-     />
-     {/* More days */}
-   </div>
-   ```
-
-2. Goals & Milestones
-   ```tsx
-   <div className="space-y-4">
-     <GoalCard title="Complete AS Level" deadline="May 2025" progress={65} />
-     {/* More goals */}
-   </div>
-   ```
-
-## UI Components
-
-### 1. Cards and Containers
-
-```scss
-.profile-card {
-  @apply bg-surface rounded-xl border border-border p-6;
-  @apply transition-shadow duration-200;
-  @apply hover:shadow-lg hover:border-primary/20;
-}
-
-.stat-card {
-  @apply bg-surface-alt rounded-lg p-4;
-  @apply flex items-center gap-3;
-}
-```
-
-### 2. Progress Indicators
-
-```tsx
-<CircularProgress
-  value={75}
-  size={64}
-  strokeWidth={4}
-  className="text-primary"
-  bgClassName="text-primary/10"
-/>
-```
-
-### 3. Interactive Elements
-
-```tsx
-<motion.button
-  whileHover={{ scale: 1.02 }}
-  whileTap={{ scale: 0.98 }}
-  className="btn-primary"
->
-  {/* Button content */}
-</motion.button>
-```
-
-## Empty States
-
-### 1. No Subjects Selected
-
-```tsx
-<EmptyState
-  icon={<BookIcon className="w-12 h-12 text-primary/50" />}
-  title="Start Your Study Journey"
-  description="Select your subjects to get personalized recommendations"
-  action={<SelectSubjectsButton />}
-/>
-```
-
-### 2. No Study Plan
-
-```tsx
-<EmptyState
-  icon={<CalendarIcon className="w-12 h-12 text-primary/50" />}
-  title="Create Your Study Schedule"
-  description="Plan your study time to improve productivity"
-  action={<CreateScheduleButton />}
-/>
-```
-
-## Data Management
-
-### 1. Profile Data Structure
+### API Endpoints
 
 ```typescript
-interface ProfileData {
-  user: {
-    id: string;
-    username: string;
-    email: string;
-    joinDate: Date;
-    lastActive: Date;
-  };
-  subjects: UserSubject[];
-  studyPlan?: StudyPlan;
-  preferences?: StudyPreferences;
-  progress: {
-    bySubject: Record<string, SubjectProgress>;
-    overall: number;
-  };
-}
+// Core Endpoints
+GET /api/user/profile      ✅ Complete
+PATCH /api/user/profile    ✅ Complete
+GET /api/subjects         ✅ Complete
+
+// Coming in Phase 4
+POST /api/user/profile/picture  (Future)
+GET /api/user/activity         (Future)
 ```
 
-### 2. API Integration
+### Key Components
 
-```typescript
-async function fetchProfileData(): Promise<ProfileData> {
-  const response = await fetch("/api/user/profile");
-  return response.json();
-}
+```
+src/
+├── app/
+│   └── profile/
+│       ├── layout.tsx         ✅ Complete
+│       └── page.tsx          ✅ Complete
+├── components/
+│   └── profile/
+│       ├── ProfileHeader.tsx    ✅ Complete
+│       ├── ProfileStats.tsx     ✅ Complete
+│       ├── SubjectDashboard.tsx ✅ Complete
+│       ├── EditSubjectsModal.tsx ✅ Complete
+│       ├── StudyPreferences.tsx ✅ Complete
+│       └── LoadingProfile.tsx   ✅ Complete
+└── hooks/
+    ├── useProfile.ts         ✅ Complete
+    └── useProfileUpdate.ts   ✅ Complete
 ```
 
-## Theme Integration
+### Features Implemented
 
-### 1. Color Schemes
+1. Authentication & Protection ✅
 
-```typescript
-const themeColors = {
-  primary: "var(--primary)",
-  surface: "var(--surface)",
-  surfaceAlt: "var(--surface-alt)",
-  text: "var(--text)",
-  textMuted: "var(--text-muted)",
-  border: "var(--border)",
-};
-```
+   - Route protection
+   - Auth state management
+   - Role-based access
 
-### 2. Component Theming
+2. Data Management ✅
 
-```tsx
-<div
-  className={`
-    bg-surface
-    dark:bg-surface-dark
-    text-text
-    dark:text-text-dark
-    border-border
-    dark:border-border-dark
-  `}
->
-  {/* Content */}
-</div>
-```
+   - Profile data fetching
+   - Real-time updates
+   - Error handling
+   - Loading states
 
-## Animations
+3. Subject Management ✅
 
-### 1. Page Load
+   - Enhanced subject selection
+   - Category organization
+   - Common combinations
+   - Unit tracking
 
-```typescript
-const pageVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
-```
-
-### 2. Component Transitions
-
-```typescript
-const cardVariants = {
-  hover: { y: -4, shadow: "0 12px 24px rgba(0,0,0,0.1)" },
-  tap: { scale: 0.98 },
-};
-```
-
-## Responsive Design
-
-### 1. Layout Grid
-
-```scss
-.profile-grid {
-  @apply grid gap-6;
-  @apply grid-cols-1;
-  @apply md:grid-cols-2;
-  @apply lg:grid-cols-3;
-  @apply xl:grid-cols-4;
-}
-```
-
-### 2. Component Adaptation
-
-```scss
-.subject-card {
-  @apply flex-1 min-w-[280px];
-  @apply md:max-w-[320px];
-  @apply lg:max-w-none;
-}
-```
+4. Study Preferences ✅
+   - Time settings
+   - Notification preferences
+   - Real-time updates
 
 ## Next Steps
 
-1. Create Base Components
+1. UI Polish
 
-   - Profile layout
-   - Card components
-   - Progress indicators
+   - Add proper session selection
+   - Improve grade selection interface
+   - Add tooltips and help text
+   - Test and improve mobile layouts
 
-2. Implement Core Features
+2. Data Management
 
-   - Subject management
-   - Progress tracking
-   - Study plan display
+   - Implement optimistic updates
+   - Improve error messaging
+   - Add validation rules
+   - Enhance loading states
 
-3. Add Interactive Features
+3. Testing Setup
 
-   - Edit capabilities
-   - Real-time updates
-   - Notification settings
+   - Configure test environment
+   - Write component tests
+   - Add integration tests
+   - Set up E2E testing
 
-4. Polish & Optimize
-   - Loading states
-   - Error boundaries
-   - Performance optimization
+4. Documentation
+   - Add inline code documentation
+   - Create user guides
+   - Document API endpoints
+   - Add accessibility documentation

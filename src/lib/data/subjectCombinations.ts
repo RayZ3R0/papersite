@@ -1,4 +1,4 @@
-import { mockSubjects } from './mock-subjects';
+import { registrationSubjects } from '@/components/auth/registration/subjectData';
 
 interface SubjectCombination {
   id: string;
@@ -8,49 +8,48 @@ interface SubjectCombination {
   subjectCodes: string[];
 }
 
-// Helper to find subject codes by pattern
-const getSubjectCodes = (pattern: RegExp) => 
-  mockSubjects.filter(s => pattern.test(s.code)).map(s => s.code);
+// Helper to find sequential unit IDs
+const getSequentialUnits = (subjectCode: string, prefix: string, numbers: number[]): string[] => {
+  const subject = registrationSubjects[subjectCode];
+  if (!subject) return [];
+  
+  return numbers
+    .map(num => {
+      const pattern = prefix + num;
+      const unit = subject.units.find(u => u.id === pattern);
+      return unit?.id;
+    })
+    .filter((id): id is string => id !== undefined);
+};
 
 export const commonCombinations: Record<string, SubjectCombination[]> = {
   'Mathematics': [
     {
-      id: 'maths-as-p1p2-m1s1',
+      id: 'maths-as-pure-with-mechanics',
       name: 'Maths AS (with Mechanics)',
-      description: 'Pure Mathematics 1 & 2 with Mechanics 1 and Statistics 1',
+      description: 'Pure Mathematics 1 & 2 with Mechanics 1',
       level: 'AS',
-      subjectCodes: ['P1', 'P2', 'M1', 'S1']
+      subjectCodes: [
+        ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
+        ...getSequentialUnits('WMA11', 'WME1', [1])
+      ]
     },
     {
-      id: 'maths-as-p1p2-s1s2',
+      id: 'maths-as-pure-with-stats',
       name: 'Maths AS (with Statistics)',
-      description: 'Pure Mathematics 1 & 2 with Statistics 1 & 2',
+      description: 'Pure Mathematics 1 & 2 with Statistics 1',
       level: 'AS',
-      subjectCodes: ['P1', 'P2', 'S1', 'S2']
+      subjectCodes: [
+        ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
+        ...getSequentialUnits('WMA11', 'WMS1', [1])
+      ]
     },
     {
-      id: 'maths-a2-p3p4',
-      name: 'Maths A2',
+      id: 'maths-a2-pure',
+      name: 'Maths A2 (Pure)',
       description: 'Pure Mathematics 3 & 4',
       level: 'A2',
-      subjectCodes: ['P3', 'P4']
-    }
-  ],
-
-  'Further Mathematics': [
-    {
-      id: 'further-maths-as',
-      name: 'Further Maths AS',
-      description: 'Further Pure Mathematics 1',
-      level: 'AS',
-      subjectCodes: ['FP1']
-    },
-    {
-      id: 'further-maths-a2',
-      name: 'Further Maths A2',
-      description: 'Further Pure Mathematics 2 & 3',
-      level: 'A2',
-      subjectCodes: ['FP2', 'FP3']
+      subjectCodes: getSequentialUnits('WMA11', 'WMA1', [3, 4])
     }
   ],
 
@@ -58,16 +57,16 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
     {
       id: 'physics-as',
       name: 'Physics AS',
-      description: 'Units 1 & 2',
+      description: 'Units 1, 2 & 3',
       level: 'AS',
-      subjectCodes: getSubjectCodes(/^PH[12]$/)
+      subjectCodes: getSequentialUnits('WPH11', 'WPH1', [1, 2, 3])
     },
     {
       id: 'physics-a2',
       name: 'Physics A2',
       description: 'Units 4, 5 & 6',
       level: 'A2',
-      subjectCodes: getSubjectCodes(/^PH[456]$/)
+      subjectCodes: getSequentialUnits('WPH11', 'WPH1', [4, 5, 6])
     }
   ],
 
@@ -75,16 +74,33 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
     {
       id: 'chemistry-as',
       name: 'Chemistry AS',
-      description: 'Units 1 & 2',
+      description: 'Units 1, 2 & 3',
       level: 'AS',
-      subjectCodes: getSubjectCodes(/^CH[12]$/)
+      subjectCodes: getSequentialUnits('WCH11', 'WCH1', [1, 2, 3])
     },
     {
       id: 'chemistry-a2',
       name: 'Chemistry A2',
       description: 'Units 4, 5 & 6',
       level: 'A2',
-      subjectCodes: getSubjectCodes(/^CH[456]$/)
+      subjectCodes: getSequentialUnits('WCH11', 'WCH1', [4, 5, 6])
+    }
+  ],
+
+  'Biology': [
+    {
+      id: 'biology-as',
+      name: 'Biology AS',
+      description: 'Units 1, 2 & 3',
+      level: 'AS',
+      subjectCodes: getSequentialUnits('WBI11', 'WBI1', [1, 2, 3])
+    },
+    {
+      id: 'biology-a2',
+      name: 'Biology A2',
+      description: 'Units 4, 5 & 6',
+      level: 'A2',
+      subjectCodes: getSequentialUnits('WBI11', 'WBI1', [4, 5, 6])
     }
   ]
 };

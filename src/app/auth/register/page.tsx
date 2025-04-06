@@ -7,7 +7,7 @@ import { BasicInfoStep } from '@/components/auth/registration/BasicInfoStep';
 import { EnhancedSubjectSelector } from '@/components/auth/registration/EnhancedSubjectSelector';
 import { SessionSelector } from '@/components/auth/registration/SessionSelector';
 import { StudyPreferencesStep } from '@/components/auth/registration/StudyPreferencesStep';
-import { RegistrationData, RegistrationErrors, UserSubject, StudyPreferences, ExamSession } from '@/types/registration';
+import { RegistrationData, RegistrationErrors, UserSubjectConfig, StudyPreferences, ExamSession } from '@/types/registration';
 
 enum RegistrationStep {
   BASIC_INFO,
@@ -155,7 +155,7 @@ export default function RegisterPage() {
     setApiError(null);
   };
 
-  const updateSubjects = (subjects: UserSubject[]) => {
+  const updateSubjects = (subjects: UserSubjectConfig[]) => {
     setFormData(prev => ({ ...prev, subjects }));
     setErrors({});
   };

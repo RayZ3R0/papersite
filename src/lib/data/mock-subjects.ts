@@ -1,313 +1,183 @@
-import { Subject } from '../../types/registration';
+import { Subject } from '@/types/registration';
 
-export const mockSubjects: Subject[] = [
-    // Mathematics
-    {
-        code: 'P1',
-        name: 'Pure Mathematics 1',
+export const mockSubjects: Record<string, Subject> = {
+    'MATH': {
+        code: 'MATH',
+        name: 'Mathematics',
         type: 'AS',
-        category: 'Mathematics'
+        category: 'Mathematics',
+        units: [
+            {
+                id: 'P1',
+                name: 'Pure Mathematics 1',
+                description: 'Core algebra, trigonometry and calculus'
+            },
+            {
+                id: 'P2',
+                name: 'Pure Mathematics 2',
+                description: 'Advanced algebra and calculus concepts'
+            },
+            {
+                id: 'P3',
+                name: 'Pure Mathematics 3',
+                description: 'Further pure mathematics topics'
+            },
+            {
+                id: 'P4',
+                name: 'Pure Mathematics 4',
+                description: 'Advanced pure mathematics concepts'
+            },
+            {
+                id: 'M1',
+                name: 'Mechanics 1',
+                description: 'Basic mechanics and motion'
+            },
+            {
+                id: 'M2',
+                name: 'Mechanics 2',
+                description: 'Advanced mechanics concepts'
+            },
+            {
+                id: 'S1',
+                name: 'Statistics 1',
+                description: 'Basic statistics and probability'
+            },
+            {
+                id: 'S2',
+                name: 'Statistics 2',
+                description: 'Advanced statistical methods'
+            }
+        ]
     },
-    {
-        code: 'P2',
-        name: 'Pure Mathematics 2',
+
+    'FMATH': {
+        code: 'FMATH',
+        name: 'Further Mathematics',
         type: 'AS',
-        category: 'Mathematics'
+        category: 'Further Mathematics',
+        units: [
+            {
+                id: 'FP1',
+                name: 'Further Pure Mathematics 1',
+                description: 'Advanced mathematical concepts'
+            },
+            {
+                id: 'FP2',
+                name: 'Further Pure Mathematics 2',
+                description: 'Complex analysis and methods'
+            },
+            {
+                id: 'FP3',
+                name: 'Further Pure Mathematics 3',
+                description: 'Advanced pure mathematical topics'
+            }
+        ]
     },
-    {
-        code: 'P3',
-        name: 'Pure Mathematics 3',
-        type: 'A2',
-        category: 'Mathematics'
-    },
-    {
-        code: 'P4',
-        name: 'Pure Mathematics 4',
-        type: 'A2',
-        category: 'Mathematics'
-    },
-    {
-        code: 'M1',
-        name: 'Mechanics 1',
+
+    'PHYS': {
+        code: 'PHYS',
+        name: 'Physics',
         type: 'AS',
-        category: 'Mathematics'
+        category: 'Physics',
+        units: [
+            {
+                id: 'PH1',
+                name: 'Mechanics and Materials',
+                description: 'Forces, motion, and material properties'
+            },
+            {
+                id: 'PH2',
+                name: 'Waves and Electricity',
+                description: 'Wave phenomena and electrical concepts'
+            },
+            {
+                id: 'PH3',
+                name: 'Practical Skills I',
+                description: 'Experimental techniques and data analysis'
+            },
+            {
+                id: 'PH4',
+                name: 'Fields and Further Mechanics',
+                description: 'Gravitational and electric fields'
+            },
+            {
+                id: 'PH5',
+                name: 'Nuclear and Thermal Physics',
+                description: 'Nuclear processes and thermal properties'
+            },
+            {
+                id: 'PH6',
+                name: 'Practical Skills II',
+                description: 'Advanced experimental techniques'
+            }
+        ]
     },
-    {
-        code: 'M2',
-        name: 'Mechanics 2',
-        type: 'A2',
-        category: 'Mathematics'
-    },
-    {
-        code: 'S1',
-        name: 'Statistics 1',
+
+    'CHEM': {
+        code: 'CHEM',
+        name: 'Chemistry',
         type: 'AS',
-        category: 'Mathematics'
+        category: 'Chemistry',
+        units: [
+            {
+                id: 'CH1',
+                name: 'Physical Chemistry',
+                description: 'Fundamental chemical processes'
+            },
+            {
+                id: 'CH2',
+                name: 'Organic Chemistry',
+                description: 'Carbon compounds and reactions'
+            },
+            {
+                id: 'CH3',
+                name: 'Practical Skills I',
+                description: 'Experimental techniques and data analysis'
+            },
+            {
+                id: 'CH4',
+                name: 'Physical Chemistry 2',
+                description: 'Advanced chemical processes'
+            },
+            {
+                id: 'CH5',
+                name: 'Organic Chemistry 2',
+                description: 'Complex organic synthesis'
+            },
+            {
+                id: 'CH6',
+                name: 'Practical Skills II',
+                description: 'Advanced experimental techniques'
+            }
+        ]
     },
-    {
-        code: 'S2',
-        name: 'Statistics 2',
-        type: 'A2',
-        category: 'Mathematics'
-    },
-    {
-        code: 'S3',
-        name: 'Statistics 3',
-        type: 'A2',
-        category: 'Mathematics'
-    },
-    {
-        code: 'D1',
-        name: 'Decision Mathematics 1',
+
+    'BIO': {
+        code: 'BIO',
+        name: 'Biology',
         type: 'AS',
-        category: 'Mathematics'
-    },
-    
-    // Further Mathematics
-    {
-        code: 'FP1',
-        name: 'Further Pure Mathematics 1',
-        type: 'AS',
-        category: 'Further Mathematics'
-    },
-    {
-        code: 'FP2',
-        name: 'Further Pure Mathematics 2',
-        type: 'A2',
-        category: 'Further Mathematics'
-    },
-    {
-        code: 'FP3',
-        name: 'Further Pure Mathematics 3',
-        type: 'A2',
-        category: 'Further Mathematics'
-    },
-    
-    // Physics
-    {
-        code: 'PH1',
-        name: 'Physics Unit 1',
-        type: 'AS',
-        category: 'Physics'
-    },
-    {
-        code: 'PH2',
-        name: 'Physics Unit 2',
-        type: 'AS',
-        category: 'Physics'
-    },
-    {
-        code: 'PH4',
-        name: 'Physics Unit 4',
-        type: 'A2',
-        category: 'Physics'
-    },
-    {
-        code: 'PH5',
-        name: 'Physics Unit 5',
-        type: 'A2',
-        category: 'Physics'
-    },
-    {
-        code: 'PH6',
-        name: 'Physics Unit 6',
-        type: 'A2',
-        category: 'Physics'
-    },
-    
-    // Chemistry
-    {
-        code: 'CH1',
-        name: 'Chemistry Unit 1',
-        type: 'AS',
-        category: 'Chemistry'
-    },
-    {
-        code: 'CH2',
-        name: 'Chemistry Unit 2',
-        type: 'AS',
-        category: 'Chemistry'
-    },
-    {
-        code: 'CH4',
-        name: 'Chemistry Unit 4',
-        type: 'A2',
-        category: 'Chemistry'
-    },
-    {
-        code: 'CH5',
-        name: 'Chemistry Unit 5',
-        type: 'A2',
-        category: 'Chemistry'
-    },
-    {
-        code: 'CH6',
-        name: 'Chemistry Unit 6',
-        type: 'A2',
-        category: 'Chemistry'
-    },
-    
-    // Biology
-    {
-        code: 'BIO1',
-        name: 'Biology Unit 1',
-        type: 'AS',
-        category: 'Biology'
-    },
-    {
-        code: 'BIO2',
-        name: 'Biology Unit 2',
-        type: 'AS',
-        category: 'Biology'
-    },
-    {
-        code: 'BIO4',
-        name: 'Biology Unit 4',
-        type: 'A2',
-        category: 'Biology'
-    },
-    {
-        code: 'BIO5',
-        name: 'Biology Unit 5',
-        type: 'A2',
-        category: 'Biology'
-    },
-    {
-        code: 'BIO6',
-        name: 'Biology Unit 6',
-        type: 'A2',
-        category: 'Biology'
-    },
-    
-    // Economics
-    {
-        code: 'ECO1',
-        name: 'Economics Unit 1',
-        type: 'AS',
-        category: 'Economics'
-    },
-    {
-        code: 'ECO2',
-        name: 'Economics Unit 2',
-        type: 'AS',
-        category: 'Economics'
-    },
-    {
-        code: 'ECO3',
-        name: 'Economics Unit 3',
-        type: 'A2',
-        category: 'Economics'
-    },
-    {
-        code: 'ECO4',
-        name: 'Economics Unit 4',
-        type: 'A2',
-        category: 'Economics'
-    },
-    
-    // Business Studies
-    {
-        code: 'BUS1',
-        name: 'Business Studies Unit 1',
-        type: 'AS',
-        category: 'Business Studies'
-    },
-    {
-        code: 'BUS2',
-        name: 'Business Studies Unit 2',
-        type: 'AS',
-        category: 'Business Studies'
-    },
-    {
-        code: 'BUS3',
-        name: 'Business Studies Unit 3',
-        type: 'A2',
-        category: 'Business Studies'
-    },
-    {
-        code: 'BUS4',
-        name: 'Business Studies Unit 4',
-        type: 'A2',
-        category: 'Business Studies'
-    },
-    
-    // Accounting
-    {
-        code: 'ACC1',
-        name: 'Accounting Unit 1',
-        type: 'AS',
-        category: 'Accounting'
-    },
-    {
-        code: 'ACC2',
-        name: 'Accounting Unit 2',
-        type: 'AS',
-        category: 'Accounting'
-    },
-    {
-        code: 'ACC3',
-        name: 'Accounting Unit 3',
-        type: 'A2',
-        category: 'Accounting'
-    },
-    {
-        code: 'ACC4',
-        name: 'Accounting Unit 4',
-        type: 'A2',
-        category: 'Accounting'
-    },
-    
-    // Law
-    {
-        code: 'LAW1',
-        name: 'Law Unit 1',
-        type: 'AS',
-        category: 'Law'
-    },
-    {
-        code: 'LAW2',
-        name: 'Law Unit 2',
-        type: 'AS',
-        category: 'Law'
-    },
-    {
-        code: 'LAW3',
-        name: 'Law Unit 3',
-        type: 'A2',
-        category: 'Law'
-    },
-    {
-        code: 'LAW4',
-        name: 'Law Unit 4',
-        type: 'A2',
-        category: 'Law'
-    },
-    
-    // Psychology
-    {
-        code: 'PSY1',
-        name: 'Psychology Unit 1',
-        type: 'AS',
-        category: 'Psychology'
-    },
-    {
-        code: 'PSY2',
-        name: 'Psychology Unit 2',
-        type: 'AS',
-        category: 'Psychology'
-    },
-    {
-        code: 'PSY3',
-        name: 'Psychology Unit 3',
-        type: 'A2',
-        category: 'Psychology'
-    },
-    {
-        code: 'PSY4',
-        name: 'Psychology Unit 4',
-        type: 'A2',
-        category: 'Psychology'
-    },
-    
-    
-];
+        category: 'Biology',
+        units: [
+            {
+                id: 'BIO1',
+                name: 'Cell Biology',
+                description: 'Cell structure and processes'
+            },
+            {
+                id: 'BIO2',
+                name: 'Genetics and Evolution',
+                description: 'DNA and evolutionary processes'
+            },
+            {
+                id: 'BIO4',
+                name: 'Energy and Environment',
+                description: 'Ecosystems and energy cycles'
+            },
+            {
+                id: 'BIO5',
+                name: 'Control and Homeostasis',
+                description: 'Biological regulation systems'
+            }
+        ]
+    }
+};
