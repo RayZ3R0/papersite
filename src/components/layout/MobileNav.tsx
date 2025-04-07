@@ -34,25 +34,32 @@ export default function MobileNav() {
       {/* Top Navigation Bar - Always visible on mobile */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-[9998] bg-surface border-b border-border h-12">
         <div className="flex items-center justify-between px-4 h-full">
-          {/* Home Icon */}
-          <Link href="/" className="p-2 -ml-2 text-text-muted hover:text-text">
+          {/* Left Section */}
+          <Link
+            href="/"
+            className={`p-2 -ml-2 transition-colors ${
+              pathname === "/"
+                ? "text-primary"
+                : "text-text-muted hover:text-text"
+            }`}
+          >
             <HomeIcon className="w-5 h-5" />
           </Link>
 
           {/* Right Section */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <ThemePicker />
             {user ? (
               <button
                 onClick={() => setIsDrawerOpen(true)}
-                className="p-2 -mr-2 text-text-muted hover:text-text"
+                className="p-2 text-text-muted hover:text-text"
               >
                 <UserIcon className="w-5 h-5" />
               </button>
             ) : (
               <Link
                 href="/auth/login"
-                className="p-2 -mr-2 text-text-muted hover:text-text"
+                className="p-2 text-text-muted hover:text-text"
               >
                 <UserIcon className="w-5 h-5" />
               </Link>
@@ -65,7 +72,7 @@ export default function MobileNav() {
       <div className="md:hidden h-12" aria-hidden="true" />
 
       {/* Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[9999] bg-surface border-t border-border">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[9997] bg-surface border-t border-border">
         <div className="flex items-center justify-around h-16">
           <NavLink
             href="/books"
