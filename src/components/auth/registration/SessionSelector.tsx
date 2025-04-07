@@ -1,4 +1,4 @@
-import { ExamSession } from '@/types/registration';
+import { ExamSession } from "@/types/registration";
 
 interface SessionSelectorProps {
   currentSession: ExamSession;
@@ -10,12 +10,12 @@ const SESSIONS: ExamSession[] = [
   "October 2025",
   "January 2026",
   "May 2026",
-  "October 2026"
+  "October 2026",
 ];
 
 export function SessionSelector({
   currentSession,
-  onChange
+  onChange,
 }: SessionSelectorProps) {
   return (
     <div className="space-y-4 w-full max-w-md mx-auto">
@@ -32,24 +32,26 @@ export function SessionSelector({
             className={`
               p-4 rounded-lg border-2 transition-all duration-200
               text-left
-              ${currentSession === session
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50'
+              ${
+                currentSession === session
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
               }
             `}
           >
             <div className="flex items-center justify-between">
-              <span className="font-medium text-text">
-                {session}
-              </span>
-              <div className={`
+              <span className="font-medium text-text">{session}</span>
+              <div
+                className={`
                 w-5 h-5 rounded-full border-2 transition-colors
                 flex items-center justify-center
-                ${currentSession === session
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-border'
+                ${
+                  currentSession === session
+                    ? "border-primary bg-primary text-white"
+                    : "border-border"
                 }
-              `}>
+              `}
+              >
                 {currentSession === session && (
                   <svg
                     className="w-3 h-3"

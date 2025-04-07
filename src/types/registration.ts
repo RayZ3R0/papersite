@@ -1,10 +1,6 @@
-// Exam Session Options
-export type ExamSession =
-  | "May 2025"
-  | "October 2025"
-  | "January 2026"
-  | "May 2026"
-  | "October 2026";
+import { ExamSession } from './sessions';
+// Subject Levels
+export type SubjectLevel = "AS" | "A2";
 
 // Subject Category
 export type SubjectCategory = 
@@ -19,12 +15,27 @@ export type SubjectCategory =
   | "Law"
   | "Psychology";
 
-// Subject Level
-export type SubjectLevel = "AS" | "A2";
-
 // Target Grade
 export type TargetGrade = "A*" | "A" | "B" | "C" | "D" | "E";
 
+// Exam Sessions - keep in sync with profileTypes.ts
+export type { ExamSession };
+
+
+export interface RegistrationErrors {
+  basicInfo?: {
+    username?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  };
+  subjects?: string;
+  studyPreferences?: {
+    dailyStudyHours?: string;
+    preferredStudyTime?: string;
+    notifications?: string;
+  };
+}
 // Study Time Preference
 export type StudyTime = "morning" | "afternoon" | "evening" | "night";
 
@@ -74,31 +85,31 @@ export interface BasicInfoData {
   confirmPassword: string;
 }
 
-// Complete Registration Data
-export interface RegistrationData {
-  basicInfo: BasicInfoData;
-  subjects: UserSubjectConfig[];
-  studyPreferences?: StudyPreferences;
-  currentSession?: ExamSession;
-}
-
-// Step-specific Error Types
-export interface RegistrationErrors {
-  basicInfo?: {
-    username?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
+// Registration Response
+export interface RegistrationResponse {
+  success: boolean;
+  message: string;
+  user?: {
+    id: string;
+    username: string;
+    email: string;
   };
-  subjects?: string;
-  studyPreferences?: {
-    dailyStudyHours?: string;
-    preferredStudyTime?: string;
+  errors?: {
+    basicInfo?: {
+      username?: string;
+      email?: string;
+      password?: string;
+      confirmPassword?: string;
+    };
+    subjects?: string;
+    studyPreferences?: {
+      dailyStudyHours?: string;
+      preferredStudyTime?: string;
+    };
   };
 }
 
 // Component Props Types
-
 export interface StepWrapperProps {
   currentStep: number;
   totalSteps: number;
@@ -134,18 +145,6 @@ export interface StudyPreferencesStepProps {
 }
 
 // API Response Types
-
-export interface RegistrationResponse {
-  success: boolean;
-  message: string;
-  user?: {
-    id: string;
-    username: string;
-    email: string;
-  };
-  errors?: RegistrationErrors;
-}
-
 export interface SubjectsResponse {
   success: boolean;
   subjects: Subject[];
@@ -154,4 +153,12 @@ export interface SubjectsResponse {
 export interface SessionsResponse {
   success: boolean;
   sessions: ExamSession[];
+}
+
+// Complete Registration Data
+export interface RegistrationData {
+  basicInfo: BasicInfoData;
+  subjects: UserSubjectConfig[];
+  studyPreferences?: StudyPreferences;
+  currentSession?: ExamSession;
 }

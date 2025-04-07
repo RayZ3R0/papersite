@@ -1,41 +1,45 @@
 'use client';
 
-import { useState } from 'react';
-import { UserSubjectConfig } from '@/hooks/useProfile';
+import { useState, useEffect } from 'react';
 import { useProfileUpdate } from '@/hooks/useProfileUpdate';
-import EditSubjectsModal from './EditSubjectsModal';
-import { SubjectsData } from '@/types/subject';
-import subjectsData from '@/lib/data/subjects.json';
+import { UserSubjectConfig } from '@/types/profile';
+import { EditUnitsDialog } from './UnitEditor';
+import { registrationSubjects } from '@/components/auth/registration/subjectData';
 
 interface SubjectDashboardProps {
   subjects: UserSubjectConfig[];
-}
-
-const subjectsList = (subjectsData as SubjectsData).subjects;
-
-function groupUnitsBySession(subject: UserSubjectConfig) {
-  return subject.units.reduce((acc, unit) => {
-    const session = unit.examSession;
-    if (!acc[session]) {
-      acc[session] = [];
-    }
-    acc[session].push(unit);
-    return acc;
-  }, {} as Record<string, typeof subject.units>);
 }
 
 export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { updateSubjects } = useProfileUpdate();
+  const [currentSubjects, setCurrentSubjects] = useState(subjects);
+
+  useEffect(() => {
+    setCurrentSubjects(subjects);
+  }, [subjects]);
 
   const handleSave = async (updatedSubjects: UserSubjectConfig[]) => {
     try {
       await updateSubjects(updatedSubjects);
+      setCurrentSubjects(updatedSubjects);
     } catch (error) {
       throw error;
     }
   };
+
+  // Group units by session for display
+  function groupUnitsBySession(subject: UserSubjectConfig) {
+    return subject.units.reduce((acc, unit) => {
+      const session = unit.examSession;
+      if (!acc[session]) {
+        acc[session] = [];
+      }
+      acc[session].push(unit);
+      return acc;
+    }, {} as Record<string, typeof subject.units>);
+  }
 
   return (
     <div className="space-y-6">
@@ -64,15 +68,16 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
           >
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
           </svg>
-          {subjects.length > 0 ? 'Edit Units' : 'Add Units'}
+          {currentSubjects.length > 0 ? 'Edit Units' : 'Add Units'}
         </button>
       </div>
 
       {/* Subject Cards */}
-      {subjects.length > 0 ? (
+      {currentSubjects.length > 0 ? (
         <div className="grid grid-cols-1 gap-6">
-          {subjects.map((subject) => {
-            const subjectData = subjectsList[subject.subjectCode as keyof typeof subjectsList];
+          {currentSubjects.map((subject) => {
+            // Get subject details from registration data
+            const subjectData = registrationSubjects[subject.subjectCode];
             if (!subjectData || subject.units.length === 0) return null;
 
             const groupedUnits = groupUnitsBySession(subject);
@@ -80,7 +85,7 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
               const [aYear, aMon] = a.split(' ').reverse();
               const [bYear, bMon] = b.split(' ').reverse();
               return aYear === bYear 
-                ? ['May', 'June', 'October', 'January'].indexOf(aMon) - ['May', 'June', 'October', 'January'].indexOf(bMon)
+                ? ['January', 'May', 'June', 'October'].indexOf(aMon) - ['January', 'May', 'June', 'October'].indexOf(bMon)
                 : Number(aYear) - Number(bYear);
             });
 
@@ -94,7 +99,7 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
                     <div>
                       <h3 className="font-semibold text-lg">{subjectData.name}</h3>
                       <p className="text-text-muted text-sm">
-                        Target: {subject.overallTarget} • Level: {subject.level}
+                        {subject.level} • Target Grade: {subject.overallTarget}
                       </p>
                     </div>
                     <span className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
@@ -114,8 +119,8 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
                       </div>
                       <div className="divide-y divide-border/50">
                         {groupedUnits[session].map((unit) => {
-                          const unitData = subjectData.units.find(u => u.id === unit.unitCode);
-                          if (!unitData) return null;
+                          const unitDetails = subjectData.units.find(u => u.id === unit.unitCode);
+                          if (!unitDetails) return null;
 
                           return (
                             <div
@@ -124,22 +129,34 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
                             >
                               <div className="flex justify-between items-start">
                                 <div className="flex-grow">
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="font-medium">{unitData.name}</h4>
-                                  </div>
+                                  <h4 className="font-medium">{unitDetails.name}</h4>
                                   <p className="text-sm text-text-muted mt-1">
-                                    {unitData.description}
+                                    {unitDetails.description}
                                   </p>
+                                  {/* Status Indicators */}
+                                  <div className="flex items-center gap-3 mt-2">
+                                    {unit.completed && (
+                                      <span className="inline-flex items-center text-xs font-medium text-success gap-1">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Completed{unit.actualGrade && ` • Grade: ${unit.actualGrade}`}
+                                      </span>
+                                    )}
+                                    {!unit.completed && unit.planned && (
+                                      <span className="inline-flex items-center text-xs font-medium text-primary gap-1">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Planned
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                                 <div className="text-sm text-right">
                                   <p className="font-medium">
                                     Target: {unit.targetGrade}
                                   </p>
-                                  {unit.actualGrade && (
-                                    <p className="text-text-muted mt-1">
-                                      Achieved: {unit.actualGrade}
-                                    </p>
-                                  )}
                                 </div>
                               </div>
                             </div>
@@ -173,11 +190,11 @@ export default function SubjectDashboard({ subjects }: SubjectDashboardProps) {
         </div>
       )}
 
-      {/* Unit Edit Modal */}
-      <EditSubjectsModal
+      {/* Unit Editor Dialog */}
+      <EditUnitsDialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        currentSubjects={subjects}
+        subjects={currentSubjects}
         onSave={handleSave}
         onError={(error) => {
           setError(error.message);

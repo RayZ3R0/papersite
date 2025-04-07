@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { UserSubjectConfig } from '@/hooks/useProfile';
-import { useProfileUpdate } from '@/hooks/useProfileUpdate';
+import { useState, useEffect } from "react";
+import { UserSubjectConfig, ExamSession } from "@/types/profile"; // Also import ExamSession
+import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 
 interface Subject {
   id: string;
@@ -23,38 +23,39 @@ interface SubjectModalProps {
   onError?: (error: Error) => void;
 }
 
-const GRADES = ['A*', 'A', 'B', 'C', 'D', 'E'] as const;
-const EXAM_SESSIONS = ['January', 'May', 'October'] as const;
+const GRADES = ["A*", "A", "B", "C", "D", "E"] as const;
+// Update these to be valid ExamSession values
+const EXAM_SESSIONS = ["January 2025", "May 2025", "October 2025"] as const;
 
 export default function SubjectModal({
   isOpen,
   onClose,
   existingSubject,
   onSuccess,
-  onError
+  onError,
 }: SubjectModalProps) {
   const [subjects, setSubjects] = useState<Record<string, Subject>>({});
   const [loading, setLoading] = useState(true);
-  const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
   const { updateSubjects, isUpdating } = useProfileUpdate();
 
   const [formData, setFormData] = useState<Partial<UserSubjectConfig>>({
-    subjectCode: '',
-    level: 'AS',
+    subjectCode: "",
+    level: "AS",
     units: [],
-    overallTarget: 'A'
+    overallTarget: "A",
   });
 
   // Fetch subjects data
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await fetch('/api/subjects');
+        const res = await fetch("/api/subjects");
         const data = await res.json();
         setSubjects(data.subjects);
       } catch (error) {
-        console.error('Error fetching subjects:', error);
-        onError?.(new Error('Failed to load subjects'));
+        console.error("Error fetching subjects:", error);
+        onError?.(new Error("Failed to load subjects"));
       } finally {
         setLoading(false);
       }
@@ -76,16 +77,17 @@ export default function SubjectModal({
   // Update units when subject changes
   useEffect(() => {
     if (selectedSubject && subjects[selectedSubject]) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         subjectCode: selectedSubject,
-        units: subjects[selectedSubject].units.map(unit => ({
+        units: subjects[selectedSubject].units.map((unit) => ({
           unitCode: unit.id,
           planned: false,
           completed: false,
-          targetGrade: formData.overallTarget || 'A',
-          examSession: EXAM_SESSIONS[0]
-        }))
+          targetGrade: formData.overallTarget || "A",
+          // Use a valid ExamSession value
+          examSession: "January 2025" as ExamSession,
+        })),
       }));
     }
   }, [selectedSubject, subjects]);
@@ -93,7 +95,7 @@ export default function SubjectModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.subjectCode || !formData.level || !formData.units) {
-      onError?.(new Error('Please fill in all required fields'));
+      onError?.(new Error("Please fill in all required fields"));
       return;
     }
 
@@ -102,7 +104,9 @@ export default function SubjectModal({
       onSuccess?.();
       onClose();
     } catch (error) {
-      onError?.(error instanceof Error ? error : new Error('Failed to save subject'));
+      onError?.(
+        error instanceof Error ? error : new Error("Failed to save subject")
+      );
     }
   };
 
@@ -114,7 +118,7 @@ export default function SubjectModal({
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">
-              {existingSubject ? 'Edit Subject' : 'Add New Subject'}
+              {existingSubject ? "Edit Subject" : "Add New Subject"}
             </h2>
             <button
               onClick={onClose}
@@ -166,17 +170,20 @@ export default function SubjectModal({
 
               {/* Level Selection */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Level
-                </label>
+                <label className="block text-sm font-medium mb-2">Level</label>
                 <div className="flex gap-4">
-                  {['AS', 'A2'].map((level) => (
+                  {["AS", "A2"].map((level) => (
                     <label key={level} className="flex items-center">
                       <input
                         type="radio"
                         value={level}
                         checked={formData.level === level}
-                        onChange={(e) => setFormData({ ...formData, level: e.target.value as 'AS' | 'A2' })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            level: e.target.value as "AS" | "A2",
+                          })
+                        }
                         className="mr-2"
                         required
                       />
@@ -193,7 +200,12 @@ export default function SubjectModal({
                 </label>
                 <select
                   value={formData.overallTarget}
-                  onChange={(e) => setFormData({ ...formData, overallTarget: e.target.value as typeof GRADES[number] })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      overallTarget: e.target.value as (typeof GRADES)[number],
+                    })
+                  }
                   className="w-full p-2 bg-background border rounded-lg"
                   required
                 >
@@ -221,7 +233,10 @@ export default function SubjectModal({
                               {subjects[selectedSubject].units[index].name}
                             </h4>
                             <p className="text-sm text-text-muted">
-                              {subjects[selectedSubject].units[index].description}
+                              {
+                                subjects[selectedSubject].units[index]
+                                  .description
+                              }
                             </p>
                           </div>
                           <div className="space-y-2">
@@ -231,7 +246,8 @@ export default function SubjectModal({
                                 const newUnits = [...(formData.units || [])];
                                 newUnits[index] = {
                                   ...unit,
-                                  targetGrade: e.target.value as typeof GRADES[number]
+                                  targetGrade: e.target
+                                    .value as (typeof GRADES)[number],
                                 };
                                 setFormData({ ...formData, units: newUnits });
                               }}
@@ -249,7 +265,7 @@ export default function SubjectModal({
                                 const newUnits = [...(formData.units || [])];
                                 newUnits[index] = {
                                   ...unit,
-                                  examSession: e.target.value
+                                  examSession: e.target.value as ExamSession, // Add type assertion
                                 };
                                 setFormData({ ...formData, units: newUnits });
                               }}
@@ -284,7 +300,11 @@ export default function SubjectModal({
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
                   disabled={isUpdating}
                 >
-                  {isUpdating ? 'Saving...' : existingSubject ? 'Update' : 'Add Subject'}
+                  {isUpdating
+                    ? "Saving..."
+                    : existingSubject
+                    ? "Update"
+                    : "Add Subject"}
                 </button>
               </div>
             </form>

@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useProfile } from '@/hooks/useProfile';
-import LoadingProfile from '@/components/profile/LoadingProfile';
-import ProfileHeader from '@/components/profile/ProfileHeader';
-import ProfileStats from '@/components/profile/ProfileStats';
-import SubjectDashboard from '@/components/profile/SubjectDashboard';
-import StudyPreferences from '@/components/profile/StudyPreferences';
-import { useAuth } from '@/components/auth/AuthContext';
+import { useState } from "react";
+import { useProfile } from "@/hooks/useProfile";
+import LoadingProfile from "@/components/profile/LoadingProfile";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import ProfileStats from "@/components/profile/ProfileStats";
+import SubjectDashboard from "@/components/profile/SubjectDashboard";
+import StudyPreferences from "@/components/profile/StudyPreferences";
+import { useAuth } from "@/components/auth/AuthContext";
+import { UserSubjectConfig as ProfileUserSubjectConfig } from "@/types/profile";
 
 export default function ProfilePage() {
   const { user: authUser } = useAuth();
@@ -22,9 +23,9 @@ export default function ProfilePage() {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
         <p className="text-red-700">
-          {error.message || 'Failed to load profile'}
+          {error.message || "Failed to load profile"}
         </p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="mt-2 text-sm text-red-600 hover:text-red-800"
         >
@@ -59,19 +60,21 @@ export default function ProfilePage() {
       <ProfileHeader user={user} />
 
       {/* Profile Stats */}
-      <ProfileStats 
-        subjects={subjects} 
-        studyPreferences={studyPreferences} 
+      <ProfileStats
+        subjects={subjects as unknown as ProfileUserSubjectConfig[]}
+        studyPreferences={studyPreferences}
       />
 
       {/* Subject Dashboard */}
       <div className="mt-8">
-        <SubjectDashboard subjects={subjects} />
+        <SubjectDashboard
+          subjects={subjects as unknown as ProfileUserSubjectConfig[]}
+        />
       </div>
 
       {/* Study Preferences */}
       <div className="mt-8">
-        <StudyPreferences 
+        <StudyPreferences
           preferences={studyPreferences}
           onError={handleError}
         />

@@ -3,21 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
 import { UserWithoutPassword } from '@/lib/authTypes';
+// Import types from profile.ts instead of defining them here
+import { UserSubjectConfig, ExamSession } from '@/types/profile';
 
-export interface UserSubjectConfig {
-  subjectCode: string;
-  level: 'AS' | 'A2';
-  units: {
-    unitCode: string;
-    planned: boolean;
-    completed: boolean;
-    targetGrade: 'A*' | 'A' | 'B' | 'C' | 'D' | 'E';
-    examSession: string;
-    actualGrade?: string;
-  }[];
-  overallTarget: 'A*' | 'A' | 'B' | 'C' | 'D' | 'E';
-}
-
+// Only define types that aren't already defined in profile.ts
 export interface StudyPreferences {
   dailyStudyHours?: number;
   preferredStudyTime?: 'morning' | 'afternoon' | 'evening' | 'night';

@@ -1,32 +1,83 @@
 # Authentication and User Management Structure
 
-## Core Authentication Components
+## Core Types and Data Models
 
-### Models
+### Registration and Profile Types
 
-- `src/models/User.ts`
-  - User schema and model
-  - Password hashing with bcrypt
-  - Methods for password comparison
-  - Token management (refresh, verification, reset)
-  - Profile and subject preferences
+```typescript
+// src/types/registration.ts
+export interface UserSubjectConfig {
+  subjectCode: string;
+  units: {
+    unitCode: string;
+    examSession: ExamSession;
+    planned: boolean;
+    completed: boolean;
+  }[];
+}
 
-### Authentication Library
+export interface StudyPreferences {
+  dailyStudyHours: number;
+  preferredStudyTime: "morning" | "afternoon" | "evening" | "night";
+  goalsEnabled: boolean;
+  reminderEnabled: boolean;
+  preferredExamSession: ExamSession;
+}
 
-- `src/lib/auth/`
-  - `index.ts`: Core auth functions (login, register, refresh, logout)
-  - `jwt.ts`: JWT token generation and verification
-  - `cookies.ts`: Cookie management for auth tokens
-  - `validation.ts`: Auth input validation and role checks
-  - `tokens.ts`: Email verification and password reset tokens
+export interface RegistrationData {
+  email: string;
+  username: string;
+  password: string;
+  subjects: UserSubjectConfig[];
+  studyPreferences: StudyPreferences;
+  verified: boolean;
+  steps: RegistrationStep[];
+}
+```
 
-### Types
+### User Model
 
-- `src/lib/authTypes.ts`
-  - Auth error handling
-  - Login/Register data types
-  - Token payload types
-  - Response types
+```typescript
+// src/models/User.ts
+interface UserDocument extends Document {
+  email: string;
+  username: string;
+  password: string;
+  subjects: UserSubjectConfig[];
+  studyPreferences: StudyPreferences;
+  role: "user" | "admin";
+  verified: boolean;
+  tokenVersion: number;
+}
+```
+
+## Component Structure
+
+### Authentication Components
+
+```
+src/components/auth/
+├── AuthContext.tsx          # Global auth state management
+├── LoginForm.tsx           # Login form with validation
+├── RegisterForm.tsx        # Multi-step registration
+├── AuthLayout.tsx          # Common auth page layout
+└── registration/
+    ├── BasicInfoStep.tsx   # Email, username, password
+    ├── SubjectSelectionStep.tsx  # Subject selection
+    └── StudyPreferencesStep.tsx  # Study preferences
+```
+
+### Profile Components
+
+```
+src/components/profile/
+├── ProfileHeader.tsx       # User info display
+├── ProfileStats.tsx       # Progress statistics
+├── StudyPreferences.tsx   # Study settings
+└── SubjectEditor/
+    ├── EditSubjectsDialog.tsx  # Subject editing modal
+    └── SubjectSelector.tsx     # Unit configuration
+```
 
 ## API Routes
 
@@ -35,233 +86,123 @@
 ```
 src/app/api/auth/
 ├── login/
-│   └── route.ts         # Login endpoint
+│   └── route.ts           # Login with credentials
 ├── logout/
-│   └── route.ts         # Logout endpoint
+│   └── route.ts           # Clear auth tokens
 ├── refresh/
-│   └── route.ts         # Token refresh
+│   └── route.ts           # Refresh access token
 ├── register/
-│   └── route.ts         # User registration
-├── verify/
-│   └── route.ts         # Email verification
-├── password/
-│   ├── reset/
-│   │   └── route.ts     # Password reset
-│   └── change/
-│       └── route.ts     # Password change
+│   └── route.ts           # User registration
 └── me/
-    └── route.ts         # Get current user
+    └── route.ts           # Get current user
 ```
 
-### User Profile
+### Profile Management
 
 ```
-src/app/api/user/
-├── profile/
-│   └── route.ts         # Get/Update profile
-└── subjects/
-    └── route.ts         # Manage subject preferences
+src/app/api/profile/
+├── route.ts               # Update profile/preferences
+└── password/
+    └── route.ts          # Change password
 ```
 
-### Admin
+## Auth Flow
+
+1. Registration
+
+   - Collect basic info (email, username, password)
+   - Subject selection with unit configuration
+   - Study preferences setup
+   - Create user and set auth tokens
+
+2. Login
+
+   - Email/password validation
+   - JWT token generation (access + refresh)
+   - Cookie-based token storage
+
+3. Profile Updates
+   - Subject progress tracking
+   - Unit completion status
+   - Study preference modifications
+
+## Security Features
+
+- Password hashing with bcrypt
+- JWT-based authentication
+- HTTP-only cookies for tokens
+- Protected API routes
+- Input validation
+- CSRF protection
+
+## Hooks and Utilities
+
+```typescript
+// src/hooks/useProfile.ts
+export function useProfile() {
+  // Fetch and cache user profile data
+}
+
+// src/hooks/useProfileUpdate.ts
+export function useProfileUpdate() {
+  // Handle profile updates with optimistic UI
+}
+
+// src/lib/auth/tokens.ts
+export function createTokens(user: UserDocument) {
+  // Generate access and refresh tokens
+}
+
+// src/lib/auth/cookies.ts
+export function setCookies(res: NextResponse, access: string, refresh: string) {
+  // Set secure HTTP-only cookies
+}
+```
+
+## Profile Features
+
+### Subject Management
+
+- Subject selection with unit tracking
+- Progress monitoring
+- Exam session planning
+- Unit completion status
+
+### Study Preferences
+
+- Daily study hours
+- Preferred study time
+- Goal tracking
+- Exam session preferences
+
+### Progress Tracking
+
+- Unit completion statistics
+- Subject-wise progress
+- Overall completion percentage
+- Study time tracking
+
+## Admin Features
 
 ```
 src/app/api/admin/
-├── users/
-│   └── route.ts         # User management
-└── settings/
-    └── route.ts         # Admin settings
-```
-
-## Frontend Components
-
-### Auth UI
-
-```
-src/components/auth/
-├── LoginForm.tsx
-├── RegisterForm.tsx
-├── VerifyEmail.tsx
-├── ResetPassword.tsx
-├── UserNav.tsx          # User navigation menu
-├── AuthButtons.tsx      # Login/Register buttons
-└── ForbiddenMessage.tsx # Access denied message
-```
-
-### Profile UI
-
-```
-src/components/profile/
-├── ProfileForm.tsx
-├── SubjectSelector.tsx
-├── UnitConfig.tsx
-└── StudyPreferences.tsx
-```
-
-### Admin UI
-
-```
-src/components/admin/
-├── UserList.tsx
-├── UserEditor.tsx
-└── AdminDashboard.tsx
-```
-
-## Pages
-
-### Auth Pages
-
-```
-src/app/auth/
-├── layout.tsx
-├── login/
-│   └── page.tsx
-├── register/
-│   └── page.tsx
-├── verify/
-│   └── page.tsx
-└── reset-password/
-    └── page.tsx
-```
-
-### User Pages
-
-```
-src/app/profile/
-├── layout.tsx
-├── page.tsx
-└── settings/
-    └── page.tsx
-```
-
-### Admin Pages
-
-```
-src/app/admin/
-├── layout.tsx
-├── page.tsx
 └── users/
-    └── page.tsx
+    └── route.ts          # User management endpoints
 ```
 
-## Forum Integration
-
-### Forum API Routes
+## Frontend Pages
 
 ```
-src/app/api/forum/
-├── posts/
-│   ├── route.ts
-│   └── [postId]/
-│       ├── route.ts
-│       └── replies/
-│           └── route.ts
-├── replies/
-│   ├── [replyId]/
-│   │   └── route.ts
-│   └── like/
-│       └── route.ts
-└── admin/
-    └── route.ts
-```
-
-### Forum Models
-
-- `src/models/Post.ts`: Forum post model
-- `src/models/Reply.ts`: Reply model
-
-### Forum Components
-
-```
-src/components/forum/
-├── PostList.tsx
-├── PostEditor.tsx
-├── ReplyList.tsx
-└── ReplyEditor.tsx
-```
-
-## Middleware and Utilities
-
-### Auth Middleware
-
-- `src/app/auth/middleware.ts`
-  - Route protection
-  - Role-based access control
-  - User data injection
-
-### API Utilities
-
-- `src/lib/api-middleware.ts`
-  - Database connection
-  - Error handling
-  - Response formatting
-
-### Testing
-
-```
-src/__tests__/
+src/app/
 ├── auth/
-│   ├── login.test.ts
-│   ├── register.test.ts
-│   └── profile.test.ts
-└── forum/
-    └── api.test.ts
+│   ├── login/
+│   │   └── page.tsx
+│   └── register/
+│       └── page.tsx
+└── profile/
+    ├── page.tsx          # Main profile view
+    ├── academic/
+    │   └── page.tsx      # Subject management
+    └── settings/
+        └── page.tsx      # User settings
 ```
-
-## Hooks
-
-```
-src/hooks/
-├── useAuth.ts
-├── useProfile.ts
-└── useProfileUpdate.ts
-```
-
-## Type Definitions
-
-```
-src/types/
-├── profile.ts
-└── registration.ts
-```
-
-## Features
-
-### Authentication
-
-- JWT-based authentication
-- Access and refresh tokens
-- Remember me functionality
-- Email verification
-- Password reset
-- Session management
-
-### User Profile
-
-- Subject preferences
-- Study settings
-- Unit configurations
-- Progress tracking
-
-### Forum Features
-
-- Post creation/editing
-- Reply management
-- Post pinning/locking
-- Like system
-- Moderation tools
-
-### Admin Features
-
-- User management
-- Content moderation
-- Site settings
-- Usage statistics
-
-### Security Features
-
-- Password hashing
-- Token rotation
-- Rate limiting
-- CSRF protection
-- Input validation
