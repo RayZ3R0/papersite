@@ -35,7 +35,7 @@ export const quickActions: QuickAction[] = [
     color: {
       bg: 'bg-gradient-to-br from-green-500/10 to-green-600/10',
       hover: 'hover:from-green-500/20 hover:to-green-600/20',
-      text: 'text-green-500',
+      text: 'text-500',
     },
   },
   {
@@ -47,7 +47,7 @@ export const quickActions: QuickAction[] = [
     color: {
       bg: 'bg-gradient-to-br from-orange-500/10 to-orange-600/10',
       hover: 'hover:from-orange-500/20 hover:to-orange-600/20',
-      text: 'text-orange-500',
+      text: 'text-500',
     },
   },
   {
