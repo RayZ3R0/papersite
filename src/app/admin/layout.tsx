@@ -1,30 +1,26 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/components/auth/AuthContext';
-import { AuthProvider } from '@/components/auth/AuthContext';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/auth/AuthContext";
+import { AuthProvider } from "@/components/auth/AuthContext";
 
 const adminLinks = [
-  { href: '/admin/users', label: 'Users' },
+  { href: "/admin/users", label: "Users" },
   // Add more admin links here as we build them
 ];
 
-function AdminContent({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AdminContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
 
   // Debug log
-  console.log('Admin Content State:', {
+  console.log("Admin Content State:", {
     user,
     isLoading,
     pathname,
-    isAdmin: user?.role === 'admin',
-    userRole: user?.role
+    isAdmin: user?.role === "admin",
+    userRole: user?.role,
   });
 
   if (isLoading) {
@@ -41,8 +37,11 @@ function AdminContent({
       <div className="min-h-screen flex items-center justify-center bg-surface dark:bg-surface-dark">
         <div className="p-6 max-w-sm mx-auto bg-error/10 border border-error rounded-lg text-error text-center">
           <div>Please sign in to access this area</div>
-          <button 
-            onClick={() => window.location.href = '/auth/login?returnTo=' + encodeURIComponent(pathname)}
+          <button
+            onClick={() =>
+              (window.location.href =
+                "/auth/login?returnTo=" + encodeURIComponent(pathname))
+            }
             className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
           >
             Sign In
@@ -53,20 +52,24 @@ function AdminContent({
   }
 
   // Not admin
-  if (user.role !== 'admin') {
+  if (user.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface dark:bg-surface-dark">
         <div className="p-6 max-w-sm mx-auto bg-error/10 border border-error rounded-lg text-error text-center">
           <div>You must be an administrator to access this area.</div>
-          {process.env.NODE_ENV === 'development' && (
+          {process.env.NODE_ENV === "development" && (
             <pre className="mt-4 text-xs text-left bg-black/5 p-2 rounded">
-              {JSON.stringify({
-                user: {
-                  username: user.username,
-                  role: user.role,
-                  id: user._id
-                }
-              }, null, 2)}
+              {JSON.stringify(
+                {
+                  user: {
+                    username: user.username,
+                    role: user.role,
+                    id: user._id,
+                  },
+                },
+                null,
+                2
+              )}
             </pre>
           )}
         </div>
@@ -82,11 +85,8 @@ function AdminContent({
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link 
-                  href="/admin"
-                  className="text-lg font-bold text-text"
-                >
-                  Papersite Admin
+                <Link href="/admin" className="text-lg font-bold text-text">
+                  PaperVoid Admin
                 </Link>
               </div>
 
@@ -99,8 +99,8 @@ function AdminContent({
                       href={link.href}
                       className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                         isActive
-                          ? 'bg-primary text-white'
-                          : 'text-text-muted hover:text-text hover:bg-surface-hover dark:hover:bg-surface-hover-dark'
+                          ? "bg-primary text-white"
+                          : "text-text-muted hover:text-text hover:bg-surface-hover dark:hover:bg-surface-hover-dark"
                       }`}
                     >
                       {link.label}

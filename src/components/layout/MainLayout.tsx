@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { ReactNode, useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import MobileNav from './MobileNav';
-import ThemePicker from './ThemePicker';
+import { ReactNode, useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import MobileNav from "./MobileNav";
+import ThemePicker from "./ThemePicker";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   // Full hide/show for mobile nav on scroll
   useEffect(() => {
     let lastScroll = 0;
-    
+
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       if (currentScroll > lastScroll && currentScroll > 50) {
@@ -27,8 +27,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       lastScroll = currentScroll;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -75,14 +75,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               Search
             </Link>
           </nav>
-          
+
           {/* Mobile Header Content */}
           <div className="flex md:hidden items-center justify-between w-full">
             <Link href="/">
               <div className="relative w-12 h-12 overflow-hidden rounded-lg">
                 <Image
                   src="/banner.jpg"
-                  alt="papersite"
+                  alt="papervoid"
                   fill
                   className="object-cover"
                 />
@@ -98,16 +98,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* Mobile Navigation - with smooth transition */}
-      <div 
+      <div
         className={`
           md:hidden fixed bottom-0 left-0 right-0 z-[9999]
           transform transition-transform duration-300
-          ${isScrolled ? 'translate-y-full' : 'translate-y-0'}
+          ${isScrolled ? "translate-y-full" : "translate-y-0"}
         `}
       >
         <MobileNav />

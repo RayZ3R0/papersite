@@ -19,7 +19,7 @@ export default function MainNav() {
         <div className="flex items-center gap-6">
           {/* Logo */}
           <Link href="/" className="font-bold text-lg text-text">
-            PaperSite
+            PaperVoid
           </Link>
 
           {/* Main Navigation */}
