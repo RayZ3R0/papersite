@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { Examination } from "@/types/exam";
 import { UserSubjectConfig } from "@/types/profile";
-import { Badge } from "@/components/ui/badge";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -49,46 +49,50 @@ export function ExamDetailsDrawer({
         side="right"
         className={cn("flex flex-col", isMobile ? "w-full" : "w-[540px]")}
       >
-        <SheetHeader className="space-y-4 pb-4 border-b">
-          <SheetTitle className="text-2xl font-bold">
-            {format(date, "EEEE, MMMM d, yyyy")}
-          </SheetTitle>
-          <div className="flex flex-wrap gap-2">
-            {relevantExams.length > 0 ? (
-              <Badge variant="outline">
-                {relevantExams.length}{" "}
-                {relevantExams.length === 1 ? "Exam" : "Exams"}
-              </Badge>
-            ) : (
-              <Badge variant="outline">No Exams</Badge>
+        <div className="flex flex-col flex-1">
+          <SheetHeader className="space-y-4 pb-4 border-b">
+            <SheetTitle className="text-2xl font-bold">
+              {format(date, "EEEE, MMMM d, yyyy")}
+            </SheetTitle>
+            <div className="flex flex-wrap gap-2">
+              {relevantExams.length > 0 ? (
+                <div className={cn(badgeVariants({ variant: "outline" }))}>
+                  {relevantExams.length}{" "}
+                  {relevantExams.length === 1 ? "Exam" : "Exams"}
+                </div>
+              ) : (
+                <div className={cn(badgeVariants({ variant: "outline" }))}>
+                  No Exams
+                </div>
+              )}
+            </div>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto py-4 space-y-8">
+            {morningExams.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Morning Session</h3>
+                {morningExams.map((exam) => (
+                  <ExamDetailCard key={exam.code} exam={exam} />
+                ))}
+              </div>
+            )}
+
+            {afternoonExams.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Afternoon Session</h3>
+                {afternoonExams.map((exam) => (
+                  <ExamDetailCard key={exam.code} exam={exam} />
+                ))}
+              </div>
+            )}
+
+            {relevantExams.length === 0 && (
+              <div className="text-center text-muted-foreground py-8">
+                No exams scheduled for this day
+              </div>
             )}
           </div>
-        </SheetHeader>
-
-        <div className="flex-1 overflow-y-auto py-4 space-y-8">
-          {morningExams.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Morning Session</h3>
-              {morningExams.map((exam) => (
-                <ExamDetailCard key={exam.code} exam={exam} />
-              ))}
-            </div>
-          )}
-
-          {afternoonExams.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Afternoon Session</h3>
-              {afternoonExams.map((exam) => (
-                <ExamDetailCard key={exam.code} exam={exam} />
-              ))}
-            </div>
-          )}
-
-          {relevantExams.length === 0 && (
-            <div className="text-center text-muted-foreground py-8">
-              No exams scheduled for this day
-            </div>
-          )}
         </div>
       </SheetContent>
     </Sheet>
@@ -110,7 +114,7 @@ function ExamDetailCard({ exam }: ExamDetailCardProps) {
               {exam.subject} ({exam.code})
             </p>
           </div>
-          <Badge>{exam.duration}</Badge>
+          <div className={cn(badgeVariants())}>{exam.duration}</div>
         </div>
         <dl className="grid grid-cols-2 gap-2 text-sm">
           <div>
