@@ -12,7 +12,6 @@ import { UserSubjectConfig } from "@/types/profile";
 import { badgeVariants } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { ReactNode } from "react";
 
 interface ExamDrawerProps {
   isOpen: boolean;
@@ -44,65 +43,104 @@ export function ExamDetailsDrawer({
     (exam) => exam.time === "Afternoon"
   );
 
-  // Render the content
-  const DrawerContent = (props: { children: ReactNode }) => (
-    <SheetContent
-      side="right"
-      className={cn("flex flex-col", isMobile ? "w-full" : "w-[540px]")}
-    >
-      {props.children}
-    </SheetContent>
+  const content = (
+    <div className="flex flex-col flex-1">
+      <SheetHeader className="space-y-4 pb-4 border-b">
+        <SheetTitle className="text-2xl font-bold">
+          {format(date, "EEEE, MMMM d, yyyy")}
+        </SheetTitle>
+        <div className="flex flex-wrap gap-2">
+          {relevantExams.length > 0 ? (
+            <div className={cn(badgeVariants({ variant: "outline" }))}>
+              {relevantExams.length}{" "}
+              {relevantExams.length === 1 ? "Exam" : "Exams"}
+            </div>
+          ) : (
+            <div className={cn(badgeVariants({ variant: "outline" }))}>
+              No Exams
+            </div>
+          )}
+        </div>
+      </SheetHeader>
+
+      <div className="flex-1 overflow-y-auto py-4 space-y-8">
+        {morningExams.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Morning Session</h3>
+            {morningExams.map((exam) => (
+              <ExamDetailCard key={exam.code} exam={exam} />
+            ))}
+          </div>
+        )}
+
+        {afternoonExams.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Afternoon Session</h3>
+            {afternoonExams.map((exam) => (
+              <ExamDetailCard key={exam.code} exam={exam} />
+            ))}
+          </div>
+        )}
+
+        {relevantExams.length === 0 && (
+          <div className="text-center text-muted-foreground py-8">
+            No exams scheduled for this day
+          </div>
+        )}
+      </div>
+    </div>
   );
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <DrawerContent>
-        <div className="flex flex-col flex-1">
-          <SheetHeader className="space-y-4 pb-4 border-b">
-            <SheetTitle className="text-2xl font-bold">
-              {format(date, "EEEE, MMMM d, yyyy")}
-            </SheetTitle>
-            <div className="flex flex-wrap gap-2">
-              {relevantExams.length > 0 ? (
-                <div className={cn(badgeVariants({ variant: "outline" }))}>
-                  {relevantExams.length}{" "}
-                  {relevantExams.length === 1 ? "Exam" : "Exams"}
-                </div>
-              ) : (
-                <div className={cn(badgeVariants({ variant: "outline" }))}>
-                  No Exams
-                </div>
-              )}
-            </div>
-          </SheetHeader>
-
-          <div className="flex-1 overflow-y-auto py-4 space-y-8">
-            {morningExams.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Morning Session</h3>
-                {morningExams.map((exam) => (
-                  <ExamDetailCard key={exam.code} exam={exam} />
-                ))}
+      <SheetContent
+        side="right"
+        className={cn("flex flex-col", isMobile ? "w-full" : "w-[540px]")}
+      >
+        <SheetHeader className="space-y-4 pb-4 border-b">
+          <SheetTitle className="text-2xl font-bold">
+            {format(date, "EEEE, MMMM d, yyyy")}
+          </SheetTitle>
+          <div className="flex flex-wrap gap-2">
+            {relevantExams.length > 0 ? (
+              <div className={cn(badgeVariants({ variant: "outline" }))}>
+                {relevantExams.length}{" "}
+                {relevantExams.length === 1 ? "Exam" : "Exams"}
               </div>
-            )}
-
-            {afternoonExams.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Afternoon Session</h3>
-                {afternoonExams.map((exam) => (
-                  <ExamDetailCard key={exam.code} exam={exam} />
-                ))}
-              </div>
-            )}
-
-            {relevantExams.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                No exams scheduled for this day
+            ) : (
+              <div className={cn(badgeVariants({ variant: "outline" }))}>
+                No Exams
               </div>
             )}
           </div>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto py-4 space-y-8">
+          {morningExams.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Morning Session</h3>
+              {morningExams.map((exam) => (
+                <ExamDetailCard key={exam.code} exam={exam} />
+              ))}
+            </div>
+          )}
+
+          {afternoonExams.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Afternoon Session</h3>
+              {afternoonExams.map((exam) => (
+                <ExamDetailCard key={exam.code} exam={exam} />
+              ))}
+            </div>
+          )}
+
+          {relevantExams.length === 0 && (
+            <div className="text-center text-muted-foreground py-8">
+              No exams scheduled for this day
+            </div>
+          )}
         </div>
-      </DrawerContent>
+      </SheetContent>
     </Sheet>
   );
 }
