@@ -169,13 +169,7 @@ export const IALSubjects: Subject[] = [
         name: 'Further Pure Mathematics 3',
         level: 'A2',
         weight: 33.33,
-      },
-      {
-        code: 'WFM14',
-        name: 'Further Pure Mathematics 4',
-        level: 'A2',
-        weight: 33.33,
-      },
+      }
     ],
   },
   // Add more subjects here

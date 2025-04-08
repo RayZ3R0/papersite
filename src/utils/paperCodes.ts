@@ -25,11 +25,6 @@ export function getPaperCode(
   // Get unit number from unitId (e.g., "unit1" -> "1")
   const unitNumber = unitId.replace('unit', '');
 
-  // Papers from 2019 onwards use new format
-  if (year >= 2019) {
-    console.log(`Paper from ${year}: Using format W${subjectPrefix}1${unitNumber}`);
-    return `W${subjectPrefix}1${unitNumber}`;
-  }
 
   // For papers before 2019
   // Check if title contains "IAL" - also handle cases where it's in the filename
@@ -59,28 +54,6 @@ export function getPaperCode(
     p.pdfUrl?.toLowerCase().includes('(ial)'))
   );
   
-  // Debug to check IAL detection
-  console.log(`Paper ${paper.id}: isIAL=${isIAL}, hasIALPaper=${hasIALPaper}, hasNonIALPaper=${hasNonIALPaper}`);
-  
-  // Both IAL and non-IAL papers exist in this session
-  if (hasIALPaper && hasNonIALPaper) {
-    console.log('Found both IAL and non-IAL papers');
-    // Current paper has IAL
-    if (isIAL) {
-      console.log(`IAL paper: Using format W${subjectPrefix}0${unitNumber}`);
-      return `W${subjectPrefix}0${unitNumber}`;
-    } 
-    // Current paper doesn't have IAL
-    else {
-      console.log(`Non-IAL paper: Using format 6${subjectPrefix}0${unitNumber}`);
-      return `6${subjectPrefix}0${unitNumber}`;
-    }
-  } 
-  // Only one type exists (all IAL or all non-IAL)
-  else {
-    console.log(`Only one type exists: Using format W${subjectPrefix}0${unitNumber}`);
-    return `W${subjectPrefix}0${unitNumber}`;
-  }
 }
 
 // Function to check if a paper is IAL

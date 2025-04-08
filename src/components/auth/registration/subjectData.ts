@@ -2,7 +2,7 @@ import { Subject, SubjectLevel, SubjectCategory } from '@/types/registration';
 
 export const registrationSubjects: Record<string, Subject> = {
     'YCH11': {
-        code: 'WCH11',
+        code: 'YCH11',
         name: 'Chemistry',
         type: 'AS',
         category: 'Chemistry',
@@ -16,7 +16,7 @@ export const registrationSubjects: Record<string, Subject> = {
         ]
     },
     'YPH11': {
-        code: 'WPH11',
+        code: 'YPH11',
         name: 'Physics',
         type: 'AS',
         category: 'Physics',
@@ -30,7 +30,7 @@ export const registrationSubjects: Record<string, Subject> = {
         ]
     },
     'YBI11': {
-        code: 'WBI11',
+        code: 'YBI11',
         name: 'Biology',
         type: 'AS',
         category: 'Biology',
@@ -44,7 +44,7 @@ export const registrationSubjects: Record<string, Subject> = {
         ]
     },
     'YMA11': {
-        code: 'WMA11',
+        code: 'YMA11',
         name: 'Mathematics',
         type: 'AS',
         category: 'Mathematics',

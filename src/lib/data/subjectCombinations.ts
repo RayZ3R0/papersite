@@ -30,8 +30,8 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       description: 'Pure Mathematics 1 & 2 with Mechanics 1',
       level: 'AS',
       subjectCodes: [
-        ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
-        ...getSequentialUnits('WMA11', 'WME0', [1])
+        ...getSequentialUnits('YMA11', 'WMA1', [1, 2]),
+        ...getSequentialUnits('YMA11', 'WME0', [1])
       ]
     },
     {
@@ -40,8 +40,8 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       description: 'Pure Mathematics 1 & 2 with Statistics 1',
       level: 'AS',
       subjectCodes: [
-        ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
-        ...getSequentialUnits('WMA11', 'WST0', [1])
+        ...getSequentialUnits('YMA11', 'WMA1', [1, 2]),
+        ...getSequentialUnits('YMA11', 'WST0', [1])
       ]
     },
     {
@@ -49,7 +49,7 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       name: 'Maths A2 (Pure)',
       description: 'Pure Mathematics 3 & 4',
       level: 'A2',
-      subjectCodes: getSequentialUnits('WMA11', 'WMA1', [3, 4])
+      subjectCodes: getSequentialUnits('YMA11', 'WMA1', [3, 4])
     }
   ],
 
@@ -59,14 +59,14 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       name: 'Physics AS',
       description: 'Units 1, 2 & 3',
       level: 'AS',
-      subjectCodes: getSequentialUnits('WPH11', 'WPH1', [1, 2, 3])
+      subjectCodes: getSequentialUnits('YPH11', 'WPH1', [1, 2, 3])
     },
     {
       id: 'physics-a2',
       name: 'Physics A2',
       description: 'Units 4, 5 & 6',
       level: 'A2',
-      subjectCodes: getSequentialUnits('WPH11', 'WPH1', [4, 5, 6])
+      subjectCodes: getSequentialUnits('YPH11', 'WPH1', [4, 5, 6])
     }
   ],
 
@@ -76,14 +76,14 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       name: 'Chemistry AS',
       description: 'Units 1, 2 & 3',
       level: 'AS',
-      subjectCodes: getSequentialUnits('WCH11', 'WCH1', [1, 2, 3])
+      subjectCodes: getSequentialUnits('YCH11', 'WCH1', [1, 2, 3])
     },
     {
       id: 'chemistry-a2',
       name: 'Chemistry A2',
       description: 'Units 4, 5 & 6',
       level: 'A2',
-      subjectCodes: getSequentialUnits('WCH11', 'WCH1', [4, 5, 6])
+      subjectCodes: getSequentialUnits('YCH11', 'WCH1', [4, 5, 6])
     }
   ],
 
@@ -93,14 +93,14 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       name: 'Biology AS',
       description: 'Units 1, 2 & 3',
       level: 'AS',
-      subjectCodes: getSequentialUnits('WBI11', 'WBI1', [1, 2, 3])
+      subjectCodes: getSequentialUnits('YBI11', 'WBI1', [1, 2, 3])
     },
     {
       id: 'biology-a2',
       name: 'Biology A2',
       description: 'Units 4, 5 & 6',
       level: 'A2',
-      subjectCodes: getSequentialUnits('WBI11', 'WBI1', [4, 5, 6])
+      subjectCodes: getSequentialUnits('YBI11', 'WBI1', [4, 5, 6])
     }
   ]
 };

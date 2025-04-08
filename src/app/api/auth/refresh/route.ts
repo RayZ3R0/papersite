@@ -1,32 +1,27 @@
-import { NextResponse } from 'next/server';
-import { refreshUserToken } from '@/lib/auth';
-import { AuthCookieManager } from '@/lib/auth/cookies';
-import { AuthError } from '@/lib/authTypes';
+import { NextRequest, NextResponse } from 'next/server';
+import { AuthCookieManager, refreshUserToken } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const { refreshToken } = AuthCookieManager.getTokens();
     
+    // If no refresh token in cookies, can't refresh
     if (!refreshToken) {
       return NextResponse.json(
-        { error: 'No refresh token provided' },
+        { error: 'No refresh token' },
         { status: 401 }
       );
     }
-
-    const { user } = await refreshUserToken(refreshToken);
-    return NextResponse.json({ user });
+    
+    // Attempt to refresh
+    const result = await refreshUserToken(refreshToken);
+    
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('Token refresh error:', error);
-    if (error instanceof AuthError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.code === 'SERVER_ERROR' ? 500 : 401 }
-      );
-    }
+    console.error('Failed to refresh token:', error);
     return NextResponse.json(
-      { error: 'Failed to refresh token' },
-      { status: 500 }
+      { error: 'Authentication failed' },
+      { status: 401 }
     );
   }
 }

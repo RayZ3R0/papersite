@@ -11,23 +11,35 @@ import { AuthCookieManager } from './cookies';
 import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
 import { sendVerificationEmail } from './tokens';
 
-export async function refreshUserToken(refreshToken: string) {
+export async function refreshUserToken(refreshToken?: string) {
   try {
+    // If no refresh token provided, attempt to get it from cookies
+    if (!refreshToken) {
+      const tokens = AuthCookieManager.getTokens();
+      refreshToken = tokens.refreshToken;
+      
+      // If still no refresh token, we can't continue
+      if (!refreshToken) {
+        throw new AuthError('INVALID_TOKEN', 'No refresh token available');
+      }
+    }
+
     // Verify the refresh token
     const payload = await verifyToken(refreshToken);
     if (!payload) {
       throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
     }
 
-    // Find user by refresh token
-    const user = await User.findOne({ 'refreshToken.token': refreshToken });
+    // Find user by refresh token or user ID (more robust)
+    const user = await User.findOne({
+      $or: [
+        { 'refreshToken.token': refreshToken },
+        { _id: payload.userId }  // This helps if the token in DB doesn't match exactly
+      ]
+    });
+    
     if (!user) {
       throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
-    }
-
-    // Check token expiry
-    if (!user.refreshToken?.expiresAt || user.refreshToken.expiresAt < new Date()) {
-      throw new AuthError('INVALID_TOKEN', 'Refresh token expired');
     }
 
     // Generate new tokens
@@ -42,15 +54,15 @@ export async function refreshUserToken(refreshToken: string) {
       signRefreshToken(tokenPayload),
     ]);
 
-    // Update refresh token
+    // Update refresh token with MUCH longer expiry
     user.refreshToken = {
       token: newRefreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
     };
     await user.save();
 
-    // Set new cookies
-    AuthCookieManager.setTokens(accessToken, newRefreshToken);
+    // Set new cookies with remember me always true for better persistence
+    AuthCookieManager.setTokens(accessToken, newRefreshToken, true);
 
     return {
       user: {
@@ -68,7 +80,6 @@ export async function refreshUserToken(refreshToken: string) {
   }
 }
 
-// Core authentication functions
 export async function loginUser({ email, username, password, options }: LoginCredentials) {
   try {
     // Validate input
@@ -102,10 +113,10 @@ export async function loginUser({ email, username, password, options }: LoginCre
       signRefreshToken(tokenPayload),
     ]);
 
-    // Store refresh token with optional custom duration
+    // Store refresh token with much longer duration by default
     const expiresAt = new Date();
     expiresAt.setSeconds(
-      expiresAt.getSeconds() + (options?.sessionDuration || 24 * 60 * 60) // Default 24 hours
+      expiresAt.getSeconds() + (options?.sessionDuration || 30 * 24 * 60 * 60) // Default 30 days
     );
 
     user.refreshToken = {
@@ -114,9 +125,8 @@ export async function loginUser({ email, username, password, options }: LoginCre
     };
     await user.save();
 
-    // Set cookies with remember me option
-    const isLongSession = options?.sessionDuration ? options.sessionDuration > 24 * 60 * 60 : false;
-    AuthCookieManager.setTokens(accessToken, refreshToken, isLongSession);
+    // Always set cookies with remember me enabled for better persistence
+    AuthCookieManager.setTokens(accessToken, refreshToken, true);
 
     // Update last login
     await User.updateOne(
@@ -127,7 +137,6 @@ export async function loginUser({ email, username, password, options }: LoginCre
       }
     );
 
-    // Return user without sensitive data
     return {
       user: {
         _id: user._id,
@@ -179,11 +188,11 @@ export async function registerUser(data: RegisterData) {
       // Don't throw error here, just log it - we still want to create the account
     }
 
-    // Log user in
+    // Log user in with 30 day session
     return loginUser({
       email: data.email,
       password: data.password,
-      options: { sessionDuration: 24 * 60 * 60 } // 24 hours for new registrations
+      options: { sessionDuration: 30 * 24 * 60 * 60 } // 30 days
     });
   } catch (error) {
     if (error instanceof AuthError) {

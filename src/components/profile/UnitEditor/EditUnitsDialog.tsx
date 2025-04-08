@@ -84,7 +84,7 @@ export default function EditUnitsDialog({
                       planned: false,
                       completed: false,
                       targetGrade: s.overallTarget as Grade,
-                      examSession: "June 2025", // Default to next major session
+                      examSession: "May 2025", // Default to next major session
                     },
                   ],
                 }
@@ -104,7 +104,7 @@ export default function EditUnitsDialog({
             planned: false,
             completed: false,
             targetGrade: "A",
-            examSession: "June 2025",
+            examSession: "May 2025",
           },
         ],
       };

@@ -5,11 +5,9 @@ export const GRADE_OPTIONS = ['A*', 'A', 'B', 'C', 'D', 'E'] as const;
 export const SESSION_OPTIONS = [
   'January 2025',
   'May 2025',
-  'June 2025',
   'October 2025',
   'January 2026',
   'May 2026',
-  'June 2026'
 ] as const;
 
 export interface UserUnit {
