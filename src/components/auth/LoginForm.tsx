@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthContext';
-import FormInput from './FormInput';
-import FormError from './FormError';
-import LoadingButton from './LoadingButton';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./AuthContext";
+import FormInput from "./FormInput";
+import FormError from "./FormError";
+import LoadingButton from "./LoadingButton";
+import { useReturnTo } from "@/hooks/useReturnTo";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -15,10 +16,11 @@ interface LoginFormProps {
 export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
   const router = useRouter();
   const { login, error, isLoading, clearError, user } = useAuth();
+  const { getReturnUrl } = useReturnTo();
   const [formData, setFormData] = useState({
-    identifier: '',
-    password: '',
-    rememberMe: false
+    identifier: "",
+    password: "",
+    rememberMe: true, // Default to true for better persistence
   });
 
   // Clear error on unmount or when form data changes
@@ -29,20 +31,23 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
   // Handle redirect after successful login
   useEffect(() => {
     if (user) {
+      // Use provided returnTo or fallback to the return URL from query params
+      const redirectPath = returnTo || getReturnUrl();
+
       // Check if trying to access admin page
-      if (returnTo?.startsWith('/admin')) {
-        if (user.role === 'admin') {
-          router.push(returnTo);
+      if (redirectPath.startsWith("/admin")) {
+        if (user.role === "admin") {
+          router.replace(redirectPath);
         } else {
-          router.push('/'); // Non-admin users get redirected to home
+          router.replace("/"); // Non-admin users get redirected to home
         }
       } else if (onSuccess) {
         onSuccess();
-      } else if (returnTo) {
-        router.push(returnTo);
+      } else {
+        router.replace(redirectPath);
       }
     }
-  }, [user, returnTo, onSuccess, router]);
+  }, [user, returnTo, onSuccess, router, getReturnUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +68,9 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
         label="Email or Username"
         type="text"
         value={formData.identifier}
-        onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, identifier: e.target.value })
+        }
         required
         autoComplete="username"
         disabled={isLoading}
@@ -90,38 +97,41 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
               type="checkbox"
               id="remember-me"
               checked={formData.rememberMe}
-              onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-              className="
-                sr-only peer
-              "
+              onChange={(e) =>
+                setFormData({ ...formData, rememberMe: e.target.checked })
+              }
+              className="sr-only peer"
             />
-            <div className={`
+            <div
+              className={`
               w-5 h-5 border-2 rounded transition-all duration-200
               flex items-center justify-center
-              ${formData.rememberMe 
-                ? 'bg-primary border-primary' 
-                : 'border-border hover:border-primary/50'
+              ${
+                formData.rememberMe
+                  ? "bg-primary border-primary"
+                  : "border-border hover:border-primary/50"
               }
               peer-focus:ring-2 peer-focus:ring-primary/20
-            `}>
+            `}
+            >
               {formData.rememberMe && (
-                <svg 
-                  className="w-3 h-3 text-white" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
+                <svg
+                  className="w-3 h-3 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M5 13l4 4L19 7" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
                   />
                 </svg>
               )}
             </div>
-            <label 
-              htmlFor="remember-me" 
+            <label
+              htmlFor="remember-me"
               className="ml-2 select-none text-sm text-text-muted cursor-pointer hover:text-text transition-colors duration-200"
             >
               Remember me
@@ -129,19 +139,15 @@ export default function LoginForm({ onSuccess, returnTo }: LoginFormProps) {
           </div>
         </div>
 
-        <a 
-          href="/auth/forgot-password" 
+        <a
+          href="/auth/forgot-password"
           className="text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200"
         >
           Forgot password?
         </a>
       </div>
 
-      <LoadingButton
-        type="submit"
-        loading={isLoading}
-        className="w-full"
-      >
+      <LoadingButton type="submit" loading={isLoading} className="w-full">
         Sign in
       </LoadingButton>
     </form>

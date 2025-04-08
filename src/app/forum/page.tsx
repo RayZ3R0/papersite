@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/components/auth/AuthContext';
-import ProtectedContent from '@/components/auth/ProtectedContent';
-import { LoadingSpinner } from '@/components/forum/LoadingSpinner';
-import Link from 'next/link';
-import ForumHeader from '@/components/forum/ForumHeader';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/components/auth/AuthContext";
+import ProtectedContent from "@/components/auth/ProtectedContent";
+import { LoadingSpinner } from "@/components/forum/LoadingSpinner";
+import Link from "next/link";
+import ForumHeader from "@/components/forum/ForumHeader";
+import { useReturnTo } from "@/hooks/useReturnTo";
 
 interface Post {
   _id: string;
@@ -18,6 +19,8 @@ interface Post {
 
 export default function ForumPage() {
   const { user } = useAuth();
+  const { saveCurrentPath } = useReturnTo();
+  const currentPath = saveCurrentPath();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,15 +30,17 @@ export default function ForumPage() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch('/api/forum/posts');
+        const response = await fetch("/api/forum/posts");
         if (!response.ok) {
-          throw new Error('Failed to fetch posts');
+          throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
         setPosts(data.posts || []);
       } catch (error) {
-        console.error('Failed to fetch posts:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load posts');
+        console.error("Failed to fetch posts:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to load posts"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -49,19 +54,21 @@ export default function ForumPage() {
   return (
     <>
       <ForumHeader />
-      
+
       <div className="container mx-auto px-4 py-12">
         {!user && (
           <div className="text-center max-w-2xl mx-auto mb-8">
             <div className="flex justify-center gap-4">
               <Link
-                href="/auth/login"
+                href={`/auth/login?returnTo=${encodeURIComponent(currentPath)}`}
                 className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
               >
                 Sign in
               </Link>
               <Link
-                href="/auth/register"
+                href={`/auth/register?returnTo=${encodeURIComponent(
+                  currentPath
+                )}`}
                 className="px-6 py-2 border border-primary text-primary rounded-md hover:bg-primary/10 transition-colors"
               >
                 Create account
@@ -71,13 +78,16 @@ export default function ForumPage() {
         )}
 
         <ProtectedContent
-          roles={['user', 'moderator', 'admin']}
+          roles={["user", "moderator", "admin"]}
           message="Please sign in to access the forum"
           fallback={null}
+          customReturnTo={currentPath}
         >
           <div className="mt-12">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-semibold text-text">Forum Discussions</h2>
+              <h2 className="text-2xl font-semibold text-text">
+                Forum Discussions
+              </h2>
               <Link
                 href="/forum/new"
                 className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
@@ -107,11 +117,15 @@ export default function ForumPage() {
                     href={`/forum/posts/${post._id}`}
                     className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
                   >
-                    <h2 className="text-lg font-semibold mb-2 text-text">{post.title}</h2>
+                    <h2 className="text-lg font-semibold mb-2 text-text">
+                      {post.title}
+                    </h2>
                     <div className="flex items-center text-sm text-text-muted">
                       <span>By {post.authorName}</span>
                       <span className="mx-2">•</span>
-                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </span>
                       <span className="mx-2">•</span>
                       <span>{post.replyCount} replies</span>
                     </div>

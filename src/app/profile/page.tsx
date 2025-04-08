@@ -9,37 +9,15 @@ import SubjectDashboard from "@/components/profile/SubjectDashboard";
 import StudyPreferences from "@/components/profile/StudyPreferences";
 import { useAuth } from "@/components/auth/AuthContext";
 import { UserSubjectConfig as ProfileUserSubjectConfig } from "@/types/profile";
+import { useReturnTo } from "@/hooks/useReturnTo";
+import ProtectedContent from "@/components/auth/ProtectedContent";
 
 export default function ProfilePage() {
   const { user: authUser } = useAuth();
   const { data, isLoading, error } = useProfile();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  if (!authUser) {
-    return null; // ProtectedContent in layout will handle this
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-700">
-          {error.message || "Failed to load profile"}
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-2 text-sm text-red-600 hover:text-red-800"
-        >
-          Try again
-        </button>
-      </div>
-    );
-  }
-
-  if (isLoading || !data) {
-    return <LoadingProfile />;
-  }
-
-  const { user, subjects, studyPreferences } = data;
+  const { saveCurrentPath } = useReturnTo();
+  const currentPath = saveCurrentPath();
 
   const handleError = (error: Error) => {
     setErrorMessage(error.message);
@@ -47,7 +25,7 @@ export default function ProfilePage() {
     setTimeout(() => setErrorMessage(null), 5000);
   };
 
-  return (
+  const profileContent = (
     <div className="space-y-6">
       {/* Error Message */}
       {errorMessage && (
@@ -56,29 +34,61 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Profile Header */}
-      <ProfileHeader user={user} />
+      {/* Show error state */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700">
+            {error.message || "Failed to load profile"}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 text-sm text-red-600 hover:text-red-800"
+          >
+            Try again
+          </button>
+        </div>
+      )}
 
-      {/* Profile Stats */}
-      <ProfileStats
-        subjects={subjects as unknown as ProfileUserSubjectConfig[]}
-        studyPreferences={studyPreferences}
-      />
+      {/* Show loading state */}
+      {isLoading || !data ? (
+        <LoadingProfile />
+      ) : (
+        <>
+          {/* Profile Header */}
+          <ProfileHeader user={data.user} />
 
-      {/* Subject Dashboard */}
-      <div className="mt-8">
-        <SubjectDashboard
-          subjects={subjects as unknown as ProfileUserSubjectConfig[]}
-        />
-      </div>
+          {/* Profile Stats */}
+          <ProfileStats
+            subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
+            studyPreferences={data.studyPreferences}
+          />
 
-      {/* Study Preferences */}
-      <div className="mt-8">
-        <StudyPreferences
-          preferences={studyPreferences}
-          onError={handleError}
-        />
-      </div>
+          {/* Subject Dashboard */}
+          <div className="mt-8">
+            <SubjectDashboard
+              subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
+            />
+          </div>
+
+          {/* Study Preferences */}
+          <div className="mt-8">
+            <StudyPreferences
+              preferences={data.studyPreferences}
+              onError={handleError}
+            />
+          </div>
+        </>
+      )}
     </div>
+  );
+
+  return (
+    <ProtectedContent
+      roles={["user", "moderator", "admin"]}
+      message="Please sign in to view your profile"
+      customReturnTo={currentPath}
+    >
+      {profileContent}
+    </ProtectedContent>
   );
 }

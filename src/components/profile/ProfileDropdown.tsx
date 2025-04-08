@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthContext";
 import {
@@ -12,20 +12,22 @@ import {
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
 import { useClickOutside } from "@/hooks/useClickOutside";
-import { useRef } from "react";
+import { useReturnTo } from "@/hooks/useReturnTo";
 
 export default function ProfileDropdown() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const { saveCurrentPath } = useReturnTo();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(dropdownRef, () => setIsOpen(false));
 
   if (!user) {
+    const returnPath = saveCurrentPath();
     return (
       <Link
-        href="/auth/login"
+        href={`/auth/login?returnTo=${encodeURIComponent(returnPath)}`}
         className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
       >
         <UserIcon className="w-5 h-5" />
@@ -36,8 +38,10 @@ export default function ProfileDropdown() {
 
   const handleLogout = async () => {
     try {
+      setIsOpen(false); // Close dropdown first
       await logout();
-      router.push("/");
+      // Stay on the same page after logout
+      router.refresh(); // Refresh the page to update UI
     } catch (error) {
       console.error("Logout failed:", error);
     }

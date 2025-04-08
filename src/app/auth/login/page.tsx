@@ -1,28 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import LoginForm from '@/components/auth/LoginForm';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import LoginForm from "@/components/auth/LoginForm";
+import Link from "next/link";
+import { useReturnTo } from "@/hooks/useReturnTo";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [successMessage, setSuccessMessage] = useState('');
+  const { getReturnUrl } = useReturnTo();
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    const registered = searchParams?.get('registered');
+    const registered = searchParams?.get("registered");
     if (registered) {
-      setSuccessMessage('Account created successfully! Please log in.');
+      setSuccessMessage("Account created successfully! Please log in.");
     }
   }, [searchParams]);
 
-  // Get return URL from query params
-  const returnTo = searchParams?.get('returnTo') || '/';
-
   // Handle successful login
   const handleLoginSuccess = () => {
-    router.replace(returnTo);
+    router.replace(getReturnUrl());
   };
 
   return (
@@ -41,9 +40,11 @@ export default function LoginPage() {
             Welcome back
           </h2>
           <p className="mt-2 text-center text-sm text-text-muted">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link
-              href="/auth/register"
+              href={`/auth/register${
+                searchParams ? `?${searchParams.toString()}` : ""
+              }`}
               className="font-medium text-primary hover:text-primary-dark"
             >
               Sign up
@@ -52,7 +53,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <LoginForm onSuccess={handleLoginSuccess} returnTo={returnTo} />
+        <LoginForm onSuccess={handleLoginSuccess} returnTo={getReturnUrl()} />
       </div>
     </div>
   );

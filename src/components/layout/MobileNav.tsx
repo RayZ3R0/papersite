@@ -13,6 +13,7 @@ import {
   HomeIcon,
 } from "./icons";
 import { useAuth } from "@/components/auth/AuthContext";
+import { useReturnTo } from "@/hooks/useReturnTo";
 import ProfileDrawer from "../profile/ProfileDrawer";
 import ThemePicker from "./ThemePicker";
 
@@ -26,6 +27,7 @@ interface NavLinkProps {
 export default function MobileNav() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { saveCurrentPath } = useReturnTo();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isActive = (path: string) => pathname === path;
 
@@ -58,7 +60,9 @@ export default function MobileNav() {
               </button>
             ) : (
               <Link
-                href="/auth/login"
+                href={`/auth/login?returnTo=${encodeURIComponent(
+                  saveCurrentPath()
+                )}`}
                 className="p-2 text-text-muted hover:text-text"
               >
                 <UserIcon className="w-5 h-5" />

@@ -13,6 +13,7 @@ interface ProtectedContentProps {
   onAuthFailure?: () => void;
   render?: (user: UserWithoutPassword) => React.ReactNode;
   preventRedirect?: boolean;
+  customReturnTo?: string;
 }
 
 export default function ProtectedContent({
@@ -23,6 +24,7 @@ export default function ProtectedContent({
   onAuthFailure,
   render,
   preventRedirect = false,
+  customReturnTo,
 }: ProtectedContentProps) {
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
@@ -81,7 +83,7 @@ export default function ProtectedContent({
 
     // If no fallback and no callback, and we're in the browser, redirect to login
     if (typeof window !== "undefined") {
-      const returnUrl = encodeURIComponent(pathname || "/");
+      const returnUrl = encodeURIComponent(customReturnTo || pathname || "/");
       window.location.href = `/auth/login?returnTo=${returnUrl}`;
       return null;
     }
