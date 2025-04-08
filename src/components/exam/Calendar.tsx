@@ -14,7 +14,7 @@ import { UserSubjectConfig } from "@/types/profile";
 import { Examination } from "@/types/exam";
 import { ExamDetailsDrawer } from "./ExamDetailsDrawer";
 import { cn } from "@/lib/utils";
-import { Badge } from "../ui/badge";
+import { Badge, badgeVariants } from "../ui/badge";
 
 interface CalendarProps {
   examinations: Examination[];
@@ -127,9 +127,14 @@ export function Calendar({
                 </span>
                 {exams.length > 0 && (
                   <div className="absolute top-2 right-2">
-                    <Badge variant="outline" className="text-xs">
+                    <div
+                      className={cn(
+                        badgeVariants({ variant: "outline" }),
+                        "text-xs"
+                      )}
+                    >
                       {exams.length}
-                    </Badge>
+                    </div>
                   </div>
                 )}
                 <div className="mt-6 space-y-1">
