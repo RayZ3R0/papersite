@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useAuth } from './AuthContext';
-import { usePathname } from 'next/navigation';
-import { UserWithoutPassword } from '@/lib/authTypes';
+import React from "react";
+import { useAuth } from "./AuthContext";
+import { usePathname } from "next/navigation";
+import { UserWithoutPassword } from "@/lib/authTypes";
 
 interface ProtectedContentProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
-  roles?: ('user' | 'moderator' | 'admin')[];
+  roles?: ("user" | "moderator" | "admin")[];
   message?: string;
   onAuthFailure?: () => void;
   render?: (user: UserWithoutPassword) => React.ReactNode;
@@ -19,23 +19,13 @@ export default function ProtectedContent({
   children,
   fallback,
   roles,
-  message = 'Please sign in to access this content',
+  message = "Please sign in to access this content",
   onAuthFailure,
   render,
   preventRedirect = false,
 }: ProtectedContentProps) {
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
-
-  // Debug logs
-  console.log('ProtectedContent Debug:', {
-    user,
-    roles,
-    isLoading,
-    pathname,
-    isAuthorized: user && (!roles || roles.includes(user.role)),
-    userRole: user?.role
-  });
 
   // Check user authentication and roles
   const isAuthorized = user && (!roles || roles.includes(user.role));
@@ -52,11 +42,11 @@ export default function ProtectedContent({
   // If not authorized
   if (!isAuthorized) {
     // Log unauthorized reason
-    console.log('Not authorized because:', {
+    console.log("Not authorized because:", {
       hasUser: !!user,
       userRole: user?.role,
       requiredRoles: roles,
-      roleCheckPassed: !roles || (user && roles.includes(user.role))
+      roleCheckPassed: !roles || (user && roles.includes(user.role)),
     });
 
     // If we have a fallback, show it
@@ -71,13 +61,13 @@ export default function ProtectedContent({
     }
 
     // Don't redirect from admin pages (middleware handles that)
-    if (pathname?.startsWith('/admin')) {
+    if (pathname?.startsWith("/admin")) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-surface dark:bg-surface-dark">
           <div className="p-6 max-w-sm mx-auto bg-error/10 border border-error rounded-lg text-error text-center">
             You must be an administrator to access this area.
             <pre className="mt-4 text-xs text-left bg-black/5 p-2 rounded">
-              {JSON.stringify({ role: user?.role, required: 'admin' }, null, 2)}
+              {JSON.stringify({ role: user?.role, required: "admin" }, null, 2)}
             </pre>
           </div>
         </div>
@@ -90,8 +80,8 @@ export default function ProtectedContent({
     }
 
     // If no fallback and no callback, and we're in the browser, redirect to login
-    if (typeof window !== 'undefined') {
-      const returnUrl = encodeURIComponent(pathname || '/');
+    if (typeof window !== "undefined") {
+      const returnUrl = encodeURIComponent(pathname || "/");
       window.location.href = `/auth/login?returnTo=${returnUrl}`;
       return null;
     }
@@ -112,7 +102,7 @@ export default function ProtectedContent({
 // HOC for protecting entire components
 export function withProtection<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  options: Omit<ProtectedContentProps, 'children'> = {}
+  options: Omit<ProtectedContentProps, "children"> = {}
 ) {
   return function ProtectedComponent(props: P) {
     return (

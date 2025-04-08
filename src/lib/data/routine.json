@@ -3,7 +3,7 @@
   "examinations": [
     {
       "subject": "Biology",
-      "code": "WBI11 01",
+      "code": "WBI11",
       "title": "Unit 1: Molecules, Diet, Transport and Health",
       "date": "2025-05-06",
       "day": "Tuesday",
@@ -12,7 +12,7 @@
     },
     {
       "subject": "Arabic",
-      "code": "WAA01 01",
+      "code": "WAA01",
       "title": "Unit 1: Understanding and Written Response",
       "date": "2025-05-07",
       "day": "Wednesday",
@@ -21,7 +21,7 @@
     },
     {
       "subject": "Business",
-      "code": "WBS11 01",
+      "code": "WBS11",
       "title": "Unit 1: Marketing and People",
       "date": "2025-05-07",
       "day": "Wednesday",
@@ -30,7 +30,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH11 01",
+      "code": "WCH11",
       "title": "Unit 1: Structure, Bonding and Introduction to Organic Chemistry",
       "date": "2025-05-07",
       "day": "Wednesday",
@@ -39,7 +39,7 @@
     },
     {
       "subject": "Economics",
-      "code": "WEC11 01",
+      "code": "WEC11",
       "title": "Unit 1: Markets in Action",
       "date": "2025-05-08",
       "day": "Thursday",
@@ -48,7 +48,7 @@
     },
     {
       "subject": "Accounting",
-      "code": "WAC11 01",
+      "code": "WAC11",
       "title": "Unit 1: The Accounting System and Costing",
       "date": "2025-05-09",
       "day": "Friday",
@@ -57,7 +57,7 @@
     },
     {
       "subject": "English Literature",
-      "code": "WET01 01",
+      "code": "WET01",
       "title": "Unit 1: Post-2000 Poetry and Prose",
       "date": "2025-05-09",
       "day": "Friday",
@@ -66,7 +66,7 @@
     },
     {
       "subject": "English Language",
-      "code": "WEN01 01",
+      "code": "WEN01",
       "title": "Unit 1: Language: Context and Identity",
       "date": "2025-05-12",
       "day": "Monday",
@@ -75,7 +75,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH12 01",
+      "code": "WCH12",
       "title": "Unit 2: Energetics, Group Chemistry, Halogenoalkanes and Alcohols",
       "date": "2025-05-12",
       "day": "Monday",
@@ -84,7 +84,7 @@
     },
     {
       "subject": "Business",
-      "code": "WBS12 01",
+      "code": "WBS12",
       "title": "Unit 2: Managing Business Activities",
       "date": "2025-05-12",
       "day": "Monday",
@@ -93,7 +93,7 @@
     },
     {
       "subject": "Geography",
-      "code": "WGE01 01",
+      "code": "WGE01",
       "title": "Unit 1: Global Challenges",
       "date": "2025-05-13",
       "day": "Tuesday",
@@ -102,7 +102,7 @@
     },
     {
       "subject": "Greek",
-      "code": "WGK01 01",
+      "code": "WGK01",
       "title": "Unit 1: Understanding and Written Response",
       "date": "2025-05-13",
       "day": "Tuesday",
@@ -111,7 +111,7 @@
     },
     {
       "subject": "Economics",
-      "code": "WEC12 01",
+      "code": "WEC12",
       "title": "Unit 2: Macroeconomic Performance and Policy",
       "date": "2025-05-14",
       "day": "Wednesday",
@@ -120,7 +120,7 @@
     },
     {
       "subject": "English Literature",
-      "code": "WET02 01",
+      "code": "WET02",
       "title": "Unit 2: Drama",
       "date": "2025-05-15",
       "day": "Thursday",
@@ -129,7 +129,7 @@
     },
     {
       "subject": "Biology",
-      "code": "WBI12 01",
+      "code": "WBI12",
       "title": "Unit 2: Cells, Development, Biodiversity and Conservation",
       "date": "2025-05-16",
       "day": "Friday",
@@ -138,7 +138,7 @@
     },
     {
       "subject": "French",
-      "code": "WFR02 01",
+      "code": "WFR02",
       "title": "Unit 2: Understanding and Written Response",
       "date": "2025-05-16",
       "day": "Friday",
@@ -147,7 +147,7 @@
     },
     {
       "subject": "Geography",
-      "code": "WGE02 01",
+      "code": "WGE02",
       "title": "Unit 2: Geographical Investigations",
       "date": "2025-05-19",
       "day": "Monday",
@@ -156,7 +156,7 @@
     },
     {
       "subject": "English Language",
-      "code": "WEN02 01",
+      "code": "WEN02",
       "title": "Unit 2: Language in Transition",
       "date": "2025-05-20",
       "day": "Tuesday",
@@ -165,7 +165,7 @@
     },
     {
       "subject": "Biology",
-      "code": "WBI13 01",
+      "code": "WBI13",
       "title": "Unit 3: Practical Skills in Biology I",
       "date": "2025-05-21",
       "day": "Wednesday",
@@ -174,7 +174,7 @@
     },
     {
       "subject": "German",
-      "code": "WGN02 01",
+      "code": "WGN02",
       "title": "Unit 2: Understanding and Written Response",
       "date": "2025-05-22",
       "day": "Thursday",
@@ -183,7 +183,7 @@
     },
     {
       "subject": "Accounting",
-      "code": "WAC12 01",
+      "code": "WAC12",
       "title": "Unit 2: Corporate and Management Accounting",
       "date": "2025-05-23",
       "day": "Friday",
@@ -192,7 +192,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH13 01",
+      "code": "WCH13",
       "title": "Unit 3: Practical Skills in Chemistry I",
       "date": "2025-05-23",
       "day": "Friday",
@@ -201,7 +201,7 @@
     },
     {
       "subject": "Biology",
-      "code": "WBI14 01",
+      "code": "WBI14",
       "title": "Unit 4: Energy, Environment, Microbiology and Immunity",
       "date": "2025-05-27",
       "day": "Tuesday",
@@ -210,7 +210,7 @@
     },
     {
       "subject": "Economics",
-      "code": "WEC13 01",
+      "code": "WEC13",
       "title": "Unit 3: Business Behaviour",
       "date": "2025-05-27",
       "day": "Tuesday",
@@ -219,7 +219,7 @@
     },
     {
       "subject": "Arabic",
-      "code": "WAA02 01",
+      "code": "WAA02",
       "title": "Unit 2: Writing and Research",
       "date": "2025-05-28",
       "day": "Wednesday",
@@ -228,7 +228,7 @@
     },
     {
       "subject": "Business",
-      "code": "WBS13 01",
+      "code": "WBS13",
       "title": "Unit 3: Business Decisions And Strategy",
       "date": "2025-05-28",
       "day": "Wednesday",
@@ -237,7 +237,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH14 01",
+      "code": "WCH14",
       "title": "Unit 4: Rates, Equilibria and Further Organic Chemistry",
       "date": "2025-05-28",
       "day": "Wednesday",
@@ -246,7 +246,7 @@
     },
     {
       "subject": "English Literature",
-      "code": "WET03 01",
+      "code": "WET03",
       "title": "Unit 3: Poetry and Prose",
       "date": "2025-05-28",
       "day": "Wednesday",
@@ -255,7 +255,7 @@
     },
     {
       "subject": "Greek",
-      "code": "WGK02 01",
+      "code": "WGK02",
       "title": "Unit 2: Writing and Research",
       "date": "2025-05-29",
       "day": "Thursday",
@@ -264,7 +264,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH15 01",
+      "code": "WCH15",
       "title": "Unit 5: Transition Metals and Organic Nitrogen Chemistry",
       "date": "2025-06-02",
       "day": "Monday",
@@ -273,7 +273,7 @@
     },
     {
       "subject": "English Language",
-      "code": "WEN03 01",
+      "code": "WEN03",
       "title": "Unit 3: Crafting Language (Writing)",
       "date": "2025-06-02",
       "day": "Monday",
@@ -282,7 +282,7 @@
     },
     {
       "subject": "Geography",
-      "code": "WGE03 01",
+      "code": "WGE03",
       "title": "Unit 3: Contested Planet",
       "date": "2025-06-02",
       "day": "Monday",
@@ -291,7 +291,7 @@
     },
     {
       "subject": "Economics",
-      "code": "WEC14 01",
+      "code": "WEC14",
       "title": "Unit 4: Developments in the Global Economy",
       "date": "2025-06-03",
       "day": "Tuesday",
@@ -300,7 +300,7 @@
     },
     {
       "subject": "Business",
-      "code": "WBS14 01",
+      "code": "WBS14",
       "title": "Unit 4: Global Business",
       "date": "2025-06-04",
       "day": "Wednesday",
@@ -309,7 +309,7 @@
     },
     {
       "subject": "English Literature",
-      "code": "WET04 01",
+      "code": "WET04",
       "title": "Unit 4: Shakespeare and Pre-1900 Poetry",
       "date": "2025-06-04",
       "day": "Wednesday",
@@ -318,7 +318,7 @@
     },
     {
       "subject": "German",
-      "code": "WGN04 01",
+      "code": "WGN04",
       "title": "Unit 4: Research, Understanding and Written Response",
       "date": "2025-06-05",
       "day": "Thursday",
@@ -327,7 +327,7 @@
     },
     {
       "subject": "Biology",
-      "code": "WBI15 01",
+      "code": "WBI15",
       "title": "Unit 5: Respiration, Internal Environment, Coordination and Gene Technology",
       "date": "2025-06-06",
       "day": "Friday",
@@ -336,7 +336,7 @@
     },
     {
       "subject": "French",
-      "code": "WFR04 01",
+      "code": "WFR04",
       "title": "Unit 4: Research, Understanding and Written Response",
       "date": "2025-06-09",
       "day": "Monday",
@@ -345,7 +345,7 @@
     },
     {
       "subject": "Geography",
-      "code": "WGE04 01",
+      "code": "WGE04",
       "title": "Unit 4: Researching Geography",
       "date": "2025-06-09",
       "day": "Monday",
@@ -354,7 +354,7 @@
     },
     {
       "subject": "Biology",
-      "code": "WBI16 01",
+      "code": "WBI16",
       "title": "Unit 6: Practical Skills in Biology II",
       "date": "2025-06-11",
       "day": "Wednesday",
@@ -363,7 +363,7 @@
     },
     {
       "subject": "Chemistry",
-      "code": "WCH16 01",
+      "code": "WCH16",
       "title": "Unit 6: Practical Skills in Chemistry II",
       "date": "2025-06-13",
       "day": "Friday",
@@ -372,7 +372,7 @@
     },
     {
       "subject": "English Language",
-      "code": "WEN04 01",
+      "code": "WEN04",
       "title": "Unit 4: Investigating Language",
       "date": "2025-06-13",
       "day": "Friday",
@@ -525,7 +525,7 @@
     },
     {
       "subject": "Information Technology (IT)",
-      "code": "WIT11 01",
+      "code": "WIT11",
       "title": "Unit 1",
       "date": "2025-05-08",
       "day": "Thursday",
@@ -534,7 +534,7 @@
     },
     {
       "subject": "Information Technology (IT)",
-      "code": "WIT12 01",
+      "code": "WIT12",
       "title": "Unit 2",
       "date": "2025-05-19",
       "day": "Monday",
@@ -543,7 +543,7 @@
     },
     {
       "subject": "Information Technology (IT)",
-      "code": "WIT13 01",
+      "code": "WIT13",
       "title": "Unit 3",
       "date": "2025-05-27",
       "day": "Tuesday",
@@ -552,7 +552,7 @@
     },
     {
       "subject": "Information Technology (IT)",
-      "code": "WIT14 01",
+      "code": "WIT14",
       "title": "Unit 4",
       "date": "2025-06-10",
       "day": "Tuesday",
@@ -561,7 +561,7 @@
     },
     {
       "subject": "Law",
-      "code": "YLA1 01",
+      "code": "YLA1",
       "title": "Paper 1: Underlying Principles of Law and the English Legal System",
       "date": "2025-05-12",
       "day": "Monday",
@@ -579,7 +579,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WDM11 01",
+      "code": "WDM11",
       "title": "D1: Decision Mathematics 1",
       "date": "2025-05-15",
       "day": "Thursday",
@@ -588,7 +588,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WFM01 01",
+      "code": "WFM01",
       "title": "FP1: Further Pure Mathematics 1",
       "date": "2025-05-22",
       "day": "Thursday",
@@ -597,7 +597,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WFM02 01",
+      "code": "WFM02",
       "title": "FP2: Further Pure Mathematics 2",
       "date": "2025-06-03",
       "day": "Tuesday",
@@ -606,7 +606,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WFM03 01",
+      "code": "WFM03",
       "title": "FP3: Further Pure Mathematics 3",
       "date": "2025-06-10",
       "day": "Tuesday",
@@ -615,7 +615,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WMA11 01",
+      "code": "WMA11",
       "title": "P1: Pure Mathematics 1",
       "date": "2025-05-08",
       "day": "Thursday",
@@ -624,7 +624,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WMA12 01",
+      "code": "WMA12",
       "title": "P2: Pure Mathematics 2",
       "date": "2025-05-13",
       "day": "Tuesday",
@@ -633,7 +633,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WMA13 01",
+      "code": "WMA13",
       "title": "P3: Pure Mathematics 3",
       "date": "2025-05-29",
       "day": "Thursday",
@@ -642,7 +642,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WMA14 01",
+      "code": "WMA14",
       "title": "P4: Pure Mathematics 4",
       "date": "2025-06-05",
       "day": "Thursday",
@@ -651,7 +651,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WME01 01",
+      "code": "WME01",
       "title": "M1: Mechanics 1",
       "date": "2025-05-06",
       "day": "Tuesday",
@@ -660,7 +660,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WME02 01",
+      "code": "WME02",
       "title": "M2: Mechanics 2",
       "date": "2025-06-02",
       "day": "Monday",
@@ -669,7 +669,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WME03 01",
+      "code": "WME03",
       "title": "M3: Mechanics 3",
       "date": "2025-06-12",
       "day": "Thursday",
@@ -678,7 +678,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WST01 01",
+      "code": "WST01",
       "title": "S1: Statistics 1",
       "date": "2025-05-20",
       "day": "Tuesday",
@@ -687,7 +687,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WST02 01",
+      "code": "WST02",
       "title": "S2: Statistics 2",
       "date": "2025-06-06",
       "day": "Friday",
@@ -696,7 +696,7 @@
     },
     {
       "subject": "Mathematics",
-      "code": "WST03 01",
+      "code": "WST03",
       "title": "S3: Statistics 3",
       "date": "2025-06-13",
       "day": "Friday",
@@ -705,7 +705,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH11 01",
+      "code": "WPH11",
       "title": "Unit 1: Mechanics and Materials",
       "date": "2025-05-09",
       "day": "Friday",
@@ -714,7 +714,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH12 01",
+      "code": "WPH12",
       "title": "Unit 2: Waves and Electricity",
       "date": "2025-05-14",
       "day": "Wednesday",
@@ -723,7 +723,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH13 01",
+      "code": "WPH13",
       "title": "Unit 3: Practical Skills in Physics I",
       "date": "2025-05-19",
       "day": "Monday",
@@ -732,7 +732,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH14 01",
+      "code": "WPH14",
       "title": "Unit 4: Further Mechanics, Fields and Particles",
       "date": "2025-05-29",
       "day": "Thursday",
@@ -741,7 +741,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH15 01",
+      "code": "WPH15",
       "title": "Unit 5: Thermodynamics, Radiation, Oscillations and Cosmology",
       "date": "2025-06-04",
       "day": "Wednesday",
@@ -750,7 +750,7 @@
     },
     {
       "subject": "Physics",
-      "code": "WPH16 01",
+      "code": "WPH16",
       "title": "Unit 6: Practical Skills in Physics II",
       "date": "2025-06-09",
       "day": "Monday",
@@ -759,7 +759,7 @@
     },
     {
       "subject": "Psychology",
-      "code": "WPS01 01",
+      "code": "WPS01",
       "title": "Unit 1: Social and cognitive psychology",
       "date": "2025-05-06",
       "day": "Tuesday",
@@ -768,7 +768,7 @@
     },
     {
       "subject": "Psychology",
-      "code": "WPS02 01",
+      "code": "WPS02",
       "title": "Unit 2: Biological psychology, learning theories and development",
       "date": "2025-05-20",
       "day": "Tuesday",
@@ -777,7 +777,7 @@
     },
     {
       "subject": "Psychology",
-      "code": "WPS03 01",
+      "code": "WPS03",
       "title": "Unit 3: Applications of psychology",
       "date": "2025-05-27",
       "day": "Tuesday",
@@ -786,7 +786,7 @@
     },
     {
       "subject": "Psychology",
-      "code": "WPS04 01",
+      "code": "WPS04",
       "title": "Unit 4: Clinical psychology and psychological skills",
       "date": "2025-06-10",
       "day": "Tuesday",
@@ -795,7 +795,7 @@
     },
     {
       "subject": "Spanish",
-      "code": "WSP02 01",
+      "code": "WSP02",
       "title": "Unit 2: Understanding and Written Response",
       "date": "2025-05-14",
       "day": "Wednesday",
@@ -804,7 +804,7 @@
     },
     {
       "subject": "Spanish",
-      "code": "WSP04 01",
+      "code": "WSP04",
       "title": "Unit 4: Research, Understanding and Written Response",
       "date": "2025-06-03",
       "day": "Tuesday",
