@@ -1,0 +1,815 @@
+{
+  "title": "Pearson Edexcel International Advanced Levels - Summer 2025 Examination Timetable",
+  "examinations": [
+    {
+      "subject": "Biology",
+      "code": "WBI11 01",
+      "title": "Unit 1: Molecules, Diet, Transport and Health",
+      "date": "2025-05-06",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Arabic",
+      "code": "WAA01 01",
+      "title": "Unit 1: Understanding and Written Response",
+      "date": "2025-05-07",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Business",
+      "code": "WBS11 01",
+      "title": "Unit 1: Marketing and People",
+      "date": "2025-05-07",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH11 01",
+      "title": "Unit 1: Structure, Bonding and Introduction to Organic Chemistry",
+      "date": "2025-05-07",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Economics",
+      "code": "WEC11 01",
+      "title": "Unit 1: Markets in Action",
+      "date": "2025-05-08",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Accounting",
+      "code": "WAC11 01",
+      "title": "Unit 1: The Accounting System and Costing",
+      "date": "2025-05-09",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "English Literature",
+      "code": "WET01 01",
+      "title": "Unit 1: Post-2000 Poetry and Prose",
+      "date": "2025-05-09",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "English Language",
+      "code": "WEN01 01",
+      "title": "Unit 1: Language: Context and Identity",
+      "date": "2025-05-12",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH12 01",
+      "title": "Unit 2: Energetics, Group Chemistry, Halogenoalkanes and Alcohols",
+      "date": "2025-05-12",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Business",
+      "code": "WBS12 01",
+      "title": "Unit 2: Managing Business Activities",
+      "date": "2025-05-12",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Geography",
+      "code": "WGE01 01",
+      "title": "Unit 1: Global Challenges",
+      "date": "2025-05-13",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Greek",
+      "code": "WGK01 01",
+      "title": "Unit 1: Understanding and Written Response",
+      "date": "2025-05-13",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Economics",
+      "code": "WEC12 01",
+      "title": "Unit 2: Macroeconomic Performance and Policy",
+      "date": "2025-05-14",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "English Literature",
+      "code": "WET02 01",
+      "title": "Unit 2: Drama",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Biology",
+      "code": "WBI12 01",
+      "title": "Unit 2: Cells, Development, Biodiversity and Conservation",
+      "date": "2025-05-16",
+      "day": "Friday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "French",
+      "code": "WFR02 01",
+      "title": "Unit 2: Understanding and Written Response",
+      "date": "2025-05-16",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Geography",
+      "code": "WGE02 01",
+      "title": "Unit 2: Geographical Investigations",
+      "date": "2025-05-19",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "English Language",
+      "code": "WEN02 01",
+      "title": "Unit 2: Language in Transition",
+      "date": "2025-05-20",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Biology",
+      "code": "WBI13 01",
+      "title": "Unit 3: Practical Skills in Biology I",
+      "date": "2025-05-21",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "German",
+      "code": "WGN02 01",
+      "title": "Unit 2: Understanding and Written Response",
+      "date": "2025-05-22",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Accounting",
+      "code": "WAC12 01",
+      "title": "Unit 2: Corporate and Management Accounting",
+      "date": "2025-05-23",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH13 01",
+      "title": "Unit 3: Practical Skills in Chemistry I",
+      "date": "2025-05-23",
+      "day": "Friday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "Biology",
+      "code": "WBI14 01",
+      "title": "Unit 4: Energy, Environment, Microbiology and Immunity",
+      "date": "2025-05-27",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Economics",
+      "code": "WEC13 01",
+      "title": "Unit 3: Business Behaviour",
+      "date": "2025-05-27",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Arabic",
+      "code": "WAA02 01",
+      "title": "Unit 2: Writing and Research",
+      "date": "2025-05-28",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Business",
+      "code": "WBS13 01",
+      "title": "Unit 3: Business Decisions And Strategy",
+      "date": "2025-05-28",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH14 01",
+      "title": "Unit 4: Rates, Equilibria and Further Organic Chemistry",
+      "date": "2025-05-28",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "English Literature",
+      "code": "WET03 01",
+      "title": "Unit 3: Poetry and Prose",
+      "date": "2025-05-28",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Greek",
+      "code": "WGK02 01",
+      "title": "Unit 2: Writing and Research",
+      "date": "2025-05-29",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH15 01",
+      "title": "Unit 5: Transition Metals and Organic Nitrogen Chemistry",
+      "date": "2025-06-02",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "English Language",
+      "code": "WEN03 01",
+      "title": "Unit 3: Crafting Language (Writing)",
+      "date": "2025-06-02",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Geography",
+      "code": "WGE03 01",
+      "title": "Unit 3: Contested Planet",
+      "date": "2025-06-02",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Economics",
+      "code": "WEC14 01",
+      "title": "Unit 4: Developments in the Global Economy",
+      "date": "2025-06-03",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Business",
+      "code": "WBS14 01",
+      "title": "Unit 4: Global Business",
+      "date": "2025-06-04",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "English Literature",
+      "code": "WET04 01",
+      "title": "Unit 4: Shakespeare and Pre-1900 Poetry",
+      "date": "2025-06-04",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "German",
+      "code": "WGN04 01",
+      "title": "Unit 4: Research, Understanding and Written Response",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Biology",
+      "code": "WBI15 01",
+      "title": "Unit 5: Respiration, Internal Environment, Coordination and Gene Technology",
+      "date": "2025-06-06",
+      "day": "Friday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "French",
+      "code": "WFR04 01",
+      "title": "Unit 4: Research, Understanding and Written Response",
+      "date": "2025-06-09",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Geography",
+      "code": "WGE04 01",
+      "title": "Unit 4: Researching Geography",
+      "date": "2025-06-09",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Biology",
+      "code": "WBI16 01",
+      "title": "Unit 6: Practical Skills in Biology II",
+      "date": "2025-06-11",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "Chemistry",
+      "code": "WCH16 01",
+      "title": "Unit 6: Practical Skills in Chemistry II",
+      "date": "2025-06-13",
+      "day": "Friday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "English Language",
+      "code": "WEN04 01",
+      "title": "Unit 4: Investigating Language",
+      "date": "2025-06-13",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI01 1A",
+      "title": "Unit 1 - Option 1A: France in Revolution, 1774-99",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI01 1B",
+      "title": "Unit 1 - Option 1B: Russia in Revolution, 1881-1917",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI01 1C",
+      "title": "Unit 1 - Option 1C: Germany, 1918-45",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI01 1D",
+      "title": "Unit 1 - Option 1D: Britain, 1964-90",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI02 1A",
+      "title": "Unit 2 - Option 1A: India, 1857-1948: The Raj to Partition",
+      "date": "2025-05-21",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI02 1B",
+      "title": "Unit 2 - Option 1B: China, 1900-76",
+      "date": "2025-05-21",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI02 1C",
+      "title": "Unit 2 - Option 1C: Russia, 1917-91: From Lenin to Yeltsin",
+      "date": "2025-05-21",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI02 1D",
+      "title": "Unit 2 - Option 1D: South Africa, 1948-2014",
+      "date": "2025-05-21",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI03 1A",
+      "title": "Unit 3 - Option 1A: The USA, Independence to Civil War, 1763-1865",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI03 1B",
+      "title": "Unit 3 - Option 1B: The British Experience of Warfare, 1803-1945",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI03 1C",
+      "title": "Unit 3 - Option 1C: Germany: United, Divided and Reunited, 1870-1990",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI03 1D",
+      "title": "Unit 3 - Option 1D: Civil Rights and Race Relations in the USA, 1865-2009",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI04 1A",
+      "title": "Unit 4 - Option 1A: The Making of Modern Europe, 1805-71",
+      "date": "2025-06-12",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI04 1B",
+      "title": "Unit 4 - Option 1B: The World in Crisis, 1879-1945",
+      "date": "2025-06-12",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI04 1C",
+      "title": "Unit 4 - Option 1C: The World Divided: Superpower Relations, 1943-90",
+      "date": "2025-06-12",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "History",
+      "code": "WHI04 1D",
+      "title": "Unit 4 - Option 1D: The Cold War and Hot War in Asia, 1945-90",
+      "date": "2025-06-12",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Information Technology (IT)",
+      "code": "WIT11 01",
+      "title": "Unit 1",
+      "date": "2025-05-08",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Information Technology (IT)",
+      "code": "WIT12 01",
+      "title": "Unit 2",
+      "date": "2025-05-19",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Information Technology (IT)",
+      "code": "WIT13 01",
+      "title": "Unit 3",
+      "date": "2025-05-27",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Information Technology (IT)",
+      "code": "WIT14 01",
+      "title": "Unit 4",
+      "date": "2025-06-10",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Law",
+      "code": "YLA1 01",
+      "title": "Paper 1: Underlying Principles of Law and the English Legal System",
+      "date": "2025-05-12",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Law",
+      "code": "YLA1 02",
+      "title": "Paper 2: The Law in Action",
+      "date": "2025-06-03",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "3h 00m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WDM11 01",
+      "title": "D1: Decision Mathematics 1",
+      "date": "2025-05-15",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WFM01 01",
+      "title": "FP1: Further Pure Mathematics 1",
+      "date": "2025-05-22",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WFM02 01",
+      "title": "FP2: Further Pure Mathematics 2",
+      "date": "2025-06-03",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WFM03 01",
+      "title": "FP3: Further Pure Mathematics 3",
+      "date": "2025-06-10",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WMA11 01",
+      "title": "P1: Pure Mathematics 1",
+      "date": "2025-05-08",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WMA12 01",
+      "title": "P2: Pure Mathematics 2",
+      "date": "2025-05-13",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WMA13 01",
+      "title": "P3: Pure Mathematics 3",
+      "date": "2025-05-29",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WMA14 01",
+      "title": "P4: Pure Mathematics 4",
+      "date": "2025-06-05",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WME01 01",
+      "title": "M1: Mechanics 1",
+      "date": "2025-05-06",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WME02 01",
+      "title": "M2: Mechanics 2",
+      "date": "2025-06-02",
+      "day": "Monday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WME03 01",
+      "title": "M3: Mechanics 3",
+      "date": "2025-06-12",
+      "day": "Thursday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WST01 01",
+      "title": "S1: Statistics 1",
+      "date": "2025-05-20",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WST02 01",
+      "title": "S2: Statistics 2",
+      "date": "2025-06-06",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Mathematics",
+      "code": "WST03 01",
+      "title": "S3: Statistics 3",
+      "date": "2025-06-13",
+      "day": "Friday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH11 01",
+      "title": "Unit 1: Mechanics and Materials",
+      "date": "2025-05-09",
+      "day": "Friday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH12 01",
+      "title": "Unit 2: Waves and Electricity",
+      "date": "2025-05-14",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH13 01",
+      "title": "Unit 3: Practical Skills in Physics I",
+      "date": "2025-05-19",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH14 01",
+      "title": "Unit 4: Further Mechanics, Fields and Particles",
+      "date": "2025-05-29",
+      "day": "Thursday",
+      "time": "Afternoon",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH15 01",
+      "title": "Unit 5: Thermodynamics, Radiation, Oscillations and Cosmology",
+      "date": "2025-06-04",
+      "day": "Wednesday",
+      "time": "Morning",
+      "duration": "1h 45m"
+    },
+    {
+      "subject": "Physics",
+      "code": "WPH16 01",
+      "title": "Unit 6: Practical Skills in Physics II",
+      "date": "2025-06-09",
+      "day": "Monday",
+      "time": "Morning",
+      "duration": "1h 20m"
+    },
+    {
+      "subject": "Psychology",
+      "code": "WPS01 01",
+      "title": "Unit 1: Social and cognitive psychology",
+      "date": "2025-05-06",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Psychology",
+      "code": "WPS02 01",
+      "title": "Unit 2: Biological psychology, learning theories and development",
+      "date": "2025-05-20",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Psychology",
+      "code": "WPS03 01",
+      "title": "Unit 3: Applications of psychology",
+      "date": "2025-05-27",
+      "day": "Tuesday",
+      "time": "Morning",
+      "duration": "1h 30m"
+    },
+    {
+      "subject": "Psychology",
+      "code": "WPS04 01",
+      "title": "Unit 4: Clinical psychology and psychological skills",
+      "date": "2025-06-10",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 00m"
+    },
+    {
+      "subject": "Spanish",
+      "code": "WSP02 01",
+      "title": "Unit 2: Understanding and Written Response",
+      "date": "2025-05-14",
+      "day": "Wednesday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    },
+    {
+      "subject": "Spanish",
+      "code": "WSP04 01",
+      "title": "Unit 4: Research, Understanding and Written Response",
+      "date": "2025-06-03",
+      "day": "Tuesday",
+      "time": "Afternoon",
+      "duration": "2h 30m"
+    }
+  ]
+}

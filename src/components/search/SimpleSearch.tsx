@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import SearchBox from './SearchBox';
+import React from "react";
+import { useRouter } from "next/navigation";
+import SearchBox from "./SearchBox";
 
 export default function SimpleSearch() {
   const router = useRouter();
@@ -20,13 +20,13 @@ export default function SimpleSearch() {
         value=""
         onChange={handleSearch}
         onClear={() => {}}
-        placeholder="Search papers, subjects, or topics..."
+        placeholder="Search past papers..."
         className="!shadow-md hover:!shadow-lg transition-shadow"
       />
       {/* Advanced Search Link */}
       <div className="mt-2 flex justify-end">
         <button
-          onClick={() => router.push('/search?focus=true')}
+          onClick={() => router.push("/search?focus=true")}
           className="text-sm text-primary hover:text-primary-dark dark:hover:text-primary-light
             transition-colors"
         >

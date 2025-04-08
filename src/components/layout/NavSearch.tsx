@@ -78,7 +78,7 @@ export default function NavSearch() {
           ref={inputRef}
           type="search"
           enterKeyHint="search"
-          placeholder="Search papers, books, and notes..."
+          placeholder="Search past papers..."
           defaultValue={initialQuery}
           className={`
             w-full bg-transparent px-9 h-9
