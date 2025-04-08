@@ -31,7 +31,7 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       level: 'AS',
       subjectCodes: [
         ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
-        ...getSequentialUnits('WMA11', 'WME1', [1])
+        ...getSequentialUnits('WMA11', 'WME0', [1])
       ]
     },
     {
@@ -41,7 +41,7 @@ export const commonCombinations: Record<string, SubjectCombination[]> = {
       level: 'AS',
       subjectCodes: [
         ...getSequentialUnits('WMA11', 'WMA1', [1, 2]),
-        ...getSequentialUnits('WMA11', 'WMS1', [1])
+        ...getSequentialUnits('WMA11', 'WST0', [1])
       ]
     },
     {
