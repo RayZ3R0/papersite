@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/sheet";
 import { Examination } from "@/types/exam";
 import { UserSubjectConfig } from "@/types/profile";
-import { Badge, badgeVariants } from "@/components/ui/badge";
+import { badgeVariants } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { ReactNode } from "react";
 
 interface ExamDrawerProps {
   isOpen: boolean;
@@ -43,12 +44,19 @@ export function ExamDetailsDrawer({
     (exam) => exam.time === "Afternoon"
   );
 
+  // Render the content
+  const DrawerContent = (props: { children: ReactNode }) => (
+    <SheetContent
+      side="right"
+      className={cn("flex flex-col", isMobile ? "w-full" : "w-[540px]")}
+    >
+      {props.children}
+    </SheetContent>
+  );
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent
-        side="right"
-        className={cn("flex flex-col", isMobile ? "w-full" : "w-[540px]")}
-      >
+      <DrawerContent>
         <div className="flex flex-col flex-1">
           <SheetHeader className="space-y-4 pb-4 border-b">
             <SheetTitle className="text-2xl font-bold">
@@ -94,7 +102,7 @@ export function ExamDetailsDrawer({
             )}
           </div>
         </div>
-      </SheetContent>
+      </DrawerContent>
     </Sheet>
   );
 }
