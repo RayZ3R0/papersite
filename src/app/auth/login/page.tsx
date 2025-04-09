@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import LoginForm from "@/components/auth/LoginForm";
 import Link from "next/link";
 import { useReturnTo } from "@/hooks/useReturnTo";
+import { withSearchParams } from "@/components/providers/SearchParamsProvider";
 
-export default function LoginPage() {
+function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { getReturnUrl } = useReturnTo();
@@ -58,3 +59,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+// Wrap with SearchParamsProvider
+export default withSearchParams(LoginPage);

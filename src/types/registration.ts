@@ -13,7 +13,19 @@ export type SubjectCategory =
   | "Business Studies"
   | "Accounting"
   | "Law"
-  | "Psychology";
+  | "Psychology"
+  | "English Literature"
+  | "German"
+  | "French"
+  | "Spanish"
+  | "History"
+  | "Geography"
+  | "Computer Science"
+  | "Arabic"
+  | "English Language"
+  | "Information Technology"
+  | "Art and Design"
+  | "Greek";
 
 // Target Grade
 export type TargetGrade = "A*" | "A" | "B" | "C" | "D" | "E";

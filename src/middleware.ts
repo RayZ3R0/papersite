@@ -6,9 +6,22 @@ import { verifyToken } from '@/lib/auth/jwt';
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
+// Skip middleware for static files and next internal routes
+function isStaticPath(pathname: string) {
+  return (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname.includes('.')
+  );
+}
+
 export async function middleware(request: NextRequest) {
-  // Get request path
   const { pathname } = request.nextUrl;
+
+  // Skip middleware for static files
+  if (isStaticPath(pathname)) {
+    return NextResponse.next();
+  }
 
   // Admin routes protection
   if (pathname.startsWith('/admin')) {

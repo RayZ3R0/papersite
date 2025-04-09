@@ -12,59 +12,70 @@ const DURATIONS = {
   rememberMe: 180 * 24 * 60 * 60 // 180 days (increased from 90 days)
 } as const;
 
+function getCookieValue(cookieName: string) {
+  // Check if we're in a browser context
+  if (typeof document !== 'undefined') {
+    const value = document.cookie.match('(^|;)\\s*' + cookieName + '\\s*=\\s*([^;]+)');
+    return value ? value.pop() : '';
+  }
+  // Server context
+  return cookies().get(cookieName)?.value;
+}
+
 export class AuthCookieManager {
   static getTokens() {
-    const cookieStore = cookies();
     return {
-      accessToken: cookieStore.get(ACCESS_TOKEN_KEY)?.value,
-      refreshToken: cookieStore.get(REFRESH_TOKEN_KEY)?.value,
+      accessToken: getCookieValue(ACCESS_TOKEN_KEY),
+      refreshToken: getCookieValue(REFRESH_TOKEN_KEY),
     };
   }
 
   static setTokens(accessToken: string, refreshToken: string, rememberMe?: boolean) {
-    const cookieStore = cookies();
-    
     // Default to remembering user (setting to true improves persistence)
     const effectiveRememberMe = rememberMe !== false;
     
     // Always use the longer duration for refresh token
     const refreshMaxAge = effectiveRememberMe ? DURATIONS.rememberMe : DURATIONS.refreshToken;
 
-    // Set access token with longer duration
-    cookieStore.set(ACCESS_TOKEN_KEY, accessToken, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: DURATIONS.accessToken,
       path: '/',
       priority: 'high',
-      // Adding expires for better browser compatibility
+    } as const;
+
+    // In browser context
+    if (typeof document !== 'undefined') {
+      document.cookie = `${ACCESS_TOKEN_KEY}=${accessToken}; max-age=${DURATIONS.accessToken}; path=/; ${cookieOptions.secure ? 'secure;' : ''} samesite=lax;`;
+      document.cookie = `${REFRESH_TOKEN_KEY}=${refreshToken}; max-age=${refreshMaxAge}; path=/; ${cookieOptions.secure ? 'secure;' : ''} samesite=lax;`;
+      if (effectiveRememberMe) {
+        document.cookie = `${REMEMBER_ME_KEY}=true; max-age=${DURATIONS.rememberMe}; path=/; ${cookieOptions.secure ? 'secure;' : ''} samesite=lax;`;
+      } else {
+        document.cookie = `${REMEMBER_ME_KEY}=; max-age=0; path=/;`;
+      }
+      return;
+    }
+
+    // Server context
+    const cookieStore = cookies();
+    
+    cookieStore.set(ACCESS_TOKEN_KEY, accessToken, {
+      ...cookieOptions,
+      maxAge: DURATIONS.accessToken,
       expires: new Date(Date.now() + DURATIONS.accessToken * 1000),
     });
 
-    // Set refresh token with much longer expiry
     cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      ...cookieOptions,
       maxAge: refreshMaxAge,
-      path: '/',
-      priority: 'high',
-      // Remove partitioned property as it's not recognized
-      // Adding expires for better browser compatibility
       expires: new Date(Date.now() + refreshMaxAge * 1000),
     });
 
-    // Always set remember me cookie unless explicitly disabled
     if (effectiveRememberMe) {
       cookieStore.set(REMEMBER_ME_KEY, 'true', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        ...cookieOptions,
         maxAge: DURATIONS.rememberMe,
-        path: '/',
-        // Remove partitioned property as it's not recognized
-        // Adding expires for better browser compatibility
         expires: new Date(Date.now() + DURATIONS.rememberMe * 1000),
       });
     } else {
@@ -73,9 +84,16 @@ export class AuthCookieManager {
   }
 
   static clearTokens() {
+    // In browser context
+    if (typeof document !== 'undefined') {
+      document.cookie = `${ACCESS_TOKEN_KEY}=; max-age=0; path=/;`;
+      document.cookie = `${REFRESH_TOKEN_KEY}=; max-age=0; path=/;`;
+      document.cookie = `${REMEMBER_ME_KEY}=; max-age=0; path=/;`;
+      return;
+    }
+
+    // Server context
     const cookieStore = cookies();
-    
-    // Fix delete method calls - should only pass the key
     cookieStore.delete(ACCESS_TOKEN_KEY);
     cookieStore.delete(REFRESH_TOKEN_KEY);
     cookieStore.delete(REMEMBER_ME_KEY);
@@ -87,7 +105,6 @@ export class AuthCookieManager {
   }
 
   static isRemembered() {
-    const cookieStore = cookies();
-    return cookieStore.get(REMEMBER_ME_KEY)?.value === 'true';
+    return getCookieValue(REMEMBER_ME_KEY) === 'true';
   }
 }
