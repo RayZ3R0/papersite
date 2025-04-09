@@ -21,7 +21,7 @@ export function ExamDetailsDrawer({
 }: ExamDetailsDrawerProps) {
   // Handle animation states
   const [isVisible, setIsVisible] = useState(false);
-  const { height, handlers, isAtFullHeight } = useDrawerGesture();
+  const { height, handlers, isAtFullHeight } = useDrawerGesture(onClose);
 
   useEffect(() => {
     if (isOpen) {
@@ -81,7 +81,10 @@ export function ExamDetailsDrawer({
       >
         {/* Drag Handle - Mobile Only */}
         <div
-          className="md:hidden w-full flex justify-center pt-2 pb-1"
+          className="md:hidden w-full flex justify-center pt-2 pb-1 touch-none"
+          onTouchStart={handlers.onTouchStart}
+          onTouchMove={handlers.onTouchMove}
+          onTouchEnd={handlers.onTouchEnd}
         >
           <div className="w-8 h-1 rounded-full bg-border/60" />
         </div>
