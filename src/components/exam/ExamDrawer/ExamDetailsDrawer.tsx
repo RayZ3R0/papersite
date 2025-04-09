@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Examination } from "@/types/exam";
 import { format } from "date-fns";
 import { ExamSection } from "./ExamSection";
+import { useDrawerGesture } from "./hooks/useDrawerGesture";
 
 interface ExamDetailsDrawerProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export function ExamDetailsDrawer({
 }: ExamDetailsDrawerProps) {
   // Handle animation states
   const [isVisible, setIsVisible] = useState(false);
+  const { height, handlers, isAtFullHeight } = useDrawerGesture();
 
   useEffect(() => {
     if (isOpen) {
@@ -61,9 +63,9 @@ export function ExamDetailsDrawer({
       <div
         className={`
           fixed inset-x-0 md:inset-x-auto md:right-0 bottom-0 md:top-16
-          w-full md:w-[448px] h-[85vh] md:h-[calc(100vh-4rem)]
+          w-full md:w-[448px] md:h-[calc(100vh-4rem)]
           bg-surface z-50
-          transition-transform duration-300 ease-out
+          transition-all duration-300 ease-out
           transform
           ${
             isOpen
@@ -73,15 +75,23 @@ export function ExamDetailsDrawer({
           shadow-xl border-t md:border-l border-border
           rounded-t-xl md:rounded-none
           flex flex-col
+          ${isAtFullHeight ? "rounded-t-none" : ""}
         `}
+        style={{ height: height }}
       >
         {/* Drag Handle - Mobile Only */}
-        <div className="md:hidden w-full flex justify-center pt-2 pb-1">
+        <div
+          className="md:hidden w-full flex justify-center pt-2 pb-1 touch-none cursor-grab active:cursor-grabbing"
+          {...handlers}
+        >
           <div className="w-8 h-1 rounded-full bg-border/60" />
         </div>
 
         {/* Main Header - Fixed */}
-        <div className="flex-none border-b border-border bg-surface/95 backdrop-blur-sm">
+        <div className={`
+          flex-none border-b border-border bg-surface/95 backdrop-blur-sm
+          ${isAtFullHeight ? "md:border-t-0" : ""}
+        `}>
           <div className="px-4 py-3 flex justify-between items-start">
             <div className="space-y-1">
               <h2 className="text-lg font-semibold">{formattedDate}</h2>

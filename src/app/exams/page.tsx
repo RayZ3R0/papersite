@@ -61,17 +61,6 @@ export default function ExamsPage() {
           )}
         </div>
       </div>
-
-      {/* Mobile View Time Indicator */}
-      <div className="fixed bottom-16 right-4 lg:hidden">
-        <div className="bg-surface/95 backdrop-blur-sm shadow-lg rounded-full px-4 py-2 text-sm border border-border">
-          {nextExam
-            ? `Next: ${nextExam.subject} (${new Date(
-                nextExam.date
-              ).toLocaleDateString()})`
-            : "No upcoming exams"}
-        </div>
-      </div>
     </div>
   );
 }

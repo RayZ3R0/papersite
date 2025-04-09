@@ -45,8 +45,8 @@ export default function DayCell({
         ${className}
       `}
     >
-      {/* Date Number */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col items-center">
+        {/* Date Number */}
         <span
           className={`
             text-sm font-medium rounded-full w-6 h-6 flex items-center justify-center
@@ -64,76 +64,79 @@ export default function DayCell({
           {format(date, "d")}
         </span>
 
-        {/* Your Exam badge - desktop only */}
-        {hasRelevantExams && (
-          <span className="hidden md:inline-block text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded">
-            Your Exam{relevantCount > 1 ? "s" : ""}
-          </span>
+        {/* Mobile Exam Indicators */}
+        {hasExams && (
+          <div className="flex gap-1 mt-1 md:hidden">
+            {hasRelevantExams && (
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            )}
+            {exams.some(e => !e.isRelevant) && (
+              <span className="w-1.5 h-1.5 rounded-full bg-text-muted/50" />
+            )}
+          </div>
         )}
       </div>
 
-      {/* Mobile Exam Indicators */}
-      {hasExams && (
-        <div className="flex justify-center gap-1 mt-1 md:hidden">
-          {hasRelevantExams && (
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-          )}
-          {exams.some(e => !e.isRelevant) && (
-            <span className="w-1.5 h-1.5 rounded-full bg-text-muted/50" />
-          )}
-        </div>
-      )}
+      {/* Desktop Only Content */}
+      <div className="hidden md:block">
+        {/* Your Exam badge */}
+        {hasRelevantExams && (
+          <span className="text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded absolute right-2 top-2">
+            Your Exam{relevantCount > 1 ? "s" : ""}
+          </span>
+        )}
 
-      {/* Exam Pills - desktop only */}
-      {hasExams && (
-        <div className="hidden md:block space-y-1 mt-1">
-          {sortedExams.slice(0, 2).map((exam) => (
-            <div
-              key={exam.code}
-              className={`
-                text-[11px] leading-tight px-1.5 py-1 rounded
-                transition-colors
-                ${
-                  exam.time === "Morning"
-                    ? exam.isRelevant
-                      ? "bg-warning/50 text-warning-foreground font-medium shadow-sm ring-1 ring-warning/40"
-                      : "bg-warning/20 text-warning-foreground/70"
-                    : exam.isRelevant
-                    ? "bg-primary/50 text-primary-foreground font-medium shadow-sm ring-1 ring-primary/40"
-                    : "bg-primary/20 text-primary/70"
-                }
-              `}
-              title={`${exam.subject} - ${exam.title} (${exam.time})${
-                exam.isRelevant ? " - Your Exam" : ""
-              }`}
-            >
-              <div className="truncate flex items-center gap-1">
-                <span>{exam.subject}</span>
-                {exam.isRelevant && (
-                  <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-current opacity-80" />
-                )}
+        {/* Exam Pills */}
+        {hasExams && (
+          <div className="space-y-1 mt-1">
+            {sortedExams.slice(0, 2).map((exam) => (
+              <div
+                key={exam.code}
+                className={`
+                  text-[11px] leading-tight px-1.5 py-1 rounded
+                  transition-colors
+                  ${
+                    exam.time === "Morning"
+                      ? exam.isRelevant
+                        ? "bg-warning/50 text-warning-foreground font-medium shadow-sm ring-1 ring-warning/40"
+                        : "bg-warning/20 text-warning-foreground/70"
+                      : exam.isRelevant
+                      ? "bg-primary/50 text-primary-foreground font-medium shadow-sm ring-1 ring-primary/40"
+                      : "bg-primary/20 text-primary/70"
+                  }
+                `}
+                title={`${exam.subject} - ${exam.title} (${exam.time})${
+                  exam.isRelevant ? " - Your Exam" : ""
+                }`}
+              >
+                <div className="truncate flex items-center gap-1">
+                  <span>{exam.subject}</span>
+                  {exam.isRelevant && (
+                    <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-current opacity-80" />
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {/* More indicator - desktop only */}
-          {exams.length > 2 && (
-            <div
-              className={`
-                text-[11px] text-center py-0.5 px-1.5 rounded font-medium
-                ${
-                  hasRelevantExams
-                    ? "bg-primary/30 text-primary ring-1 ring-primary/20"
-                    : "bg-muted/50 text-text-muted"
-                }
-              `}
-            >
-              +{exams.length - 2} more
-              {relevantCount > 2 && ` (${relevantCount - 2} yours)`}
-            </div>
-          )}
-        </div>
-      )}
+            {/* More indicator */}
+            {exams.length > 2 && (
+              <div
+                className={`
+                  text-[11px] text-center py-0.5 px-1.5 rounded font-medium
+                  ${
+                    hasRelevantExams
+                      ? "bg-primary/30 text-primary ring-1 ring-primary/20"
+                      : "bg-muted/50 text-text-muted"
+                  }
+                `}
+              >
+                +{exams.length - 2} more
+                {relevantCount > 2 && ` (${relevantCount - 2} yours)`}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Hover indicator */}
       <div
