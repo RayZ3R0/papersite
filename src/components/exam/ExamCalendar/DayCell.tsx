@@ -45,28 +45,37 @@ export default function DayCell({
         ${className}
       `}
     >
-      <div className="flex flex-col items-center">
-        {/* Date Number */}
-        <span
-          className={`
-            text-sm font-medium rounded-full w-6 h-6 flex items-center justify-center
-            transition-colors
-            ${
-              isToday
-                ? "bg-primary text-white"
-                : hasRelevantExams
-                ? "text-primary"
-                : "text-text-muted"
-            }
-            ${hasRelevantExams && !isToday ? "font-semibold" : ""}
-          `}
-        >
-          {format(date, "d")}
-        </span>
+      <div className="flex md:block">
+        {/* Date Number - Centered on mobile, top-left on desktop */}
+        <div className="flex justify-center md:justify-start w-full">
+          <span
+            className={`
+              text-sm font-medium rounded-full w-6 h-6 flex items-center justify-center
+              transition-colors
+              ${
+                isToday
+                  ? "bg-primary text-white"
+                  : hasRelevantExams
+                  ? "text-primary"
+                  : "text-text-muted"
+              }
+              ${hasRelevantExams && !isToday ? "font-semibold" : ""}
+            `}
+          >
+            {format(date, "d")}
+          </span>
+        </div>
+
+        {/* Your Exam badge - Desktop only */}
+        {hasRelevantExams && (
+          <span className="hidden md:inline-block text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded absolute right-2 top-2">
+            Your Exam{relevantCount > 1 ? "s" : ""}
+          </span>
+        )}
 
         {/* Mobile Exam Indicators */}
         {hasExams && (
-          <div className="flex gap-1 mt-1 md:hidden">
+          <div className="flex gap-1 mt-1 md:hidden justify-center">
             {hasRelevantExams && (
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             )}
@@ -79,13 +88,6 @@ export default function DayCell({
 
       {/* Desktop Only Content */}
       <div className="hidden md:block">
-        {/* Your Exam badge */}
-        {hasRelevantExams && (
-          <span className="text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded absolute right-2 top-2">
-            Your Exam{relevantCount > 1 ? "s" : ""}
-          </span>
-        )}
-
         {/* Exam Pills */}
         {hasExams && (
           <div className="space-y-1 mt-1">
