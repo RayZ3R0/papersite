@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Examination } from "@/types/exam";
 import { format } from "date-fns";
+import { ExamSection } from "./ExamSection";
 
 interface ExamDetailsDrawerProps {
   isOpen: boolean;
@@ -23,14 +24,24 @@ export function ExamDetailsDrawer({
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
+      // Prevent body scroll when drawer is open on mobile
+      if (window.innerWidth < 768) {
+        document.body.style.overflow = "hidden";
+      }
     } else {
       const timer = setTimeout(() => setIsVisible(false), 300);
+      // Restore body scroll when drawer is closed
+      document.body.style.overflow = "";
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
   if (!isVisible && !isOpen) return null;
 
+  // Separate exams into user's exams and other exams
+  const userExams = exams.filter((exam) => exam.isRelevant);
+  const otherExams = exams.filter((exam) => !exam.isRelevant);
+  
   const formattedDate = format(new Date(date), "MMMM d, yyyy");
 
   return (
@@ -46,79 +57,80 @@ export function ExamDetailsDrawer({
         onClick={onClose}
       />
 
-      {/* Drawer */}
+      {/* Drawer Container */}
       <div
         className={`
-          fixed right-0 top-0 h-full w-full sm:w-96 bg-surface z-50
-          shadow-xl border-l border-border flex flex-col
+          fixed inset-x-0 md:inset-x-auto md:right-0 bottom-0 md:top-16
+          w-full md:w-[448px] h-[85vh] md:h-[calc(100vh-4rem)]
+          bg-surface z-50
           transition-transform duration-300 ease-out
-          ${isOpen ? "translate-x-0" : "translate-x-full"}
+          transform
+          ${
+            isOpen
+              ? "translate-y-0 md:translate-x-0"
+              : "translate-y-full md:translate-y-0 md:translate-x-full"
+          }
+          shadow-xl border-t md:border-l border-border
+          rounded-t-xl md:rounded-none
+          flex flex-col
         `}
       >
-        {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-border">
-          <h2 className="text-lg font-semibold">{formattedDate}</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-muted/80 rounded-full transition-colors"
-          >
-            ×
-          </button>
+        {/* Drag Handle - Mobile Only */}
+        <div className="md:hidden w-full flex justify-center pt-2 pb-1">
+          <div className="w-8 h-1 rounded-full bg-border/60" />
         </div>
 
-        {/* Content - added overflow-y-auto to make it scrollable */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="space-y-4">
-            {exams.length === 0 ? (
-              <p className="text-text-muted text-center py-8">
-                No exams scheduled for this day
-              </p>
-            ) : (
-              exams.map((exam) => (
-                <div
-                  key={exam.code}
-                  className={`
-                    p-4 rounded-lg border border-border space-y-2
-                    ${exam.isRelevant ? "bg-primary/5 border-primary/20" : ""}
-                  `}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">{exam.subject}</h3>
-                      <p className="text-sm text-text-muted">{exam.title}</p>
-                    </div>
-                    <span
-                      className={`
-                        text-xs px-2 py-1 rounded-full
-                        ${
-                          exam.time === "Morning"
-                            ? "bg-warning/20 text-warning-foreground"
-                            : "bg-primary/20 text-primary"
-                        }
-                      `}
-                    >
-                      {exam.time}
-                    </span>
-                  </div>
-
-                  <div className="text-sm text-text-muted space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Time:</span>
-                      <span>{exam.time}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Duration:</span>
-                      <span>{exam.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Code:</span>
-                      <span>{exam.code}</span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
+        {/* Main Header - Fixed */}
+        <div className="flex-none border-b border-border bg-surface/95 backdrop-blur-sm">
+          <div className="px-4 py-3 flex justify-between items-start">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold">{formattedDate}</h2>
+              {userExams.length > 0 && (
+                <p className="text-sm text-primary">
+                  You have {userExams.length} exam{userExams.length !== 1 ? "s" : ""} on
+                  this day
+                </p>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-3 -mr-2 hover:bg-muted/80 rounded-full transition-colors"
+              aria-label="Close drawer"
+            >
+              ×
+            </button>
           </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+          {exams.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-text-muted p-4">
+              <p className="text-center">No exams scheduled for this day</p>
+            </div>
+          ) : (
+            <div className="pb-safe">
+              {/* User's Exams Section */}
+              {userExams.length > 0 && (
+                <ExamSection
+                  title="Your Exams"
+                  exams={userExams}
+                  isSticky={true}
+                  showCountdown={true}
+                />
+              )}
+
+              {/* Other Exams Section */}
+              {otherExams.length > 0 && (
+                <div className="mt-6 mb-4 md:mb-4 pb-16 md:pb-0">
+                  <ExamSection
+                    title="Other Exams"
+                    exams={otherExams}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

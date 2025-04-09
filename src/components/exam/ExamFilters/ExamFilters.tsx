@@ -8,9 +8,10 @@ export function ExamFilters({
   subjects,
   className = "",
 }: ExamFilterProps) {
+  // Hide entire component on mobile using Tailwind's responsive classes
   return (
     <div
-      className={`space-y-4 p-4 bg-surface rounded-lg border border-border ${className}`}
+      className={`hidden md:block space-y-4 p-4 bg-surface rounded-lg border border-border ${className}`}
     >
       {/* View Toggle */}
       <div className="space-y-2">

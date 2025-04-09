@@ -34,7 +34,7 @@ export default function DayCell({
       onClick={onClick}
       className={`
         group relative p-2 rounded-lg border transition-all cursor-pointer
-        hover:bg-surface/80 hover:shadow-sm
+        hover:bg-surface/80 hover:shadow-sm min-h-[40px] md:min-h-0
         ${getEmphasis()}
         ${
           isSelected
@@ -46,7 +46,7 @@ export default function DayCell({
       `}
     >
       {/* Date Number */}
-      <div className="flex justify-between items-start mb-1">
+      <div className="flex justify-between items-start">
         <span
           className={`
             text-sm font-medium rounded-full w-6 h-6 flex items-center justify-center
@@ -63,16 +63,30 @@ export default function DayCell({
         >
           {format(date, "d")}
         </span>
+
+        {/* Your Exam badge - desktop only */}
         {hasRelevantExams && (
-          <span className="text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded">
+          <span className="hidden md:inline-block text-[10px] font-medium bg-primary/30 text-primary px-1.5 rounded">
             Your Exam{relevantCount > 1 ? "s" : ""}
           </span>
         )}
       </div>
 
-      {/* Exam Pills */}
+      {/* Mobile Exam Indicators */}
       {hasExams && (
-        <div className="space-y-1">
+        <div className="flex justify-center gap-1 mt-1 md:hidden">
+          {hasRelevantExams && (
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          )}
+          {exams.some(e => !e.isRelevant) && (
+            <span className="w-1.5 h-1.5 rounded-full bg-text-muted/50" />
+          )}
+        </div>
+      )}
+
+      {/* Exam Pills - desktop only */}
+      {hasExams && (
+        <div className="hidden md:block space-y-1 mt-1">
           {sortedExams.slice(0, 2).map((exam) => (
             <div
               key={exam.code}
@@ -102,7 +116,7 @@ export default function DayCell({
             </div>
           ))}
 
-          {/* More indicator */}
+          {/* More indicator - desktop only */}
           {exams.length > 2 && (
             <div
               className={`
