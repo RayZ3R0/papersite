@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 type DrawerHeight = 'compact' | 'default' | 'full';
 
@@ -23,8 +23,29 @@ export function useDrawerGesture() {
     startHeight: DRAWER_HEIGHTS.default,
   });
 
+  // Track velocity for momentum scrolling
+  const [lastY, setLastY] = useState(0);
+  const [lastTime, setLastTime] = useState(0);
+
   // Find closest snap point
-  const getSnapHeight = useCallback((height: number): DrawerHeight => {
+  const getSnapHeight = useCallback((height: number, velocity: number): DrawerHeight => {
+    // If velocity is high enough, snap to next/previous point
+    const VELOCITY_THRESHOLD = 1.5;
+    if (Math.abs(velocity) > VELOCITY_THRESHOLD) {
+      const heights = Object.entries(DRAWER_HEIGHTS);
+      const currentIndex = heights.findIndex(([_, value]) => 
+        Math.abs(value - height) < 10
+      );
+      
+      if (velocity < 0 && currentIndex < heights.length - 1) {
+        return heights[currentIndex + 1][0] as DrawerHeight;
+      }
+      if (velocity > 0 && currentIndex > 0) {
+        return heights[currentIndex - 1][0] as DrawerHeight;
+      }
+    }
+
+    // Otherwise snap to closest point
     const distances = Object.entries(DRAWER_HEIGHTS).map(([key, value]) => ({
       key: key as DrawerHeight,
       distance: Math.abs(value - height),
@@ -35,8 +56,11 @@ export function useDrawerGesture() {
   }, []);
 
   // Handle touch start
-  const handleTouchStart = useCallback((e: TouchEvent) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     const touch = e.touches[0];
+    setLastY(touch.clientY);
+    setLastTime(Date.now());
     setState(prev => ({
       ...prev,
       isDragging: true,
@@ -46,7 +70,8 @@ export function useDrawerGesture() {
   }, []);
 
   // Handle touch move
-  const handleTouchMove = useCallback((e: TouchEvent) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     if (!state.isDragging) return;
 
     const touch = e.touches[0];
@@ -56,6 +81,9 @@ export function useDrawerGesture() {
       DRAWER_HEIGHTS.full
     );
 
+    setLastY(touch.clientY);
+    setLastTime(Date.now());
+
     setState(prev => ({
       ...prev,
       currentHeight: newHeight,
@@ -63,16 +91,37 @@ export function useDrawerGesture() {
   }, [state.isDragging, state.startHeight, state.startY]);
 
   // Handle touch end
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
     if (!state.isDragging) return;
 
-    const snapTo = getSnapHeight(state.currentHeight);
+    const now = Date.now();
+    const velocity = (lastY - state.startY) / (now - lastTime); // pixels per ms
+    const snapTo = getSnapHeight(state.currentHeight, velocity);
+
     setState(prev => ({
       ...prev,
       isDragging: false,
       currentHeight: DRAWER_HEIGHTS[snapTo],
     }));
-  }, [state.isDragging, state.currentHeight, getSnapHeight]);
+  }, [state.isDragging, state.currentHeight, state.startY, lastY, lastTime, getSnapHeight]);
+
+  // Clean up function
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 768px)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        setState(prev => ({
+          ...prev,
+          isDragging: false,
+          currentHeight: DRAWER_HEIGHTS.default,
+        }));
+      }
+    };
+
+    mql.addEventListener('change', handleChange);
+    return () => mql.removeEventListener('change', handleChange);
+  }, []);
 
   const height = `${state.currentHeight}vh`;
   const isAtFullHeight = state.currentHeight === DRAWER_HEIGHTS.full;
@@ -81,9 +130,9 @@ export function useDrawerGesture() {
     height,
     isAtFullHeight,
     handlers: {
-      onTouchStart: handleTouchStart as unknown as (e: React.TouchEvent) => void,
-      onTouchMove: handleTouchMove as unknown as (e: React.TouchEvent) => void,
-      onTouchEnd: handleTouchEnd as unknown as (e: React.TouchEvent) => void,
+      onTouchStart: handleTouchStart,
+      onTouchMove: handleTouchMove,
+      onTouchEnd: handleTouchEnd,
     },
   };
 }
