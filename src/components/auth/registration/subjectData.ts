@@ -195,76 +195,60 @@ export const registrationSubjects: Record<string, Subject> = {
         { id: 'WIT14', name: 'Unit 4: Project Management', description: 'Planning and managing IT projects' }
     ]
     },
-    'YAD11': {
-    code: 'YAD11',
-    name: 'Art and Design',
-    type: 'AS',
-    category: 'Art and Design',
-    units: [
-        { id: 'WAD11', name: 'Unit 1: Coursework Portfolio', description: 'Development of a personal art portfolio' },
-        { id: 'WAD12', name: 'Unit 2: Externally Set Assignment', description: 'Response to an external art brief' },
-        { id: 'WAD13', name: 'Unit 3: Personal Investigation', description: 'In-depth artistic study with written component' },
-        { id: 'WAD14', name: 'Unit 4: Advanced Externally Set Assignment', description: 'Advanced response to an external art brief' }
-    ]
-    },
-    'YFR11': {
-    code: 'YFR11',
+    'YFR01': {
+    code: 'YFR01',
     name: 'French',
     type: 'AS',
     category: 'French',
     units: [
-        { id: 'WFR11', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in French' },
-        { id: 'WFR12', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
-        { id: 'WFR13', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
-        { id: 'WFR14', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
+        { id: 'WFR01', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in French' },
+        { id: 'WFR02', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
+        { id: 'WFR03', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
+        { id: 'WFR04', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
     ]
     },
-    'YGN11': {
-    code: 'YGN11',
+    'YGN01': {
+    code: 'YGN01',
     name: 'German',
     type: 'AS',
     category: 'German',
     units: [
-        { id: 'WGN11', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in German' },
-        { id: 'WGN12', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
-        { id: 'WGN13', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
-        { id: 'WGN14', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
+        { id: 'WGN01', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in German' },
+        { id: 'WGN02', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
+        { id: 'WGN03', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
+        { id: 'WGN04', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
     ]
     },
-    'YSP11': {
-    code: 'YSP11',
+    'YSP01': {
+    code: 'YSP01',
     name: 'Spanish',
     type: 'AS',
     category: 'Spanish',
     units: [
-        { id: 'WSP11', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Spanish' },
-        { id: 'WSP12', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
-        { id: 'WSP13', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
-        { id: 'WSP14', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
+        { id: 'WSP01', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Spanish' },
+        { id: 'WSP02', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
+        { id: 'WSP03', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
+        { id: 'WSP04', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
     ]
     },
-    'YAR11': {
-    code: 'YAR11',
+    'YAA01': {
+    code: 'YAA01',
     name: 'Arabic',
     type: 'AS',
     category: 'Arabic',
     units: [
-        { id: 'WAR11', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Arabic' },
-        { id: 'WAR12', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
-        { id: 'WAR13', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
-        { id: 'WAR14', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
+        { id: 'WAA01', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Arabic' },
+        { id: 'WAA02', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
     ]
     },
-    'YGK11': {
-    code: 'YGK11',
+    'YGK01': {
+    code: 'YGK01',
     name: 'Greek',
     type: 'AS',
     category: 'Greek',
     units: [
-        { id: 'WGK11', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Greek' },
-        { id: 'WGK12', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
-        { id: 'WGK13', name: 'Unit 3: Understanding and Spoken Response', description: 'Advanced oral response and debate' },
-        { id: 'WGK14', name: 'Unit 4: Research, Understanding and Written Response', description: 'Research-based writing and comprehension' }
+        { id: 'WGK01', name: 'Unit 1: Spoken Expression and Response', description: 'Oral skills and discussion in Greek' },
+        { id: 'WGK02', name: 'Unit 2: Understanding and Written Response', description: 'Listening, reading, and writing skills' },
     ]
     },
     
