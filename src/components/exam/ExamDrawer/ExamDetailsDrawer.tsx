@@ -21,7 +21,7 @@ export function ExamDetailsDrawer({
 }: ExamDetailsDrawerProps) {
   // Handle animation states
   const [isVisible, setIsVisible] = useState(false);
-  const { height, handlers, isAtFullHeight } = useDrawerGesture(onClose);
+  const { height, handlers, isAtFullHeight, key } = useDrawerGesture(onClose, isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,6 +61,7 @@ export function ExamDetailsDrawer({
 
       {/* Drawer Container */}
       <div
+        key={`drawer-${key}`}
         className={`
           fixed inset-x-0 md:inset-x-auto md:right-0 bottom-0 md:top-16
           w-full md:w-[448px] md:h-[calc(100%-4rem)]
@@ -79,6 +80,7 @@ export function ExamDetailsDrawer({
         `}
         style={{ height: window.innerWidth < 768 ? height : undefined }}
       >
+        {/* Rest of component remains the same */}
         {/* Drag Handle - Mobile Only */}
         <div
           className="md:hidden w-full flex justify-center pt-2 pb-1 touch-none"
@@ -94,7 +96,7 @@ export function ExamDetailsDrawer({
           className={`
             flex-none border-b border-border bg-surface/95 backdrop-blur-sm
             md:hidden touch-none cursor-grab active:cursor-grabbing
-            ${isAtFullHeight ? "md:border-t-0" : ""}
+            ${isAtFullHeight ? "rounded-t-none" : ""}
           `}
           onTouchStart={handlers.onTouchStart}
           onTouchMove={handlers.onTouchMove}
