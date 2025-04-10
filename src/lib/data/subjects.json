@@ -5029,7 +5029,359 @@
           "unitId": "unit1",
           "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen (IAL) QP - Unit 1 Edexcel Economics A-level.pdf",
           "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen (IAL) MS - Unit 1 Edexcel Economics A-level.pdf"
-        }
+        },
+        {
+        "title": "Economics Unit 2 - January 2020 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/January 2020 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/January 2020 (IAL) MS.pdf",
+        "session": "January",
+        "year": 2020,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2021 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/January 2021 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/January 2021 (IAL) MS.pdf",
+        "session": "January",
+        "year": 2021,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2022 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/January 2022 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/January 2022 (IAL) MS.pdf",
+        "session": "January",
+        "year": 2022,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2022 (IAL) [Unused]",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/January 2022 (IAL) [Unused] QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/January 2022 (IAL) [Unused] MS.pdf",
+        "session": "January",
+        "year": 2022,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2023 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/January 2023 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/January 2023 (IAL) MS.pdf",
+        "session": "January",
+        "year": 2023,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2019 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/June 2019 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/June 2019 (IAL) MS.pdf",
+        "session": "June",
+        "year": 2019,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2021 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/June 2021 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/June 2021 (IAL) MS.pdf",
+        "session": "June",
+        "year": 2021,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2022 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/June 2022 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/June 2022 (IAL) MS.pdf",
+        "session": "June",
+        "year": 2022,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2023 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/June 2023 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/June 2023 (IAL) MS.pdf",
+        "session": "June",
+        "year": 2023,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2019 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/October 2019 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/October 2019 (IAL) MS.pdf",
+        "session": "October",
+        "year": 2019,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2020 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/October 2020 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/October 2020 (IAL) MS.pdf",
+        "session": "October",
+        "year": 2020,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2021 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/October 2021 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/October 2021 (IAL) MS.pdf",
+        "session": "October",
+        "year": 2021,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2022 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/October 2022 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/October 2022 (IAL) MS.pdf",
+        "session": "October",
+        "year": 2022,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2023 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/October 2023 (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/October 2023 (IAL) MS.pdf",
+        "session": "October",
+        "year": 2023,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - Specimen (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/QP/Specimen (IAL) QP.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/2018/Unit-2/MS/Specimen (IAL) MS.pdf",
+        "session": "Specimen",
+        "year": 0,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2011",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2011 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2011 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2011,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2012",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2012 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2012 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2012,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2013",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2013 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2013 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2013,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2014 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2014,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2014",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2014,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2015 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2015 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2015 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2015,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2016 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2016 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2016 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2016,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2017 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2017 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2017 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2017,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2018 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2018 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2018 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2018,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - January 2019 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2019 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2019 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "January",
+        "year": 2019,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2009",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2009 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2009 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2009,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2010",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2010 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2010 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2010,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2011",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2011 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2011 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2011,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2012",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2012 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2012 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2012,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2013",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2013,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2014 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2014,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2014 (R)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (R) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (R) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2014,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2014",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2014,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2015 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2015,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2015",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2015,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2016 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2016,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2016",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2016,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2017 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2017,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2017",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2017,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - June 2018 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2018 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2018 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "June",
+        "year": 2018,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2016 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2016 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2016 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "October",
+        "year": 2016,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2017 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2017 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2017 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "October",
+        "year": 2017,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - October 2018 (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2018 (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2018 (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "October",
+        "year": 2018,
+        "unitId": "unit2"
+      },
+      {
+        "title": "Economics Unit 2 - Specimen (IAL)",
+        "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/Specimen (IAL) QP - Unit 2 Edexcel Economics A-level.pdf",
+        "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Economics/A-level/Past-Papers/Edexcel-IAL/Unit-2/Specimen (IAL) MS - Unit 2 Edexcel Economics A-level.pdf",
+        "session": "Specimen",
+        "year": 0,
+        "unitId": "unit2"
+      }
       ]
     },
     "psychology": {
