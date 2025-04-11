@@ -1,7 +1,4 @@
-import { Post } from '@/models/Post';
-import { Reply } from '@/models/Reply';
 import { UserWithoutPassword } from './authTypes';
-
 export type ForumAction = 'create' | 'edit' | 'delete' | 'pin' | 'lock';
 
 interface ActionPermissions {
@@ -68,37 +65,6 @@ export function canPerformAction(
     : permissions.replyActions.includes(action);
 }
 
-/**
- * Populate a post with user info
- */
-export async function populatePost(post: any) {
-  if (!post) return null;
-  
-  await Post.populate(post, {
-    path: 'userInfo',
-    select: 'username role verified'
-  });
-
-  return post;
-}
-
-/**
- * Get a formatted post with populated user info
- */
-export async function getFormattedPost(postId: string) {
-  const post = await Post.findById(postId);
-  if (!post) return null;
-
-  const populatedPost = await populatePost(post);
-  const replies = await Reply.find({ postId })
-    .sort('createdAt')
-    .populate('userInfo', 'username role verified');
-
-  return {
-    post: populatedPost,
-    replies
-  };
-}
 
 /**
  * Format a date for display
@@ -112,24 +78,4 @@ export function formatDate(date: Date | string): string {
     hour: 'numeric',
     minute: '2-digit'
   });
-}
-
-/**
- * Check if a post exists and throw if not found
- */
-export async function validatePostExists(postId: string): Promise<void> {
-  const exists = await Post.exists({ _id: postId });
-  if (!exists) {
-    throw new Error('Post not found');
-  }
-}
-
-/**
- * Check if a reply exists and throw if not found
- */
-export async function validateReplyExists(replyId: string): Promise<void> {
-  const exists = await Reply.exists({ _id: replyId });
-  if (!exists) {
-    throw new Error('Reply not found');
-  }
 }

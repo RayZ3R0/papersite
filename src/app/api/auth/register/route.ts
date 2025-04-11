@@ -1,11 +1,26 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { withDb } from '@/lib/api-middleware';
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
-import { User } from '@/models/User';
-import bcrypt from 'bcryptjs';
-import { RegistrationData } from '@/types/registration';
+import { AuthError, AUTH_ERRORS } from '@/lib/authTypes';
+import { registerUser } from '@/lib/auth';
+import { validateRegisterData } from '@/lib/auth/validation';
+import { 
+  RegistrationData, 
+  RegisterData,
+  MongoError,
+  ValidationError
+} from '@/types/registration';
 
-export const POST = withDb(async (req) => {
+// Use Node.js runtime for mongoose and bcrypt
+export const runtime = 'nodejs';
+
+// Make route dynamic
+export const dynamic = 'force-dynamic';
+
+// Maximum duration for registration process
+export const maxDuration = 10;
+
+export async function POST(req: NextRequest) {
   try {
     const data: RegistrationData = await req.json();
     const { basicInfo, subjects, studyPreferences, currentSession } = data;
@@ -15,49 +30,87 @@ export const POST = withDb(async (req) => {
       return createErrorResponse('Username, email and password are required', 400);
     }
 
-    // Check if username exists
-    const existingUser = await User.findOne({ username: basicInfo.username });
-    if (existingUser) {
-      return createErrorResponse('Username already exists', 400);
+    // Validate registration data
+    try {
+      validateRegisterData(basicInfo);
+    } catch (error) {
+      if (error instanceof AuthError) {
+        return createErrorResponse(error.message, 400);
+      }
+      throw error;
     }
 
-    // Check if email exists
-    const existingEmail = await User.findOne({ email: basicInfo.email });
-    if (existingEmail) {
-      return createErrorResponse('Email already registered', 400);
-    }
-
-    // Create user with basic info
-    const user = await User.create({
-      username: basicInfo.username,
-      email: basicInfo.email,
-      password: basicInfo.password, // Password will be hashed by the model pre-save hook
-      role: 'user',
-      verified: false,
-      // Optional fields
-      ...(subjects?.length ? { subjects } : {}),
-      ...(studyPreferences ? { studyPreferences } : {}),
-      ...(currentSession ? { currentSession } : {})
-    });
-
-    // Create safe user data without sensitive fields
-    const userData = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      verified: user.verified,
-      subjects: user.subjects,
-      studyPreferences: user.studyPreferences,
-      currentSession: user.currentSession
+    // Register user through auth service
+    const registerData: RegisterData = {
+      ...basicInfo,
+      subjects,
+      studyPreferences,
+      currentSession
     };
 
-    return createSuccessResponse({
-      message: 'Registration successful',
-      user: userData,
-    });
-  } catch (error) {
+    const result = await registerUser(registerData);
+
+    if (!result || !result.user) {
+      return createErrorResponse(AUTH_ERRORS.SERVER_ERROR, 500);
+    }
+
+    // Format response data
+    const responseData = {
+      user: {
+        id: result.user._id.toString(),
+        username: result.user.username,
+        email: result.user.email,
+        role: result.user.role,
+        verified: result.user.verified,
+        createdAt: result.user.createdAt?.toISOString(),
+        subjects: subjects || [],
+        studyPreferences: studyPreferences || null,
+        currentSession: currentSession || null
+      },
+      message: 'Registration successful. Please verify your email.',
+      verificationRequired: true
+    };
+
+    return createSuccessResponse(responseData, 201);
+  } catch (error: unknown) {
     console.error('Registration error:', error);
-    return createErrorResponse('Registration failed', 500);
+
+    // Handle known auth errors
+    if (error instanceof AuthError) {
+      return createErrorResponse(error.message, 400);
+    }
+
+    // Handle validation errors from mongoose
+    if (error && (error as ValidationError).name === 'ValidationError') {
+      const validationError = error as ValidationError;
+      const messages = Object.values(validationError.errors)
+        .map(err => err.message)
+        .join(', ');
+      return createErrorResponse(`Validation failed: ${messages}`, 400);
+    }
+
+    // Handle duplicate key errors from mongodb
+    if (error && (error as MongoError).code === 11000) {
+      const mongoError = error as MongoError;
+      const field = Object.keys(mongoError.keyPattern || {})[0] || 'field';
+      return createErrorResponse(
+        `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`,
+        409
+      );
+    }
+
+    return createErrorResponse(AUTH_ERRORS.SERVER_ERROR, 500);
   }
-});
+}
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
+}

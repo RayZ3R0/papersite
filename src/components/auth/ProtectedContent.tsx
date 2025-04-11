@@ -44,12 +44,12 @@ export default function ProtectedContent({
   // If not authorized
   if (!isAuthorized) {
     // Log unauthorized reason
-    console.log("Not authorized because:", {
-      hasUser: !!user,
-      userRole: user?.role,
-      requiredRoles: roles,
-      roleCheckPassed: !roles || (user && roles.includes(user.role)),
-    });
+    // console.log("Not authorized because:", {
+    //   hasUser: !!user,
+    //   userRole: user?.role,
+    //   requiredRoles: roles,
+    //   roleCheckPassed: !roles || (user && roles.includes(user.role)),
+    // });
 
     // If we have a fallback, show it
     if (fallback !== undefined) {

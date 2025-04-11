@@ -1,45 +1,77 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Reply } from '@/models/Reply';
 import { Post } from '@/models/Post';
-import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
+import { withDb, createErrorResponse, createSuccessResponse, isValidObjectId } from '@/lib/api-middleware';
 import { requireAuth } from '@/lib/auth/validation';
-import mongoose from 'mongoose';
+import { ValidationError, MongoError } from '@/types/registration';
+
+// Use Node.js runtime for mongoose
+export const runtime = 'nodejs';
 
 // Make route dynamic
 export const dynamic = 'force-dynamic';
+
+// Set maximum duration for operations
+export const maxDuration = 5;
 
 function getPostId(request: NextRequest): string | null {
   const segments = request.url.split('/');
   const idx = segments.findIndex(s => s === 'posts') + 1;
   if (idx < segments.length) {
     const postId = segments[idx];
-    return mongoose.isValidObjectId(postId) ? postId : null;
+    return isValidObjectId(postId) ? postId : null;
   }
   return null;
 }
 
 export const GET = withDb(async (request: NextRequest) => {
   try {
-    // During build, return mock data
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({ replies: [] });
-    }
-
     const postId = getPostId(request);
     if (!postId) {
       return createErrorResponse('Invalid post ID', 400);
     }
 
-    const replies = await Reply.find({ postId })
-      .sort({ createdAt: 1 })
-      .populate('userInfo', 'username role verified');
+    // First check if post exists and is accessible
+    const post = await Post.findById(postId);
+    if (!post) {
+      return createErrorResponse('Post not found', 404);
+    }
 
-    return NextResponse.json({ replies });
+    if (post.isDeleted) {
+      return createErrorResponse('Post has been deleted', 410);
+    }
+
+    // Fetch replies with user info
+    const replies = await Reply.find({ 
+      postId,
+      isDeleted: { $ne: true }
+    })
+      .sort({ createdAt: 1 })
+      .populate('userInfo', 'username role verified')
+      .lean()
+      .exec();
+
+    // Format response data
+    const formattedReplies = replies.map(reply => ({
+      ...reply,
+      _id: reply._id.toString(),
+      author: reply.author.toString(),
+      createdAt: reply.createdAt?.toISOString(),
+      editedAt: reply.editedAt?.toISOString(),
+      userInfo: reply.userInfo ? {
+        role: reply.userInfo.role || 'user',
+        verified: reply.userInfo.verified || false
+      } : undefined
+    }));
+
+    return createSuccessResponse({ 
+      replies: formattedReplies
+    });
   } catch (error) {
     console.error('Error fetching replies:', error);
     return createErrorResponse('Failed to fetch replies');
   }
-}, { requireConnection: false }); // Allow static builds with empty data
+});
 
 export const POST = withDb(async (request: NextRequest) => {
   try {
@@ -51,26 +83,14 @@ export const POST = withDb(async (request: NextRequest) => {
       return createErrorResponse('Invalid post ID', 400);
     }
 
-    // During build, return mock data
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({
-        reply: {
-          _id: 'mock-reply-id',
-          content: 'Mock Reply',
-          author: payload.userId,
-          username: payload.username,
-          postId,
-          createdAt: new Date(),
-          edited: false,
-          likes: []
-        }
-      });
-    }
-
     // Check if post exists and is not locked
     const post = await Post.findById(postId);
     if (!post) {
       return createErrorResponse('Post not found', 404);
+    }
+
+    if (post.isDeleted) {
+      return createErrorResponse('Cannot reply to a deleted post', 410);
     }
 
     if (post.isLocked) {
@@ -80,37 +100,95 @@ export const POST = withDb(async (request: NextRequest) => {
     const body = await request.json();
     const { content } = body;
 
-    if (!content) {
+    if (!content?.trim()) {
       return createErrorResponse('Content is required', 400);
     }
 
-    const reply = new Reply({
-      postId,
-      content,
-      author: payload.userId,
-      username: payload.username
-    });
+    if (content.length > 10000) {
+      return createErrorResponse('Content exceeds maximum length (max 10000 characters)', 400);
+    }
 
-    await reply.save();
+    // Create reply with session to ensure atomic operations
+    const session = await Reply.startSession();
+    let reply;
 
-    // Increment reply count on the post
-    await Post.findByIdAndUpdate(postId, {
-      $inc: { replyCount: 1 },
-      lastReplyAt: new Date()
-    });
+    try {
+      await session.withTransaction(async () => {
+        // Create reply
+        reply = await Reply.create([{
+          postId,
+          content: content.trim(),
+          author: payload.userId.toString(),
+          username: payload.username,
+          createdAt: new Date()
+        }], { session });
 
-    // Populate user info before returning
-    await Reply.populate(reply, {
-      path: 'userInfo',
-      select: 'username role verified'
-    });
+        reply = reply[0]; // Get the created reply
 
-    return NextResponse.json({ reply });
-  } catch (error) {
+        // Update post
+        await Post.findByIdAndUpdate(postId, {
+          $inc: { replyCount: 1 },
+          lastReplyAt: new Date()
+        }, { session });
+
+        // Populate user info
+        await Reply.populate(reply, {
+          path: 'userInfo',
+          select: 'username role verified'
+        });
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    if (!reply) {
+      return createErrorResponse('Failed to create reply', 500);
+    }
+
+    // Format response data to match interface
+    const formattedReply = {
+      ...reply.toObject(),
+      _id: reply._id.toString(),
+      author: reply.author.toString(),
+      createdAt: reply.createdAt?.toISOString(),
+      editedAt: reply.editedAt?.toISOString(),
+      userInfo: reply.userInfo ? {
+        role: reply.userInfo.role || 'user',
+        verified: reply.userInfo.verified || false
+      } : undefined
+    };
+
+    return createSuccessResponse({
+      message: 'Reply created successfully',
+      reply: formattedReply
+    }, 201);
+  } catch (error: unknown) {
     console.error('Error creating reply:', error);
-    return createErrorResponse('Failed to create reply');
+
+    if (error && (error as ValidationError).name === 'ValidationError') {
+      const validationError = error as ValidationError;
+      const messages = Object.values(validationError.errors)
+        .map(err => err.message)
+        .join(', ');
+      return createErrorResponse(`Validation failed: ${messages}`, 400);
+    }
+
+    if (error && (error as MongoError).code === 11000) {
+      return createErrorResponse('Duplicate reply detected', 409);
+    }
+
+    return createErrorResponse('Failed to create reply', 500);
   }
-}, { requireConnection: true }); // Require DB connection for writes
+});
 
 // Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'POST', 'OPTIONS']);
+export function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}

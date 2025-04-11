@@ -3,9 +3,14 @@ import { Reply } from '@/models/Reply';
 import { withDb, handleOptions, createErrorResponse } from '@/lib/api-middleware';
 import { requireAuth } from '@/lib/auth/validation';
 import mongoose from 'mongoose';
+// Use Node.js runtime for mongoose
+export const runtime = 'nodejs';
 
 // Make route dynamic
 export const dynamic = 'force-dynamic';
+
+// Maximum duration for long operations
+export const maxDuration = 10; // 10 seconds
 
 function getReplyId(request: NextRequest): string | null {
   const segments = request.url.split('/');

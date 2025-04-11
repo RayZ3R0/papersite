@@ -1,10 +1,24 @@
 import { NextResponse } from 'next/server';
-import { logoutUser } from '@/lib/auth';
 import { AuthError } from '@/lib/authTypes';
+import { clearAuthTokens } from '@/lib/auth/edge';
+import { logoutUser } from '@/lib/auth';
+
+// Use Node.js runtime for database operations
+export const runtime = 'nodejs';
 
 export async function POST() {
   try {
-    await logoutUser();
+    // First clear auth tokens (Edge compatible)
+    await clearAuthTokens();
+    
+    // Then handle database operations (Node.js)
+    try {
+      await logoutUser();
+    } catch (error) {
+      // Log but don't fail if DB cleanup fails
+      console.error('DB cleanup error:', error);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Logout error:', error);
@@ -20,3 +34,6 @@ export async function POST() {
     );
   }
 }
+
+// Force dynamic to prevent caching
+export const dynamic = 'force-dynamic';

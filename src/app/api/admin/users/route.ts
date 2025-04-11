@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { User } from '@/models/User';
-import { verifyToken } from '@/lib/auth/jwt';
+import { requireAuth } from '@/lib/auth/validation';
+import { verifyAccessToken } from '@/lib/auth/edge';
 
-const ACCESS_TOKEN_KEY = 'access_token';
+// Use Node.js runtime for mongoose
+export const runtime = 'nodejs';
+
+// Make route dynamic
+export const dynamic = 'force-dynamic';
+
+// Maximum duration for admin operations
+export const maxDuration = 10;
 
 export const GET = withDb(async (req: NextRequest) => {
   try {
-    // Get auth token from cookie
-    const accessToken = req.cookies.get(ACCESS_TOKEN_KEY)?.value;
-    if (!accessToken) {
-      console.log('No access token found');
-      return createErrorResponse('Unauthorized', 401);
-    }
-
-    // Verify token and check role
-    const payload = await verifyToken(accessToken);
-    if (!payload || payload.role !== 'admin') {
-      console.log('User not authorized:', payload);
+    // Verify admin access
+    const payload = await requireAuth();
+    if (payload.role !== 'admin') {
       return createErrorResponse('Unauthorized', 403);
     }
 
@@ -28,10 +28,22 @@ export const GET = withDb(async (req: NextRequest) => {
       banned: 1,
       verified: 1,
       createdAt: 1,
-      lastLogin: 1
+      lastLogin: 1,
+      loginCount: 1,
+      verificationAttempts: 1,
+      resetPasswordAttempts: 1,
+      lockoutUntil: 1
     }).sort({ createdAt: -1 });
 
-    return createSuccessResponse({ users });
+    return createSuccessResponse({ 
+      users: users.map(user => ({
+        ...user.toObject(),
+        _id: user._id.toString(),
+        createdAt: user.createdAt?.toISOString(),
+        lastLogin: user.lastLogin?.toISOString(),
+        lockoutUntil: user.lockoutUntil?.toISOString()
+      }))
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     return createErrorResponse('Failed to fetch users', 500);
@@ -40,15 +52,9 @@ export const GET = withDb(async (req: NextRequest) => {
 
 export const DELETE = withDb(async (req: NextRequest) => {
   try {
-    // Get auth token from cookie
-    const accessToken = req.cookies.get(ACCESS_TOKEN_KEY)?.value;
-    if (!accessToken) {
-      return createErrorResponse('Unauthorized', 401);
-    }
-
-    // Verify token and check role
-    const payload = await verifyToken(accessToken);
-    if (!payload || payload.role !== 'admin') {
+    // Verify admin access
+    const payload = await requireAuth();
+    if (payload.role !== 'admin') {
       return createErrorResponse('Unauthorized', 403);
     }
 
@@ -75,9 +81,24 @@ export const DELETE = withDb(async (req: NextRequest) => {
 
     await User.findByIdAndDelete(userId);
 
-    return createSuccessResponse({ message: 'User deleted successfully' });
+    return createSuccessResponse({ 
+      message: 'User deleted successfully',
+      userId: userId.toString()
+    });
   } catch (error) {
     console.error('Error deleting user:', error);
     return createErrorResponse('Failed to delete user', 500);
   }
 });
+
+// Handle preflight requests
+export const OPTIONS = () => {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
+};

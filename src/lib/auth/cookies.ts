@@ -4,12 +4,14 @@ import { type ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const REMEMBER_ME_KEY = 'remember_me';
+const SESSION_ID_KEY = 'session_id';
 
-// Increased cookie durations for better persistence
+// Extended cookie durations for maximum persistence
 const DURATIONS = {
-  accessToken: 24 * 60 * 60, // 24 hours (increased from 4 hours)
-  refreshToken: 30 * 24 * 60 * 60, // 30 days (increased from 7 days)
-  rememberMe: 180 * 24 * 60 * 60 // 180 days (increased from 90 days)
+  accessToken: 7 * 24 * 60 * 60, // 7 days for better persistence
+  refreshToken: 90 * 24 * 60 * 60, // 90 days for long-term sessions
+  rememberMe: 365 * 24 * 60 * 60, // 1 year for remember me
+  sessionId: 90 * 24 * 60 * 60 // 90 days for session tracking
 } as const;
 
 function getCookieValue(cookieName: string) {
@@ -27,15 +29,25 @@ export class AuthCookieManager {
     return {
       accessToken: getCookieValue(ACCESS_TOKEN_KEY),
       refreshToken: getCookieValue(REFRESH_TOKEN_KEY),
+      sessionId: getCookieValue(SESSION_ID_KEY)
     };
   }
 
+  // Generate a unique session ID
+  static generateSessionId(): string {
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  }
+
   static setTokens(accessToken: string, refreshToken: string, rememberMe?: boolean) {
-    // Default to remembering user (setting to true improves persistence)
-    const effectiveRememberMe = rememberMe !== false;
+    // Always use remember me for better persistence
+    const effectiveRememberMe = true;
     
-    // Always use the longer duration for refresh token
-    const refreshMaxAge = effectiveRememberMe ? DURATIONS.rememberMe : DURATIONS.refreshToken;
+    // Use the longest duration for refresh token
+    const refreshMaxAge = DURATIONS.rememberMe;
+
+    // Generate a new session ID if one doesn't exist
+    const existingSessionId = getCookieValue(SESSION_ID_KEY);
+    const sessionId = existingSessionId || this.generateSessionId();
 
     const cookieOptions = {
       httpOnly: true,
@@ -43,6 +55,7 @@ export class AuthCookieManager {
       sameSite: 'lax',
       path: '/',
       priority: 'high',
+      domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || undefined
     } as const;
 
     // In browser context
@@ -86,9 +99,12 @@ export class AuthCookieManager {
   static clearTokens() {
     // In browser context
     if (typeof document !== 'undefined') {
-      document.cookie = `${ACCESS_TOKEN_KEY}=; max-age=0; path=/;`;
-      document.cookie = `${REFRESH_TOKEN_KEY}=; max-age=0; path=/;`;
-      document.cookie = `${REMEMBER_ME_KEY}=; max-age=0; path=/;`;
+      const domain = process.env.NEXT_PUBLIC_COOKIE_DOMAIN;
+      const domainStr = domain ? `domain=${domain};` : '';
+      document.cookie = `${ACCESS_TOKEN_KEY}=; max-age=0; path=/; ${domainStr}`;
+      document.cookie = `${REFRESH_TOKEN_KEY}=; max-age=0; path=/; ${domainStr}`;
+      document.cookie = `${REMEMBER_ME_KEY}=; max-age=0; path=/; ${domainStr}`;
+      document.cookie = `${SESSION_ID_KEY}=; max-age=0; path=/; ${domainStr}`;
       return;
     }
 
@@ -97,6 +113,7 @@ export class AuthCookieManager {
     cookieStore.delete(ACCESS_TOKEN_KEY);
     cookieStore.delete(REFRESH_TOKEN_KEY);
     cookieStore.delete(REMEMBER_ME_KEY);
+    cookieStore.delete(SESSION_ID_KEY);
   }
 
   static getTokenHeader() {

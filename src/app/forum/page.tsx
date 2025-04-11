@@ -11,7 +11,7 @@ import { useReturnTo } from "@/hooks/useReturnTo";
 interface Post {
   _id: string;
   title: string;
-  authorName: string;
+  username: string;
   tags: string[];
   replyCount: number;
   createdAt: string;
@@ -35,7 +35,18 @@ export default function ForumPage() {
           throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
-        setPosts(data.posts || []);
+        // Handle nested data structure and ensure proper date parsing
+        const posts = data.data?.posts || [];
+        setPosts(posts.map((post: any) => ({
+          _id: post._id,
+          title: post.title,
+          username: post.username,
+          tags: post.tags || [],
+          replyCount: typeof post.replyCount === 'number' ? post.replyCount : 0,
+          createdAt: post.createdAt?.$date?.$numberLong
+            ? new Date(parseInt(post.createdAt.$date.$numberLong)).toISOString()
+            : post.createdAt || new Date().toISOString()
+        })));
       } catch (error) {
         console.error("Failed to fetch posts:", error);
         setError(
@@ -121,7 +132,7 @@ export default function ForumPage() {
                       {post.title}
                     </h2>
                     <div className="flex items-center text-sm text-text-muted">
-                      <span>By {post.authorName}</span>
+                      <span>By {post.username}</span>
                       <span className="mx-2">•</span>
                       <span>
                         {new Date(post.createdAt).toLocaleDateString()}

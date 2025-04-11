@@ -1,8 +1,23 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  experimental: {
+    optimizeCss: true,
+  },
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // Environment variables that should be exposed to the client
+  env: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_COOKIE_DOMAIN: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
+  },
+
+  // Static files and public assets
   images: {
+    domains: ["localhost"],
     remotePatterns: [
       {
         protocol: "https",
@@ -10,74 +25,88 @@ const nextConfig = {
       },
     ],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  webpack: (config, { isServer }) => {
-    // Client-side fixes
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      canvas: false,
-      encoding: false,
-    };
 
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      canvas: false,
-      encoding: false,
-      fs: false,
-      path: false,
-    };
-
-    // Server-side fixes
-    if (isServer) {
-      // More comprehensive externals configuration
-      const nodeExternals = [
-        "canvas",
-        "jsdom",
-        "react-pdf/node",
-        "pdfjs-dist/build/pdf.worker.entry",
-      ];
-
-      config.externals = [
-        ...(Array.isArray(config.externals) ? config.externals : []),
-        function (context, request, callback) {
-          if (nodeExternals.includes(request)) {
-            return callback(null, `commonjs ${request}`);
-          }
-          callback();
-        },
-      ];
+  // Webpack configuration
+  webpack: (config, { dev, isServer }) => {
+    // Handle Node.js modules in Edge runtime
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+        stream: false,
+      };
     }
-
-    // Handle .node extensions with ignore-loader
-    config.module.rules.push({
-      test: /\.node$/,
-      loader: "ignore-loader",
-    });
 
     return config;
   },
-  // Handle static and dynamic routes
-  experimental: {
-    optimizeCss: true,
-    serverActions: {
-      bodySizeLimit: "2mb",
-    },
-  },
-  // Configure headers for cookie handling
+
+  // Security headers
   async headers() {
     return [
       {
-        source: "/api/:path*",
+        source: "/:path*",
         headers: [
           {
-            key: "Cache-Control",
-            value: "no-store, must-revalidate",
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
         ],
       },
     ];
+  },
+
+  // Route segment config
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Handle Node.js routes
+        {
+          source: "/api/subjects/:path*",
+          destination: "/api/subjects/:path*",
+          has: [
+            {
+              type: "header",
+              key: "x-invoke-path",
+              value: "/api/subjects",
+            },
+          ],
+        },
+        // Handle Edge routes
+        {
+          source: "/api/auth/:path*",
+          destination: "/api/auth/:path*",
+          has: [
+            {
+              type: "header",
+              key: "x-invoke-path",
+              value: "/api/auth",
+            },
+          ],
+        },
+      ],
+    };
   },
 };
 

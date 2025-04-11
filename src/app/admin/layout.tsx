@@ -14,14 +14,14 @@ function AdminContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
 
-  // Debug log
-  console.log("Admin Content State:", {
-    user,
-    isLoading,
-    pathname,
-    isAdmin: user?.role === "admin",
-    userRole: user?.role,
-  });
+  // // Debug log
+  // console.log("Admin Content State:", {
+  //   user,
+  //   isLoading,
+  //   pathname,
+  //   isAdmin: user?.role === "admin",
+  //   userRole: user?.role,
+  // });
 
   if (isLoading) {
     return (

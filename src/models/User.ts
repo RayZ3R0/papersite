@@ -1,6 +1,5 @@
 import mongoose, { Model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
-
 import { ExamSession } from '@/lib/data/subjects';
 
 interface UserSubjectConfig {
@@ -30,17 +29,34 @@ export interface IUser {
   banned: boolean;
   createdAt: Date;
   lastLogin: Date;
+  
+  // Auth tokens and expiry
   refreshToken?: {
     token: string;
     expiresAt: Date;
   };
   email?: string;
   verified: boolean;
+
+  // Email verification
   verificationToken?: string;
   verificationTokenExpires?: Date;
+  verificationSessionId?: string;
+  verificationAttempts?: number;
+
+  // Password reset
   resetPasswordToken?: string;
   resetPasswordTokenExpires?: Date;
-  // New fields for subject tracking
+  resetPasswordSessionId?: string;
+  resetPasswordAttempts?: number;
+
+  // Security tracking
+  lastPasswordChange?: Date;
+  passwordHistory?: string[];
+  loginAttempts?: number;
+  lockoutUntil?: Date;
+
+  // User data
   subjects?: UserSubjectConfig[];
   currentSession?: ExamSession;
   studyPreferences?: StudyPreferences;
@@ -56,6 +72,7 @@ export interface IUserMethods {
 export type UserModel = Model<IUser, {}, IUserMethods>;
 
 const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
+  // Basic info
   username: {
     type: String,
     required: true,
@@ -64,6 +81,78 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
     minlength: 3,
     maxlength: 30,
   },
+  password: {
+    type: String,
+    required: true,
+    select: false // Don't include password by default
+  },
+  role: {
+    type: String,
+    enum: ['user', 'moderator', 'admin'],
+    default: 'user'
+  },
+  banned: {
+    type: Boolean,
+    default: false
+  },
+
+  // Email and verification
+  email: {
+    type: String,
+    sparse: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
+  },
+  verified: {
+    type: Boolean,
+    default: false
+  },
+
+  // Verification fields
+  verificationToken: String,
+  verificationTokenExpires: Date,
+  verificationSessionId: String,
+  verificationAttempts: {
+    type: Number,
+    default: 0
+  },
+
+  // Password reset fields
+  resetPasswordToken: String,
+  resetPasswordTokenExpires: Date,
+  resetPasswordSessionId: String,
+  resetPasswordAttempts: {
+    type: Number,
+    default: 0
+  },
+
+  // Security tracking
+  lastPasswordChange: Date,
+  passwordHistory: [String],
+  loginAttempts: {
+    type: Number,
+    default: 0
+  },
+  lockoutUntil: Date,
+
+  // Session management
+  refreshToken: {
+    token: String,
+    expiresAt: Date
+  },
+
+  // Timestamps
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now
+  },
+
   // Subject tracking fields
   subjects: [{
     subjectCode: String,
@@ -95,48 +184,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
       enum: ['morning', 'afternoon', 'evening', 'night']
     },
     notifications: Boolean
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  role: {
-    type: String,
-    enum: ['user', 'moderator', 'admin'],
-    default: 'user'
-  },
-  banned: {
-    type: Boolean,
-    default: false
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  lastLogin: {
-    type: Date,
-    default: Date.now
-  },
-  refreshToken: {
-    token: String,
-    expiresAt: Date
-  },
-  email: {
-    type: String,
-    sparse: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
-  },
-  verified: {
-    type: Boolean,
-    default: false
-  },
-  verificationToken: String,
-  verificationTokenExpires: Date,
-  resetPasswordToken: String,
-  resetPasswordTokenExpires: Date
+  }
 });
 
 // Hash password before saving
@@ -173,7 +221,21 @@ userSchema.methods.toJSON = function() {
   return userObject;
 };
 
-// Create model
-export const User = (mongoose.models.User || mongoose.model<IUser, UserModel>('User', userSchema)) as UserModel;
+// Helper function to initialize model
+const initializeModel = () => {
+  try {
+    return mongoose.models.User || mongoose.model<IUser, UserModel>('User', userSchema);
+  } catch (error: any) { // Type assertion for mongoose error
+    // If model compilation fails, return existing model
+    if (error?.name === 'OverwriteModelError') {
+      return mongoose.model<IUser, UserModel>('User');
+    }
+    throw error;
+  }
+};
 
+// Create model
+export const User = initializeModel() as UserModel;
+
+// Ensure model is exported properly for Edge Runtime
 export default User;

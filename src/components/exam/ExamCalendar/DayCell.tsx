@@ -3,6 +3,60 @@
 import { format } from "date-fns";
 import { DayCellProps } from "@/types/exam";
 
+// Helper function to extract unit information from exam code
+function getUnitInfo(code: string): string {
+  // Handle Math units
+  if (code.startsWith('W')) {
+    // Pure Mathematics (WMA) -> P1, P2, etc.
+    if (code.startsWith('WMA')) {
+      const num = code.slice(4, 5);
+      return `P${num}`;
+    }
+    // Further Pure Mathematics (WFM) -> FP1, FP2, etc.
+    if (code.startsWith('WFM0')) {
+      const num = code.slice(4, 5);
+      return `FP${num}`;
+    }
+    // Mechanics (WME) -> M1, M2, etc.
+    if (code.startsWith('WME0')) {
+      const num = code.slice(4, 5);
+      return `M${num}`;
+    }
+    // Statistics (WST) -> S1, S2, etc.
+    if (code.startsWith('WST0')) {
+      const num = code.slice(4, 5);
+      return `S${num}`;
+    }
+    // Decision Mathematics (WDM) -> D1
+    if (code.startsWith('WDM')) {
+      const num = code.slice(4, 5);
+      return `D${num}`;
+    }
+
+    // Handle special case for history units (e.g., WHI01 1C -> U1C)
+    if (code.includes(" ")) {
+      const parts = code.split(" ");
+      if (parts[1].startsWith("1")) {
+        return `U${parts[1]}`;
+      }
+    }
+
+    // Standard units (e.g., WCH11 -> U1)
+    const unitMatch = code.match(/\d+/);
+    if (unitMatch) {
+      const number = unitMatch[0];
+      // If it's a single digit or ends with a letter, use as is
+      if (number.length === 1 || /[A-Z]$/i.test(number)) {
+        return `U${number}`;
+      }
+      // Otherwise take the second digit as unit number
+      return `U${number[1]}`;
+    }
+  }
+
+  return ""; // Return empty string if no unit info found
+}
+
 export default function DayCell({
   date,
   exams,
@@ -112,7 +166,10 @@ export default function DayCell({
                 }`}
               >
                 <div className="truncate flex items-center gap-1">
-                  <span>{exam.subject}</span>
+                  <span className="flex-1 truncate">
+                    {exam.subject}
+                    <span className="ml-1 opacity-90">{getUnitInfo(exam.code)}</span>
+                  </span>
                   {exam.isRelevant && (
                     <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-current opacity-80" />
                   )}

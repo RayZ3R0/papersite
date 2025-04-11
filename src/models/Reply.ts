@@ -26,24 +26,6 @@ export interface IReplyModel extends BaseReply {
   postId: mongoose.Types.ObjectId;
 }
 
-// Mock methods that always return empty results
-const createMockMethods = () => ({
-  find: () => ({
-    sort: () => ({
-      populate: () => Promise.resolve([])
-    }),
-    populate: () => Promise.resolve([])
-  }),
-  findById: () => ({
-    populate: () => Promise.resolve(null)
-  }),
-  exists: () => Promise.resolve(false),
-  deleteMany: () => Promise.resolve({ acknowledged: true }),
-  deleteOne: () => Promise.resolve({ acknowledged: true }),
-  populate: () => Promise.resolve(null),
-  create: () => Promise.resolve({}),
-  save: () => Promise.resolve({}),
-});
 
 // Define schema
 const replySchema = new mongoose.Schema<IReplyModel>({
@@ -104,22 +86,37 @@ replySchema.index({ username: 1 });
 
 // Initialize model with proper checks
 function getReplyModel(): mongoose.Model<IReplyModel> {
-  // Client-side or build-time
-  if (typeof window !== 'undefined' || (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI)) {
-    return createMockMethods() as unknown as mongoose.Model<IReplyModel>;
+  // Return existing model if available
+  if (mongoose.models.Reply) {
+    return mongoose.models.Reply;
   }
 
-  // Server-side with mongoose available
-  if (mongoose.connection.readyState === 1) {
+  // Only create model on server side
+  if (typeof window === 'undefined') {
     try {
-      return mongoose.models.Reply || mongoose.model<IReplyModel>('Reply', replySchema);
-    } catch {
       return mongoose.model<IReplyModel>('Reply', replySchema);
+    } catch (error) {
+      if ((error as Error).name === 'OverwriteModelError') {
+        return mongoose.model<IReplyModel>('Reply');
+      }
+      throw error;
     }
   }
 
-  // If no connection, return mock methods
-  return createMockMethods() as unknown as mongoose.Model<IReplyModel>;
+  // Return a lightweight proxy for client-side type checking
+  // This will be replaced by actual data from API calls
+  const clientProxy = new Proxy({} as mongoose.Model<IReplyModel>, {
+    get: (target, prop) => {
+      if (prop === 'modelName') return 'Reply';
+      if (prop === 'schema') return replySchema;
+      return () => {
+        console.warn('Attempting to call Reply model method on client side');
+        return Promise.resolve(null);
+      };
+    }
+  });
+
+  return clientProxy;
 }
 
 // Create and export the model

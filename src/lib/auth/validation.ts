@@ -38,10 +38,10 @@ export function validateRegisterData(data: RegisterData) {
 }
 
 export async function verifyUserStatus(user: any) {
-  // Temporarily disable email verification for testing
-  // if (!user.verified) {
-  //   throw new AuthError('USER_NOT_VERIFIED', 'Please verify your email to continue');
-  // }
+  // Email verification check
+  if (process.env.REQUIRE_EMAIL_VERIFICATION === 'true' && !user.verified) {
+    throw new AuthError('USER_NOT_VERIFIED', 'Please verify your email to continue');
+  }
 
   if (user.disabled) {
     throw new AuthError('ACCOUNT_DISABLED', 'This account has been disabled');
@@ -49,19 +49,41 @@ export async function verifyUserStatus(user: any) {
 }
 
 export async function requireAuth() {
-  const { accessToken } = AuthCookieManager.getTokens();
+  const { accessToken, refreshToken } = AuthCookieManager.getTokens();
 
-  if (!accessToken) {
+  if (!accessToken && !refreshToken) {
     throw new AuthError('INVALID_TOKEN', 'Authentication required');
   }
 
-  // verifyToken will throw if token is invalid
-  const payload = await verifyToken(accessToken);
-  if (!payload) {
-    throw new AuthError('INVALID_TOKEN', 'Invalid token');
-  }
+  try {
+    // Try access token first
+    if (accessToken) {
+      const payload = await verifyToken(accessToken);
+      if (payload) {
+        return payload;
+      }
+    }
 
-  return payload;
+    // If access token is invalid or missing, try refresh token
+    if (refreshToken) {
+      const { refreshUserToken } = await import('@/lib/auth');
+      const result = await refreshUserToken(refreshToken, true);
+      if (result?.user) {
+        return {
+          userId: result.user._id,
+          username: result.user.username,
+          role: result.user.role
+        };
+      }
+    }
+
+    throw new AuthError('INVALID_TOKEN', 'Invalid or expired tokens');
+  } catch (error) {
+    if (error instanceof AuthError) {
+      throw error;
+    }
+    throw new AuthError('INVALID_TOKEN', 'Failed to authenticate');
+  }
 }
 
 export async function requireRole(roles: UserRole[]) {

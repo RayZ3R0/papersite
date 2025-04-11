@@ -7,12 +7,17 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
+  // Add null check for user
+  if (!user || !user.username) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 p-6 bg-surface rounded-lg shadow-sm">
       {/* Avatar Section */}
       <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
         <span className="text-3xl text-primary">
-          {user.username.charAt(0).toUpperCase()}
+          {user.username?.charAt(0).toUpperCase() || '?'}
         </span>
       </div>
 
@@ -20,12 +25,12 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
       <div className="flex-1 text-center md:text-left">
         <div className="space-y-1">
           <div className="flex items-center gap-2 justify-center md:justify-start">
-            <h1 className="text-2xl font-bold">{user.username}</h1>
+            <h1 className="text-2xl font-bold">{user.username || 'Anonymous'}</h1>
           </div>
           <div className="flex flex-col md:flex-row gap-2 items-center md:items-start text-sm text-text-muted">
-            <span>Member since {new Date(user.createdAt).toLocaleDateString()}</span>
+            <span>Member since {new Date(user.createdAt || Date.now()).toLocaleDateString()}</span>
             <span className="hidden md:inline">•</span>
-            <span className="capitalize">{user.role}</span>
+            <span className="capitalize">{user.role || 'user'}</span>
             {user.verified && (
               <>
                 <span className="hidden md:inline">•</span>

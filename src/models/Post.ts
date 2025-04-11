@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+ import mongoose from 'mongoose';
 import { UserWithoutPassword } from '@/lib/authTypes';
 
 // Base interface with common properties
@@ -14,9 +14,13 @@ interface BasePost {
   views: number;
   isPinned: boolean;
   isLocked: boolean;
+  isDeleted: boolean;
+  deletedAt?: Date;
+  deletedBy?: string;
   tags: string[];
   lastReplyAt?: Date;
   replyCount: number;
+  modifiedBy?: ModAction;
   userInfo?: Partial<UserWithoutPassword>;
 }
 
@@ -31,27 +35,14 @@ export interface IPostModel extends Omit<BasePost, '_id'> {
   author: mongoose.Types.ObjectId;
 }
 
-// Mock methods that always return empty results
-const createMockMethods = () => ({
-  find: () => ({
-    sort: () => ({
-      limit: () => ({
-        populate: () => Promise.resolve([])
-      }),
-      populate: () => Promise.resolve([])
-    }),
-    populate: () => Promise.resolve([])
-  }),
-  findById: () => ({
-    populate: () => Promise.resolve(null)
-  }),
-  exists: () => Promise.resolve(false),
-  findByIdAndUpdate: () => Promise.resolve(null),
-  deleteOne: () => Promise.resolve({ acknowledged: true }),
-  populate: () => Promise.resolve(null),
-  create: () => Promise.resolve({}),
-  save: () => Promise.resolve({}),
-});
+// Moderation action metadata
+interface ModAction {
+  action: 'edit' | 'pin' | 'lock' | 'delete' | 'restore';
+  user: string;
+  timestamp: Date;
+  previousState?: boolean;
+  reason?: string;
+}
 
 // Define schema
 const postSchema = new mongoose.Schema<IPostModel>({
@@ -78,10 +69,6 @@ const postSchema = new mongoose.Schema<IPostModel>({
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
   edited: {
     type: Boolean,
     default: false
@@ -105,6 +92,16 @@ const postSchema = new mongoose.Schema<IPostModel>({
     type: Boolean,
     default: false
   },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  deletedAt: {
+    type: Date
+  },
+  deletedBy: {
+    type: String
+  },
   tags: [{
     type: String,
     trim: true
@@ -115,8 +112,19 @@ const postSchema = new mongoose.Schema<IPostModel>({
   replyCount: {
     type: Number,
     default: 0
+  },
+  modifiedBy: {
+    action: {
+      type: String,
+      enum: ['edit', 'pin', 'lock', 'delete', 'restore']
+    },
+    user: String,
+    timestamp: Date,
+    previousState: Boolean,
+    reason: String
   }
 }, {
+  timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
@@ -136,6 +144,7 @@ postSchema.index({ author: 1 });
 postSchema.index({ username: 1 });
 postSchema.index({ tags: 1 });
 postSchema.index({ isPinned: -1, createdAt: -1 });
+postSchema.index({ isDeleted: 1 });
 
 // Update lastReplyAt on reply count change
 postSchema.pre('save', function(next) {
@@ -147,22 +156,37 @@ postSchema.pre('save', function(next) {
 
 // Initialize model with proper checks
 function getPostModel(): mongoose.Model<IPostModel> {
-  // Client-side or build-time
-  if (typeof window !== 'undefined' || (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI)) {
-    return createMockMethods() as unknown as mongoose.Model<IPostModel>;
+  // Return existing model if available
+  if (mongoose.models.Post) {
+    return mongoose.models.Post;
   }
 
-  // Server-side with mongoose available
-  if (mongoose.connection.readyState === 1) {
+  // Only create model on server side
+  if (typeof window === 'undefined') {
     try {
-      return mongoose.models.Post || mongoose.model<IPostModel>('Post', postSchema);
-    } catch {
       return mongoose.model<IPostModel>('Post', postSchema);
+    } catch (error) {
+      if ((error as Error).name === 'OverwriteModelError') {
+        return mongoose.model<IPostModel>('Post');
+      }
+      throw error;
     }
   }
 
-  // If no connection, return mock methods
-  return createMockMethods() as unknown as mongoose.Model<IPostModel>;
+  // Return a lightweight proxy for client-side type checking
+  // This will be replaced by actual data from API calls
+  const clientProxy = new Proxy({} as mongoose.Model<IPostModel>, {
+    get: (target, prop) => {
+      if (prop === 'modelName') return 'Post';
+      if (prop === 'schema') return postSchema;
+      return () => {
+        console.warn('Attempting to call Post model method on client side');
+        return Promise.resolve(null);
+      };
+    }
+  });
+
+  return clientProxy;
 }
 
 // Create and export the model

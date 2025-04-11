@@ -1,84 +1,114 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { User } from '@/models/User';
-import { emailService } from '@/lib/email/emailService';
-import { generatePasswordResetToken, verifyTokenOfType, clearTokens } from '@/lib/auth/tokens';
+import { AuthError } from '@/lib/authTypes';
+import { generatePasswordResetToken } from '@/lib/auth/tokens';
+import { sendPasswordResetEmail } from '@/app/api/email/actions';
 
-export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // Use Node.js runtime for this route
 
-// Request password reset
-export const POST = withDb(async (request: NextRequest) => {
+export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
 
     if (!email) {
-      return createErrorResponse('Email is required', 400);
+      return NextResponse.json(
+        { error: 'Email is required' },
+        { status: 400 }
+      );
     }
 
     // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user || !user.email) {
-      // Return success even if user not found to prevent email enumeration
-      return createSuccessResponse({
-        message: 'If an account exists with this email, you will receive a password reset link'
-      });
-    }
+    const user = await User.findOne({ email });
 
-    // Generate and send reset token
-    const resetToken = await generatePasswordResetToken(email);
-    if (!resetToken) {
-      return createSuccessResponse({
-        message: 'If an account exists with this email, you will receive a password reset link'
-      });
-    }
-
-    // Send reset email
-    try {
-      await emailService.sendPasswordResetEmail(user.email, resetToken);
-    } catch (error) {
-      console.error('Failed to send password reset email:', error);
-      // Still return success to prevent email enumeration
-    }
-
-    return createSuccessResponse({
-      message: 'If an account exists with this email, you will receive a password reset link'
-    });
-  } catch (error) {
-    console.error('Password reset request error:', error);
-    return createErrorResponse('Failed to process password reset request', 500);
-  }
-});
-
-// Handle password reset
-export const PUT = withDb(async (request: NextRequest) => {
-  try {
-    const { token, password } = await request.json();
-
-    if (!token || !password) {
-      return createErrorResponse('Token and new password are required', 400);
-    }
-
-    // Verify the token
-    const isValid = await verifyTokenOfType(token, 'reset');
-    if (!isValid) {
-      return createErrorResponse('Invalid or expired reset token', 400);
-    }
-
-    // Find user with matching reset token
-    const user = await User.findOne({ resetPasswordToken: token });
     if (!user) {
-      return createErrorResponse('User not found', 404);
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
     }
 
-    // Update password and clear reset tokens
-    user.password = password;
-    await clearTokens(user._id.toString(), 'reset');
+    // Generate reset token
+    const token = await generatePasswordResetToken(email);
 
-    return createSuccessResponse({
-      message: 'Password reset successful'
+    // Send password reset email
+    const emailResult = await sendPasswordResetEmail(email, token);
+
+    if (!emailResult.success) {
+      console.error('Failed to send password reset email:', emailResult.error);
+      return NextResponse.json(
+        { error: 'Failed to send password reset email' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Password reset email sent'
     });
   } catch (error) {
     console.error('Password reset error:', error);
-    return createErrorResponse('Failed to reset password', 500);
+    
+    if (error instanceof AuthError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to process password reset' },
+      { status: 500 }
+    );
   }
-});
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const { token, newPassword } = await request.json();
+
+    if (!token || !newPassword) {
+      return NextResponse.json(
+        { error: 'Token and new password are required' },
+        { status: 400 }
+      );
+    }
+
+    // Find user by reset token
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpires: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpires = undefined;
+    await user.save();
+
+    return NextResponse.json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    console.error('Password update error:', error);
+    
+    if (error instanceof AuthError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to update password' },
+      { status: 500 }
+    );
+  }
+}

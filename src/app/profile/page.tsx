@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import LoadingProfile from "@/components/profile/LoadingProfile";
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -19,7 +19,27 @@ export default function ProfilePage() {
   const { saveCurrentPath } = useReturnTo();
   const currentPath = saveCurrentPath();
 
+  // Debug logs
+  useEffect(() => {
+    console.log('Profile page mounted/updated:', {
+      hasAuth: !!authUser,
+      hasData: !!data,
+      isLoading,
+      hasError: !!error,
+      path: currentPath
+    });
+
+    if (data) {
+      // console.log('Profile data available:', {
+      //   username: data.user?.username,
+      //   subjects: data.subjects?.length || 0,
+      //   hasPreferences: !!data.studyPreferences
+      // });
+    }
+  }, [authUser, data, isLoading, error, currentPath]);
+
   const handleError = (error: Error) => {
+    console.error('Profile component error:', error);
     setErrorMessage(error.message);
     // Auto-hide error after 5 seconds
     setTimeout(() => setErrorMessage(null), 5000);
@@ -50,33 +70,49 @@ export default function ProfilePage() {
       )}
 
       {/* Show loading state */}
-      {isLoading || !data ? (
+      {isLoading ? (
         <LoadingProfile />
+      ) : !data || !data.user ? (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700">No profile data available</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 text-sm text-red-600 hover:text-red-800"
+          >
+            Try again
+          </button>
+        </div>
       ) : (
         <>
           {/* Profile Header */}
-          <ProfileHeader user={data.user} />
+          {data.user && <ProfileHeader user={data.user} />}
 
           {/* Profile Stats */}
-          <ProfileStats
-            subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
-            studyPreferences={data.studyPreferences}
-          />
+          {data.subjects && data.studyPreferences && (
+            <ProfileStats
+              subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
+              studyPreferences={data.studyPreferences}
+            />
+          )}
 
           {/* Subject Dashboard */}
-          <div className="mt-8">
-            <SubjectDashboard
-              subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
-            />
-          </div>
+          {data.subjects && (
+            <div className="mt-8">
+              <SubjectDashboard
+                subjects={data.subjects as unknown as ProfileUserSubjectConfig[]}
+              />
+            </div>
+          )}
 
           {/* Study Preferences */}
-          <div className="mt-8">
-            <StudyPreferences
-              preferences={data.studyPreferences}
-              onError={handleError}
-            />
-          </div>
+          {data.studyPreferences && (
+            <div className="mt-8">
+              <StudyPreferences
+                preferences={data.studyPreferences}
+                onError={handleError}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

@@ -1,19 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import subjectsData from '@/lib/data/subjects.json';
+
+// Use Node.js runtime
+export const runtime = 'nodejs';
 
 // Make route dynamic
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    // Read the subjects data file
-    const subjectsPath = path.join(process.cwd(), 'src/lib/data/subjects.json');
-    const subjectsData = await fs.readFile(subjectsPath, 'utf-8');
-    const subjects = JSON.parse(subjectsData);
-
     // Clean up the response to only include necessary subject info
-    const cleanSubjects = Object.entries(subjects.subjects).reduce((acc, [id, data]: [string, any]) => {
+    const cleanSubjects = Object.entries(subjectsData.subjects).reduce((acc, [id, data]: [string, any]) => {
       acc[id] = {
         id,
         name: data.name || id.charAt(0).toUpperCase() + id.slice(1),
@@ -36,3 +33,7 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Allow caching for better performance
+export const fetchCache = 'force-cache';
+export const revalidate = 3600; // Revalidate every hour

@@ -1,117 +1,126 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Post } from '@/models/Post';
-import { withDb, handleOptions } from '@/lib/api-middleware';
+import { withDb, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { requireAuth } from '@/lib/auth/validation';
+import { MongoError, ValidationError } from '@/types/registration';
+
+// Use Node.js runtime for mongoose
+export const runtime = 'nodejs';
 
 // Make route dynamic
 export const dynamic = 'force-dynamic';
 
-function createMockPost() {
-  return {
-    _id: 'mock-id',
-    title: 'Mock Post',
-    content: 'Mock Content',
-    author: 'mock-author',
-    username: 'mock-user',
-    createdAt: new Date(),
-    edited: false,
-    likes: [],
-    views: 0,
-    isPinned: false,
-    isLocked: false,
-    tags: [],
-    replyCount: 0,
-    userInfo: {
-      username: 'mock-user',
-      role: 'user',
-      verified: false
-    }
-  };
-}
+// Maximum duration for forum operations
+export const maxDuration = 10;
 
 export const GET = withDb(async (request: NextRequest) => {
   try {
-    // During build, return mock data
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({ 
-        posts: [createMockPost()]
-      });
-    }
-
-    // Check if Post model is available
-    if (!Post || typeof Post.find !== 'function') {
-      console.error('Post model not properly initialized');
-      return NextResponse.json({ posts: [] });
-    }
-
-    const posts = await Post.find()
+    const posts = await Post.find(
+      { isDeleted: { $ne: true } },
+      'title content username tags replyCount createdAt isPinned isLocked'
+    )
       .sort({ isPinned: -1, createdAt: -1 })
       .limit(50)
-      .populate('userInfo', 'username role verified');
+      .lean()
+      .exec();
 
-    return NextResponse.json({ posts });
+    // Format post data
+    const formattedPosts = posts.map(post => ({
+      _id: post._id.toString(),
+      title: post.title,
+      username: post.username,
+      tags: post.tags || [],
+      replyCount: post.replyCount || 0,
+      createdAt: post.createdAt?.toISOString(),
+      isPinned: post.isPinned || false,
+      isLocked: post.isLocked || false
+    }));
+
+    return createSuccessResponse({
+      posts: formattedPosts,
+      total: formattedPosts.length
+    });
   } catch (error) {
     console.error('Error fetching posts:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch posts' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to fetch posts');
   }
-}, { requireConnection: false }); // Allow static builds with mock data
+});
 
 export const POST = withDb(async (request: NextRequest) => {
   try {
     // Verify user authentication
     const payload = await requireAuth();
 
-    // During build, return mock response
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-      return NextResponse.json({
-        post: {
-          ...createMockPost(),
-          author: payload.userId,
-          username: payload.username
-        }
-      });
-    }
-
-    // Check if Post model is available
-    if (!Post || typeof Post.create !== 'function') {
-      throw new Error('Post model not properly initialized');
-    }
-
     const body = await request.json();
-    const { title, content } = body;
+    const { title, content, tags } = body;
 
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: 'Title and content are required' },
-        { status: 400 }
-      );
+    if (!title?.trim() || !content?.trim()) {
+      return createErrorResponse('Title and content are required', 400);
     }
 
-    const post = new Post({
-      title,
-      content,
+    if (title.length > 200) {
+      return createErrorResponse('Title is too long (max 200 characters)', 400);
+    }
+
+    if (content.length > 50000) {
+      return createErrorResponse('Content is too long (max 50000 characters)', 400);
+    }
+
+    // Create and save post
+    const post = await Post.create({
+      title: title.trim(),
+      content: content.trim(),
       author: payload.userId,
-      username: payload.username
+      username: payload.username,
+      tags: tags?.filter(Boolean) || [],
+      createdAt: new Date()
     });
 
-    await post.save();
+    // Populate user info
     await Post.populate(post, {
       path: 'userInfo',
       select: 'username role verified'
     });
 
-    return NextResponse.json({ post });
-  } catch (error) {
+    // Format response data
+    const formattedPost = {
+      ...post.toObject(),
+      _id: post._id.toString(),
+      author: post.author.toString(),
+      createdAt: post.createdAt?.toISOString()
+    };
+
+    return createSuccessResponse({
+      message: 'Post created successfully',
+      post: formattedPost
+    }, 201);
+  } catch (error: unknown) {
     console.error('Error creating post:', error);
-    return NextResponse.json(
-      { error: 'Failed to create post' },
-      { status: 500 }
-    );
+    
+    if (error && (error as ValidationError).name === 'ValidationError') {
+      const validationError = error as ValidationError;
+      const messages = Object.values(validationError.errors)
+        .map(err => err.message)
+        .join(', ');
+      return createErrorResponse(`Validation failed: ${messages}`, 400);
+    }
+
+    if (error && (error as MongoError).code === 11000) {
+      return createErrorResponse('Duplicate post detected', 409);
+    }
+    
+    return createErrorResponse('Failed to create post');
   }
-}, { requireConnection: true }); // Require DB connection for writes
+});
 
 // Handle preflight requests
-export const OPTIONS = () => handleOptions(['GET', 'POST', 'OPTIONS']);
+export function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
+}

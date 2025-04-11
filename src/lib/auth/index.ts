@@ -1,31 +1,62 @@
+import { User } from '@/models/User';
+import { AuthError, LoginCredentials, RegisterData, UserRole, UserWithoutPassword, JWTPayload } from '../authTypes';
+import { signAccessToken, signRefreshToken, verifyToken } from './jwt';
+import { AuthCookieManager } from './cookies';
+import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
+import { sendVerificationEmail } from './tokens';
+import { clearAuthTokens } from './edge';
+
+// Re-export for backward compatibility
 export * from './jwt';
 export * from './cookies';
 export * from './validation';
 export * from '../authTypes';
 export * from './tokens';
+export * from './edge';
 
-import { User } from '@/models/User';
-import { AuthError, LoginCredentials, RegisterData } from '../authTypes';
-import { signAccessToken, signRefreshToken, verifyToken } from './jwt';
-import { AuthCookieManager } from './cookies';
-import { validateLoginCredentials, validateRegisterData, verifyUserStatus } from './validation';
-import { sendVerificationEmail } from './tokens';
-
-export async function refreshUserToken(refreshToken?: string) {
+/**
+ * Handle user token refresh
+ */
+export async function refreshUserToken(refreshToken?: string, forceRefresh: boolean = false) {
   try {
-    // If no refresh token provided, attempt to get it from cookies
-    if (!refreshToken) {
-      const tokens = AuthCookieManager.getTokens();
-      refreshToken = tokens.refreshToken;
+    // Get tokens from cookies
+    const tokens = AuthCookieManager.getTokens();
+    const currentRefreshToken = refreshToken || tokens.refreshToken;
+    const currentAccessToken = tokens.accessToken;
       
-      // If still no refresh token, we can't continue
-      if (!refreshToken) {
-        throw new AuthError('INVALID_TOKEN', 'No refresh token available');
+    // If no refresh token, we can't continue
+    if (!currentRefreshToken) {
+      throw new AuthError('INVALID_TOKEN', 'No refresh token available');
+    }
+
+    let payload: JWTPayload;
+
+    // Check access token if available and not forcing refresh
+    if (currentAccessToken && !forceRefresh) {
+      try {
+        const tokenData = await verifyToken(currentAccessToken);
+        // Check if token is still valid and not close to expiry
+        const expiryThreshold = Date.now() + 5 * 60 * 1000; // 5 minutes
+        if (tokenData.exp && tokenData.exp * 1000 > expiryThreshold) {
+          // Token is still valid and not close to expiry
+          return { user: await getUserFromToken(tokenData) };
+        }
+      } catch (error) {
+        // Access token is invalid or expired, continue with refresh
       }
     }
 
-    // Verify the refresh token
-    const payload = await verifyToken(refreshToken);
+    // At this point, either access token is invalid or we're forcing refresh
+    if (!currentRefreshToken) {
+      throw new AuthError('INVALID_TOKEN', 'No refresh token available');
+    }
+
+    try {
+      payload = await verifyToken(currentRefreshToken);
+    } catch (error) {
+      throw new AuthError('INVALID_TOKEN', 'Invalid or expired refresh token');
+    }
+
     if (!payload) {
       throw new AuthError('INVALID_TOKEN', 'Invalid refresh token');
     }
@@ -49,7 +80,7 @@ export async function refreshUserToken(refreshToken?: string) {
       role: user.role,
     };
 
-    const [accessToken, newRefreshToken] = await Promise.all([
+    const [newAccessToken, newRefreshToken] = await Promise.all([
       signAccessToken(tokenPayload),
       signRefreshToken(tokenPayload),
     ]);
@@ -62,7 +93,7 @@ export async function refreshUserToken(refreshToken?: string) {
     await user.save();
 
     // Set new cookies with remember me always true for better persistence
-    AuthCookieManager.setTokens(accessToken, newRefreshToken, true);
+    AuthCookieManager.setTokens(newAccessToken, newRefreshToken, true);
 
     return {
       user: {
@@ -80,8 +111,14 @@ export async function refreshUserToken(refreshToken?: string) {
   }
 }
 
+/**
+ * Handle user login
+ */
 export async function loginUser({ email, username, password, options }: LoginCredentials) {
   try {
+    // Clear any existing session first
+    AuthCookieManager.clearTokens();
+
     // Validate input
     validateLoginCredentials({ email, username, password });
 
@@ -94,6 +131,12 @@ export async function loginUser({ email, username, password, options }: LoginCre
     }
 
     await verifyUserStatus(user);
+
+    // Clear any existing refresh tokens for this user
+    await User.updateOne(
+      { _id: user._id },
+      { $unset: { refreshToken: 1 } }
+    );
 
     // Verify password
     const isValid = await user.comparePassword(password);
@@ -156,6 +199,9 @@ export async function loginUser({ email, username, password, options }: LoginCre
   }
 }
 
+/**
+ * Handle user registration
+ */
 export async function registerUser(data: RegisterData) {
   try {
     // Validate input
@@ -203,22 +249,46 @@ export async function registerUser(data: RegisterData) {
   }
 }
 
+/**
+ * Handle user token verification and data fetch
+ */
+async function getUserFromToken(tokenData: JWTPayload): Promise<UserWithoutPassword> {
+  const user = await User.findById(tokenData.userId);
+  if (!user) {
+    throw new AuthError('USER_NOT_FOUND', 'User not found');
+  }
+  
+  // Handle type conversions for MongoDB types
+  return {
+    _id: user._id.toString(),
+    username: user.username,
+    email: user.email || '', // Provide default empty string for optional email
+    role: user.role,
+    verified: user.verified,
+    createdAt: user.createdAt.toISOString() // Convert Date to ISO string
+  };
+}
+
+/**
+ * Handle user logout
+ * Split into Edge-compatible cookie clearing and optional DB cleanup
+ */
 export async function logoutUser() {
+  // First clear cookies (Edge-compatible)
+  clearAuthTokens();
+  
   try {
+    // If we can access the database, clean up refresh tokens
     const { refreshToken } = AuthCookieManager.getTokens();
     
     if (refreshToken) {
-      // Find and update user
-      await User.updateOne(
+      await User.updateMany(
         { 'refreshToken.token': refreshToken },
         { $unset: { refreshToken: 1 } }
       );
     }
-
-    // Clear cookies
-    AuthCookieManager.clearTokens();
   } catch (error) {
-    console.error('Logout error:', error);
-    throw new AuthError('SERVER_ERROR', 'An error occurred during logout');
+    // Log but don't fail if DB cleanup fails
+    console.error('DB cleanup error during logout:', error);
   }
 }
