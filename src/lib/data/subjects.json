@@ -1032,9 +1032,1584 @@
 {"id": "chem-2016-october-unit1", "unitId": "unit1", "year": 2016, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202016%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202016%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - October 2016 (IAL)"},
 {"id": "chem-2017-october-paper1-unit1", "unitId": "unit1", "year": 2017, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202017%20(IAL)%20QP%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202017%20(IAL)%20MS%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "title": "Chemistry Unit 1 - October 2017 "},
 {"id": "chem-2018-october-paper1-unit1", "unitId": "unit1", "year": 2018, "session": "October", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202018%20(IAL)%20QP%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/October%202018%20(IAL)%20MS%20-%20Paper%201%20Edexcel%20Chemistry%20A-Level.pdf", "title": "Chemistry Unit 1 - October 2018"},
-{"id": "chem-specimen-unit1", "unitId": "unit1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - Specimen (IAL)"}
-
-      ]
+{"id": "chem-specimen-unit1", "unitId": "unit1", "year": 0, "session": "Specimen", "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20QP%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-1/Specimen%20(IAL)%20MS%20-%20Unit%201%20Edexcel%20Chemistry%20A-level.pdf", "title": "Chemistry Unit 1 - Specimen (IAL)"},
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2020",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/January 2020 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/January 2020 (IAL) MS.pdf",
+    "year": 2020,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2021",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/January 2021 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/January 2021 (IAL) MS.pdf",
+    "year": 2021,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2022",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/January 2022 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/January 2022 (IAL) MS.pdf",
+    "year": 2022,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2023",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/January 2023 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/January 2023 (IAL) MS.pdf",
+    "year": 2023,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2019",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/June 2019 (IAL) QP .pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/June 2019 (IAL) MS .pdf",
+    "year": 2019,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2021",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/June 2021 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/June 2021 (IAL) MS.pdf",
+    "year": 2021,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2022",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/June 2022 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/June 2022 (IAL) MS.pdf",
+    "year": 2022,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2023",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/June 2023 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/June 2023 (IAL) MS.pdf",
+    "year": 2023,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2019",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/October 2019 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/October 2019 (IAL) MS.pdf",
+    "year": 2019,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2020",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/October 2020 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/October 2020 (IAL) MS.pdf",
+    "year": 2020,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2021",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/October 2021 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/October 2021 (IAL) MS.pdf",
+    "year": 2021,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2022",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/October 2022 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/October 2022 (IAL) MS.pdf",
+    "year": 2022,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2023",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/October 2023 (IAL) QP.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/October 2023 (IAL) MS.pdf",
+    "year": 2023,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/QP/Specimen (IAL) QP .pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-2/MS/Specimen (IAL) MS .pdf",
+    "year": 2018,
+    "session": "Specimen",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | January 2010",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2010 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2010 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2010,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | January 2011",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2011 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2011 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2011,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | January 2012",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2012 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2012 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2012,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | January 2013",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2013 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2013 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2013,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2014",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2014 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2014,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2015",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2015 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2015 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2015,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2016",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2016 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2016 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2016,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2017",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2017 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2017 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2017,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2018",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2018 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2018 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2018,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | January 2019",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2019 (IAL) QP - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/January 2019 (IAL) MS - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "year": 2019,
+    "session": "January",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2009",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2009 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2009 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2009,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2010",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2010 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2010 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2010,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2011",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2011 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2011 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2011,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2012",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2012 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2012 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2012,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2013",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2013,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2013 (R)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 (R) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2013 (R) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2013,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2014",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2014,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2014 (R)",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (R) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (R) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2014,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2014",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2014 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2014,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2015",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2015,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2015",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2015 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2015,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2016",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2016,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2016",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 (IAL) QP - Unit 2 Edexcel Chemistry.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2016 (IAL) MS - Unit 2 Edexcel Chemistry.pdf",
+    "year": 2016,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 | June 2017",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2017,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2017",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2017 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2017,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2018",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2018 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2018 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2018,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | June 2019",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2019 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/June 2019 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2019,
+    "session": "June",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2016",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2016 (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2016 (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2016,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2017",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2017 (IAL) QP - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2017 (IAL) MS - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "year": 2017,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | October 2018",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2018 (IAL) QP - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/October 2018 (IAL) MS - Paper 2 Edexcel Chemistry A-Level.pdf",
+    "year": 2018,
+    "session": "October",
+    "unitId": "unit2"
+  },
+  {
+    "title": "Chemistry Unit 2 (IAL) | Specimen",
+    "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/Specimen (IAL) QP - Unit 2 Edexcel Chemistry A-level.pdf",
+    "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-2/Specimen (IAL) MS - Unit 2 Edexcel Chemistry A-level.pdf",
+    "year": 2018,
+    "session": "Specimen",
+    "unitId": "unit2"
+  },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2020",
+      "year": 2020,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/January 2020 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/January 2020 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2021",
+      "year": 2021,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/January 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/January 2021 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2022",
+      "year": 2022,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/January 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/January 2022 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2023",
+      "year": 2023,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/January 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/January 2023 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2019",
+      "year": 2019,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/June 2019 (IAL) QP .pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/June 2019 (IAL) MS .pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2021",
+      "year": 2021,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/June 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/June 2021 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2022",
+      "year": 2022,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/June 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/June 2022 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2023",
+      "year": 2023,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/June 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/June 2023 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2019",
+      "year": 2019,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/October 2019 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/October 2019 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2020",
+      "year": 2020,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/October 2020 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/October 2020 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2021",
+      "year": 2021,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/October 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/October 2021 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2022",
+      "year": 2022,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/October 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/October 2022 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2023",
+      "year": 2023,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/October 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/October 2023 (IAL) MS.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | Specimen",
+      "year": 2018,
+      "session": "Specimen",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/QP/Specimen (IAL) QP .pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-3/MS/Specimen (IAL) MS .pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | January 2010",
+      "year": 2010,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2010 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2010 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | January 2011",
+      "year": 2011,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2011 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2011 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | January 2012",
+      "year": 2012,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2012 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2012 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | January 2013",
+      "year": 2013,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2013 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2013 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2014",
+      "year": 2014,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2014 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2014 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2015",
+      "year": 2015,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2015 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2015 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2016",
+      "year": 2016,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2016 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2016 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2017",
+      "year": 2017,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2017 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2017 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2018",
+      "year": 2018,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2018 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2018 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | January 2019",
+      "year": 2019,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2019 (IAL) QP - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/January 2019 (IAL) MS - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | June 2009",
+      "year": 2009,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2009 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2009 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | June 2010",
+      "year": 2010,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2010 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2010 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | June 2011",
+      "year": 2011,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2011 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2011 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | June 2012",
+      "year": 2012,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2012 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2012 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 | June 2013",
+      "year": 2013,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2013 QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2013 MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2014",
+      "year": 2014,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2014 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2014 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2015",
+      "year": 2015,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2015 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2015 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2016",
+      "year": 2016,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2016 (IAL) QP - Unit 3 Edexcel Chemistry.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2016 (IAL) MS - Unit 3 Edexcel Chemistry.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2017",
+      "year": 2017,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2017 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2017 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2018",
+      "year": 2018,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2018 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2018 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | June 2019",
+      "year": 2019,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2019 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/June 2019 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2016",
+      "year": 2016,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2016 (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2016 (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2017",
+      "year": 2017,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2017 (IAL) QP - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2017 (IAL) MS - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | October 2018",
+      "year": 2018,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2018 (IAL) QP - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/October 2018 (IAL) MS - Paper 3 Edexcel Chemistry A-Level.pdf",
+      "unitId": "unit3"
+    },
+    {
+      "title": "Chemistry Unit 3 (IAL) | Specimen",
+      "year": 2018,
+      "session": "Specimen",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/Specimen (IAL) QP - Unit 3 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-3/Specimen (IAL) MS - Unit 3 Edexcel Chemistry A-level.pdf",
+      "unitId": "unit3"
+    },
+      {
+      "title": "Chemistry Unit 4 January 2020 (IAL)",
+      "unitId": "unit4",
+      "year": 2020,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/January 2020 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/January 2020 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2021 (IAL)",
+      "unitId": "unit4",
+      "year": 2021,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/January 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/January 2021 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2022 (IAL)",
+      "unitId": "unit4",
+      "year": 2022,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/January 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/January 2022 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2023 (IAL)",
+      "unitId": "unit4",
+      "year": 2023,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/January 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/January 2023 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2021 (IAL)",
+      "unitId": "unit4",
+      "year": 2021,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/June 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/June 2021 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2022 (IAL)",
+      "unitId": "unit4",
+      "year": 2022,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/June 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/June 2022 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2023 (IAL)",
+      "unitId": "unit4",
+      "year": 2023,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/June 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/June 2023 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 October 2020 (IAL)",
+      "unitId": "unit4",
+      "year": 2020,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/October 2020 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/October 2020 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 October 2021 (IAL)",
+      "unitId": "unit4",
+      "year": 2021,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/October 2021 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/October 2021 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 October 2022 (IAL)",
+      "unitId": "unit4",
+      "year": 2022,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/October 2022 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/October 2022 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 October 2023 (IAL)",
+      "unitId": "unit4",
+      "year": 2023,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/October 2023 (IAL) QP.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/October 2023 (IAL) MS.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 Specimen (IAL)",
+      "unitId": "unit4",
+      "year": 2018,
+      "session": "Specimen",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/QP/Specimen (IAL) QP .pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-4/MS/Specimen (IAL) MS .pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2010",
+      "unitId": "unit4",
+      "year": 2010,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2010 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2010 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2011",
+      "unitId": "unit4",
+      "year": 2011,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2011 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2011 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2012",
+      "unitId": "unit4",
+      "year": 2012,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2012 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2012 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2013",
+      "unitId": "unit4",
+      "year": 2013,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2013 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2013 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2014 (IAL)",
+      "unitId": "unit4",
+      "year": 2014,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2014 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2014 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2015 (IAL)",
+      "unitId": "unit4",
+      "year": 2015,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2015 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2015 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2016 (IAL)",
+      "unitId": "unit4",
+      "year": 2016,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2016 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2016 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2017 (IAL)",
+      "unitId": "unit4",
+      "year": 2017,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2017 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2017 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2018 (IAL)",
+      "unitId": "unit4",
+      "year": 2018,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2018 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2018 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 January 2019 (IAL)",
+      "unitId": "unit4",
+      "year": 2019,
+      "session": "January",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2019 (IAL) QP - Paper 4 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/January 2019 (IAL) MS - Paper 4 Edexcel Chemistry A-Level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2010",
+      "unitId": "unit4",
+      "year": 2010,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2010 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2010 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2011",
+      "unitId": "unit4",
+      "year": 2011,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2011 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2011 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2012",
+      "unitId": "unit4",
+      "year": 2012,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2012 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2012 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2013",
+      "unitId": "unit4",
+      "year": 2013,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2013 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2013 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2013 (R)",
+      "unitId": "unit4",
+      "year": 2013,
+      "session": "June (R)",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2013 (R) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2013 (R) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2014",
+      "unitId": "unit4",
+      "year": 2014,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2014 (R)",
+      "unitId": "unit4",
+      "year": 2014,
+      "session": "June (R)",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 (R) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 (R) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2014 (IAL)",
+      "unitId": "unit4",
+      "year": 2014,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2014 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2015",
+      "unitId": "unit4",
+      "year": 2015,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2015 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2015 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2015 (IAL)",
+      "unitId": "unit4",
+      "year": 2015,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2015 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2015 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2016",
+      "unitId": "unit4",
+      "year": 2016,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2016 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2016 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2016 (IAL)",
+      "unitId": "unit4",
+      "year": 2016,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2016 (IAL) QP - Unit 4 Edexcel Chemistry.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2016 (IAL) MS - Unit 4 Edexcel Chemistry.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2017",
+      "unitId": "unit4",
+      "year": 2017,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2017 QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2017 MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2017 (IAL)",
+      "unitId": "unit4",
+      "year": 2017,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2017 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2017 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2018 (IAL)",
+      "unitId": "unit4",
+      "year": 2018,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2018 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2018 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 June 2019 (IAL)",
+      "unitId": "unit4",
+      "year": 2019,
+      "session": "June",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2019 (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/June 2019 (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 | October 2017 (IAL)",
+      "unitId": "unit4",
+      "year": 2017,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/October 2017 (IAL) QP - Paper 4 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/October 2017 (IAL) MS - Paper 4 Edexcel Chemistry A-Level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 | October 2018 (IAL)",
+      "unitId": "unit4",
+      "year": 2018,
+      "session": "October",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/October 2018 (IAL) QP - Paper 4 Edexcel Chemistry A-Level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/October 2018 (IAL) MS - Paper 4 Edexcel Chemistry A-Level.pdf"
+      },
+      {
+      "title": "Chemistry Unit 4 Specimen (IAL)",
+      "unitId": "unit4",
+      "year": 2018,
+      "session": "Specimen",
+      "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/Specimen (IAL) QP - Unit 4 Edexcel Chemistry A-level.pdf",
+      "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-4/Specimen (IAL) MS - Unit 4 Edexcel Chemistry A-level.pdf"
+      },
+        {
+          "title": "Chemistry Unit 5 | January 2021 (IAL)",
+          "unitId": "unit5",
+          "year": 2021,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/January 2021 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/January 2021 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2022 (IAL)",
+          "unitId": "unit5",
+          "year": 2022,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/January 2022 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/January 2022 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2023 (IAL)",
+          "unitId": "unit5",
+          "year": 2023,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/January 2023 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/January 2023 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2021 (IAL)",
+          "unitId": "unit5",
+          "year": 2021,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/June 2021 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/June 2021 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2022 (IAL)",
+          "unitId": "unit5",
+          "year": 2022,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/June 2022 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/June 2022 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2023 (IAL)",
+          "unitId": "unit5",
+          "year": 2023,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/June 2023 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/June 2023 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2020 (IAL)",
+          "unitId": "unit5",
+          "year": 2020,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/October 2020 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/October 2020 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2021 (IAL)",
+          "unitId": "unit5",
+          "year": 2021,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/October 2021 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/October 2021 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2022 (IAL)",
+          "unitId": "unit5",
+          "year": 2022,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/October 2022 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/October 2022 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2023 (IAL)",
+          "unitId": "unit5",
+          "year": 2023,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/October 2023 (IAL) QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/October 2023 (IAL) MS.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | Specimen (IAL)",
+          "unitId": "unit5",
+          "year": 2018,
+          "session": "Specimen",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/QP/Specimen (IAL) QP .pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-5/MS/Specimen (IAL) MS .pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2011",
+          "unitId": "unit5",
+          "year": 2011,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2011 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2011 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2012",
+          "unitId": "unit5",
+          "year": 2012,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2012 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2012 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2013",
+          "unitId": "unit5",
+          "year": 2013,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2013 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2013 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2014 (IAL)",
+          "unitId": "unit5",
+          "year": 2014,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2014 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2014 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2015 (IAL)",
+          "unitId": "unit5",
+          "year": 2015,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2015 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2015 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2016 (IAL)",
+          "unitId": "unit5",
+          "year": 2016,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2016 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2016 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2017 (IAL)",
+          "unitId": "unit5",
+          "year": 2017,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2017 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2017 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2018 (IAL)",
+          "unitId": "unit5",
+          "year": 2018,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2018 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2018 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | January 2019 (IAL)",
+          "unitId": "unit5",
+          "year": 2019,
+          "session": "January",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2019 (IAL) QP - Paper 5 Edexcel Chemistry A-Level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/January 2019 (IAL) MS - Paper 5 Edexcel Chemistry A-Level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2010",
+          "unitId": "unit5",
+          "year": 2010,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2010 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2010 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2011",
+          "unitId": "unit5",
+          "year": 2011,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2011 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2011 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2012",
+          "unitId": "unit5",
+          "year": 2012,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2012 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2012 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2013",
+          "unitId": "unit5",
+          "year": 2013,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2013 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2013 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2013 (R)",
+          "unitId": "unit5",
+          "year": 2013,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2013 (R) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2013 (R) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2014",
+          "unitId": "unit5",
+          "year": 2014,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2014 (R)",
+          "unitId": "unit5",
+          "year": 2014,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 (R) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 (R) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2014 (IAL)",
+          "unitId": "unit5",
+          "year": 2014,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2014 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2015",
+          "unitId": "unit5",
+          "year": 2015,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2015 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2015 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2015 (IAL)",
+          "unitId": "unit5",
+          "year": 2015,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2015 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2015 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2016",
+          "unitId": "unit5",
+          "year": 2016,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2016 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2016 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2016 (IAL)",
+          "unitId": "unit5",
+          "year": 2016,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2016 (IAL) QP - Unit 5 Edexcel Chemistry.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2016 (IAL) MS - Unit 5 Edexcel Chemistry.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2017",
+          "unitId": "unit5",
+          "year": 2017,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2017 QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2017 MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2017 (IAL)",
+          "unitId": "unit5",
+          "year": 2017,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2017 (IAL) QP - Paper 5 Edexcel Chemistry A-Level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2017 (IAL) MS - Paper 5 Edexcel Chemistry A-Level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2018 (IAL)",
+          "unitId": "unit5",
+          "year": 2018,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2018 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2018 (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | June 2019 (IAL)",
+          "unitId": "unit5",
+          "year": 2019,
+          "session": "June",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2019 (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/June 2019 (IAL) MS - Paper 5 Edexcel Chemistry A-level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2017 (IAL)",
+          "unitId": "unit5",
+          "year": 2017,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/October 2017 (IAL) QP - Paper 5 Edexcel Chemistry A-Level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/October 2017 (IAL) MS - Paper 5 Edexcel Chemistry A-Level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | October 2018 (IAL)",
+          "unitId": "unit5",
+          "year": 2018,
+          "session": "October",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/October 2018 (IAL) QP - Paper 5 Edexcel Chemistry A-Level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/October 2018 (IAL) MS - Paper 5 Edexcel Chemistry A-Level.pdf"
+        },
+        {
+          "title": "Chemistry Unit 5 | Specimen (IAL)",
+          "unitId": "unit5",
+          "year": 2018,
+          "session": "Specimen",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/Specimen (IAL) QP - Unit 5 Edexcel Chemistry A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-5/Specimen (IAL) MS - Unit 5 Edexcel Chemistry A-level.pdf"
+        },
+          {
+            "title": "Chemistry Unit 6 | January 2021 (IAL)",
+            "unitId": "unit6",
+            "year": 2021,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/January 2021 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/January 2021 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2022 (IAL)",
+            "unitId": "unit6",
+            "year": 2022,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/January 2022 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/January 2022 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2023",
+            "unitId": "unit6",
+            "year": 2023,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/January 2023 QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/January 2023 MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2021 (IAL)",
+            "unitId": "unit6",
+            "year": 2021,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/June 2021 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/June 2021 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2022 (IAL)",
+            "unitId": "unit6",
+            "year": 2022,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/June 2022 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/June 2022 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2023 (IAL)",
+            "unitId": "unit6",
+            "year": 2023,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/June 2023 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/June 2023 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2020 (IAL)",
+            "unitId": "unit6",
+            "year": 2020,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/October 2020 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/October 2020 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2021 (IAL)",
+            "unitId": "unit6",
+            "year": 2021,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/October 2021 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/October 2021 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2022 (IAL)",
+            "unitId": "unit6",
+            "year": 2022,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/October 2022 (IAL) QP.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/October 2022 (IAL) MS.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2023 (IAL)",
+            "unitId": "unit6",
+            "year": 2023,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/October 2023 (IAL) QP.pdf",
+            "markingSchemeUrl": null
+          },
+          {
+            "title": "Chemistry Unit 6 | Specimen (IAL)",
+            "unitId": "unit6",
+            "year": 2018,
+            "session": "Specimen",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/QP/Specimen (IAL) QP .pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/2018-spec/Unit-6/MS/Specimen (IAL) MS .pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2011",
+            "unitId": "unit6",
+            "year": 2011,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2011 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2011 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2012",
+            "unitId": "unit6",
+            "year": 2012,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2012 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2012 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2013",
+            "unitId": "unit6",
+            "year": 2013,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2013 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2013 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2014 (IAL)",
+            "unitId": "unit6",
+            "year": 2014,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2014 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2014 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2015 (IAL)",
+            "unitId": "unit6",
+            "year": 2015,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2015 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2015 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2016 (IAL)",
+            "unitId": "unit6",
+            "year": 2016,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2016 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2016 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2017 (IAL)",
+            "unitId": "unit6",
+            "year": 2017,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2017 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2017 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2018 (IAL)",
+            "unitId": "unit6",
+            "year": 2018,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2018 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2018 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | January 2019 (IAL)",
+            "unitId": "unit6",
+            "year": 2019,
+            "session": "January",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2019 (IAL) QP - Paper 6 Edexcel Chemistry A-Level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/January 2019 (IAL) MS - Paper 6 Edexcel Chemistry A-Level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2010",
+            "unitId": "unit6",
+            "year": 2010,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2010 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2010 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2011",
+            "unitId": "unit6",
+            "year": 2011,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2011 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2011 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2012",
+            "unitId": "unit6",
+            "year": 2012,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2012 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2012 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2013",
+            "unitId": "unit6",
+            "year": 2013,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2013 QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2013 MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2014 (IAL)",
+            "unitId": "unit6",
+            "year": 2014,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2014 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2014 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2015 (IAL)",
+            "unitId": "unit6",
+            "year": 2015,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2015 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2015 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2016 (IAL)",
+            "unitId": "unit6",
+            "year": 2016,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2016 (IAL) QP - Unit 6 Edexcel Chemistry.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2016 (IAL) MS - Unit 6 Edexcel Chemistry.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2017 (IAL)",
+            "unitId": "unit6",
+            "year": 2017,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2017 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2017 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2018 (IAL)",
+            "unitId": "unit6",
+            "year": 2018,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2018 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2018 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | June 2019 (IAL)",
+            "unitId": "unit6",
+            "year": 2019,
+            "session": "June",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2019 (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/June 2019 (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2017 (IAL)",
+            "unitId": "unit6",
+            "year": 2017,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/October 2017 (IAL) QP - Paper 6 Edexcel Chemistry A-Level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/October 2017 (IAL) MS - Paper 6 Edexcel Chemistry A-Level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | October 2018 (IAL)",
+            "unitId": "unit6",
+            "year": 2018,
+            "session": "October",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/October 2018 (IAL) QP - Paper 6 Edexcel Chemistry A-Level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/October 2018 (IAL) MS - Paper 6 Edexcel Chemistry A-Level.pdf"
+          },
+          {
+            "title": "Chemistry Unit 6 | Specimen (IAL)",
+            "unitId": "unit6",
+            "year": 2018,
+            "session": "Specimen",
+            "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/Specimen (IAL) QP - Unit 6 Edexcel Chemistry A-level.pdf",
+            "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Chemistry/A-level/Past-Papers/Edexcel-IAL/Unit-6/Specimen (IAL) MS - Unit 6 Edexcel Chemistry A-level.pdf"
+          }
+    ]
     },
     "mathematics": {
       "id": "mathematics",
@@ -6749,7 +8324,199 @@
         "year": 0,
         "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-3/Specimen (IAL) QP - Paper 3 Edexcel Psychology A-level.pdf",
         "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-3/Specimen (IAL) MS - Paper 3 Edexcel Psychology A-level.pdf"
-      }
+      },
+      {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2018",
+          "year": 2018,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2018 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2018 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2019",
+          "year": 2019,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2019 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2019 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2020",
+          "year": 2020,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2020 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2020 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2021",
+          "year": 2021,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2021 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2021 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2022",
+          "year": 2022,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2022 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2022 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | January 2023",
+          "year": 2023,
+          "session": "January",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/January 2023 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/January 2023 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2017",
+          "year": 2017,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2017 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2017 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2018",
+          "year": 2018,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2018 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2018 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2019",
+          "year": 2019,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2019 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2019 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2021",
+          "year": 2021,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2021 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2021 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2022",
+          "year": 2022,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2022 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2022 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2023",
+          "year": 2023,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/June 2023 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/June 2023 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | October 2017",
+          "year": 2017,
+          "session": "October",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/October 2017 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/October 2017 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | October 2018",
+          "year": 2018,
+          "session": "October",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/October 2018 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/October 2018 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | October 2020",
+          "year": 2020,
+          "session": "October",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/October 2020 QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/October 2020 MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | Specimen",
+          "year": 2018,
+          "session": "Specimen",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/QP/Specimen QP.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/New-Spec-Paper-4/MS/Specimen MS.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2010",
+          "year": 2010,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2010 QP - Unit 4 Edexcel  Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2010 MS - Unit 4 Edexcel  Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2011",
+          "year": 2011,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2011 QP - Unit 4 Edexcel  Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2011 MS - Unit 4 Edexcel  Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2012",
+          "year": 2012,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2012 QP - Unit 4 Edexcel  Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2012 MS - Unit 4 Edexcel  Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2013",
+          "year": 2013,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2013 QP - Unit 4 Edexcel  Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2013 MS - Unit 4 Edexcel  Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2014",
+          "year": 2014,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2014 QP - Unit 4 Edexcel  Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2014 MS - Unit 4 Edexcel  Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2015",
+          "year": 2015,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2015 QP - Unit 4 Edexcel Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2015 MS - Unit 4 Edexcel Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2016",
+          "year": 2016,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2016 QP - Unit 4 Edexcel Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2016 MS - Unit 4 Edexcel Psychology A-level.pdf"
+        },
+        {
+          "title": "Edexcel IAL Psychology Unit 4 | June 2017 (Old Spec)",
+          "year": 2017,
+          "session": "June",
+          "unitId": "unit4",
+          "pdfUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2017 QP - Unit 4 Edexcel Psychology A-level.pdf",
+          "markingSchemeUrl": "https://pmt.physicsandmathstutor.com/download/Psychology/A-level/Past-Papers/Edexcel-IAL/Paper-4/June 2017 MS - Unit 4 Edexcel Psychology A-level.pdf"
+        }
       ]
     },
     "business": {
