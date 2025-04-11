@@ -383,7 +383,22 @@
             "previewImage": "/previews/accu1.png",
             "tags": ["accounting", "unit 1", "complete notes"]
           },
-          "topics": []
+          "topics": [
+            {
+              "id": "u1-formulae",
+              "name": "Unit 1 Formulae",
+              "resources": [
+                {
+                  "id": "u1-formulae",
+                  "title": "Unit 1 Formulae",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/rq5Bw49tpJ_Accounting_AS",
+                  "previewImage": "/previews/accu1form.png",
+                  "tags": ["accounting", "unit 1", "formulae"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "u2",
@@ -397,7 +412,22 @@
             "previewImage": "/previews/accu2.png",
             "tags": ["accounting", "unit 2", "complete notes"]
           },
-          "topics": []
+          "topics": [
+            {
+              "id": "u2-formulae",
+              "name": "Unit 2 Formulae",
+              "resources": [
+                {
+                  "id": "u2-formulae",
+                  "title": "Unit 2 Formulae",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/apghy6yNeq_Accounting_formulae",
+                  "previewImage": "/previews/accu2form.png",
+                  "tags": ["accounting", "unit 2", "formulae"]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
