@@ -57,95 +57,120 @@ export default function PostContent({
   };
 
   return (
-    <div className="bg-surface rounded-lg shadow overflow-hidden">
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-divider">
-        <div className="flex justify-between items-start">
-          <div className="flex-1 min-w-0"> {/* Add min-width to enable text wrapping */}
-            {/* Title */}
-            <h2 className="text-xl font-semibold text-text break-words pr-4">
+    <article
+      className="bg-surface rounded-lg shadow-sm border border-divider overflow-hidden"
+      aria-labelledby={`post-title-${post._id}`}
+    >
+      <div className="divide-y divide-divider">
+        {/* Header */}
+        <header className="px-6 py-4 bg-surface-alt/30">
+          {/* Title and Action Menu */}
+          <div className="flex justify-between items-start mb-2.5">
+            <h2 
+              id={`post-title-${post._id}`}
+              className="text-xl font-semibold text-text break-words pr-4 flex items-center gap-2"
+            >
               {post.isPinned && (
-                <span className="inline-block mr-2 text-sm font-medium text-primary">
+                <span className="text-primary flex-shrink-0" title="Pinned post" aria-label="Pinned post">
                   📌
                 </span>
               )}
-              {post.title}
+              <span>{post.title}</span>
             </h2>
+            <div className="flex-shrink-0 -mt-1 -mr-2">
+              <UserActionMenu
+                authorId={post.author}
+                onEdit={() => setIsEditOpen(true)}
+                onDelete={onDelete}
+                onPin={onPin}
+                onLock={onLock}
+                isPinned={post.isPinned}
+                isLocked={post.isLocked}
+                type="post"
+              />
+            </div>
+          </div>
 
-            {/* Author info */}
-            <div className="mt-1 text-sm">
-              <span className="text-text-muted">Posted by </span>
+          {/* Author info and metadata */}
+          <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-1.5">
               <span className="font-medium text-text">
                 {post.username}
                 {post.userInfo?.verified && (
-                  <span className="ml-1 text-primary" title="Verified user">
+                  <span className="ml-0.5 text-primary" title="Verified user" aria-label="Verified user">
                     ✓
                   </span>
                 )}
               </span>
               {post.userInfo?.role !== 'user' && (
-                <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-surface-alt text-text-muted">
+                <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-surface-alt text-text-muted">
                   {post.userInfo?.role}
                 </span>
               )}
-              <span className="ml-2 text-text-muted whitespace-nowrap">
+              <span className="text-text-muted" aria-hidden="true">•</span>
+              <time 
+                dateTime={new Date(post.createdAt).toISOString()} 
+                className="text-text-muted"
+              >
                 {formatDate(post.createdAt)}
-              </span>
+              </time>
               {post.edited && (
-                <span className="ml-2 text-text-muted" title={post.editedAt ? formatDate(post.editedAt) : undefined}>
-                  (edited)
-                </span>
+                <>
+                  <span className="text-text-muted" aria-hidden="true">•</span>
+                  <time
+                    dateTime={post.editedAt ? new Date(post.editedAt).toISOString() : undefined}
+                    className="text-text-muted"
+                    title={post.editedAt ? formatDate(post.editedAt) : undefined}
+                  >
+                    edited
+                  </time>
+                </>
               )}
             </div>
           </div>
+          
+          {post.isLocked && (
+            <div className="mt-2 text-sm text-warning flex items-center gap-1.5" role="alert">
+              <span aria-hidden="true">🔒</span>
+              <span>This post has been locked</span>
+            </div>
+          )}
 
-          {/* Action Menu - Keep it from shrinking */}
-          <div className="flex-shrink-0">
-            <UserActionMenu
-              authorId={post.author}
-              onEdit={() => setIsEditOpen(true)}
-              onDelete={onDelete}
-              onPin={onPin}
-              onLock={onLock}
-              isPinned={post.isPinned}
-              isLocked={post.isLocked}
-              type="post"
-            />
+          {error && (
+            <div className="mt-2 text-sm text-error" role="alert">
+              {error}
+            </div>
+          )}
+        </header>
+
+        {/* Content */}
+        <div className="px-6 py-4">
+          <div className="prose prose-text max-w-none break-words whitespace-pre-wrap">
+            {displayContent.split('\n').map((paragraph, index) => (
+              paragraph.length > 0 ? (
+                <p key={index} className="mb-3 last:mb-0">
+                  {paragraph}
+                </p>
+              ) : (
+                <br key={index} />
+              )
+            ))}
           </div>
+
+          {isLongContent && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-3 text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+              aria-expanded={isExpanded}
+              aria-controls={`content-${post._id}`}
+            >
+              <span>{isExpanded ? 'Show less' : 'Show more'}</span>
+              <span className="text-xs" aria-hidden="true">
+                {isExpanded ? '▲' : '▼'}
+              </span>
+            </button>
+          )}
         </div>
-
-        {post.isLocked && (
-          <div className="mt-2 text-sm text-warning">
-            🔒 This post has been locked
-          </div>
-        )}
-
-        {error && (
-          <div className="mt-2 text-sm text-error">
-            {error}
-          </div>
-        )}
-      </div>
-
-      {/* Content with word wrapping */}
-      <div className="px-6 py-4">
-        <div className="prose prose-text max-w-none break-words whitespace-pre-wrap">
-          {displayContent.split('\n').map((paragraph, index) => (
-            <p key={index} className="mb-4 last:mb-0">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-
-        {/* Show more/less button */}
-        {isLongContent && (
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors"
-          >
-            {isExpanded ? 'Show less' : 'Show more'}
-          </button>
-        )}
       </div>
 
       {/* Edit Dialog */}
@@ -157,6 +182,6 @@ export default function PostContent({
         initialContent={post.content}
         type="post"
       />
-    </div>
+    </article>
   );
 }

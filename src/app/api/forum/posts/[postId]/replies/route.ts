@@ -4,6 +4,7 @@ import { Post } from '@/models/Post';
 import { withDb, createErrorResponse, createSuccessResponse, isValidObjectId } from '@/lib/api-middleware';
 import { requireAuth } from '@/lib/auth/validation';
 import { ValidationError, MongoError } from '@/types/registration';
+import { Types } from 'mongoose';
 
 // Use Node.js runtime for mongoose
 export const runtime = 'nodejs';
@@ -110,12 +111,12 @@ export const POST = withDb(async (request: NextRequest) => {
 
     // Create reply with session to ensure atomic operations
     const session = await Reply.startSession();
-    let reply;
+    let newReply: any = null;
 
     try {
       await session.withTransaction(async () => {
         // Create reply
-        reply = await Reply.create([{
+        const result = await Reply.create([{
           postId,
           content: content.trim(),
           author: payload.userId.toString(),
@@ -123,7 +124,8 @@ export const POST = withDb(async (request: NextRequest) => {
           createdAt: new Date()
         }], { session });
 
-        reply = reply[0]; // Get the created reply
+        // Get the created reply
+        newReply = result[0];
 
         // Update post
         await Post.findByIdAndUpdate(postId, {
@@ -132,7 +134,7 @@ export const POST = withDb(async (request: NextRequest) => {
         }, { session });
 
         // Populate user info
-        await Reply.populate(reply, {
+        await Reply.populate(newReply, {
           path: 'userInfo',
           select: 'username role verified'
         });
@@ -141,20 +143,20 @@ export const POST = withDb(async (request: NextRequest) => {
       await session.endSession();
     }
 
-    if (!reply) {
+    if (!newReply) {
       return createErrorResponse('Failed to create reply', 500);
     }
 
     // Format response data to match interface
     const formattedReply = {
-      ...reply.toObject(),
-      _id: reply._id.toString(),
-      author: reply.author.toString(),
-      createdAt: reply.createdAt?.toISOString(),
-      editedAt: reply.editedAt?.toISOString(),
-      userInfo: reply.userInfo ? {
-        role: reply.userInfo.role || 'user',
-        verified: reply.userInfo.verified || false
+      ...newReply.toObject(),
+      _id: newReply._id.toString(),
+      author: newReply.author.toString(),
+      createdAt: newReply.createdAt?.toISOString(),
+      editedAt: newReply.editedAt?.toISOString(),
+      userInfo: newReply.userInfo ? {
+        role: newReply.userInfo.role || 'user',
+        verified: newReply.userInfo.verified || false
       } : undefined
     };
 
