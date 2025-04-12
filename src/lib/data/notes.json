@@ -783,6 +783,20 @@
                   "tags": ["biology", "unit 6", "repeated ideas"]
                 }
               ]
+            },
+            {
+              "id": "u6-summary",
+              "name": "Unit 6 Summary",
+              "resources": [
+                {
+                  "id": "u6-summary",
+                  "title": "Unit 3 and 6 Complete Summary",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/5m2EuFaSrW_UNIT_3___6_Biology-Experiments",
+                  "previewImage": "/previews/biou6sum.png",
+                  "tags": ["biology", "unit 6", "summary"]
+                }
+              ]
             }
           ]
         }
