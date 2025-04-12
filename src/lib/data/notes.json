@@ -83,16 +83,16 @@
               ]
             },
             {
-              "id": "redox",
-              "name": "Redox Reactions",
+              "id": "redox-u2",
+              "name": "Reduction and Oxidation",
               "resources": [
                 {
-                  "id": "redox-reactions",
-                  "title": "Redox Reactions Notes",
+                  "id": "redox-reaction-and-groups",
+                  "title": "Redox Chemistry and Group 1, 2 and 7",
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/rWxK5cHs9r_Oxidation_and_redox_reactions!!",
-                  "previewImage": "/previews/redox.png",
-                  "tags": ["chemistry", "unit 2", "redox"]
+                  "previewImage": "/previews/redoxo.png",
+                  "tags": ["chemistry", "unit 2", "reduction", "oxidation"]
                 }
               ]
             },
@@ -157,7 +157,7 @@
         {
           "id": "u3",
           "name": "Unit 3",
-          "number": 1,
+          "number": 3,
           "description": "Chemistry Unit 3",
           "topics": [
             {
@@ -169,16 +169,16 @@
                   "title": "Chemistry Unit 3 Notes By Alex Rider",
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/xHMAqvuf39_Chemistry_Unit_3_By_Alex_Rider",
-                  "previewImage": "/previews/kinetics.png",
-                  "tags": ["chemistry", "kinetics", "unit 3", "further kinetics"]
+                  "previewImage": "/previews/alex.png",
+                  "tags": ["chemistry", "unit 3"]
                 },
                 {
-                  "id": "alex-rider",
+                  "id": "osama-bin-laden",
                   "title": "Chemistry Unit 3 Notes By Osama Bin Laden",
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/hHL33mGnAZ_Unit_3_by_Osama_Orabi",
                   "previewImage": "/previews/osama.png",
-                  "tags": ["chemistry", "kinetics", "unit 3", "further kinetics"]
+                  "tags": ["chemistry", "unit 3"]
                 }
               ]
             }
@@ -373,7 +373,7 @@
             "title": "Complete Chemistry U6 Notes",
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/cqhxw4s9pY_Chemistry_Unit_6_Notes",
-            "previewImage": "/previews/p3.png",
+            "previewImage": "/previews/chemu6.png",
             "tags": ["chemistry", "unit 6", "complete notes"]
           },
           "topics": []
@@ -442,6 +442,243 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "physics",
+      "name": "Physics",
+      "description": "Physics notes.",
+      "units": [
+        {
+          "id": "u1",
+          "name": "Unit 1",
+          "number": 1,
+          "unitPdf": {
+            "id": "phy-u1-full",
+            "title": "Complete Physics Unit 1 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/MSHt8apG3p_Physics-Unit-1_Revision_Notes",
+            "previewImage": "/previews/phyu1.png",
+            "tags": ["physics", "unit 1", "complete notes"]
+          },
+          "topics": [
+            {
+              "id": "u1-motion",
+              "name": "Motion",
+              "resources": [
+                {
+                  "id": "double-motion",
+                  "title": "Double Motion Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/UQmaK5nvNm_Directions__Man!",
+                  "previewImage": "/previews/doublemotion.png",
+                  "tags": ["physics", "unit 1", "motion"]
+                }
+              ]
+            },
+            {
+              "id": "u1-faq",
+              "name": "Unit 1 FAQ",
+              "resources": [
+                {
+                  "id": "u1-faq",
+                  "title": "Unit 1 FAQ",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/QJxM8jHTbq_PHYSICS_UNIT_1",
+                  "previewImage": "/previews/phyu1faq.png",
+                  "tags": ["physics", "unit 1", "faq"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u2",
+          "name": "Unit 2",
+          "number": 1,
+          "unitPdf": {
+            "id": "phy-u2-full",
+            "title": "Complete Physics Unit 2 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/2HTsudFXru_Chemistry_Edexcel_IAS_Unit_2_Notes_new",
+            "previewImage": "/previews/phyu2.png",
+            "tags": ["physics", "unit 2", "complete notes"]
+          },
+          "topics": [
+            {
+              "id": "waves",
+              "name": "Waves",
+              "resources": [
+                {
+                  "id": "u2-waves",
+                  "title": "Waves Complete Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/pR7Jv84HPr_Waves_notes_Aravinth",
+                  "previewImage": "/previews/phywaves.png",
+                  "tags": ["physics", "unit 2", "waves"]
+                },
+                {
+                  "id": "u2-waves-2",
+                  "title": "Waves Particle Duality",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/kgcMtVNEvD_Wave_Particle_Duality_Edexcel_IAL_PHYSICS",
+                  "previewImage": "/previews/waveparticle.png",
+                  "tags": ["physics", "unit 2", "waves", "particle duality"]
+                }
+              ]
+            },
+            {
+              "id": "u2-faq",
+              "name": "Unit 2 FAQ",
+              "resources": [
+                {
+                  "id": "u2-faq",
+                  "title": "Unit 2 FAQ",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/rKenF5FpWm_PHYSCIS_UNIT_2",
+                  "previewImage": "/previews/phyu2faq.png",
+                  "tags": ["physics", "unit 2", "faq"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u3",
+          "name": "Unit 3",
+          "number": 1,
+          "unitPdf": {
+            "id": "phy-u3-full",
+            "title": "Complete Physics Unit 3 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/TnTn2Jynjm_IAL_Physics_Unit_3_note-2",
+            "previewImage": "/previews/phyu3.png",
+            "tags": ["physics", "unit 3", "complete notes"]
+          },
+          "topics": [
+            {
+              "id": "u3-faq",
+              "name": "Unit 3 FAQ",
+              "resources": [
+                {
+                  "id": "u3-faq",
+                  "title": "Unit 3 FAQ",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/2Edb8hVpTQ_Physics_Unit_3_FAQ",
+                  "previewImage": "/previews/phyu3faq.png",
+                  "tags": ["physics", "unit 3", "faq"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u4",
+          "name": "Unit 4",
+          "number": 1,
+          "unitPdf": {
+            "id": "phy-u4-full",
+            "title": "Complete Physics Unit 4 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/3YW5DXU4pQ_Unit_4_notes",
+            "previewImage": "/previews/phyu4.png",
+            "tags": ["physics", "unit 4", "complete notes"]
+          },
+          "topics": [
+            {
+              "id": "u4-faq",
+              "name": "Unit 4 FAQ",
+              "resources": [
+                {
+                  "id": "u4-faq",
+                  "title": "Unit 4 FAQ",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/Xq9CyEKbsc_A2-Physics-Unit-4-Definitions-and-Statements-Questions__1_",
+                  "previewImage": "/previews/phyu4faq.png",
+                  "tags": ["physics", "unit 4", "faq"]
+                }
+              ]
+            },
+            {
+              "id": "u4-short-notes",
+              "name": "Short Notes",
+              "resources": [
+                {
+                  "id": "u4-short-notes",
+                  "title": "Unit 4 Complete Short Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/JxfQFPNP5r_Physics_Unit_4",
+                  "previewImage": "/previews/phyu4short.png",
+                  "tags": ["physics", "unit 4", "short notes"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u5",
+          "name": "Unit 5",
+          "number": 1,
+          "unitPdf": {
+            "id": "phy-u5-full",
+            "title": "Physics Unit 5 Complete Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/uLBBgH4f2e_Unit_5_notes",
+            "previewImage": "/previews/phyu5.png",
+            "tags": ["physics", "unit 5", "complete notes"]
+          },
+          "topics": [
+            {
+              "id": "u5-short-notes",
+              "name": "Short Notes",
+              "resources": [
+                {
+                  "id": "u5-short-notes",
+                  "title": "Unit 5 Complete Short Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/Kf9R3F9Uwv_Physics_Unit_5",
+                  "previewImage": "/previews/phyu5short.png",
+                  "tags": ["physics", "unit 5", "short notes"]
+                }
+              ]
+            },
+            {
+              "id": "u5-faq",
+              "name": "Unit 5 FAQ",
+              "resources": [
+                {
+                  "id": "u5-faq",
+                  "title": "Unit 5 FAQ",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/TjkhDtEyYT_Unit-5_FAQ",
+                  "previewImage": "/previews/phyu5faq.png",
+                  "tags": ["physics", "unit 5", "faq"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "u6",
+          "name": "Unit 6",
+          "number": 1,
+          "topics": [
+          {
+            "id": "u6-uncertainty",
+            "name": "Uncertainty",
+            "resources": [
+              {
+                "id": "u6-uncertainty",
+                "title": "All About Uncertainty",
+                "type": "pdf",
+                "downloadUrl": "https://pdfhost.io/v/bANpNdxbNj_All_about_UNCERTAINTY-Unit-6",
+                "previewImage": "/previews/phyu6uncert.png",
+                "tags": ["physics", "unit 6", "uncertainty"]
+              }
+            ]
+          }
+        ]
         }
       ]
     }
