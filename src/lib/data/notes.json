@@ -763,13 +763,28 @@
           "number": 1,
           "unitPdf": {
             "id": "bio-u6-full",
-            "title": "Complete Biology Unit 6 Notes",
+            "title": "Complete Biology Unit 6 Guide",
             "type": "pdf",
-            "downloadUrl": "https://pdfhost.io/v/2HTsudFXru_Chemistry_Edexcel_IAS_Unit_6_Notes_new",
+            "downloadUrl": "https://pdfhost.io/v/ATfsXvRcbE_Unit_6_mohab__1_",
             "previewImage": "/previews/biou6.png",
             "tags": ["biology", "unit 6", "complete notes"]
           },
-          "topics": []
+          "topics": [
+            {
+              "id": "u6-repeated-ideas",
+              "name": "Repeated Ideas",
+              "resources": [
+                {
+                  "id": "u6-repeated-ideas",
+                  "title": "Unit 6 Repeated Ideas",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/TXGH3DJGKg_U6_Repeated_Ideas",
+                  "previewImage": "/previews/biou6rep.png",
+                  "tags": ["biology", "unit 6", "repeated ideas"]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
