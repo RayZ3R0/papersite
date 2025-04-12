@@ -1,6 +1,6 @@
 'use client';
 
-import { SearchBox } from '@/components/search/SearchBox';
+import { SearchBox } from '@/components/annotate/search/SearchBox';
 
 export function Header() {
   return (
@@ -15,7 +15,13 @@ export function Header() {
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
-            <SearchBox />
+            <SearchBox 
+              placeholder="Search papers..."
+              onSearch={(query) => {
+                // Handle search here
+                console.log('Search:', query);
+              }}
+            />
           </div>
         </div>
       </div>
