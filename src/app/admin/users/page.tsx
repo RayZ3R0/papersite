@@ -28,7 +28,7 @@ export default function UsersPage() {
         throw new Error(data.error || 'Failed to fetch users');
       }
 
-      setUsers(data.users);
+      setUsers(data.data.users);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to fetch users');
     } finally {

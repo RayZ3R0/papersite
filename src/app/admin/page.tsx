@@ -26,9 +26,9 @@ export default function AdminDashboard() {
 
       // Calculate stats from users data
       const stats = {
-        totalUsers: data.users.length,
-        unverifiedUsers: data.users.filter((u: any) => !u.verified).length,
-        bannedUsers: data.users.filter((u: any) => u.banned).length,
+        totalUsers: data.data.users.length,
+        unverifiedUsers: data.data.users.filter((u: any) => !u.verified).length,
+        bannedUsers: data.data.users.filter((u: any) => u.banned).length,
       };
 
       setStats(stats);
