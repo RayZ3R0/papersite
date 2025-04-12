@@ -71,6 +71,16 @@ export default class PDFSaver {
           viewport,
           scale: { x: scaleX, y: scaleY, stroke: strokeScale }
         });
+        
+        // Separate pen and eraser strokes
+        const penStrokes = strokes.filter(stroke => stroke.tool !== 'eraser');
+        const eraserStrokes = strokes.filter(stroke => stroke.tool === 'eraser');
+        
+        this.logWithTime('Stroke breakdown', {
+          total: strokes.length,
+          pen: penStrokes.length,
+          eraser: eraserStrokes.length
+        });
   
         ctx.save();
         
@@ -83,8 +93,8 @@ export default class PDFSaver {
         ctx.lineCap = 'round';
         ctx.miterLimit = 2;
         
-        // Draw each stroke with enhanced quality
-        for (const stroke of strokes) {
+        // Draw pen strokes first
+        for (const stroke of penStrokes) {
           try {
             // Scale coordinates with enhanced precision
             const scaledStroke = {
@@ -98,33 +108,72 @@ export default class PDFSaver {
               size: stroke.size * strokeScale * 1.05  // 5% boost in stroke width
             };
   
-            // Log stroke data
-            this.logWithTime('Processing stroke', {
-              original: {
-                x: stroke.points[0].x,
-                y: stroke.points[0].y,
-                size: stroke.size
-              },
-              scaled: {
-                x: scaledStroke.points[0].x,
-                y: scaledStroke.points[0].y,
-                size: scaledStroke.size
-              }
-            });
+            // Log stroke data for first few strokes
+            if (penStrokes.indexOf(stroke) < 3) {
+              this.logWithTime(`Pen stroke ${penStrokes.indexOf(stroke)}`, {
+                tool: stroke.tool,
+                color: stroke.color,
+                size: stroke.size,
+                points: stroke.points.length
+              });
+            }
   
             const renderer = new StrokeRenderer(scaledStroke, {
               scale: 1,
-              // Enhance smoothing for export
               smoothing: true,
               forExport: true,
-              // Add enhanced smoothing option if your StrokeRenderer supports it
               enhancedSmoothing: true
             });
   
             renderer.render(ctx, { scale: 1 });
           } catch (err) {
-            this.logWithTime('Error rendering stroke:', err);
+            this.logWithTime('Error rendering pen stroke:', err);
           }
+        }
+        
+        // Now apply eraser strokes using destination-out blend mode
+        if (eraserStrokes.length > 0) {
+          // Change composite operation for erasers
+          ctx.globalCompositeOperation = 'destination-out';
+          
+          for (const stroke of eraserStrokes) {
+            try {
+              // Scale coordinates with enhanced precision
+              const scaledStroke = {
+                ...stroke,
+                points: stroke.points.map(point => ({
+                  ...point,
+                  x: point.x * scaleX,
+                  y: point.y * scaleY
+                })),
+                // Make eraser slightly larger for better coverage
+                size: stroke.size * strokeScale * 1.1  // 10% boost in eraser width
+              };
+  
+              // Log eraser stroke data
+              if (eraserStrokes.indexOf(stroke) < 3) {
+                this.logWithTime(`Eraser stroke ${eraserStrokes.indexOf(stroke)}`, {
+                  tool: stroke.tool,
+                  size: stroke.size,
+                  points: stroke.points.length
+                });
+              }
+  
+              const renderer = new StrokeRenderer(scaledStroke, {
+                scale: 1,
+                smoothing: true,
+                forExport: true,
+                enhancedSmoothing: true
+              });
+  
+              renderer.render(ctx, { scale: 1 });
+            } catch (err) {
+              this.logWithTime('Error rendering eraser stroke:', err);
+            }
+          }
+          
+          // Reset composite operation back to default
+          ctx.globalCompositeOperation = 'source-over';
         }
   
         // Restore canvas context
