@@ -1,10 +1,10 @@
 'use client';
 
-import { PDFDocument, PDFEmbeddedPage, PDFPage } from 'pdf-lib';
-import { pdfjs } from 'react-pdf';
 import { Stroke } from '@/lib/annotationStore';
-import StrokeRenderer, { StrokeRendererOptions } from './rendering/StrokeRenderer';
-import { RenderOptions } from './rendering/BaseRenderer';
+import StrokeRenderer from './rendering/StrokeRenderer';
+import { PDFDocument } from 'pdf-lib';
+import { PDFSaveError, PDFSaveErrorCode } from './pdf-saver/types';
+import { getErrorMessage } from './pdf-saver/utils/error-handling';
 
 interface SaveProgress {
   currentPage: number;
@@ -13,105 +13,88 @@ interface SaveProgress {
 }
 
 export default class PDFSaver {
+  private logWithTime(message: string, data?: any) {
+    const timestamp = new Date().toISOString().split('T')[1];
+    console.log(`[PDFSaver ${timestamp}] ${message}`, data || '');
+  }
+
   constructor(private file: File | Blob) {}
 
-  private async createCanvas(width: number, height: number): Promise<HTMLCanvasElement> {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    return canvas;
-  }
+  private async renderStrokesToCanvas(
+    strokes: Stroke[],
+    pdfWidth: number,
+    pdfHeight: number,
+    viewportWidth: number,
+    viewportHeight: number
+  ): Promise<Uint8Array> {
+    return new Promise((resolve, reject) => {
+      try {
+        // Create canvas at PDF dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = pdfWidth;
+        canvas.height = pdfHeight;
 
-  private async getPDFJSDocument(arrayBuffer: ArrayBuffer) {
-    return pdfjs.getDocument({ data: arrayBuffer }).promise;
-  }
-
-  private async renderPageToCanvas(
-    pdfPage: PDFPage,
-    annotations: Stroke[],
-    options: RenderOptions,
-    pdfArrayBuffer: ArrayBuffer,
-    pageNumber: number
-  ): Promise<HTMLCanvasElement> {
-    const { width: pdfWidth, height: pdfHeight } = pdfPage.getSize();
-    
-    // Create canvas at PDF size
-    const canvas = await this.createCanvas(pdfWidth, pdfHeight);
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Could not get canvas context');
-
-    try {
-      // Load the PDF page
-      const pdfJSDoc = await this.getPDFJSDocument(pdfArrayBuffer);
-      const pdfJSPage = await pdfJSDoc.getPage(pageNumber);
-
-      // Calculate the scale needed to match PDF dimensions
-      const baseViewport = pdfJSPage.getViewport({ scale: 1.0 });
-      const scale = pdfWidth / baseViewport.width;
-      
-      // Create a viewport at the correct scale
-      const viewport = pdfJSPage.getViewport({ scale });
-
-      // Clear canvas and set white background
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, pdfWidth, pdfHeight);
-
-      // Render PDF content
-      await pdfJSPage.render({
-        canvasContext: ctx,
-        viewport,
-      }).promise;
-
-      // Draw annotations
-      ctx.save();
-      ctx.scale(scale, scale); // Scale to match PDF dimensions
-
-      // Set up for high-quality rendering
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      // Draw each annotation
-      annotations.forEach(stroke => {
-        const renderer = new StrokeRenderer(stroke, {
-          ...options,
-          smoothing: true,
-          scale // Pass the PDF scale to the renderer
-        });
-
-        // Set blending mode
-        if (stroke.tool === 'highlighter') {
-          ctx.globalCompositeOperation = 'multiply';
-          ctx.globalAlpha = stroke.opacity;
-        } else if (stroke.tool === 'eraser') {
-          ctx.globalCompositeOperation = 'destination-out';
-          ctx.globalAlpha = 1;
-        } else {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.globalAlpha = 1;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          throw new Error('Could not get canvas context');
         }
 
-        // Render stroke with proper scaling
-        renderer.render(ctx, {
-          ...options,
-          scale: 1 / scale // Compensate for the context scaling
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Calculate scale factor from viewport to PDF coordinates
+        const scaleX = pdfWidth / viewportWidth;
+        const scaleY = pdfHeight / viewportHeight;
+
+        this.logWithTime('Rendering strokes', {
+          pdfDimensions: { width: pdfWidth, height: pdfHeight },
+          viewportDimensions: { width: viewportWidth, height: viewportHeight },
+          scale: { x: scaleX, y: scaleY }
         });
-      });
 
-      ctx.restore();
+        // Draw each stroke
+        for (const stroke of strokes) {
+          const renderer = new StrokeRenderer(stroke, {
+            scale: 1,
+            smoothing: true,
+            forExport: true
+          });
 
-      return canvas;
-    } catch (error) {
-      console.error('Error rendering PDF page:', error);
-      throw error;
-    }
-  }
+          // Scale stroke size proportionally
+          const scaledStroke = {
+            ...stroke,
+            size: stroke.size * scaleX
+          };
 
-  private async getArrayBuffer(file: File | Blob): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as ArrayBuffer);
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(file);
+          // Transform context for this stroke
+          ctx.save();
+          
+          // Scale coordinates from viewport to PDF space
+          ctx.scale(scaleX, scaleY);
+          
+          // Render the stroke
+          renderer.render(ctx, { scale: 1 });
+          
+          // Restore context
+          ctx.restore();
+        }
+
+        // Convert to PNG
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error('Failed to convert canvas to blob'));
+            return;
+          }
+
+          blob.arrayBuffer()
+            .then(buffer => resolve(new Uint8Array(buffer)))
+            .catch(reject);
+
+        }, 'image/png', 1.0);
+
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
@@ -120,118 +103,92 @@ export default class PDFSaver {
     onProgress?: (progress: SaveProgress) => void
   ): Promise<Blob> {
     try {
-      // Load the PDF
-      const arrayBuffer = await this.getArrayBuffer(this.file);
-      
-      // Create a new PDF document to ensure we don't have rendering artifacts
-      const sourcePdfDoc = await PDFDocument.load(arrayBuffer);
-      const pdfDoc = await PDFDocument.create();
-      
-      // Copy all pages from source to destination
-      const pages = sourcePdfDoc.getPages();
-      const pageIndices = Array.from({ length: pages.length }, (_, i) => i);
-      const copiedPages = await pdfDoc.copyPages(sourcePdfDoc, pageIndices);
-      
-      // Add each copied page to the new document
-      for (let i = 0; i < copiedPages.length; i++) {
-        pdfDoc.addPage(copiedPages[i]);
-      }
-      
-      // Now get the pages from the new document
-      const newPages = pdfDoc.getPages();
-      
+      // Initial progress report
+      onProgress?.({
+        currentPage: 0,
+        totalPages: annotations.size,
+        status: 'Loading PDF...'
+      });
+
+      // Get PDF bytes
+      const pdfBytes = await this.file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const pages = pdfDoc.getPages();
+
+      // Calculate viewport dimensions (assume all pages have same viewport)
+      // These should match the dimensions used in the viewer
+      const viewportWidth = 800; // Default viewport width
+      const viewportHeight = 1132; // Default viewport height (A4 ratio)
+
+      this.logWithTime('Processing PDF', {
+        pages: pages.length,
+        viewport: { width: viewportWidth, height: viewportHeight }
+      });
+
       // Process each page
-      for (let i = 0; i < newPages.length; i++) {
-        const pageNumber = i + 1;
+      let currentPage = 0;
+      for (const [pageNum, strokes] of annotations.entries()) {
+        if (strokes.length === 0) continue;
+
+        currentPage++;
         onProgress?.({
-          currentPage: pageNumber,
-          totalPages: newPages.length,
-          status: `Processing page ${pageNumber}`
+          currentPage,
+          totalPages: annotations.size,
+          status: `Processing page ${pageNum}...`
         });
-  
-        // Get the current page
-        const page = newPages[i];
-        const pageAnnotations = annotations.get(pageNumber) || [];
-  
-        // If no annotations on this page, skip further processing
-        if (pageAnnotations.length === 0) {
-          continue;
-        }
-  
+
+        const page = pages[pageNum - 1];
+        const { width: pdfWidth, height: pdfHeight } = page.getSize();
+
         try {
-          // Render the page with annotations to canvas
-          const canvas = await this.renderPageToCanvas(
-            pages[i], // Use the original page for rendering to ensure correct scale
-            pageAnnotations,
-            { scale: 1 }, 
-            arrayBuffer, 
-            pageNumber
+          // Render strokes to image
+          const pngData = await this.renderStrokesToCanvas(
+            strokes,
+            pdfWidth,
+            pdfHeight,
+            viewportWidth,
+            viewportHeight
           );
-          
-          // Convert canvas to PNG with high quality
-          const imageBytes = await new Promise<Uint8Array>((resolve, reject) => {
-            canvas.toBlob(async blob => {
-              if (!blob) {
-                reject(new Error('Failed to create blob from canvas'));
-                return;
-              }
-              
-              try {
-                const arrayBuffer = await blob.arrayBuffer();
-                resolve(new Uint8Array(arrayBuffer));
-              } catch (error) {
-                reject(error);
-              }
-            }, 'image/png', 1.0); // Use max quality
-          });
-    
+
           // Embed image in PDF
-          const { width, height } = page.getSize();
-          const image = await pdfDoc.embedPng(imageBytes);
-          
-          // Replace the page with the annotated image
-          // First clear the page (create a new empty page with same size)
-          const newPage = pdfDoc.insertPage(i, [width, height]);
-          pdfDoc.removePage(i + 1); // Remove the original page
-          
-          // Draw the image exactly matching the page dimensions
-          newPage.drawImage(image, {
+          const image = await pdfDoc.embedPng(pngData);
+
+          // Draw image at exact page dimensions
+          page.drawImage(image, {
             x: 0,
             y: 0,
-            width,
-            height,
-            opacity: 1
+            width: pdfWidth,
+            height: pdfHeight
           });
+
         } catch (error) {
-          console.error(`Error processing page ${pageNumber}:`, error);
-          onProgress?.({
-            currentPage: pageNumber,
-            totalPages: newPages.length,
-            status: `Error on page ${pageNumber}, using original content`
-          });
+          this.logWithTime(`Error processing page ${pageNum}:`, error);
+          throw error;
         }
       }
-  
+
+      // Save the modified PDF
       onProgress?.({
-        currentPage: newPages.length,
-        totalPages: newPages.length,
-        status: 'Finalizing PDF'
+        currentPage: annotations.size,
+        totalPages: annotations.size,
+        status: 'Finalizing PDF...'
       });
-  
-      // Create final PDF with compression options for better quality
-      const pdfBytes = await pdfDoc.save({
-        useObjectStreams: false,  // May help with compatibility
-        addDefaultPage: false
-      });
-      
-      return new Blob([pdfBytes], { type: 'application/pdf' });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+      return new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+
     } catch (error) {
-      console.error('Failed to save PDF:', error);
-      throw error;
+      this.logWithTime('PDF save error:', error);
+      throw error instanceof PDFSaveError ? error : new PDFSaveError(
+        PDFSaveErrorCode.PDF_MODIFICATION_FAILED,
+        error instanceof Error ? error.message : 'Failed to save PDF'
+      );
     }
   }
 
-  // Helper method to trigger download
+  /**
+   * Helper method to trigger download
+   */
   static downloadBlob(blob: Blob, filename: string) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
