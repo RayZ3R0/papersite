@@ -6,6 +6,35 @@
       "description": "Mathematics notes covering calculus and algebra",
       "units": [
         {
+          "id": "p2",
+          "name": "Pure 2",
+          "number": 1,
+          "topics": [
+            {
+              "id": "p2-proofs",
+              "name": "Proofs",
+              "resources": [
+                {
+                  "id": "p2-proof-exh",
+                  "title": "Proof By Exhaustion Examples",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/uFGZhX3HVq_Proof_by_Exhaustion_worksheet",
+                  "previewImage": "/previews/p2.png",
+                  "tags": ["mathematics", "calculus", "p2", "pure 2"]
+                },
+                {
+                  "id": "p2-proof-comp",
+                  "title": "Proof Questions Compilation",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/NpCsQfJsEd_PURE_2_-_FULL_PROOF_QUESTIONS",
+                  "previewImage": "/previews/p2proof.png",
+                  "tags": ["mathematics", "calculus", "p2", "pure 2"]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "p3",
           "name": "Pure 3",
           "number": 1,
@@ -17,7 +46,138 @@
             "previewImage": "/previews/p3.png",
             "tags": ["mathematics", "calculus", "p3", "pure 3", "graphs", "functions", "trigonometry"]
           },
-          "topics": []
+          "topics": [{
+            "id": "p3-notes",
+            "name": "Notes",
+            "resources": [
+              {
+                "id": "p3-notes",
+                "title": "More P3 Notes",
+                "type": "pdf",
+                "downloadUrl": "https://drive.google.com/file/d/1q4vzNEoKu4mZQucQnD8jflpfS3Xd5Y70/view",
+                "previewImage": "/previews/p3notes.png",
+                "tags": ["mathematics", "calculus", "p3", "pure 3"]
+              }
+            ]
+          }]
+        },
+        {
+          "id": "p4",
+          "name": "Pure 4",
+          "number": 1,
+          "unitPdf": {
+            "id": "p4-full",
+            "title": "Complete P4 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://drive.google.com/file/d/1aHwhBZcrm4srvyDh7yNMFkbJjeQ7By5a/view",
+            "previewImage": "/previews/p4.png",
+            "tags": ["mathematics", "calculus", "p4", "pure 4"]
+          },
+          "topics": [
+            {
+              "id": "p4-proofs",
+              "name": "Proofs",
+              "resources": [
+                {
+                  "id": "p4-proof-comp",
+                  "title": "P4 Proof Questions Compilation",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/MvLewj6FJn_PURE_4_-_FULL_PROOF_QUESTIONS_UPDATED",
+                  "previewImage": "/previews/p4proof.png",
+                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                }
+              ]
+            },
+            {
+              "id": "p4-vectors",
+              "name": "Vectors",
+              "resources": [
+                {
+                  "id": "p4-vectors",
+                  "title": "Tricky Vectors Questions",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/u7mdPRcURc_PURE_4_-_TRICKY_VECTORS_QUESTIONS",
+                  "previewImage": "/previews/p4vec.png",
+                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                }
+              ]
+            },
+            {
+              "id": "p4-integration",
+              "name": "Integration",
+              "resources": [
+                {
+                  "id": "p4-integration",
+                  "title": "Tricky Integration Questions",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/nbX7Y2XZBY_PURE_4_-_TRICKY_INTEGRATION_QUESTIONS__MS",
+                  "previewImage": "/previews/p4int.png",
+                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                }
+              ]
+            },
+            {
+              "id": "p4-differential-eq",
+              "name": "Differential Equations",
+              "resources": [
+                {
+                  "id": "p4-differential-equations",
+                  "title": "tricky Differential Equations Questions",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/LFubfeKWwy_PURE_4_-_TRICKY_DIFFERENTIAL_EQUATION_QUESTIONS",
+                  "previewImage": "/previews/p4diff.png",
+                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s1",
+          "name": "Statistics 1",
+          "number": 1,
+          "unitPdf": {
+            "id": "s1-full",
+            "title": "Complete S1 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/fDxbKQurgx_Statistics-1-Notes",
+            "previewImage": "/previews/s1.png",
+            "tags": ["mathematics", "statistics", "s1", "statistical distributions"]
+          }
+        },
+        {
+          "id": "s2",
+          "name": "Statistics 2",
+          "number": 1,
+          "unitPdf": {
+            "id": "s2-full",
+            "title": "Complete S2 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://drive.google.com/file/d/1r2MvgJvX0P7TRSEjZn9X-wRqeYmUn6FG/view",
+            "previewImage": "/previews/s2.png",
+            "tags": ["mathematics", "statistics", "s2", "statistical distributions"]
+          }
+        },
+        {
+          "id": "m1",
+          "name": "Mechanics 1",
+          "number": 1,
+          "topics": [
+            {
+              "id": "m1-questions",
+              "name": "Compilation Questions",
+              "resources": [
+                {
+                  "id": "m1-notes",
+                  "title": "Compilation of Forces, Friction Questions",
+                  "type": "pdf",
+                  "downloadUrl": "https://drive.google.com/file/d/1tzto-S9tr3QdmliPv9t-F6SyFIVLPNVK/view",
+                  "previewImage": "/previews/m1.png",
+                  "tags": ["mathematics", "mechanics", "m1", "mechanics 1"]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
