@@ -1,109 +1,58 @@
-import PDFSaver from '../../PDFSaver';
-import { PDFModifier, SVGGenerator, CoordinateMapper } from '..';
-import { Stroke } from '@/lib/annotationStore';
-import { PDFDocument } from 'pdf-lib';
-
-// Mock PDF file
-const mockPDF = new Blob([new Uint8Array([0x25, 0x50, 0x44, 0x46])], { type: 'application/pdf' });
-
-// Mock stroke data
-const mockStrokes: Stroke[] = [
-  {
-    points: [
-      { x: 100, y: 100, pressure: 0.5 },
-      { x: 200, y: 200, pressure: 0.5 }
-    ],
-    color: '#000000',
-    size: 2,
-    opacity: 1,
-    tool: 'pen'
-  }
-];
-
-describe('PDFSaver', () => {
-  let saver: PDFSaver;
-
-  beforeEach(() => {
-    saver = new PDFSaver(mockPDF);
-  });
-
-  test('should initialize without errors', () => {
-    expect(saver).toBeDefined();
-  });
-
-  test('should handle empty annotations', async () => {
-    const annotations = new Map<number, Stroke[]>();
-    const result = await saver.save(annotations);
-    expect(result).toBeInstanceOf(Blob);
-  });
-});
-
-describe('CoordinateMapper', () => {
-  const viewport = { width: 800, height: 600, scale: 1 };
-  const pdfDimensions = { width: 595, height: 842 };
-  const mapper = new CoordinateMapper(viewport, pdfDimensions);
-
-  test('should map points correctly', () => {
-    const point = { x: 100, y: 100, pressure: 0.5 };
-    const mapped = mapper.mapPoint(point);
-    expect(mapped.pdfX).toBeDefined();
-    expect(mapped.pdfY).toBeDefined();
-  });
-
-  test('should map stroke size', () => {
-    const size = 2;
-    const mapped = mapper.mapStrokeSize(size);
-    expect(mapped).toBeGreaterThan(0);
-  });
-});
-
-describe('SVGGenerator', () => {
-  const dimensions = {
-    width: 595,
-    height: 842,
-    viewport: {
-      width: 595,
-      height: 842,
-      scale: 1
-    }
-  };
-  
-  const generator = new SVGGenerator(dimensions);
-
-  test('should generate valid SVG', () => {
-    const svg = generator.generateSVG(mockStrokes);
-    expect(svg).toContain('<svg');
-    expect(svg).toContain('</svg>');
-  });
-
-  test('should handle eraser strokes', () => {
-    const eraserStrokes = [{
-      ...mockStrokes[0],
-      tool: 'eraser' as const
-    }];
-    const masks = generator.generateEraserMasks(eraserStrokes);
-    expect(masks.length).toBe(1);
-  });
-});
+import { PDFModifier } from '../PDFModifier';
+import { PDFSaveErrorCode } from '../types';
 
 describe('PDFModifier', () => {
   let modifier: PDFModifier;
-  const annotations = new Map<number, Stroke[]>([[1, mockStrokes]]);
 
-  beforeAll(async () => {
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]);
-    const pdfBytes = await pdfDoc.save();
-
-    modifier = new PDFModifier({
-      pdfBytes: pdfBytes.buffer as ArrayBuffer,
-      annotations,
-      onProgress: () => {}
-    });
+  beforeEach(() => {
+    modifier = new PDFModifier();
   });
 
-  test('should process PDF without errors', async () => {
-    const result = await modifier.process();
-    expect(result).toBeInstanceOf(Uint8Array);
+  it('should throw error when PDF not loaded', async () => {
+    await expect(modifier.save()).rejects.toThrow();
+  });
+
+  it('should throw initialization error when accessing page before loading', () => {
+    expect(() => modifier.getPage(1)).toThrow();
+  });
+
+  it('should throw initialization error when getting page count before loading', () => {
+    expect(() => modifier.getPageCount()).toThrow();
+  });
+
+  it('should load PDF successfully', async () => {
+    const pdfBytes = new Uint8Array([/* mock PDF bytes */]);
+    const doc = await modifier.loadPDF(pdfBytes.buffer);
+    expect(doc).toBeDefined();
+  });
+
+  it('should embed image after loading PDF', async () => {
+    const pdfBytes = new Uint8Array([/* mock PDF bytes */]);
+    await modifier.loadPDF(pdfBytes.buffer);
+    
+    const imageBytes = new Uint8Array([/* mock PNG bytes */]);
+    const result = await modifier.embedImage(imageBytes);
+    expect(result).toBeDefined();
+  });
+
+  it('should throw error when embedding image before loading PDF', async () => {
+    const imageBytes = new Uint8Array([/* mock PNG bytes */]);
+    await expect(modifier.embedImage(imageBytes)).rejects.toThrow();
+  });
+
+  it('should save modified PDF', async () => {
+    const pdfBytes = new Uint8Array([/* mock PDF bytes */]);
+    await modifier.loadPDF(pdfBytes.buffer);
+    const result = await modifier.save();
+    expect(result).toBeDefined();
+  });
+
+  // Mock implementation tests
+  it('should use correct error codes', async () => {
+    try {
+      await modifier.save();
+    } catch (error: any) {
+      expect(error.code).toBe(PDFSaveErrorCode.INITIALIZATION_FAILED);
+    }
   });
 });

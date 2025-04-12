@@ -4,13 +4,16 @@ import { Stroke } from '@/lib/annotationStore';
 import StrokeRenderer from './rendering/StrokeRenderer';
 import { PDFDocument } from 'pdf-lib';
 import { PDFSaveError, PDFSaveErrorCode } from './pdf-saver/types';
-import { getErrorMessage } from './pdf-saver/utils/error-handling';
 
 interface SaveProgress {
   currentPage: number;
   totalPages: number;
   status: string;
 }
+
+// Constants for coordinate conversion
+const QUALITY_SCALE = 4; // Increase rendering quality
+const PDF_TO_SCREEN_RATIO = 72 / 96; // PDF points to screen pixels ratio
 
 export default class PDFSaver {
   private logWithTime(message: string, data?: any) {
@@ -20,11 +23,10 @@ export default class PDFSaver {
 
   constructor(private file: File | Blob) {}
 
-  private getViewportDimensions(): { width: number; height: number } | null {
-    const page = document.querySelector('.react-pdf__Page');
-    if (!page) return null;
-
-    const rect = page.getBoundingClientRect();
+  private getViewportDimensions() {
+    const viewer = document.querySelector('.react-pdf__Page');
+    if (!viewer) return null;
+    const rect = viewer.getBoundingClientRect();
     return {
       width: rect.width,
       height: rect.height
@@ -38,39 +40,53 @@ export default class PDFSaver {
   ): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       try {
-        // Get viewport dimensions
-        const viewport = this.getViewportDimensions();
-        if (!viewport) {
-          throw new Error('Could not determine viewport dimensions');
-        }
-
-        // Create canvas at PDF dimensions
+        // Create high-resolution canvas
         const canvas = document.createElement('canvas');
-        canvas.width = pdfWidth;
-        canvas.height = pdfHeight;
-
-        const ctx = canvas.getContext('2d');
+        canvas.width = pdfWidth * QUALITY_SCALE;
+        canvas.height = pdfHeight * QUALITY_SCALE;
+  
+        const ctx = canvas.getContext('2d', {
+          alpha: true,
+          willReadFrequently: true
+        });
+  
         if (!ctx) {
           throw new Error('Could not get canvas context');
         }
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Calculate scales
-        const scaleX = pdfWidth / viewport.width;
-        const scaleY = pdfHeight / viewport.height;
-
+  
+        // Get viewport dimensions
+        const viewport = this.getViewportDimensions();
+        if (!viewport) {
+          throw new Error('Could not get viewport dimensions');
+        }
+  
+        // Calculate scale factors
+        const scaleX = (pdfWidth / viewport.width) * QUALITY_SCALE;
+        const scaleY = (pdfHeight / viewport.height) * QUALITY_SCALE;
+        const strokeScale = Math.min(scaleX, scaleY) * PDF_TO_SCREEN_RATIO;
+  
         this.logWithTime('Canvas setup', {
           pdf: { width: pdfWidth, height: pdfHeight },
+          canvas: { width: canvas.width, height: canvas.height },
           viewport,
-          scale: { x: scaleX, y: scaleY }
+          scale: { x: scaleX, y: scaleY, stroke: strokeScale }
         });
-
-        // Draw each stroke
+  
+        ctx.save();
+        
+        // Enhanced image smoothing
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Apply anti-aliasing
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.miterLimit = 2;
+        
+        // Draw each stroke with enhanced quality
         for (const stroke of strokes) {
           try {
-            // Scale stroke coordinates
+            // Scale coordinates with enhanced precision
             const scaledStroke = {
               ...stroke,
               points: stroke.points.map(point => ({
@@ -78,45 +94,55 @@ export default class PDFSaver {
                 x: point.x * scaleX,
                 y: point.y * scaleY
               })),
-              size: stroke.size * Math.min(scaleX, scaleY) // Scale stroke width proportionally
+              // Add a slight increase to stroke size for better visibility
+              size: stroke.size * strokeScale * 1.05  // 5% boost in stroke width
             };
-
-            this.logWithTime('Stroke scaling', {
+  
+            // Log stroke data
+            this.logWithTime('Processing stroke', {
               original: {
-                first: { x: stroke.points[0].x, y: stroke.points[0].y },
+                x: stroke.points[0].x,
+                y: stroke.points[0].y,
                 size: stroke.size
               },
               scaled: {
-                first: { x: scaledStroke.points[0].x, y: scaledStroke.points[0].y },
+                x: scaledStroke.points[0].x,
+                y: scaledStroke.points[0].y,
                 size: scaledStroke.size
               }
             });
-
+  
             const renderer = new StrokeRenderer(scaledStroke, {
               scale: 1,
+              // Enhance smoothing for export
               smoothing: true,
-              forExport: true
+              forExport: true,
+              // Add enhanced smoothing option if your StrokeRenderer supports it
+              enhancedSmoothing: true
             });
-
+  
             renderer.render(ctx, { scale: 1 });
           } catch (err) {
             this.logWithTime('Error rendering stroke:', err);
           }
         }
-
-        // Convert to PNG
+  
+        // Restore canvas context
+        ctx.restore();
+  
+        // Use uncompressed PNG for maximum quality
         canvas.toBlob((blob) => {
           if (!blob) {
             reject(new Error('Failed to convert canvas to blob'));
             return;
           }
-
+  
           blob.arrayBuffer()
             .then(buffer => resolve(new Uint8Array(buffer)))
             .catch(reject);
-
-        }, 'image/png', 1.0);
-
+  
+        }, 'image/png', 1.0);  // Use maximum quality setting
+  
       } catch (error) {
         reject(error);
       }
@@ -140,12 +166,10 @@ export default class PDFSaver {
       const pdfDoc = await PDFDocument.load(pdfBytes);
       const pages = pdfDoc.getPages();
 
-      // Get viewport dimensions
-      const viewport = this.getViewportDimensions();
       this.logWithTime('Processing PDF', {
         pages: pages.length,
-        viewport,
-        devicePixelRatio: window.devicePixelRatio
+        devicePixelRatio: window.devicePixelRatio,
+        qualityScale: QUALITY_SCALE
       });
 
       // Process each page
@@ -166,9 +190,9 @@ export default class PDFSaver {
         try {
           // Log page info
           this.logWithTime(`Processing page ${pageNum}`, {
-            pdf: { width: pdfWidth, height: pdfHeight },
-            viewport,
-            strokeCount: strokes.length
+            dimensions: { width: pdfWidth, height: pdfHeight },
+            strokeCount: strokes.length,
+            firstStroke: strokes[0]?.points.slice(0, 2)
           });
 
           // Render strokes to image

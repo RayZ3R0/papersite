@@ -20,7 +20,7 @@ export default function NotesPage() {
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl font-bold text-text">Notes</h1>
         <p className="text-text-muted mt-1">
-          Browse study notes by subject and unit
+          Browse study notes by subject and unit. [Disclaimer: Not all of these notes were made by me; credit goes to the respective persons who created them.]
         </p>
       </div>
 
