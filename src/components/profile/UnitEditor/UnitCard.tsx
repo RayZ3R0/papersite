@@ -56,14 +56,14 @@ export default function UnitCard({
   };
 
   return (
-    <div className="bg-surface-alt p-4 rounded-lg space-y-4">
+    <div className="bg-surface-alt p-3 sm:p-4 rounded-lg space-y-3 sm:space-y-4">
       <div>
-        <h4 className="font-medium text-lg">{unitName}</h4>
+        <h4 className="font-medium text-base sm:text-lg">{unitName}</h4>
         <p className="text-sm text-text-muted mt-1">{unitDescription}</p>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {/* Status Toggles */}
         <div className="flex items-center gap-4">
           {/* Completed Toggle */}
@@ -128,12 +128,13 @@ export default function UnitCard({
         </div>
 
         {/* Grades and Session */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Target Grade */}
-          <div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          {/* Target Grade - with mobile optimizations */}
+          <div className="relative">
             <label className="text-sm font-medium text-text-muted block mb-1">
               Target Grade
             </label>
+            <div className="relative">
             <select
               value={unit.targetGrade}
               onChange={(e) =>
@@ -142,10 +143,16 @@ export default function UnitCard({
                 )
               }
               className="
-                w-full px-3 py-1.5 rounded text-sm
+                w-full px-2 py-1 sm:py-1.5 rounded text-sm text-ellipsis
                 bg-surface border-2 transition duration-200 outline-none
                 border-border hover:border-primary/50 focus:border-primary
+                appearance-none
+                relative
               "
+              style={{
+                WebkitAppearance: 'none',
+                MozAppearance: 'none'
+              }}
             >
               {GRADE_OPTIONS.map((grade) => (
                 <option key={grade} value={grade}>
@@ -153,14 +160,21 @@ export default function UnitCard({
                 </option>
               ))}
             </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
           </div>
 
           {/* Actual Grade (only if completed) */}
           {unit.completed && (
-            <div>
+            <div className="relative">
               <label className="text-sm font-medium text-text-muted block mb-1">
                 Actual Grade
               </label>
+              <div className="relative">
               <select
                 value={unit.actualGrade || ""}
                 onChange={(e) =>
@@ -169,10 +183,16 @@ export default function UnitCard({
                   )
                 }
                 className="
-                  w-full px-3 py-1.5 rounded text-sm
+                  w-full px-2 py-1 sm:py-1.5 rounded text-sm text-ellipsis
                   bg-surface border-2 transition duration-200 outline-none
                   border-border hover:border-primary/50 focus:border-primary
+                  appearance-none
+                  relative
                 "
+                style={{
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none'
+                }}
               >
                 <option value="">Not Set</option>
                 {GRADE_OPTIONS.map((grade) => (
@@ -181,14 +201,21 @@ export default function UnitCard({
                   </option>
                 ))}
               </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
             </div>
           )}
 
           {/* Exam Session */}
-          <div>
+          <div className="relative">
             <label className="text-sm font-medium text-text-muted block mb-1">
               Exam Session
             </label>
+            <div className="relative">
             <select
               value={unit.examSession}
               onChange={(e) =>
@@ -197,10 +224,16 @@ export default function UnitCard({
                 )
               }
               className="
-                w-full px-3 py-1.5 rounded text-sm
+                w-full px-2 py-1 sm:py-1.5 rounded text-sm text-ellipsis
                 bg-surface border-2 transition duration-200 outline-none
                 border-border hover:border-primary/50 focus:border-primary
+                appearance-none
+                relative
               "
+              style={{
+                WebkitAppearance: 'none',
+                MozAppearance: 'none'
+              }}
             >
               {SESSION_OPTIONS.map((session) => (
                 <option key={session} value={session}>
@@ -208,6 +241,12 @@ export default function UnitCard({
                 </option>
               ))}
             </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-muted">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
           </div>
         </div>
       </div>

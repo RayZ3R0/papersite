@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Resource, Subject, Unit } from '@/types/note';
 import NoteCard from './NoteCard';
 
@@ -9,6 +10,8 @@ interface NotesGridProps {
 }
 
 export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
+  const [resources, setResources] = useState<Resource[]>([]);
+
   // Helper function to get all resources from a unit
   const getUnitResources = (unit: Unit): Resource[] => {
     const resources: Resource[] = [];
@@ -28,10 +31,22 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     return resources;
   };
 
+  // Effect to update resources when subject or unit changes
+  useEffect(() => {
+    const newResources = selectedUnit
+      ? getUnitResources(selectedUnit)
+      : subject.units.flatMap(getUnitResources);
+    
+    setResources(newResources);
+
+    // Cleanup function
+    return () => {
+      setResources([]);
+    };
+  }, [subject.id, selectedUnit?.id]); // Only re-run when subject or unit changes
+
   // Get resources to display based on selection
-  const resourcesToShow = selectedUnit
-    ? getUnitResources(selectedUnit)
-    : subject.units.flatMap(getUnitResources);
+  const resourcesToShow = resources;
 
   // If no resources, show message
   if (resourcesToShow.length === 0) {

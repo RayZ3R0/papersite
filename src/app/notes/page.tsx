@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import NotesFilter from '@/components/notes/NotesFilter';
 import NotesGrid from '@/components/notes/NotesGrid';
+import { NotesErrorBoundary } from '@/components/error/NotesErrorBoundary';
 import { Subject, Unit, NotesData } from '@/types/note';
 import rawNotesData from '@/lib/data/notes.json';
 
@@ -41,10 +42,13 @@ export default function NotesPage() {
         {/* Notes Grid */}
         <div className="flex-1 min-w-0">
           {selectedSubject ? (
-            <NotesGrid
-              subject={selectedSubject}
-              selectedUnit={selectedUnit}
-            />
+            <NotesErrorBoundary>
+              <NotesGrid
+                key={selectedSubject.id} // Force remount when subject changes
+                subject={selectedSubject}
+                selectedUnit={selectedUnit}
+              />
+            </NotesErrorBoundary>
           ) : (
             // Subject Selection Message
             <div className="text-center py-12 px-4 bg-surface rounded-lg border border-border">

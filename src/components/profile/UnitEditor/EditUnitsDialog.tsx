@@ -129,10 +129,10 @@ export default function EditUnitsDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-2 sm:p-4">
       <div
         ref={dialogRef}
-        className="bg-background rounded-lg shadow-lg w-full max-w-4xl flex flex-col max-h-[90vh]"
+        className="bg-background rounded-lg shadow-lg w-full max-w-4xl flex flex-col max-h-[calc(100vh-7rem)] sm:max-h-[90vh] mt-12 mb-16 sm:my-0"
       >
         {/* Dialog Header */}
         <div className="p-6 border-b border-border flex-shrink-0">
@@ -191,7 +191,7 @@ export default function EditUnitsDialog({
         </div>
 
         {/* Dialog Body */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 overscroll-contain">
           {activeTab === "existing" ? (
             <SubjectList
               subjects={editedSubjects}

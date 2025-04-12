@@ -27,6 +27,20 @@
       "description": "Cool Chemistry notes.",
       "units": [
         {
+          "id": "u1",
+          "name": "Unit 1",
+          "number": 1,
+          "unitPdf": {
+            "id": "chem-u1",
+            "title": "Complete Chemistry U1 Notes",
+            "type": "pdf",
+            "downloadUrl": "https://pdfhost.io/v/2HTsudFXru_Chemistry_Edexcel_IAS_Unit_1_Notes_new",
+            "previewImage": "/previews/chemu1.png",
+            "tags": ["chemistry", "unit 1", "complete notes"]
+          },
+          "topics": []
+        },
+        {
           "id": "u2",
           "name": "Unit 2",
           "number": 1,
