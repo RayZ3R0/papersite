@@ -20,12 +20,32 @@ export default class PDFSaver {
 
   constructor(private file: File | Blob) {}
 
+  private getScalingFactors(pdfWidth: number, pdfHeight: number): { scaleX: number; scaleY: number } {
+    // Find the PDF viewer element
+    const pdfViewer = document.querySelector('.pdf-viewer') as HTMLElement;
+    let viewerWidth = 0;
+    let viewerHeight = 0;
+
+    if (pdfViewer) {
+      viewerWidth = pdfViewer.clientWidth;
+      viewerHeight = pdfViewer.clientHeight;
+    } else {
+      // Fallback to default A4 ratio if viewer not found
+      viewerWidth = 595; // A4 width in points
+      viewerHeight = 842; // A4 height in points
+    }
+
+    // Calculate scale factors
+    const scaleX = pdfWidth / viewerWidth;
+    const scaleY = pdfHeight / viewerHeight;
+
+    return { scaleX, scaleY };
+  }
+
   private async renderStrokesToCanvas(
     strokes: Stroke[],
     pdfWidth: number,
-    pdfHeight: number,
-    viewportWidth: number,
-    viewportHeight: number
+    pdfHeight: number
   ): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       try {
@@ -42,41 +62,52 @@ export default class PDFSaver {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Calculate scale factor from viewport to PDF coordinates
-        const scaleX = pdfWidth / viewportWidth;
-        const scaleY = pdfHeight / viewportHeight;
-
+        // Get scaling factors
+        const { scaleX, scaleY } = this.getScalingFactors(pdfWidth, pdfHeight);
+        
         this.logWithTime('Rendering strokes', {
           pdfDimensions: { width: pdfWidth, height: pdfHeight },
-          viewportDimensions: { width: viewportWidth, height: viewportHeight },
           scale: { x: scaleX, y: scaleY }
         });
 
         // Draw each stroke
         for (const stroke of strokes) {
-          const renderer = new StrokeRenderer(stroke, {
-            scale: 1,
-            smoothing: true,
-            forExport: true
-          });
+          try {
+            // Scale the stroke
+            const scaledStroke = {
+              ...stroke,
+              points: stroke.points.map(point => ({
+                ...point,
+                x: point.x * scaleX,
+                y: pdfHeight - (point.y * scaleY) // Flip Y coordinate
+              })),
+              size: stroke.size * Math.min(scaleX, scaleY) * 0.5 // Adjust stroke width scaling
+            };
 
-          // Scale stroke size proportionally
-          const scaledStroke = {
-            ...stroke,
-            size: stroke.size * scaleX
-          };
+            this.logWithTime('Processing stroke', {
+              original: {
+                x: stroke.points[0].x,
+                y: stroke.points[0].y,
+                size: stroke.size
+              },
+              scaled: {
+                x: scaledStroke.points[0].x,
+                y: scaledStroke.points[0].y,
+                size: scaledStroke.size
+              }
+            });
 
-          // Transform context for this stroke
-          ctx.save();
-          
-          // Scale coordinates from viewport to PDF space
-          ctx.scale(scaleX, scaleY);
-          
-          // Render the stroke
-          renderer.render(ctx, { scale: 1 });
-          
-          // Restore context
-          ctx.restore();
+            const renderer = new StrokeRenderer(scaledStroke, {
+              scale: 1,
+              smoothing: true,
+              forExport: true
+            });
+
+            // Render the stroke
+            renderer.render(ctx, { scale: 1 });
+          } catch (err) {
+            this.logWithTime('Error rendering stroke:', err);
+          }
         }
 
         // Convert to PNG
@@ -115,14 +146,9 @@ export default class PDFSaver {
       const pdfDoc = await PDFDocument.load(pdfBytes);
       const pages = pdfDoc.getPages();
 
-      // Calculate viewport dimensions (assume all pages have same viewport)
-      // These should match the dimensions used in the viewer
-      const viewportWidth = 800; // Default viewport width
-      const viewportHeight = 1132; // Default viewport height (A4 ratio)
-
       this.logWithTime('Processing PDF', {
         pages: pages.length,
-        viewport: { width: viewportWidth, height: viewportHeight }
+        devicePixelRatio: window.devicePixelRatio
       });
 
       // Process each page
@@ -141,13 +167,24 @@ export default class PDFSaver {
         const { width: pdfWidth, height: pdfHeight } = page.getSize();
 
         try {
+          // Log page info for debugging
+          this.logWithTime(`Page ${pageNum}`, {
+            size: { width: pdfWidth, height: pdfHeight },
+            rotation: page.getRotation().angle,
+            strokeCount: strokes.length,
+            strokeBounds: strokes.length > 0 ? {
+              minX: Math.min(...strokes.flatMap(s => s.points.map(p => p.x))),
+              maxX: Math.max(...strokes.flatMap(s => s.points.map(p => p.x))),
+              minY: Math.min(...strokes.flatMap(s => s.points.map(p => p.y))),
+              maxY: Math.max(...strokes.flatMap(s => s.points.map(p => p.y)))
+            } : null
+          });
+
           // Render strokes to image
           const pngData = await this.renderStrokesToCanvas(
             strokes,
             pdfWidth,
-            pdfHeight,
-            viewportWidth,
-            viewportHeight
+            pdfHeight
           );
 
           // Embed image in PDF
@@ -158,7 +195,8 @@ export default class PDFSaver {
             x: 0,
             y: 0,
             width: pdfWidth,
-            height: pdfHeight
+            height: pdfHeight,
+            opacity: 1
           });
 
         } catch (error) {
