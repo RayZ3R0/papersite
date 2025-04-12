@@ -112,7 +112,7 @@
             },
             {
               "id": "group1-2",
-              "name": "Group 1 and 2 Notes",
+              "name": "Group 1 and 2",
               "resources": [
                 {
                   "id": "equilibria",
@@ -144,7 +144,7 @@
               "resources": [
                 {
                   "id": "u2-organic",
-                  "title": "Unit 2 Organic Chemistry Notes",
+                  "title": "Organic Chemistry",
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/ammMJuTnFu_Topic_10-_Organic_Chemistry__Halogenoalkanes__Alcohols_and_Spectra",
                   "previewImage": "/previews/u2org.png",
@@ -376,7 +376,20 @@
             "previewImage": "/previews/chemu6.png",
             "tags": ["chemistry", "unit 6", "complete notes"]
           },
-          "topics": []
+          "topics": [{
+            "id": "u6-core-practical",
+            "name": "Core Practical",
+            "resources": [
+              {
+                "id": "u6-core-practical",
+                "title": "Chemistry Unit 6 Core Practicals",
+                "type": "pdf",
+                "downloadUrl": "https://pdfhost.io/v/SYfdgg2YEq_practical-guide-international-edexcel",
+                "previewImage": "/previews/chemu6core.png",
+                "tags": ["chemistry", "unit 6", "core practical"]
+              }
+            ]
+          }]
         }
       ]
     },
@@ -400,7 +413,7 @@
           "topics": [
             {
               "id": "u1-formulae",
-              "name": "Unit 1 Formulae",
+              "name": "Formulae",
               "resources": [
                 {
                   "id": "u1-formulae",
@@ -429,7 +442,7 @@
           "topics": [
             {
               "id": "u2-formulae",
-              "name": "Unit 2 Formulae",
+              "name": "Formulae",
               "resources": [
                 {
                   "id": "u2-formulae",
@@ -479,7 +492,7 @@
             },
             {
               "id": "u1-faq",
-              "name": "Unit 1 FAQ",
+              "name": "FAQ",
               "resources": [
                 {
                   "id": "u1-faq",
@@ -530,7 +543,7 @@
             },
             {
               "id": "u2-faq",
-              "name": "Unit 2 FAQ",
+              "name": "FAQ",
               "resources": [
                 {
                   "id": "u2-faq",
@@ -559,7 +572,7 @@
           "topics": [
             {
               "id": "u3-faq",
-              "name": "Unit 3 FAQ",
+              "name": "FAQ",
               "resources": [
                 {
                   "id": "u3-faq",
@@ -588,7 +601,7 @@
           "topics": [
             {
               "id": "u4-faq",
-              "name": "Unit 4 FAQ",
+              "name": "FAQ",
               "resources": [
                 {
                   "id": "u4-faq",
@@ -645,7 +658,7 @@
             },
             {
               "id": "u5-faq",
-              "name": "Unit 5 FAQ",
+              "name": "FAQ",
               "resources": [
                 {
                   "id": "u5-faq",
