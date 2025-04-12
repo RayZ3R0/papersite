@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withDb } from '@/lib/api-middleware';
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-middleware';
 import { AuthError, AUTH_ERRORS } from '@/lib/authTypes';
 import { registerUser } from '@/lib/auth';
@@ -21,11 +20,44 @@ export const dynamic = 'force-dynamic';
 // Maximum duration for registration process (in seconds)
 export const maxDuration = 60;
 
+// Direct MongoDB connection for registration with higher timeouts
+async function connectToMongo() {
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not defined');
+  }
+  
+  // Close existing connection if any
+  if (mongoose.connection.readyState === 1) {
+    await mongoose.connection.close();
+  }
+  
+  // Use environment variables for timeouts with fallbacks
+  const serverSelectionTimeoutMS = parseInt(process.env.MONGODB_SERVER_SELECTION_TIMEOUT || '30000', 10);
+  const socketTimeoutMS = parseInt(process.env.MONGODB_SOCKET_TIMEOUT || '45000', 10);
+  const connectTimeoutMS = parseInt(process.env.MONGODB_CONNECTION_TIMEOUT || '30000', 10);
+  
+  // Connect with higher timeouts specifically for registration
+  return mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS,
+    socketTimeoutMS,
+    connectTimeoutMS,
+    maxPoolSize: 1,
+    waitQueueTimeoutMS: serverSelectionTimeoutMS,
+    retryWrites: true,
+    family: 4
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Establish direct connection with higher timeouts
+    await connectToMongo();
+    
     const data: RegistrationData = await req.json();
     const { basicInfo, subjects, studyPreferences, currentSession } = data;
 
+    // Rest of your existing code...
     // Validate required fields
     if (!basicInfo?.username || !basicInfo?.email || !basicInfo?.password) {
       return createErrorResponse('Username, email and password are required', 400);
@@ -74,7 +106,7 @@ export async function POST(req: NextRequest) {
 
     return createSuccessResponse(responseData, 201);
   } catch (error: unknown) {
-    // Enhanced error logging for debugging connection issues
+    // Error handling as before...
     console.error('Registration error details:', {
       name: error instanceof Error ? error.name : typeof error,
       message: error instanceof Error ? error.message : String(error),
@@ -90,7 +122,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Handle MongoDB connection timeout specifically
-    if ((error as Error)?.message?.includes('buffering timed out after')) {
+    if ((error as Error)?.message?.includes('buffering timed out after') || 
+        (error as Error)?.message?.includes('timed out') ||
+        (error as Error)?.message?.includes('timeout')) {
       return createErrorResponse(
         'Registration service is temporarily busy. Please try again in a moment.',
         503
@@ -117,6 +151,15 @@ export async function POST(req: NextRequest) {
     }
 
     return createErrorResponse(AUTH_ERRORS.SERVER_ERROR, 500);
+  } finally {
+    // Always close the connection when done
+    try {
+      if (mongoose.connection.readyState === 1) {
+        await mongoose.connection.close();
+      }
+    } catch (closeError) {
+      console.error('Error closing MongoDB connection:', closeError);
+    }
   }
 }
 

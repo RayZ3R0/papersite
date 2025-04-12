@@ -4,5 +4,10 @@
       "src": "package.json",
       "use": "@vercel/next"
     }
-  ]
+  ],
+  "env": {
+    "MONGODB_CONNECTION_TIMEOUT": "30000",
+    "MONGODB_SOCKET_TIMEOUT": "45000",
+    "MONGODB_SERVER_SELECTION_TIMEOUT": "30000"
+  }
 }
