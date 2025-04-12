@@ -17,8 +17,8 @@ export const runtime = 'nodejs';
 // Make route dynamic
 export const dynamic = 'force-dynamic';
 
-// Maximum duration for registration process
-export const maxDuration = 10;
+// Maximum duration for registration process (in seconds)
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {

@@ -4,5 +4,10 @@
       "src": "package.json",
       "use": "@vercel/next"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/auth/register": {
+      "maxDuration": 60
+    }
+  }
 }
