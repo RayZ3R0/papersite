@@ -143,7 +143,8 @@
             "downloadUrl": "https://pdfhost.io/v/fDxbKQurgx_Statistics-1-Notes",
             "previewImage": "/previews/s1.png",
             "tags": ["mathematics", "statistics", "s1", "statistical distributions"]
-          }
+          },
+          "topics": []
         },
         {
           "id": "s2",
@@ -156,7 +157,8 @@
             "downloadUrl": "https://drive.google.com/file/d/1r2MvgJvX0P7TRSEjZn9X-wRqeYmUn6FG/view",
             "previewImage": "/previews/s2.png",
             "tags": ["mathematics", "statistics", "s2", "statistical distributions"]
-          }
+          },
+          "topics": []
         },
         {
           "id": "m1",

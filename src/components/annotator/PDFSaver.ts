@@ -20,17 +20,15 @@ export default class PDFSaver {
 
   constructor(private file: File | Blob) {}
 
-  private getViewerScale(): number {
-    // Get scale from PDF viewer's transform style
-    const pageEl = document.querySelector('.react-pdf__Page') as HTMLElement;
-    if (pageEl) {
-      const transform = pageEl.style.transform;
-      const match = transform?.match(/scale\(([\d.]+)\)/);
-      if (match && match[1]) {
-        return parseFloat(match[1]);
-      }
-    }
-    return 1;
+  private getViewportDimensions(): { width: number; height: number } | null {
+    const page = document.querySelector('.react-pdf__Page');
+    if (!page) return null;
+
+    const rect = page.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height
+    };
   }
 
   private async renderStrokesToCanvas(
@@ -40,6 +38,12 @@ export default class PDFSaver {
   ): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       try {
+        // Get viewport dimensions
+        const viewport = this.getViewportDimensions();
+        if (!viewport) {
+          throw new Error('Could not determine viewport dimensions');
+        }
+
         // Create canvas at PDF dimensions
         const canvas = document.createElement('canvas');
         canvas.width = pdfWidth;
@@ -53,46 +57,37 @@ export default class PDFSaver {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Get viewer scale
-        const viewerScale = this.getViewerScale();
-        
-        // Calculate actual scaling needed
-        const screenDPI = 96;
-        const pdfDPI = 72;
-        const dpiScale = pdfDPI / screenDPI;
-        
-        // Final scale factor
-        const scale = dpiScale / viewerScale;
+        // Calculate scales
+        const scaleX = pdfWidth / viewport.width;
+        const scaleY = pdfHeight / viewport.height;
 
-        this.logWithTime('Scale factors', {
-          viewerScale,
-          dpiScale,
-          finalScale: scale
+        this.logWithTime('Canvas setup', {
+          pdf: { width: pdfWidth, height: pdfHeight },
+          viewport,
+          scale: { x: scaleX, y: scaleY }
         });
 
         // Draw each stroke
         for (const stroke of strokes) {
           try {
-            // Scale the stroke
+            // Scale stroke coordinates
             const scaledStroke = {
               ...stroke,
               points: stroke.points.map(point => ({
                 ...point,
-                x: point.x * scale,
-                y: pdfHeight - (point.y * scale) // Flip Y coordinate
+                x: point.x * scaleX,
+                y: point.y * scaleY
               })),
-              size: stroke.size * scale * 0.5 // Adjust stroke width
+              size: stroke.size * Math.min(scaleX, scaleY) // Scale stroke width proportionally
             };
 
-            this.logWithTime('Processing stroke', {
+            this.logWithTime('Stroke scaling', {
               original: {
-                x: stroke.points[0].x,
-                y: stroke.points[0].y,
+                first: { x: stroke.points[0].x, y: stroke.points[0].y },
                 size: stroke.size
               },
               scaled: {
-                x: scaledStroke.points[0].x,
-                y: scaledStroke.points[0].y,
+                first: { x: scaledStroke.points[0].x, y: scaledStroke.points[0].y },
                 size: scaledStroke.size
               }
             });
@@ -103,7 +98,6 @@ export default class PDFSaver {
               forExport: true
             });
 
-            // Render the stroke
             renderer.render(ctx, { scale: 1 });
           } catch (err) {
             this.logWithTime('Error rendering stroke:', err);
@@ -146,9 +140,12 @@ export default class PDFSaver {
       const pdfDoc = await PDFDocument.load(pdfBytes);
       const pages = pdfDoc.getPages();
 
+      // Get viewport dimensions
+      const viewport = this.getViewportDimensions();
       this.logWithTime('Processing PDF', {
         pages: pages.length,
-        viewerScale: this.getViewerScale()
+        viewport,
+        devicePixelRatio: window.devicePixelRatio
       });
 
       // Process each page
@@ -167,16 +164,11 @@ export default class PDFSaver {
         const { width: pdfWidth, height: pdfHeight } = page.getSize();
 
         try {
-          // Log page dimensions and bounds
+          // Log page info
           this.logWithTime(`Processing page ${pageNum}`, {
             pdf: { width: pdfWidth, height: pdfHeight },
-            strokes: strokes.length,
-            bounds: strokes.length > 0 ? {
-              minX: Math.min(...strokes.flatMap(s => s.points.map(p => p.x))),
-              maxX: Math.max(...strokes.flatMap(s => s.points.map(p => p.x))),
-              minY: Math.min(...strokes.flatMap(s => s.points.map(p => p.y))),
-              maxY: Math.max(...strokes.flatMap(s => s.points.map(p => p.y)))
-            } : null
+            viewport,
+            strokeCount: strokes.length
           });
 
           // Render strokes to image
