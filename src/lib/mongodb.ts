@@ -4,7 +4,22 @@ import mongoose from 'mongoose';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connection options based on runtime
-const NODE_OPTIONS = {
+// Production (Vercel) optimized options
+const PROD_OPTIONS = {
+  maxPoolSize: 1,
+  minPoolSize: 0,
+  serverSelectionTimeoutMS: 15000,
+  socketTimeoutMS: 45000,
+  family: 4,
+  heartbeatFrequencyMS: 5000,
+  autoIndex: false,
+  retryWrites: true,
+  connectTimeoutMS: 15000,
+  waitQueueTimeoutMS: 15000
+};
+
+// Development options with more relaxed settings
+const DEV_OPTIONS = {
   maxPoolSize: 5,
   minPoolSize: 1,
   serverSelectionTimeoutMS: 5000,
@@ -14,6 +29,9 @@ const NODE_OPTIONS = {
   autoIndex: true,
   retryWrites: true,
 };
+
+// Use appropriate options based on environment
+const NODE_OPTIONS = process.env.NODE_ENV === 'production' ? PROD_OPTIONS : DEV_OPTIONS;
 
 // Enhanced connection interface
 interface ConnectionOptions extends mongoose.ConnectOptions {
@@ -69,9 +87,9 @@ async function validateConnection(): Promise<boolean> {
  */
 async function dbConnect(options: ConnectionOptions = {}): Promise<typeof mongoose> {
   const {
-    maxRetries = 3,
-    retryDelay = 1000,
-    validateConnection: shouldValidate = true,
+    maxRetries = process.env.NODE_ENV === 'production' ? 5 : 3,
+    retryDelay = process.env.NODE_ENV === 'production' ? 2000 : 1000,
+    validateConnection: shouldValidate = process.env.NODE_ENV !== 'production',
     ...mongooseOptions
   } = options;
 

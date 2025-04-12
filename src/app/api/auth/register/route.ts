@@ -4,8 +4,9 @@ import { createErrorResponse, createSuccessResponse } from '@/lib/api-middleware
 import { AuthError, AUTH_ERRORS } from '@/lib/authTypes';
 import { registerUser } from '@/lib/auth';
 import { validateRegisterData } from '@/lib/auth/validation';
-import { 
-  RegistrationData, 
+import mongoose from 'mongoose';
+import {
+  RegistrationData,
   RegisterData,
   MongoError,
   ValidationError
@@ -73,11 +74,27 @@ export async function POST(req: NextRequest) {
 
     return createSuccessResponse(responseData, 201);
   } catch (error: unknown) {
-    console.error('Registration error:', error);
+    // Enhanced error logging for debugging connection issues
+    console.error('Registration error details:', {
+      name: error instanceof Error ? error.name : typeof error,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      code: (error as any)?.code,
+      timeoutMS: (error as any)?.timeoutMS,
+      connectionState: mongoose.connection?.readyState
+    });
 
     // Handle known auth errors
     if (error instanceof AuthError) {
       return createErrorResponse(error.message, 400);
+    }
+
+    // Handle MongoDB connection timeout specifically
+    if ((error as Error)?.message?.includes('buffering timed out after')) {
+      return createErrorResponse(
+        'Registration service is temporarily busy. Please try again in a moment.',
+        503
+      );
     }
 
     // Handle validation errors from mongoose
