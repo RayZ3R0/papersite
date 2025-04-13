@@ -1,60 +1,79 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-interface Subject {
-  id: string;
-  name: string;
-  units: number;
-  icon?: string;
-}
-
-// Mock data - replace with actual data
-const mockSubjects = [
-  { id: 'physics', name: 'Physics', units: 6 },
-  { id: 'chemistry', name: 'Chemistry', units: 4 },
-  { id: 'biology', name: 'Biology', units: 5 },
-  { id: 'math', name: 'Mathematics', units: 8 }
-];
-
-function SubjectCard({ id, name, units, icon }: Subject) {
-  return (
-    <a
-      href={`/annotate/${id}`}
-      className="group relative rounded-lg border p-6 hover:bg-accent transition-colors"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-          {icon ? (
-            <img src={icon} alt="" className="h-6 w-6" />
-          ) : (
-            <span className="text-xl font-semibold">{name[0]}</span>
-          )}
-        </div>
-      </div>
-      <div className="mt-4">
-        <h3 className="font-semibold tracking-tight">{name}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {units} {units === 1 ? 'Unit' : 'Units'}
-        </p>
-      </div>
-    </a>
-  );
-}
+// Dynamically import PDFViewer to avoid SSR issues
+const PDFViewer = dynamic(
+  () => import('@/components/annotator/PDFViewer'),
+  { ssr: false }
+);
 
 export default function AnnotatePage() {
-  const [subjects, setSubjects] = useState<Subject[]>(mockSubjects);
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile?.type === 'application/pdf') {
+      setFile(selectedFile);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Papers</h1>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {subjects.map((subject) => (
-          <SubjectCard key={subject.id} {...subject} />
-        ))}
-      </div>
+    <div className="h-[calc(100vh-4rem)]"> {/* Subtract navbar height */}
+      {!file ? (
+        // Upload section
+        <div className="max-w-xl mx-auto h-full flex items-center justify-center">
+          <div className="w-full p-8 border-2 border-dashed border-border rounded-xl bg-surface">
+            <h1 className="text-2xl font-bold mb-6 text-text text-center">
+              Upload PDF to Annotate
+            </h1>
+            
+            {/* File Input */}
+            <div className="flex flex-col items-center">
+              <label className="relative group cursor-pointer">
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <div className="px-6 py-3 rounded-lg bg-primary text-white
+                  transition-all duration-200
+                  hover:bg-primary/90 active:scale-95"
+                >
+                  Choose PDF File
+                </div>
+                <p className="mt-2 text-sm text-text-muted text-center">
+                  or drag and drop here
+                </p>
+              </label>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // PDF Viewer section
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-border bg-surface">
+            <h1 className="text-xl font-semibold text-text truncate flex-1 mr-4">
+              {file.name}
+            </h1>
+            <button
+              onClick={() => setFile(null)}
+              className="px-4 py-2 text-sm text-text-muted hover:text-text
+                transition-colors whitespace-nowrap"
+            >
+              Upload Different File
+            </button>
+          </div>
+          
+          {/* PDF Viewer */}
+          <div className="flex-1 min-h-0">
+            <PDFViewer file={file} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
