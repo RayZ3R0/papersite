@@ -1,126 +1,145 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useOnClickOutside } from '@/hooks/useOnClickOutside';
-
-const DEFAULT_COLORS = [
-  '#000000', // Black
-  '#404040', // Dark Gray
-  '#7A7A7A', // Gray
-  '#FF4136', // Red
-  '#FF851B', // Orange
-  '#FFDC00', // Yellow
-  '#2ECC40', // Green
-  '#0074D9', // Blue
-  '#B10DC9', // Purple
-  '#F012BE', // Magenta
-];
+import React, { useState, useRef, useCallback } from 'react';
+import { ColorPreset, colorPresets } from './types';
+import Tooltip from './components/Tooltip';
 
 interface ColorPickerProps {
-  onColorChange: (color: string) => void;
   currentColor: string;
+  onColorChange: (color: string) => void;
 }
 
-export default function ColorPicker({ onColorChange, currentColor }: ColorPickerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
-  
-  // Close when clicking outside
-  useOnClickOutside(pickerRef, () => setIsOpen(false));
-  
-  // Ensure good color contrast for the selected color indicator
-  const isDark = (color: string) => {
-    // Convert hex to RGB
-    const r = parseInt(color.substring(1, 3), 16);
-    const g = parseInt(color.substring(3, 5), 16);
-    const b = parseInt(color.substring(5, 7), 16);
-    
-    // Calculate luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance < 0.5;
+export default function ColorPicker({ currentColor, onColorChange }: ColorPickerProps) {
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
+  const [tempColor, setTempColor] = useState(currentColor);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handlePresetClick = (color: string) => {
+    onColorChange(color);
+    setTempColor(color);
   };
-  
+
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const color = e.target.value;
+    setTempColor(color);
+  };
+
+  const handleCustomInputBlur = () => {
+    if (tempColor !== currentColor) {
+      onColorChange(tempColor);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onColorChange(tempColor);
+      inputRef.current?.blur();
+    }
+  };
+
+  const getContrastText = useCallback((bgColor: string): string => {
+    // Convert hex to RGB
+    const hex = bgColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  }, []);
+
   return (
-    <div ref={pickerRef} className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 py-1.5 px-2 rounded-lg border border-border/80 hover:border-border
-          hover:shadow-sm transition-all bg-background w-full"
-        aria-label="Select Color"
-      >
-        <div className="flex-shrink-0 w-6 h-6 rounded-md overflow-hidden shadow-sm border border-border/30 hover:scale-105 transition-transform"
-          style={{ backgroundColor: currentColor }}
-        />
-        <div className="flex-1 text-left overflow-hidden">
-          <span className={`text-xs font-mono uppercase ${isDark(currentColor) ? 'text-white' : 'text-black'}`}
-            style={{ backgroundColor: currentColor }}>
-            {currentColor}
-          </span>
-        </div>
-        <svg className="w-3.5 h-3.5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          {isOpen ? (
-            <polyline points="18 15 12 9 6 15"></polyline>
-          ) : (
-            <polyline points="6 9 12 15 18 9"></polyline>
-          )}
-        </svg>
-      </button>
+    <div className="space-y-3">
+      {/* Color presets */}
+      <div className="grid grid-cols-6 gap-1.5">
+        {colorPresets.map((preset) => (
+          <Tooltip key={preset.color} content={preset.name}>
+            <button
+              onClick={() => handlePresetClick(preset.color)}
+              className={`w-8 h-8 rounded-lg transition-all duration-200 
+                ${currentColor === preset.color 
+                  ? 'ring-2 ring-primary ring-offset-2' 
+                  : 'hover:scale-110 hover:shadow-lg'}`}
+              style={{ 
+                backgroundColor: preset.color,
+                color: getContrastText(preset.color)
+              }}
+              aria-label={`Select ${preset.name} color`}
+            >
+              {currentColor === preset.color && (
+                <svg 
+                  width="16" 
+                  height="16" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2"
+                  className="mx-auto"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </button>
+          </Tooltip>
+        ))}
+      </div>
 
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1.5 p-3 bg-background
-          border border-border rounded-xl shadow-lg z-50 w-64 transition-all 
-          origin-top-left animate-in fade-in-50 zoom-in-95 duration-150"
-        >
-          <div className="grid grid-cols-5 gap-2 mb-3">
-            {DEFAULT_COLORS.map((color) => (
-              <button
-                key={color}
-                onClick={() => {
-                  onColorChange(color);
-                  setIsOpen(false);
-                }}
-                className={`w-8 h-8 rounded-md transition-all duration-200
-                  ${currentColor.toLowerCase() === color.toLowerCase() 
-                    ? 'ring-2 ring-primary ring-offset-1 scale-110 shadow' 
-                    : 'hover:scale-105 border border-border/40 hover:shadow-sm'
-                  }`}
-                style={{ backgroundColor: color }}
-                aria-label={`Select color ${color}`}
-              />
-            ))}
-          </div>
-
-          {/* Custom color input */}
-          <div className="border-t border-border pt-3">
-            <div className="text-xs text-text-muted mb-2">Custom Color</div>
-            <div className="flex gap-2">
+      {/* Custom color input */}
+      <div>
+        <Tooltip content="Click to enter custom color">
+          <button
+            onClick={() => {
+              setShowCustomPicker(true);
+              setTimeout(() => inputRef.current?.focus(), 100);
+            }}
+            className={`flex items-center gap-2 w-full p-2 rounded-lg 
+              transition-all duration-200 hover:bg-surface-alt group
+              ${showCustomPicker ? 'bg-surface-alt' : ''}`}
+          >
+            <div 
+              className="w-6 h-6 rounded border border-border/80 shadow-sm"
+              style={{ backgroundColor: currentColor }}
+            />
+            {showCustomPicker ? (
               <input
-                type="color"
-                value={currentColor}
-                onChange={(e) => onColorChange(e.target.value)}
-                className="w-10 h-10 rounded-md cursor-pointer"
-              />
-              <input
+                ref={inputRef}
                 type="text"
-                value={currentColor}
-                onChange={(e) => {
-                  // Validate hex color format
-                  if (e.target.value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
-                    onColorChange(e.target.value);
-                  }
-                }}
-                onBlur={(e) => {
-                  // Make sure we have a valid 6-digit hex on blur
-                  if (e.target.value.length < 7) {
-                    onColorChange('#000000');
-                  }
-                }}
-                className="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-surface"
+                value={tempColor}
+                onChange={handleCustomInputChange}
+                onBlur={handleCustomInputBlur}
+                onKeyDown={handleKeyDown}
+                className="flex-1 bg-transparent border-none outline-none 
+                  text-xs font-mono focus:ring-0 p-0"
+                placeholder="#000000"
               />
-            </div>
-          </div>
-        </div>
-      )}
+            ) : (
+              <span className="text-xs font-mono text-text-muted group-hover:text-text">
+                {currentColor}
+              </span>
+            )}
+          </button>
+        </Tooltip>
+      </div>
+      
+      {/* Color input */}
+      <div className="relative">
+        <input
+          type="color"
+          value={tempColor}
+          onChange={(e) => {
+            setTempColor(e.target.value);
+            onColorChange(e.target.value);
+          }}
+          className="absolute inset-0 w-full h-8 opacity-0 cursor-pointer"
+          aria-label="Choose custom color"
+        />
+        <div 
+          className="h-8 rounded-lg border border-border/80 cursor-pointer
+            bg-[conic-gradient(from_0deg,red,yellow,lime,aqua,blue,magenta,red)]"
+        />
+      </div>
     </div>
   );
 }

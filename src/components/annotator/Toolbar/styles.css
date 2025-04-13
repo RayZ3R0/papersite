@@ -1,0 +1,231 @@
+/* Base Animations */
+@keyframes toolbarShow {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toolbarHide {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes toolbarMinimize {
+  from {
+    width: 300px;
+  }
+  to {
+    width: 70px;
+  }
+}
+
+@keyframes toolbarExpand {
+  from {
+    width: 70px;
+  }
+  to {
+    width: 300px;
+  }
+}
+
+@keyframes toolSelect {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* Mobile Animations */
+@keyframes mobileToolbarShow {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileToolbarHide {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Core Styles */
+.toolbar {
+  --toolbar-duration: 300ms;
+  --toolbar-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform, width, opacity;
+
+  /* Ensure toolbar appears above PDF */
+  z-index: 1000;
+  position: fixed;
+}
+
+/* Show/Hide Transitions */
+.toolbar-enter {
+  animation: toolbarShow var(--toolbar-duration) var(--toolbar-easing);
+}
+
+.toolbar-exit {
+  animation: toolbarHide var(--toolbar-duration) var(--toolbar-easing);
+}
+
+/* Minimize/Expand Transitions */
+.toolbar-minimize {
+  animation: toolbarMinimize var(--toolbar-duration) var(--toolbar-easing);
+}
+
+.toolbar-expand {
+  animation: toolbarExpand var(--toolbar-duration) var(--toolbar-easing);
+}
+
+/* Tool Selection Animation */
+.tool-button-active {
+  animation: toolSelect 300ms var(--toolbar-easing);
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 768px) {
+  .toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+
+  .toolbar-mobile-enter {
+    animation: mobileToolbarShow var(--toolbar-duration) var(--toolbar-easing);
+  }
+
+  .toolbar-mobile-exit {
+    animation: mobileToolbarHide var(--toolbar-duration) var(--toolbar-easing);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .toolbar {
+    --toolbar-bg: rgba(17, 24, 39, 0.95);
+    --toolbar-border: rgba(255, 255, 255, 0.1);
+    --toolbar-shadow: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .toolbar {
+    --toolbar-duration: 0ms;
+  }
+  
+  .toolbar *,
+  .toolbar *::before,
+  .toolbar *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
+/* Draggable Area */
+.toolbar-drag-handle {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.toolbar-dragging {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.toolbar-dragging * {
+  cursor: grabbing !important;
+}
+
+/* Slider Animations */
+.slider-track {
+  transition: background-color 200ms var(--toolbar-easing);
+}
+
+.slider-thumb {
+  transition: transform 100ms var(--toolbar-easing);
+}
+
+.slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider-thumb:active {
+  transform: scale(0.95);
+}
+
+/* Button Animations */
+.toolbar-button {
+  transition: all 200ms var(--toolbar-easing);
+}
+
+.toolbar-button:hover {
+  transform: translateY(-1px);
+}
+
+.toolbar-button:active {
+  transform: scale(0.95);
+}
+
+/* Color Picker Animations */
+.color-swatch {
+  transition: transform 200ms var(--toolbar-easing),
+              box-shadow 200ms var(--toolbar-easing);
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.color-swatch:active {
+  transform: scale(0.95);
+}
+
+/* Tooltip Animations */
+.tooltip-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.tooltip-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms var(--toolbar-easing),
+              transform 200ms var(--toolbar-easing);
+}
+
+.tooltip-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tooltip-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 150ms var(--toolbar-easing),
+              transform 150ms var(--toolbar-easing);
+}

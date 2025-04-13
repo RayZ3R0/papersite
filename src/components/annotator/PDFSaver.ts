@@ -13,7 +13,19 @@ interface SaveProgress {
 
 // Constants for coordinate conversion
 const QUALITY_SCALE = 4; // Increase rendering quality
-const PDF_TO_SCREEN_RATIO = 72 / 96; // PDF points to screen pixels ratio
+const PDF_POINTS_PER_INCH = 72;
+const SCREEN_PIXELS_PER_INCH = 96;
+
+// Coordinate system adjustment constants
+const DPI_RATIO = PDF_POINTS_PER_INCH / SCREEN_PIXELS_PER_INCH;
+
+// Manual fine-tuning adjustments (can be modified for better alignment)
+const MANUAL_FINE_TUNING = {
+  offsetX: 0,        // Horizontal adjustment in pixels (positive = right)
+  offsetY: 0,        // Vertical adjustment in pixels (positive = down)
+  scaleAdjustment: 1.0,  // Scale factor adjustment (1.0 = no change)
+  rotationDegrees: 0    // Rotation in degrees (rarely needed)
+};
 
 export default class PDFSaver {
   private logWithTime(message: string, data?: any) {
@@ -21,67 +33,105 @@ export default class PDFSaver {
     console.log(`[PDFSaver ${timestamp}] ${message}`, data || '');
   }
 
-  constructor(private file: File | Blob) {}
+  constructor(
+    private file: File | Blob, 
+    private viewerScale: number = 1.0,
+    private manualTuning = MANUAL_FINE_TUNING
+  ) {}
 
-  private getViewportDimensions() {
-    const viewer = document.querySelector('.react-pdf__Page');
-    if (!viewer) return null;
-    const rect = viewer.getBoundingClientRect();
-    return {
-      width: rect.width,
-      height: rect.height
+  /**
+   * Captures page offsets from the DOM if available
+   * These are used to fine-tune the annotation placement
+   */
+  private getPageOffsets(): { offsetX: number, offsetY: number, pageScale: number } {
+    try {
+      // Try to get the current canvas element and annotation container
+      const pdfCanvas = document.querySelector('.react-pdf__Page__canvas') as HTMLCanvasElement;
+      const annotationLayer = document.querySelector('.react-pdf__Page') as HTMLDivElement;
+      
+      if (pdfCanvas && annotationLayer) {
+        const pdfRect = pdfCanvas.getBoundingClientRect();
+        const annotationRect = annotationLayer.getBoundingClientRect();
+        
+        // Calculate offsets between the PDF canvas and annotation layer
+        const offsetX = pdfRect.left - annotationRect.left;
+        const offsetY = pdfRect.top - annotationRect.top;
+        
+        // Determine the effective page scale from DOM elements
+        const pageScale = pdfRect.width / pdfCanvas.width;
+        
+        return { 
+          offsetX: offsetX + this.manualTuning.offsetX, 
+          offsetY: offsetY + this.manualTuning.offsetY, 
+          pageScale 
+        };
+      }
+    } catch (err) {
+      // If anything goes wrong, just use default values
+      this.logWithTime("Couldn't determine page offsets from DOM", err);
+    }
+    
+    // Default values if DOM elements aren't available
+    return { 
+      offsetX: this.manualTuning.offsetX, 
+      offsetY: this.manualTuning.offsetY, 
+      pageScale: 1.0 * this.manualTuning.scaleAdjustment
     };
   }
 
   private async renderStrokesToCanvas(
     strokes: Stroke[],
     pdfWidth: number,
-    pdfHeight: number
+    pdfHeight: number,
+    pageNumber: number
   ): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       try {
-        // Create high-resolution canvas
+        // Create high-resolution canvas matching PDF dimensions
         const canvas = document.createElement('canvas');
         canvas.width = pdfWidth * QUALITY_SCALE;
         canvas.height = pdfHeight * QUALITY_SCALE;
-  
+    
         const ctx = canvas.getContext('2d', {
           alpha: true,
           willReadFrequently: true
         });
-  
+    
         if (!ctx) {
           throw new Error('Could not get canvas context');
         }
+        
+        // Calculate scale factors between screen space and PDF space
+        const screenToPdfRatioX = QUALITY_SCALE * this.manualTuning.scaleAdjustment;
+        const screenToPdfRatioY = QUALITY_SCALE * this.manualTuning.scaleAdjustment;
+        
+        // Get fine-tuning offsets from DOM if available
+        const { offsetX, offsetY } = this.getPageOffsets();
+        
+        // Use a fixed stroke size multiplier based on DPI ratio
+        const strokeSizeMultiplier = DPI_RATIO * QUALITY_SCALE * this.manualTuning.scaleAdjustment;
   
-        // Get viewport dimensions
-        const viewport = this.getViewportDimensions();
-        if (!viewport) {
-          throw new Error('Could not get viewport dimensions');
-        }
-  
-        // Calculate scale factors
-        const scaleX = (pdfWidth / viewport.width) * QUALITY_SCALE;
-        const scaleY = (pdfHeight / viewport.height) * QUALITY_SCALE;
-        const strokeScale = Math.min(scaleX, scaleY) * PDF_TO_SCREEN_RATIO;
-  
-        this.logWithTime('Canvas setup', {
+        this.logWithTime(`PDF coordinate mapping for page ${pageNumber}`, {
+          viewerScale: this.viewerScale,
           pdf: { width: pdfWidth, height: pdfHeight },
           canvas: { width: canvas.width, height: canvas.height },
-          viewport,
-          scale: { x: scaleX, y: scaleY, stroke: strokeScale }
+          offsets: { x: offsetX, y: offsetY },
+          manualTuning: this.manualTuning,
+          strokeSizeMultiplier,
+          quality: QUALITY_SCALE
         });
+        
+        // Apply rotation if specified (rare, but helpful in some cases)
+        if (this.manualTuning.rotationDegrees !== 0) {
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate(this.manualTuning.rotationDegrees * Math.PI / 180);
+          ctx.translate(-canvas.width / 2, -canvas.height / 2);
+        }
         
         // Separate pen and eraser strokes
         const penStrokes = strokes.filter(stroke => stroke.tool !== 'eraser');
         const eraserStrokes = strokes.filter(stroke => stroke.tool === 'eraser');
         
-        this.logWithTime('Stroke breakdown', {
-          total: strokes.length,
-          pen: penStrokes.length,
-          eraser: eraserStrokes.length
-        });
-  
         ctx.save();
         
         // Enhanced image smoothing
@@ -96,68 +146,95 @@ export default class PDFSaver {
         // Draw pen strokes first
         for (const stroke of penStrokes) {
           try {
-            // Scale coordinates with enhanced precision
+            // Map stroke coordinates to PDF space using the correct transformation
             const scaledStroke = {
               ...stroke,
-              points: stroke.points.map(point => ({
-                ...point,
-                x: point.x * scaleX,
-                y: point.y * scaleY
-              })),
-              // Add a slight increase to stroke size for better visibility
-              size: stroke.size * strokeScale * 1.05  // 5% boost in stroke width
+              points: stroke.points.map(point => {
+                // Account for any fine-tuning offsets between PDF and annotation layer
+                const adjustedX = point.x + offsetX;
+                const adjustedY = point.y + offsetY;
+                
+                // Scale coordinates using viewerScale and apply PDF transformation
+                const pdfX = (adjustedX / this.viewerScale) * screenToPdfRatioX;
+                const pdfY = (adjustedY / this.viewerScale) * screenToPdfRatioY;
+                
+                return {
+                  ...point,
+                  x: pdfX,
+                  y: pdfY
+                };
+              }),
+              // Scale stroke size to match PDF resolution
+              size: (stroke.size / this.viewerScale) * strokeSizeMultiplier
             };
-  
-            // Log stroke data for first few strokes
-            if (penStrokes.indexOf(stroke) < 3) {
-              this.logWithTime(`Pen stroke ${penStrokes.indexOf(stroke)}`, {
+    
+            // Log first few strokes for debugging
+            if (penStrokes.indexOf(stroke) < 2) {
+              this.logWithTime(`Pen stroke ${penStrokes.indexOf(stroke)} on page ${pageNumber}`, {
                 tool: stroke.tool,
                 color: stroke.color,
                 size: stroke.size,
-                points: stroke.points.length
+                scaledSize: scaledStroke.size,
+                viewerScale: this.viewerScale,
+                points: stroke.points.length,
+                firstPoint: {
+                  original: { x: stroke.points[0]?.x, y: stroke.points[0]?.y },
+                  adjusted: { x: stroke.points[0]?.x + offsetX, y: stroke.points[0]?.y + offsetY },
+                  transformed: { 
+                    x: ((stroke.points[0]?.x + offsetX) / this.viewerScale) * screenToPdfRatioX,
+                    y: ((stroke.points[0]?.y + offsetY) / this.viewerScale) * screenToPdfRatioY
+                  }
+                },
+                lastPoint: {
+                  original: { 
+                    x: stroke.points[stroke.points.length-1]?.x, 
+                    y: stroke.points[stroke.points.length-1]?.y 
+                  },
+                  transformed: { 
+                    x: ((stroke.points[stroke.points.length-1]?.x + offsetX) / this.viewerScale) * screenToPdfRatioX,
+                    y: ((stroke.points[stroke.points.length-1]?.y + offsetY) / this.viewerScale) * screenToPdfRatioY
+                  }
+                }
               });
             }
-  
+    
             const renderer = new StrokeRenderer(scaledStroke, {
               scale: 1,
               smoothing: true,
               forExport: true,
               enhancedSmoothing: true
             });
-  
+    
             renderer.render(ctx, { scale: 1 });
           } catch (err) {
-            this.logWithTime('Error rendering pen stroke:', err);
+            this.logWithTime(`Error rendering pen stroke on page ${pageNumber}:`, err);
           }
         }
         
-        // Now apply eraser strokes using destination-out blend mode
+        // Handle eraser strokes with the same coordinate mapping
         if (eraserStrokes.length > 0) {
-          // Change composite operation for erasers
           ctx.globalCompositeOperation = 'destination-out';
           
           for (const stroke of eraserStrokes) {
             try {
-              // Scale coordinates with enhanced precision
               const scaledStroke = {
                 ...stroke,
-                points: stroke.points.map(point => ({
-                  ...point,
-                  x: point.x * scaleX,
-                  y: point.y * scaleY
-                })),
+                points: stroke.points.map(point => {
+                  const adjustedX = point.x + offsetX;
+                  const adjustedY = point.y + offsetY;
+                  
+                  const pdfX = (adjustedX / this.viewerScale) * screenToPdfRatioX;
+                  const pdfY = (adjustedY / this.viewerScale) * screenToPdfRatioY;
+                  
+                  return {
+                    ...point,
+                    x: pdfX,
+                    y: pdfY
+                  };
+                }),
                 // Make eraser slightly larger for better coverage
-                size: stroke.size * strokeScale * 1.1  // 10% boost in eraser width
+                size: (stroke.size / this.viewerScale) * strokeSizeMultiplier * 1.05
               };
-  
-              // Log eraser stroke data
-              if (eraserStrokes.indexOf(stroke) < 3) {
-                this.logWithTime(`Eraser stroke ${eraserStrokes.indexOf(stroke)}`, {
-                  tool: stroke.tool,
-                  size: stroke.size,
-                  points: stroke.points.length
-                });
-              }
   
               const renderer = new StrokeRenderer(scaledStroke, {
                 scale: 1,
@@ -168,30 +245,28 @@ export default class PDFSaver {
   
               renderer.render(ctx, { scale: 1 });
             } catch (err) {
-              this.logWithTime('Error rendering eraser stroke:', err);
+              this.logWithTime(`Error rendering eraser stroke on page ${pageNumber}:`, err);
             }
           }
           
-          // Reset composite operation back to default
           ctx.globalCompositeOperation = 'source-over';
         }
-  
-        // Restore canvas context
+    
         ctx.restore();
-  
+    
         // Use uncompressed PNG for maximum quality
         canvas.toBlob((blob) => {
           if (!blob) {
             reject(new Error('Failed to convert canvas to blob'));
             return;
           }
-  
+    
           blob.arrayBuffer()
             .then(buffer => resolve(new Uint8Array(buffer)))
             .catch(reject);
-  
-        }, 'image/png', 1.0);  // Use maximum quality setting
-  
+    
+        }, 'image/png', 1.0);
+        
       } catch (error) {
         reject(error);
       }
@@ -218,7 +293,10 @@ export default class PDFSaver {
       this.logWithTime('Processing PDF', {
         pages: pages.length,
         devicePixelRatio: window.devicePixelRatio,
-        qualityScale: QUALITY_SCALE
+        qualityScale: QUALITY_SCALE,
+        annotatedPages: annotations.size,
+        viewerScale: this.viewerScale,
+        manualTuning: this.manualTuning
       });
 
       // Process each page
@@ -233,22 +311,32 @@ export default class PDFSaver {
           status: `Processing page ${pageNum}...`
         });
 
-        const page = pages[pageNum - 1];
+        const page = pages[pageNum - 1]; 
+        if (!page) {
+          this.logWithTime(`Page ${pageNum} not found in PDF document`);
+          continue;
+        }
+        
         const { width: pdfWidth, height: pdfHeight } = page.getSize();
 
         try {
           // Log page info
           this.logWithTime(`Processing page ${pageNum}`, {
-            dimensions: { width: pdfWidth, height: pdfHeight },
+            dimensions: { width: pdfWidth, height: pdfHeight, ratio: pdfWidth/pdfHeight },
             strokeCount: strokes.length,
-            firstStroke: strokes[0]?.points.slice(0, 2)
+            firstStroke: strokes[0]?.points.slice(0, 2),
+            strokeTypes: strokes.map(s => s.tool).reduce((acc, tool) => {
+              acc[tool] = (acc[tool] || 0) + 1;
+              return acc;
+            }, {} as Record<string, number>)
           });
 
           // Render strokes to image
           const pngData = await this.renderStrokesToCanvas(
             strokes,
             pdfWidth,
-            pdfHeight
+            pdfHeight,
+            pageNum
           );
 
           // Embed image in PDF
@@ -300,5 +388,19 @@ export default class PDFSaver {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+  
+  /**
+   * Helper method to create a PDFSaver with custom fine-tuning
+   */
+  static withCustomTuning(
+    file: File | Blob,
+    viewerScale: number = 1.0,
+    tuning: Partial<typeof MANUAL_FINE_TUNING> = {}
+  ): PDFSaver {
+    return new PDFSaver(file, viewerScale, {
+      ...MANUAL_FINE_TUNING,
+      ...tuning
+    });
   }
 }

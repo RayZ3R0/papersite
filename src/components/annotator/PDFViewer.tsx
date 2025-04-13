@@ -161,8 +161,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
         totalPages: numPages,
         status: 'Preparing to save...'
       });
-
-      const saver = new PDFSaver(file);
+  
+      const saver = new PDFSaver(file, scale);
       const annotationsMap = new Map<number, Stroke[]>();
       
       // Get annotations for all pages
@@ -279,113 +279,116 @@ export default function PDFViewer({ file }: PDFViewerProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-surface">
-      {/* Controls */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-            disabled={currentPage <= 1}
-            className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
-              disabled:cursor-not-allowed transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-sm">
-            Page {currentPage} of {numPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(Math.min(numPages, currentPage + 1))}
-            disabled={currentPage >= numPages}
-            className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
-              disabled:cursor-not-allowed transition-colors"
-          >
-            Next
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => handleZoom(-0.1)}
-            className="p-2 rounded hover:bg-surface-alt transition-colors"
-          >
-            Zoom Out
-          </button>
-          <span className="text-sm w-20 text-center">
-            {Math.round(scale * 100)}%
-          </span>
-          <button
-            onClick={() => handleZoom(0.1)}
-            className="p-2 rounded hover:bg-surface-alt transition-colors"
-          >
-            Zoom In
-          </button>
-        </div>
-      </div>
-
-      {/* PDF Document */}
-      <div 
-        ref={containerRef}
-        className="flex-1 overflow-auto bg-surface-alt/50 relative"
-      >
-        <div className="min-h-full w-full flex justify-center p-6">
-          <div className="relative bg-white shadow-lg">
-            <Document
-              file={file}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={
-                <div className="flex items-center justify-center min-h-[60vh]">
-                  Loading PDF...
-                </div>
-              }
+    <>
+      <div className="flex flex-col h-full bg-surface">
+        {/* Controls */}
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage <= 1}
+              className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
+                disabled:cursor-not-allowed transition-colors"
             >
-              <Page
-                pageNumber={currentPage}
-                scale={scale}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-                onLoadSuccess={onPageLoadSuccess}
-                loading={
-                  <div className="w-full aspect-[1/1.414] bg-surface-alt animate-pulse" />
-                }
-              />
-            </Document>
+              Previous
+            </button>
+            <span className="text-sm">
+              Page {currentPage} of {numPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(Math.min(numPages, currentPage + 1))}
+              disabled={currentPage >= numPages}
+              className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
+                disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
 
-            {pageDimensions && scale && (
-              <div className="absolute inset-0" key={redrawKey}>
-                <AnnotationLayer
-                  width={pageDimensions.width}
-                  height={pageDimensions.height}
-                  scale={scale}
-                  pageNumber={currentPage}
-                  color={currentColor}
-                  size={strokeSize}
-                  tool={currentTool}
-                  opacity={opacity}
-                  onPressureChange={(pressure: number) => console.log('Pressure:', pressure)}
-                />
-              </div>
-            )}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleZoom(-0.1)}
+              className="p-2 rounded hover:bg-surface-alt transition-colors"
+            >
+              Zoom Out
+            </button>
+            <span className="text-sm w-20 text-center">
+              {Math.round(scale * 100)}%
+            </span>
+            <button
+              onClick={() => handleZoom(0.1)}
+              className="p-2 rounded hover:bg-surface-alt transition-colors"
+            >
+              Zoom In
+            </button>
           </div>
         </div>
 
-        <Toolbar
-          onToolChange={handleToolChange}
-          onColorChange={handleColorChange}
-          onSizeChange={handleSizeChange}
-          onOpacityChange={handleOpacityChange}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          onClear={handleClear}
-          onSave={handleSave}
-          canUndo={canUndo}
-          canRedo={canRedo}
-          currentTool={currentTool}
-          currentColor={currentColor}
-          currentSize={strokeSize}
-          currentOpacity={opacity}
-        />
+        {/* PDF Document */}
+        <div 
+          ref={containerRef}
+          className="flex-1 overflow-auto bg-surface-alt/50"
+        >
+          <div className="min-h-full w-full flex justify-center p-6">
+            <div className="relative bg-white shadow-lg">
+              <Document
+                file={file}
+                onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <div className="flex items-center justify-center min-h-[60vh]">
+                    Loading PDF...
+                  </div>
+                }
+              >
+                <Page
+                  pageNumber={currentPage}
+                  scale={scale}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                  onLoadSuccess={onPageLoadSuccess}
+                  loading={
+                    <div className="w-full aspect-[1/1.414] bg-surface-alt animate-pulse" />
+                  }
+                />
+              </Document>
+
+              {pageDimensions && scale && (
+                <div className="absolute inset-0" key={redrawKey}>
+                  <AnnotationLayer
+                    width={pageDimensions.width}
+                    height={pageDimensions.height}
+                    scale={scale}
+                    pageNumber={currentPage}
+                    color={currentColor}
+                    size={strokeSize}
+                    tool={currentTool}
+                    opacity={opacity}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Toolbar rendered at root level */}
+      <Toolbar
+        onToolChange={handleToolChange}
+        onColorChange={handleColorChange}
+        onSizeChange={handleSizeChange}
+        onOpacityChange={handleOpacityChange}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onClear={handleClear}
+        onSave={handleSave}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        currentTool={currentTool}
+        currentColor={currentColor}
+        currentSize={strokeSize}
+        currentOpacity={opacity}
+        initiallyVisible={true}
+      />
 
       {/* Save Progress Modal */}
       <SaveProgress
@@ -394,6 +397,6 @@ export default function PDFViewer({ file }: PDFViewerProps) {
         status={saveProgress.status}
         isVisible={saveProgress.isVisible}
       />
-    </div>
+    </>
   );
 }
