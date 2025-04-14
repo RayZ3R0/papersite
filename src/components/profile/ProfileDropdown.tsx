@@ -13,6 +13,7 @@ import UserAvatar from "./UserAvatar";
 import Link from "next/link";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useReturnTo } from "@/hooks/useReturnTo";
+import { MiniExamCountdown } from "./MiniExamCountdown";
 
 export default function ProfileDropdown() {
   const { user, logout } = useAuth();
@@ -28,7 +29,7 @@ export default function ProfileDropdown() {
     return (
       <Link
         href={`/auth/login?returnTo=${encodeURIComponent(returnPath)}`}
-        className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+        className="flex items-center gap-2.5 text-sm font-medium px-3 py-2 rounded-lg hover:bg-surface-hover transition-colors"
       >
         <UserIcon className="w-5 h-5" />
         <span>Login</span>
@@ -47,79 +48,105 @@ export default function ProfileDropdown() {
     }
   };
 
+  const menuItems = [
+    {
+      href: "/profile",
+      icon: UserIcon,
+      label: "Your Profile",
+    },
+    {
+      href: "/exams",
+      icon: () => (
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+      label: "Routine",
+    },
+    {
+      href: "/profile/settings",
+      icon: SettingsIcon,
+      label: "Settings",
+    },
+  ];
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 hover:text-primary transition-colors"
+        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-surface-hover transition-all duration-150"
       >
         <UserAvatar user={user} size="sm" />
-        <span className="text-sm font-medium">{user.username}</span>
+        <span className="text-sm font-medium hidden sm:block">{user.username}</span>
         <ChevronDownIcon
-          className={`w-4 h-4 transition-transform ${
+          className={`w-4 h-4 transition-transform duration-150 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-surface border border-border rounded-lg shadow-lg py-2 z-50">
-          {/* Profile Section */}
-          <div className="px-4 py-2 border-b border-border">
-            <p className="text-sm font-medium">{user.username}</p>
-            <p className="text-sm text-text-muted">{user.email}</p>
-          </div>
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Dropdown */}
+          <div className="absolute right-0 mt-2 w-72 bg-surface rounded-xl border border-border shadow-lg py-2 z-50 overflow-hidden">
+            {/* Header - User Info */}
+            <div className="px-4 py-3">
+              <div className="flex items-center gap-3">
+                <UserAvatar user={user} size="lg" />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold truncate">{user.username}</h3>
+                  <p className="text-sm text-text-muted truncate">{user.email}</p>
+                </div>
+              </div>
+            </div>
 
-          {/* Menu Items */}
-          <div className="py-1">
-            <Link
-              href="/profile"
-              className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-surface-hover"
-              onClick={() => setIsOpen(false)}
-            >
-              <UserIcon className="w-4 h-4" />
-              <span>Your Profile</span>
-            </Link>
+            {/* Exam Countdown */}
+            <MiniExamCountdown />
 
-            <Link
-              href="/exams"
-              className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-surface-hover"
-              onClick={() => setIsOpen(false)}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {/* Navigation Links */}
+            <div className="px-2 py-2">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-surface-hover transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <item.icon className="w-4 h-4 text-text-muted" />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Logout Section */}
+            <div className="px-2 pt-2 pb-1">
+              <div className="border-t border-border -mx-2 my-1" />
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm text-error rounded-lg hover:bg-error/5 transition-colors"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              <span>Routine</span>
-            </Link>
-
-            <Link
-              href="/profile/settings"
-              className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-surface-hover"
-              onClick={() => setIsOpen(false)}
-            >
-              <SettingsIcon className="w-4 h-4" />
-              <span>Settings</span>
-            </Link>
-
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 px-4 py-2 text-sm text-error hover:bg-surface-hover"
-            >
-              <LogoutIcon className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
+                <LogoutIcon className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

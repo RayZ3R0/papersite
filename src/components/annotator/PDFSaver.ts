@@ -12,7 +12,7 @@ interface SaveProgress {
 }
 
 // Constants for coordinate conversion
-const QUALITY_SCALE = 4; // Reduced from 4 to prevent over-scaling
+const QUALITY_SCALE = 6; // Reduced from 4 to prevent over-scaling
 const PDF_POINTS_PER_INCH = 72;
 const SCREEN_PIXELS_PER_INCH = 96;
 
@@ -22,9 +22,9 @@ const DPI_RATIO = PDF_POINTS_PER_INCH / SCREEN_PIXELS_PER_INCH;
 
 // Manual fine-tuning adjustments (can be modified for better alignment)
 const MANUAL_FINE_TUNING = {
-  offsetX: 0,        // Horizontal adjustment in pixels (positive = right)
-  offsetY: 0,        // Vertical adjustment in pixels (positive = down)
-  scaleAdjustment: 1.0,  // Scale factor adjustment (1.0 = no change)
+  offsetX: 82,        // Horizontal adjustment in pixels (positive = right)
+  offsetY: 75,        // Vertical adjustment in pixels (positive = down)
+  scaleAdjustment: 1.3,  // Scale factor adjustment (1.0 = no change)
   rotationDegrees: 0    // Rotation in degrees (rarely needed)
 };
 
