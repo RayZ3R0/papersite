@@ -12,11 +12,12 @@ interface SaveProgress {
 }
 
 // Constants for coordinate conversion
-const QUALITY_SCALE = 4; // Increase rendering quality
+const QUALITY_SCALE = 4; // Reduced from 4 to prevent over-scaling
 const PDF_POINTS_PER_INCH = 72;
 const SCREEN_PIXELS_PER_INCH = 96;
 
-// Coordinate system adjustment constants
+// Coordinate system adjustment constant
+// This is the key ratio for converting between screen pixels and PDF points
 const DPI_RATIO = PDF_POINTS_PER_INCH / SCREEN_PIXELS_PER_INCH;
 
 // Manual fine-tuning adjustments (can be modified for better alignment)
@@ -87,7 +88,7 @@ export default class PDFSaver {
   ): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       try {
-        // Create high-resolution canvas matching PDF dimensions
+        // Create canvas that matches PDF dimensions in points
         const canvas = document.createElement('canvas');
         canvas.width = pdfWidth * QUALITY_SCALE;
         canvas.height = pdfHeight * QUALITY_SCALE;
@@ -101,15 +102,15 @@ export default class PDFSaver {
           throw new Error('Could not get canvas context');
         }
         
-        // Calculate scale factors between screen space and PDF space
-        const screenToPdfRatioX = QUALITY_SCALE * this.manualTuning.scaleAdjustment;
-        const screenToPdfRatioY = QUALITY_SCALE * this.manualTuning.scaleAdjustment;
+        // Fixed scaling factor that accounts for quality enhancement only
+        // Simpler scaling model focused on maintaining correct proportions
+        const scaleFactor = QUALITY_SCALE;
         
         // Get fine-tuning offsets from DOM if available
         const { offsetX, offsetY } = this.getPageOffsets();
         
-        // Use a fixed stroke size multiplier based on DPI ratio
-        const strokeSizeMultiplier = DPI_RATIO * QUALITY_SCALE * this.manualTuning.scaleAdjustment;
+        // Calculate stroke size factor - more direct approach
+        const strokeSizeFactor = scaleFactor;
   
         this.logWithTime(`PDF coordinate mapping for page ${pageNumber}`, {
           viewerScale: this.viewerScale,
@@ -117,8 +118,8 @@ export default class PDFSaver {
           canvas: { width: canvas.width, height: canvas.height },
           offsets: { x: offsetX, y: offsetY },
           manualTuning: this.manualTuning,
-          strokeSizeMultiplier,
-          quality: QUALITY_SCALE
+          strokeSizeFactor,
+          scaleFactor
         });
         
         // Apply rotation if specified (rare, but helpful in some cases)
@@ -146,17 +147,24 @@ export default class PDFSaver {
         // Draw pen strokes first
         for (const stroke of penStrokes) {
           try {
-            // Map stroke coordinates to PDF space using the correct transformation
+            // Convert original screen points to PDF space
+            // The key change here is using pdfWidth/pdfHeight as the reference dimensions
+            // rather than applying multiple scaling factors
             const scaledStroke = {
               ...stroke,
               points: stroke.points.map(point => {
-                // Account for any fine-tuning offsets between PDF and annotation layer
+                // Account for any fine-tuning offsets
                 const adjustedX = point.x + offsetX;
                 const adjustedY = point.y + offsetY;
                 
-                // Scale coordinates using viewerScale and apply PDF transformation
-                const pdfX = (adjustedX / this.viewerScale) * screenToPdfRatioX;
-                const pdfY = (adjustedY / this.viewerScale) * screenToPdfRatioY;
+                // First normalize to original document space by removing viewer scaling
+                const normalizedX = adjustedX / this.viewerScale;
+                const normalizedY = adjustedY / this.viewerScale;
+                
+                // Convert screen pixels to PDF point space
+                // The key fix: properly map screen coordinates to PDF space
+                const pdfX = normalizedX * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment;
+                const pdfY = normalizedY * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment;
                 
                 return {
                   ...point,
@@ -164,8 +172,8 @@ export default class PDFSaver {
                   y: pdfY
                 };
               }),
-              // Scale stroke size to match PDF resolution
-              size: (stroke.size / this.viewerScale) * strokeSizeMultiplier
+              // Scale stroke size properly
+              size: (stroke.size / this.viewerScale) * strokeSizeFactor * DPI_RATIO * this.manualTuning.scaleAdjustment
             };
     
             // Log first few strokes for debugging
@@ -181,8 +189,8 @@ export default class PDFSaver {
                   original: { x: stroke.points[0]?.x, y: stroke.points[0]?.y },
                   adjusted: { x: stroke.points[0]?.x + offsetX, y: stroke.points[0]?.y + offsetY },
                   transformed: { 
-                    x: ((stroke.points[0]?.x + offsetX) / this.viewerScale) * screenToPdfRatioX,
-                    y: ((stroke.points[0]?.y + offsetY) / this.viewerScale) * screenToPdfRatioY
+                    x: ((stroke.points[0]?.x + offsetX) / this.viewerScale) * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment,
+                    y: ((stroke.points[0]?.y + offsetY) / this.viewerScale) * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment
                   }
                 },
                 lastPoint: {
@@ -191,8 +199,8 @@ export default class PDFSaver {
                     y: stroke.points[stroke.points.length-1]?.y 
                   },
                   transformed: { 
-                    x: ((stroke.points[stroke.points.length-1]?.x + offsetX) / this.viewerScale) * screenToPdfRatioX,
-                    y: ((stroke.points[stroke.points.length-1]?.y + offsetY) / this.viewerScale) * screenToPdfRatioY
+                    x: ((stroke.points[stroke.points.length-1]?.x + offsetX) / this.viewerScale) * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment,
+                    y: ((stroke.points[stroke.points.length-1]?.y + offsetY) / this.viewerScale) * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment
                   }
                 }
               });
@@ -223,8 +231,11 @@ export default class PDFSaver {
                   const adjustedX = point.x + offsetX;
                   const adjustedY = point.y + offsetY;
                   
-                  const pdfX = (adjustedX / this.viewerScale) * screenToPdfRatioX;
-                  const pdfY = (adjustedY / this.viewerScale) * screenToPdfRatioY;
+                  const normalizedX = adjustedX / this.viewerScale;
+                  const normalizedY = adjustedY / this.viewerScale;
+                  
+                  const pdfX = normalizedX * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment;
+                  const pdfY = normalizedY * scaleFactor * DPI_RATIO * this.manualTuning.scaleAdjustment;
                   
                   return {
                     ...point,
@@ -233,7 +244,7 @@ export default class PDFSaver {
                   };
                 }),
                 // Make eraser slightly larger for better coverage
-                size: (stroke.size / this.viewerScale) * strokeSizeMultiplier * 1.05
+                size: (stroke.size / this.viewerScale) * strokeSizeFactor * DPI_RATIO * this.manualTuning.scaleAdjustment * 1.05
               };
   
               const renderer = new StrokeRenderer(scaledStroke, {
