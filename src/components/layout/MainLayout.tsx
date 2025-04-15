@@ -1,9 +1,8 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import MobileNav from "./MobileNav";
 import ThemePicker from "./ThemePicker";
 
 interface MainLayoutProps {
@@ -11,33 +10,13 @@ interface MainLayoutProps {
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Full hide/show for mobile nav on scroll
-  useEffect(() => {
-    let lastScroll = 0;
-
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll > lastScroll && currentScroll > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-      lastScroll = currentScroll;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col bg-background text-text">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-surface border-b border-border">
+      {/* Header - Desktop only */}
+      <header className="hidden md:block sticky top-0 z-50 bg-surface border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="flex items-center space-x-8">
             <Link
               href="/"
               className="text-text hover:text-text-muted transition-colors"
@@ -76,21 +55,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             </Link>
           </nav>
 
-          {/* Mobile Header Content */}
-          <div className="flex md:hidden items-center justify-between w-full">
-            <Link href="/">
-              <div className="relative w-12 h-12 overflow-hidden rounded-lg">
-                <Image
-                  src="/banner.jpg"
-                  alt="papervoid"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </Link>
-          </div>
-
-          {/* Theme Picker - Show on all screen sizes */}
+          {/* Theme Picker - Show on desktop */}
           <div className="flex items-center">
             <ThemePicker />
           </div>
@@ -98,18 +63,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">{children}</main>
-
-      {/* Mobile Navigation - with smooth transition */}
-      <div
-        className={`
-          md:hidden fixed bottom-0 left-0 right-0 z-[9999]
-          transform transition-transform duration-300
-          ${isScrolled ? "translate-y-full" : "translate-y-0"}
-        `}
-      >
-        <MobileNav />
-      </div>
+      <main className="flex-1">
+        {children}
+      </main>
     </div>
   );
 };

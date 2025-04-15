@@ -583,3 +583,177 @@ body {
     font-size: 16px; /* Prevent iOS zoom when focusing inputs */
   }
 }
+
+/* Adaptive scroll animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Better scrollbars */
+@media (min-width: 768px) {
+  /* Only apply scrollbar styling on desktop */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-border::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 9999px;
+  }
+
+  .scrollbar-thumb-border::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
+
+/* Fix for mobile viewport issues */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific rules */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Custom animations */
+@keyframes searchFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Improve Firefox rendering - prevents flickering */
+@-moz-document url-prefix() {
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  .will-change-\[height\,opacity\] {
+    will-change: height, opacity;
+  }
+}
+
+/* Improve touch interactions - fix syntax */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets on touch devices */
+  button, 
+  a {
+    min-height: 44px;
+  }
+  
+  /* Prevent active transition flash on iOS */
+  a:active,
+  button:active {
+    transition: none !important;
+  }
+}
+
+/* Add these enhanced mobile optimizations */
+/* Mobile ripple effect */
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 500ms ease-out;
+  background-color: rgba(var(--color-text-rgb, 0, 0, 0), 0.04);
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Better iOS fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS-specific optimizations */
+  * {
+    -webkit-overflow-scrolling: touch; 
+  }
+  
+  /* Prevent overscroll behavior */
+  html, body {
+    overscroll-behavior-y: none;
+  }
+  
+  /* Fix for 100vh issue on iOS */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Prevent input zoom */
+  input[type="text"],
+  input[type="search"] {
+    font-size: 16px;
+  }
+}
+
+/* Compatibility vars for dynamic values */
+:root {
+  --color-text-rgb: 31, 41, 55;
+}
+
+.dark {
+  --color-text-rgb: 249, 250, 251;
+}
+
+
+/* Fix for mobile clipping/overflow issues */
+.no-horizontal-overflow {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Fix for small screens */
+@media (max-width: 640px) {
+  .container-fix {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+  
+  .card-fix {
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Make sure body doesn't overflow on small screens */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Add to fix iOS Safari rendering issues */
+@supports (-webkit-touch-callout: none) {
+  .ios-full-height {
+    height: -webkit-fill-available;
+  }
+  
+  .ios-fix-overflow {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+}
+

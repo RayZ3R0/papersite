@@ -11,6 +11,17 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Papers | A-Level Past Papers",
   description: "Access A-Level past papers and study materials",
+  viewport: {
+    width: "device-width",
+    initialScale: 1, 
+    viewportFit: "cover", // Support for notched phones
+    minimumScale: 1,
+    maximumScale: 5
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#121212" }
+  ],
 };
 
 // Prevent static generation for auth-dependent pages
@@ -36,8 +47,8 @@ export default function RootLayout({
 
               {/* Auth context that may update with navigation */}
               <AuthLoadingProvider>
-                {/* Main content */}
-                <main className="pt-16 pb-16 md:pb-0">
+                {/* Main content - adjusted for mobile nav padding */}
+                <main className="pt-14 md:pt-16 pb-16 md:pb-0 overflow-x-hidden">
                   {/* Single loading boundary for all dynamic content */}
                   <Suspense 
                     fallback={
@@ -59,11 +70,5 @@ export default function RootLayout({
     </html>
   );
 }
-
-// Add support for streaming and Progressive Web App
-export const viewport = {
-  themeColor: "#000000",
-  viewportFit: "cover",
-};
 
 export const runtime = "edge"; // Use edge runtime for better performance

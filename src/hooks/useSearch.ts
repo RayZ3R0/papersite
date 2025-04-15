@@ -4,6 +4,9 @@ import { searchPapers } from '@/utils/search/core';
 import { SubjectsData } from '@/types/subject';
 import subjectsData from '@/lib/data/subjects.json';
 
+// Type assertion helper
+const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
+
 interface UseSearchOptions {
   debounceMs?: number;
   maxResults?: number;
@@ -33,10 +36,20 @@ export function useSearch(options: UseSearchOptions = {}) {
   const [recentSearches, setRecentSearches] = useState<SearchQuery[]>([]);
   
   const debounceTimer = useRef<NodeJS.Timeout>();
+  const searchAbortController = useRef<AbortController | null>(null);
 
   // Load recent searches on mount
   useEffect(() => {
-    setRecentSearches(getStoredSearches());
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    // On mobile, delay loading to improve initial page load speed
+    if (isMobile) {
+      const timer = setTimeout(() => {
+        setRecentSearches(getStoredSearches());
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setRecentSearches(getStoredSearches());
+    }
   }, []);
 
   // Generate quick suggestions based on current input
@@ -50,7 +63,7 @@ export function useSearch(options: UseSearchOptions = {}) {
 
     // Unit suggestions if subject is known
     if (searchQuery.subject) {
-      const subject = (subjectsData as SubjectsData).subjects[searchQuery.subject.toLowerCase()];
+      const subject = castSubjectsData(subjectsData).subjects[searchQuery.subject.toLowerCase()];
       if (subject) {
         subject.units.forEach(unit => {
           suggestions.push({
@@ -66,42 +79,64 @@ export function useSearch(options: UseSearchOptions = {}) {
     return suggestions.sort((a, b) => b.score - a.score).slice(0, 5);
   }, []);
 
-  // Memoized search function
+  // Memoized search function - now with abort controller for cancellation
   const performSearch = useCallback((searchQuery: SearchQuery) => {
     setIsSearching(true);
     setError(null);
 
+    // Cancel any in-flight search request
+    if (searchAbortController.current) {
+      searchAbortController.current.abort();
+    }
+
+    // Create a new abort controller for this search
+    searchAbortController.current = new AbortController();
+
     try {
-      const { results: searchResults, suggestions: searchSuggestions } = 
-        searchPapers(searchQuery, subjectsData as SubjectsData);
+      // Delay slightly to allow for UI updates
+      setTimeout(() => {
+        try {
+          // Check if this search was canceled
+          if (searchAbortController.current?.signal.aborted) return;
+          
+          const { results: searchResults, suggestions: searchSuggestions } = 
+            searchPapers(searchQuery, castSubjectsData(subjectsData));
 
-      setResults(searchResults.slice(0, maxResults));
+          setResults(searchResults.slice(0, maxResults));
 
-      // Merge search suggestions with quick suggestions
-      const quickSuggestions = generateSuggestions(searchQuery);
-      setSuggestions([...quickSuggestions, ...searchSuggestions]);
+          // Merge search suggestions with quick suggestions
+          const quickSuggestions = generateSuggestions(searchQuery);
+          setSuggestions([...quickSuggestions, ...searchSuggestions]);
 
-      // Store successful searches
-      if (searchResults.length > 0 && searchQuery.text) {
-        const searches = getStoredSearches();
-        const newSearches = [
-          searchQuery,
-          ...searches.filter(s => s.text !== searchQuery.text)
-        ].slice(0, maxRecentSearches);
-        
-        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
-        setRecentSearches(newSearches);
-      }
+          // Store successful searches - but not on mobile to avoid excessive storage writes
+          if (searchResults.length > 0 && searchQuery.text && typeof window !== 'undefined' && window.innerWidth >= 768) {
+            const searches = getStoredSearches();
+            const newSearches = [
+              searchQuery,
+              ...searches.filter(s => s.text !== searchQuery.text)
+            ].slice(0, maxRecentSearches);
+            
+            localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
+            setRecentSearches(newSearches);
+          }
+        } catch (err) {
+          if (searchAbortController.current?.signal.aborted) return;
+          setError(err instanceof Error ? err.message : 'Search failed');
+          setResults([]);
+          setSuggestions(generateSuggestions(searchQuery));
+        } finally {
+          setIsSearching(false);
+        }
+      }, 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
       setResults([]);
       setSuggestions(generateSuggestions(searchQuery));
-    } finally {
       setIsSearching(false);
     }
   }, [maxResults, maxRecentSearches, generateSuggestions]);
 
-  // Debounced search
+  // Debounced search - with longer delay on mobile
   const debouncedSearch = useCallback((searchQuery: SearchQuery) => {
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
@@ -110,9 +145,13 @@ export function useSearch(options: UseSearchOptions = {}) {
     // Always update suggestions immediately for better UX
     setSuggestions(generateSuggestions(searchQuery));
 
+    // Use a longer debounce on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const mobileDebounceMs = isMobile ? debounceMs * 1.5 : debounceMs;
+
     debounceTimer.current = setTimeout(() => {
       performSearch(searchQuery);
-    }, debounceMs);
+    }, mobileDebounceMs);
   }, [debounceMs, performSearch, generateSuggestions]);
 
   // Update search when query changes
@@ -128,6 +167,9 @@ export function useSearch(options: UseSearchOptions = {}) {
       if (debounceTimer.current) {
         clearTimeout(debounceTimer.current);
       }
+      if (searchAbortController.current) {
+        searchAbortController.current.abort();
+      }
     };
   }, [query, debouncedSearch]);
 
@@ -141,11 +183,32 @@ export function useSearch(options: UseSearchOptions = {}) {
 
   // Function to clear search
   const clearSearch = useCallback(() => {
+    // Cancel any in-flight search
+    if (searchAbortController.current) {
+      searchAbortController.current.abort();
+    }
+    
     setQuery({ text: '' });
     setResults([]);
     setSuggestions([]);
     setError(null);
   }, []);
+
+  // Store successful searches when component unmounts
+  // This ensures we save the most recent search when navigating away
+  useEffect(() => {
+    return () => {
+      if (results.length > 0 && query.text) {
+        const searches = getStoredSearches();
+        const newSearches = [
+          query,
+          ...searches.filter(s => s.text !== query.text)
+        ].slice(0, maxRecentSearches);
+        
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
+      }
+    };
+  }, [query, results.length, maxRecentSearches]);
 
   return {
     query,
