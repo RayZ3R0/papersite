@@ -22,7 +22,8 @@ export default function ExamsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    // Add pb-20 class to ensure content doesn't get hidden behind mobile nav
+    <div className="space-y-6 pb-20 md:pb-6">
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-text">Exam Schedule</h1>
@@ -45,20 +46,22 @@ export default function ExamsPage() {
           {/* Next Exam Countdown */}
           <CountdownTimerV2 targetExam={nextExam} />
 
-          {/* Calendar or List View */}
-          {state.view === "calendar" ? (
-            <CalendarV2
-              examinations={examinations}
-              userSubjects={profile?.subjects}
-              nextExamMonth={nextExamMonth}
-            />
-          ) : (
-            <ExamList
-              examinations={examinations}
-              userSubjects={profile?.subjects}
-              view="detailed"
-            />
-          )}
+          {/* Calendar or List View - Add mobile-friendly bottom padding */}
+          <div className="pb-safe">
+            {state.view === "calendar" ? (
+              <CalendarV2
+                examinations={examinations}
+                userSubjects={profile?.subjects}
+                nextExamMonth={nextExamMonth}
+              />
+            ) : (
+              <ExamList
+                examinations={examinations}
+                userSubjects={profile?.subjects}
+                view="detailed"
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

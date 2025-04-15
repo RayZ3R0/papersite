@@ -63,8 +63,9 @@ export default function HomePage() {
         <ActionGrid />
       </div>
       
-      {/* Recently Added Papers Section */}
+      {/* Recently Added Papers Section - now with balanced display 
       <RecentPapers />
+      */}
       
       {/* Statistics Section */}
       <StatisticsSection />
