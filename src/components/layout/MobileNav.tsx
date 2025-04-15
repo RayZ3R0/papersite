@@ -99,6 +99,9 @@ export default function MobileNav() {
 
   return (
     <>
+      {/* Spacer for top navigation - FIXED HEIGHT TO MATCH NAVBAR EXACTLY */}
+      <div className="md:hidden h-[56px]" aria-hidden="true" />
+      
       {/* Top Navigation Bar with more solid styling */}
       <div 
         ref={topNavRef}
@@ -160,9 +163,6 @@ export default function MobileNav() {
         </div>
       </div>
 
-      {/* Add padding for top navbar */}
-      <div className="md:hidden h-14" aria-hidden="true" />
-
       {/* Bottom Navigation - with more solid styling */}
       <nav 
         ref={bottomNavRef}
@@ -219,8 +219,6 @@ export default function MobileNav() {
         </div>
       </nav>
 
-      {/* Add padding for bottom navigation plus safe area inset */}
-      <div className="md:hidden h-16 pb-[env(safe-area-inset-bottom, 0px)]" aria-hidden="true" />
 
       {/* Profile Drawer - Over everything else */}
       <ProfileDrawer

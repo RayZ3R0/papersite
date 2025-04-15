@@ -47,8 +47,11 @@ export default function RootLayout({
 
               {/* Auth context that may update with navigation */}
               <AuthLoadingProvider>
-                {/* Main content - adjusted for mobile nav padding */}
-                <main className="pt-14 md:pt-16 pb-16 md:pb-0 overflow-x-hidden">
+                {/* 
+                  Adjusted main content wrapper - removed all top and bottom padding
+                  The MobileNav component already adds the necessary spacing elements
+                */}
+                <main className="md:pt-16 overflow-x-hidden">
                   {/* Single loading boundary for all dynamic content */}
                   <Suspense 
                     fallback={

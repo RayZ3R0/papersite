@@ -4,11 +4,18 @@ export interface QuickAction {
   id: string;
   label: string;
   description: string;
-  icon: IconType;
+  icon: any;
   href: string;
   color: {
-    bg: string;
-    hover: string;
+    gradientBg: string;
+    highlight: string;
+    glow: string;
+    iconBg: string;
+    iconGlow: string;
+    icon: string;
     text: string;
+    actionBg: string;
+    actionIcon: string;
+    line: string;
   };
 }

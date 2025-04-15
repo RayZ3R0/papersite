@@ -58,6 +58,8 @@ const getAnimationSettings = () => {
 
 // Helper to combine similar sessions (May/June)
 const formatSessionName = (session: string, year: number): string => {
+  if (!session) return `Unknown ${year || ''}`;
+  
   if (session.toLowerCase() === 'may') return `May/June ${year}`;
   if (session.toLowerCase() === 'june') return `May/June ${year}`;
   if (session.toLowerCase() === 'feb') return `February ${year}`;
@@ -83,6 +85,22 @@ const getRawSession = (formattedSession: string): {session: string, year: string
 };
 
 const FILTERS_VISIBLE_KEY = "papersite:filters-visible";
+
+// Safe URL generator to prevent null/undefined href values
+const safeGetPaperUrl = (paper: Paper, subject: string): string => {
+  if (!paper || !subject) {
+    return "#"; // Fallback URL if we're missing data
+  }
+  
+  // Make sure we have a valid subject string (lowercase for URL paths)
+  const safeSubject = subject.toLowerCase();
+  
+  // Some papers might not have unitId, so provide fallbacks
+  const unitPath = paper.unitId || "unknown-unit";
+  const paperId = paper.id || "unknown-paper";
+  
+  return `/papers/${safeSubject}/${unitPath}/${paperId}`;
+};
 
 export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
   const {
@@ -324,10 +342,15 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     (id: string) => {
       setSelectedSubject(id);
       setSelectedUnits([]);
-      updateQuery({
-        subject: castSubjectsData(subjectsData).subjects[id].name,
-        unit: undefined
-      });
+      
+      // Make sure we have a valid subject
+      const subject = castSubjectsData(subjectsData).subjects[id];
+      if (subject) {
+        updateQuery({
+          subject: subject.name,
+          unit: undefined
+        });
+      }
     },
     [updateQuery]
   );
@@ -425,6 +448,29 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     const subject = castSubjectsData(subjectsData).subjects[subjectId];
     return subject?.papers || [];
   }, []);
+
+  // Safely get paper code with error handling
+  const safeGetPaperCode = useCallback((paper: Paper, subjectId: string) => {
+    if (!paper || !subjectId) return "";
+    
+    try {
+      const papers = getSubjectPapers(subjectId);
+      return getPaperCode(
+        {
+          subject: subjectId,
+          unitId: paper.unitId,
+          year: paper.year,
+          title: paper.title,
+          pdfUrl: paper.pdfUrl,
+          session: paper.session,
+        },
+        papers
+      );
+    } catch (err) {
+      console.error("Error getting paper code:", err);
+      return "";
+    }
+  }, [getSubjectPapers]);
 
   return (
     <div className="w-full max-w-2xl mx-auto mobile-container-fix">
@@ -561,129 +607,115 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
           </div>
         ) : results.length > 0 ? (
           <div className="divide-y divide-border" role="list">
-            {results.map((result: SearchResult, index) => (
-              <div
-                key={result.paper.id}
-                className={`
-                  relative px-3 sm:px-4 py-4 flex flex-col sm:flex-row sm:items-center
-                  hover:bg-surface-alt/50 transition-colors
-                  active:bg-surface-alt/70 sm:active:bg-surface-alt/50
-                  border-t first:border-t-0 border-border
-                `}
-                role="listitem"
-                // Animation for search results (staggered entry)
-                style={{
-                  opacity: 0,
-                  animation: `searchFadeIn 0.3s ease-out ${index * 0.05}s forwards`
-                }}
-              >
-                {/* Add a subtle ripple effect on mobile touches */}
-                <div className="absolute inset-0 pointer-events-none sm:hidden" 
-                     style={{ overflow: 'hidden' }}>
-                  <span className="ripple-effect" />
-                </div>
-                
-                <div className="min-w-0 flex-1 mb-3 sm:mb-0">
-                  <h3 className="font-medium text-text break-words">
-                    {result.subject.name} - {result.unit.name}
-                  </h3>
-                  <div>
-                    <p className="text-sm text-text-muted">
-                      {result.paper.session} {result.paper.year}
-                      {getPaperCode(
-                        {
-                          subject: result.subject.id,
-                          unitId: result.paper.unitId,
-                          year: result.paper.year,
-                          title: result.paper.title,
-                          pdfUrl: result.paper.pdfUrl,
-                          session: result.paper.session,
-                        },
-                        getSubjectPapers(result.subject.id)
-                      ) && (
-                        <span className="text-xs ml-2">
-                          {getPaperCode(
-                            {
-                              subject: result.subject.id,
-                              unitId: result.paper.unitId,
-                              year: result.paper.year,
-                              title: result.paper.title,
-                              pdfUrl: result.paper.pdfUrl,
-                              session: result.paper.session,
-                            },
-                            getSubjectPapers(result.subject.id)
-                          )}
-                        </span>
-                      )}
-                    </p>
+            {results.map((result: SearchResult, index) => {
+              // Create safe URLs using our helper function
+              const paperUrl = safeGetPaperUrl(result.paper, result.subject.id);
+              const paperCode = safeGetPaperCode(result.paper, result.subject.id);
+              
+              return (
+                <div
+                  key={`${result.paper.id}-${index}`}
+                  className={`
+                    relative px-3 sm:px-4 py-4 flex flex-col sm:flex-row sm:items-center
+                    hover:bg-surface-alt/50 transition-colors
+                    active:bg-surface-alt/70 sm:active:bg-surface-alt/50
+                    border-t first:border-t-0 border-border
+                  `}
+                  role="listitem"
+                  // Animation for search results (staggered entry)
+                  style={{
+                    opacity: 0,
+                    animation: `searchFadeIn 0.3s ease-out ${index * 0.05}s forwards`
+                  }}
+                >
+                  {/* Add a subtle ripple effect on mobile touches */}
+                  <div className="absolute inset-0 pointer-events-none sm:hidden" 
+                       style={{ overflow: 'hidden' }}>
+                    <span className="ripple-effect" />
+                  </div>
+                  
+                  <div className="min-w-0 flex-1 mb-3 sm:mb-0">
+                    <h3 className="font-medium text-text break-words">
+                      {result.subject.name} - {result.unit.name}
+                    </h3>
+                    <div>
+                      <p className="text-sm text-text-muted">
+                        {result.paper.session || "Unknown"} {result.paper.year || ""}
+                        {paperCode && (
+                          <span className="text-xs ml-2">
+                            {paperCode}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile-friendly action buttons with visual feedback */}
+                  <div className="flex gap-2 sm:gap-2.5 sm:ml-6 mx-0 sm:-mx-1 sm:mx-0">
+                    <Link
+                      href={result.paper.pdfUrl || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                        bg-primary text-white rounded-full hover:opacity-90
+                        transition-all shadow-sm hover:shadow active:scale-[0.98]
+                        touch-manipulation"
+                      style={{ 
+                        WebkitTapHighlightColor: 'transparent',
+                        touchAction: 'manipulation'
+                      }}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <span className="whitespace-nowrap">Paper</span>
+                    </Link>
+                    <Link
+                      href={result.paper.markingSchemeUrl || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                        bg-secondary text-white rounded-full hover:opacity-90
+                        transition-all shadow-sm hover:shadow active:scale-[0.98]
+                        touch-manipulation"
+                      style={{ 
+                        WebkitTapHighlightColor: 'transparent',
+                        touchAction: 'manipulation'
+                      }}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                        />
+                      </svg>
+                      <span className="whitespace-nowrap">MS</span>
+                    </Link>
                   </div>
                 </div>
-                
-                {/* Mobile-friendly action buttons with visual feedback */}
-                <div className="flex gap-2 sm:gap-2.5 sm:ml-6 mx-0 sm:-mx-1 sm:mx-0">
-                  <Link
-                    href={result.paper.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
-                      bg-primary text-white rounded-full hover:opacity-90
-                      transition-all shadow-sm hover:shadow active:scale-[0.98]
-                      touch-manipulation"
-                    style={{ 
-                      WebkitTapHighlightColor: 'transparent',
-                      touchAction: 'manipulation'
-                    }}
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    <span className="whitespace-nowrap">Paper</span>
-                  </Link>
-                  <Link
-                    href={result.paper.markingSchemeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
-                      bg-secondary text-white rounded-full hover:opacity-90
-                      transition-all shadow-sm hover:shadow active:scale-[0.98]
-                      touch-manipulation"
-                    style={{ 
-                      WebkitTapHighlightColor: 'transparent',
-                      touchAction: 'manipulation'
-                    }}
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                      />
-                    </svg>
-                    <span className="whitespace-nowrap">MS</span>
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : query.text ? (
           <div className="px-4 py-12 text-center text-text-muted">
@@ -708,7 +740,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                 <div className="flex flex-wrap gap-2">
                   {recentSearches.map((recent: SearchQuery, index: number) => (
                     <button
-                      key={index}
+                      key={`recent-${index}`}
                       onClick={() => updateQuery(recent)}
                       className="px-3 py-2 text-sm bg-surface-alt text-text rounded-full
                         hover:bg-surface-alt/80 transition-colors active:scale-[0.98]"
@@ -730,7 +762,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                 <div className="flex flex-wrap gap-2">
                   {trendingSearches.map((search: string, index: number) => (
                     <button
-                      key={index}
+                      key={`trending-${index}`}
                       onClick={() => updateQuery({ text: search })}
                       className="px-3 py-2 text-sm bg-primary/10 text-primary rounded-full
                         hover:bg-primary/20 transition-colors group active:scale-[0.98]"
