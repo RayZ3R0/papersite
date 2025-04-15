@@ -2,19 +2,36 @@
 
 import Link from "next/link";
 import subjectsData from "@/lib/data/subjects.json";
-import type { SubjectsData } from "@/types/subject";
+import type { SubjectsData, Paper } from "@/types/subject";
+import { useMemo } from "react";
+
+const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
 
 export default function SubjectsPage() {
   // Get subjects from the data file
-  const { subjects } = subjectsData as SubjectsData;
-
-  // Calculate total papers for each subject
+  const { subjects } = castSubjectsData(subjectsData);
+  
+  // Calculate total papers for each subject with deduplication
   const getSubjectStats = (subjectId: string) => {
     const subject = subjects[subjectId];
-    const totalPapers = subject.papers.length;
+    
+    // Deduplicate papers based on pdfUrl
+    const seenPdfUrls = new Set<string>();
+    const uniquePapers = subject.papers.filter(paper => {
+      if (seenPdfUrls.has(paper.pdfUrl)) {
+        return false;
+      }
+      seenPdfUrls.add(paper.pdfUrl);
+      return true;
+    });
+    
+    const totalPapers = uniquePapers.length;
     const totalUnits = subject.units.length;
     return { totalPapers, totalUnits };
   };
+
+  // Memoize update date to avoid recalculation on each render
+  const lastUpdated = useMemo(() => new Date().toLocaleDateString(), []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -105,7 +122,7 @@ export default function SubjectsPage() {
 
                 {/* Latest Update */}
                 <div className="mt-4 text-xs text-text-muted">
-                  Last updated: {new Date().toLocaleDateString()}
+                  Last updated: {lastUpdated}
                 </div>
               </div>
             </Link>

@@ -757,3 +757,118 @@ body {
   }
 }
 
+
+/* Complete fix for mobile clipping and scrolling issues */
+@media (max-width: 767px) {
+  /* Make page container behave correctly */
+  .fixed-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Fix card rendering */
+  .search-card-mobile-fix {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  
+  /* Fix sticky header */
+  .fixed-search-page body {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix scrolling issues */
+  body, html {
+    position: relative;
+    overscroll-behavior-y: none;
+    scroll-behavior: auto;
+    height: var(--app-height, 100%);
+  }
+  
+  /* Ensure smooth scrolling in filter boxes */
+  .filter-scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  
+  /* Hide scrollbars on mobile but keep functionality */
+  .filter-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Remove any wobble */
+  .mobile-no-transform {
+    transform: none !important;
+    will-change: auto !important;
+  }
+  
+  /* Smooth scroll snap on filter items */
+  .filter-scroll-item {
+    scroll-snap-align: start;
+  }
+  
+  /* Reset any spacing that could cause overflow */
+  .mobile-container-fix {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* iOS-specific tweaks */
+@supports (-webkit-touch-callout: none) {
+  .ios-search-page {
+    /* Fix for iOS momentum scrolling */
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: 100% !important;
+  }
+  
+  /* Fix iOS search input appearance */
+  input[type="search"] {
+    border-radius: 8px !important;
+    -webkit-appearance: none !important;
+  }
+  
+  /* Fix double-tap issues */
+  a, button {
+    touch-action: manipulation;
+  }
+  
+  /* Fix for iOS notch */
+  .search-card-mobile-fix {
+    padding-left: env(safe-area-inset-left) !important;
+    padding-right: env(safe-area-inset-right) !important;
+  }
+}
+
+/* Add viewport height variables for iOS */
+:root {
+  --app-height: 100%;
+}
+
+/* Improved button touch states */
+@media (hover: none) {
+  button:active, a:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+}
+
+/* Smoother animations for reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

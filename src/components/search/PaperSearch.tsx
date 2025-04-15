@@ -16,7 +16,7 @@ import FilterBox from "./FilterBox";
 import { getTrendingSearches, logSearchQuery } from "@/utils/search/trending";
 import subjectsData from "@/lib/data/subjects.json";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Subject } from "@/types/subject";
+import type { Subject, Paper } from "@/types/subject";
 import type { SearchQuery, SearchResult } from "@/types/search";
 
 interface SubjectsData {
@@ -30,6 +30,14 @@ const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
 
 interface PaperSearchProps {
   initialQuery?: string;
+}
+
+// Enum for active filter sections
+enum FilterSection {
+  NONE = "none",
+  SUBJECTS = "subjects",
+  UNITS = "units",
+  SESSIONS = "sessions"
 }
 
 // Adaptive animation settings based on user preferences
@@ -48,6 +56,32 @@ const getAnimationSettings = () => {
   };
 };
 
+// Helper to combine similar sessions (May/June)
+const formatSessionName = (session: string, year: number): string => {
+  if (session.toLowerCase() === 'may') return `May/June ${year}`;
+  if (session.toLowerCase() === 'june') return `May/June ${year}`;
+  if (session.toLowerCase() === 'feb') return `February ${year}`;
+  if (session.toLowerCase() === 'jan') return `January ${year}`;
+  if (session.toLowerCase() === 'oct') return `October ${year}`;
+  if (session.toLowerCase() === 'nov') return `November ${year}`;
+  return `${session} ${year}`;
+};
+
+// Helper to get the raw session name
+const getRawSession = (formattedSession: string): {session: string, year: string} => {
+  const match = formattedSession.match(/^([A-Za-z\/]+)\s+(\d{4})$/);
+  if (!match) return { session: "", year: "" };
+  
+  let [, session, year] = match;
+  
+  // Handle the May/June case
+  if (session === 'May/June') {
+    session = 'May'; // Default to May for searching
+  }
+  
+  return { session, year };
+};
+
 const FILTERS_VISIBLE_KEY = "papersite:filters-visible";
 
 export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
@@ -64,23 +98,62 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
   // Search focus handling
   const searchRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const animSettings = useMemo(() => getAnimationSettings(), []);
+  const focusAttemptsRef = useRef(0);
 
-  // Auto focus if coming from homepage
+  // Enhanced focus handling with multiple strategies
   useEffect(() => {
-    if (searchParams.get("focus") === "true" && searchRef.current) {
-      // On mobile, delay focusing to prevent keyboard popping up immediately
+    // Check if we should focus (coming from home search or nav search)
+    const shouldFocus = searchParams.get("focus") === "true";
+    
+    if (shouldFocus && searchRef.current) {
+      // On mobile, use a different focus strategy
       const isMobile = window.innerWidth < 768;
-      if (isMobile) {
-        const timer = setTimeout(() => {
+      
+      // Attempt multi-stage focus approach
+      const attemptFocus = () => {
+        try {
+          // Try to focus the input element
           searchRef.current?.focus();
-        }, 500);
-        return () => clearTimeout(timer);
-      } else {
-        searchRef.current.focus();
-      }
+          focusAttemptsRef.current += 1;
+          
+          // If focus doesn't seem to work (sometimes happens on iOS), try again
+          if (document.activeElement !== searchRef.current && focusAttemptsRef.current < 3) {
+            setTimeout(attemptFocus, 150);
+          }
+        } catch (err) {
+          console.error("Focus error:", err);
+        }
+      };
+      
+      // Initial delay depends on device
+      const initialDelay = isMobile ? 400 : 100;
+      
+      // First attempt with delay
+      const timer = setTimeout(() => {
+        attemptFocus();
+        
+        // Additional RAF for more reliable timing
+        requestAnimationFrame(() => {
+          attemptFocus();
+        });
+      }, initialDelay);
+      
+      return () => clearTimeout(timer);
     }
   }, [searchParams]);
+
+  // Additional focus effect that runs after the page has fully rendered
+  useEffect(() => {
+    if (searchParams.get("focus") === "true" && searchRef.current) {
+      // This effect runs once after initial render
+      const timer = setTimeout(() => {
+        searchRef.current?.focus();
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // Filter states
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
@@ -92,6 +165,9 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     }
     return false;
   });
+  
+  // Track which filter section is expanded
+  const [expandedSection, setExpandedSection] = useState<FilterSection>(FilterSection.NONE);
 
   // For delayed loading (improves initial paint speed)
   const [loadedFilters, setLoadedFilters] = useState(false);
@@ -122,6 +198,39 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
   const hasActiveFilters =
     selectedSubject || selectedUnits.length > 0 || selectedSession;
 
+  // Reset all filters function
+  const resetAllFilters = useCallback(() => {
+    setSelectedSubject(null);
+    setSelectedUnits([]);
+    setSelectedSession(null);
+    updateQuery({
+      subject: undefined,
+      unit: undefined,
+      session: undefined,
+      year: undefined
+    });
+  }, [updateQuery]);
+
+  // Clear specific filter sections
+  const clearSubjectFilters = useCallback(() => {
+    setSelectedSubject(null);
+    setSelectedUnits([]);
+    updateQuery({ subject: undefined, unit: undefined });
+  }, [updateQuery]);
+
+  const clearUnitFilters = useCallback(() => {
+    setSelectedUnits([]);
+    updateQuery({ unit: undefined });
+  }, [updateQuery]);
+
+  const clearSessionFilters = useCallback(() => {
+    setSelectedSession(null);
+    updateQuery({
+      session: undefined,
+      year: undefined,
+    });
+  }, [updateQuery]);
+
   // Transform subjects data into filter items
   const subjectFilters = useMemo(() => {
     return Object.values(castSubjectsData(subjectsData).subjects).map(
@@ -148,27 +257,67 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     }));
   }, [selectedSubject, selectedUnits]);
 
-  // Get recent sessions
+  // Get all available sessions/years based on current selection
   const sessionFilters = useMemo(() => {
-    const allPapers = Object.values(
-      castSubjectsData(subjectsData).subjects
-    ).flatMap((s) => s.papers);
-    const sessions = Array.from(
-      new Set(allPapers.map((p) => `${p.session} ${p.year}`))
-    ).sort((a, b) => {
-      const [, yearA] = a.split(" ");
-      const [, yearB] = b.split(" ");
-      return Number(yearB) - Number(yearA);
+    let papersToFilter: Paper[] = [];
+    
+    if (selectedSubject) {
+      const subject = castSubjectsData(subjectsData).subjects[selectedSubject];
+      if (subject) {
+        // If units are selected, filter by those units
+        if (selectedUnits.length > 0) {
+          papersToFilter = subject.papers.filter(p => 
+            selectedUnits.includes(p.unitId)
+          );
+        } else {
+          // Otherwise use all papers from the subject
+          papersToFilter = subject.papers;
+        }
+      }
+    } else {
+      // If no subject selected, use all papers
+      papersToFilter = Object.values(
+        castSubjectsData(subjectsData).subjects
+      ).flatMap(s => s.papers);
+    }
+    
+    // Deduplicate papers based on pdfUrl before creating session map
+    const seenPdfUrls = new Set<string>();
+    const uniquePapers = papersToFilter.filter(paper => {
+      if (seenPdfUrls.has(paper.pdfUrl)) {
+        return false;
+      }
+      seenPdfUrls.add(paper.pdfUrl);
+      return true;
     });
-
-    return sessions.slice(0, 6).map((session) => ({
+    
+    // Create a map to combine similar sessions (May/June)
+    const sessionMap = new Map<string, number>();
+    
+    uniquePapers.forEach(paper => {
+      const formattedSession = formatSessionName(paper.session, paper.year);
+      sessionMap.set(formattedSession, (sessionMap.get(formattedSession) || 0) + 1);
+    });
+    
+    // Convert to array and sort by year (newest first)
+    const sessions = Array.from(sessionMap.entries())
+      .map(([session, count]) => ({ session, count }))
+      .sort((a, b) => {
+        const yearA = parseInt(a.session.split(' ').pop() || '0', 10);
+        const yearB = parseInt(b.session.split(' ').pop() || '0', 10);
+        if (yearA !== yearB) return yearB - yearA;
+        
+        // If years are the same, sort by session month
+        return a.session.localeCompare(b.session);
+      });
+      
+    return sessions.map(({ session, count }) => ({
       id: session,
       name: session,
-      count: allPapers.filter((p) => `${p.session} ${p.year}` === session)
-        .length,
+      count,
       isSelected: selectedSession === session,
     }));
-  }, [selectedSession]);
+  }, [selectedSubject, selectedUnits, selectedSession]);
 
   // Handle filter selections
   const handleSubjectSelect = useCallback(
@@ -177,6 +326,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
       setSelectedUnits([]);
       updateQuery({
         subject: castSubjectsData(subjectsData).subjects[id].name,
+        unit: undefined
       });
     },
     [updateQuery]
@@ -185,7 +335,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
   const handleSubjectDeselect = useCallback(() => {
     setSelectedSubject(null);
     setSelectedUnits([]);
-    updateQuery({ subject: undefined });
+    updateQuery({ subject: undefined, unit: undefined });
   }, [updateQuery]);
 
   const handleUnitSelect = useCallback(
@@ -207,17 +357,20 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
   const handleUnitDeselect = useCallback(
     (id: string) => {
       setSelectedUnits((prev) => prev.filter((unitId) => unitId !== id));
-      updateQuery({ unit: undefined });
+      // Only remove unit from query if we're deselecting the last unit
+      if (selectedUnits.length <= 1) {
+        updateQuery({ unit: undefined });
+      }
     },
-    [updateQuery]
+    [updateQuery, selectedUnits]
   );
 
   const handleSessionSelect = useCallback(
     (id: string) => {
       setSelectedSession(id);
-      const [month, year] = id.split(" ");
+      const { session, year } = getRawSession(id);
       updateQuery({
-        session: month,
+        session: session,
         year: parseInt(year, 10),
       });
     },
@@ -231,6 +384,25 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
       year: undefined,
     });
   }, [updateQuery]);
+
+  // Toggle handlers for filter sections
+  const toggleSubjectsSection = useCallback(() => {
+    setExpandedSection(prev => 
+      prev === FilterSection.SUBJECTS ? FilterSection.NONE : FilterSection.SUBJECTS
+    );
+  }, []);
+  
+  const toggleUnitsSection = useCallback(() => {
+    setExpandedSection(prev => 
+      prev === FilterSection.UNITS ? FilterSection.NONE : FilterSection.UNITS
+    );
+  }, []);
+  
+  const toggleSessionsSection = useCallback(() => {
+    setExpandedSection(prev => 
+      prev === FilterSection.SESSIONS ? FilterSection.NONE : FilterSection.SESSIONS
+    );
+  }, []);
 
   // Load trending searches on mount with delay for performance
   useEffect(() => {
@@ -254,45 +426,70 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     return subject?.papers || [];
   }, []);
 
-return (
-  // Change from "w-full max-w-2xl mx-auto" to fully support mobile:
-  <div className="w-full max-w-2xl mx-auto mobile-container-fix">
-    {/* Filter Toggle - improved for touch */}
-    <button
-      onClick={() => setShowFilters((prev) => !prev)}
-      className={`w-full mb-4 px-3 sm:px-4 py-3 text-sm
-        flex items-center justify-between transition-colors
-        rounded-lg border border-border hover:border-border-light
-        bg-surface hover:bg-surface-alt
-        focus:outline-none focus:ring-2 focus:ring-primary/30
-        text-text active:opacity-90`}
-      style={{ touchAction: 'manipulation' }}
-      aria-expanded={showFilters}
-      aria-controls="search-filters"
-    >
-      <span className="flex items-center gap-2">
-        <svg
-          className={`w-4 h-4 transition-transform duration-200 ${
-            showFilters ? "rotate-180" : ""
-          }`}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M19 9l-7 7-7-7" />
-        </svg>
-        {showFilters ? "Hide filters" : "Show filters"}
-      </span>
-      {hasActiveFilters && (
-        <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
-          Filters active
+  return (
+    <div className="w-full max-w-2xl mx-auto mobile-container-fix">
+      {/* Filter Toggle - improved for touch */}
+      <button
+        onClick={() => setShowFilters((prev) => !prev)}
+        className={`w-full mb-3 px-3 sm:px-4 py-3 text-sm
+          flex items-center justify-between transition-colors
+          rounded-lg border border-border hover:border-border-light
+          bg-surface hover:bg-surface-alt
+          focus:outline-none focus:ring-2 focus:ring-primary/30
+          text-text active:opacity-90`}
+        style={{ touchAction: 'manipulation' }}
+        aria-expanded={showFilters}
+        aria-controls="search-filters"
+      >
+        <span className="flex items-center gap-2">
+          <svg
+            className={`w-4 h-4 transition-transform duration-200 ${
+              showFilters ? "rotate-180" : ""
+            }`}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M19 9l-7 7-7-7" />
+          </svg>
+          {showFilters ? "Hide filters" : "Show filters"}
         </span>
+        {hasActiveFilters && (
+          <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
+            Filters active
+          </span>
+        )}
+      </button>
+
+      {/* Reset all filters button - only visible when filters are active */}
+      {hasActiveFilters && (
+        <div className="w-full flex justify-end -mt-1 mb-3 px-1">
+          <button
+            onClick={resetAllFilters}
+            className="text-xs text-text-muted hover:text-primary transition-colors
+              flex items-center gap-1.5 py-1 px-2 rounded-md hover:bg-surface-alt"
+            aria-label="Reset all filters"
+          >
+            <svg 
+              className="w-3 h-3" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            Reset filters
+          </button>
+        </div>
       )}
-    </button>
 
       {/* Filter Section with optimized animations */}
       <AnimatePresence initial={false}>
@@ -314,6 +511,9 @@ return (
                 items={subjectFilters}
                 onSelect={handleSubjectSelect}
                 onDeselect={handleSubjectDeselect}
+                expanded={expandedSection === FilterSection.SUBJECTS}
+                onToggleExpand={toggleSubjectsSection}
+                onClearAll={selectedSubject ? clearSubjectFilters : undefined}
               />
 
               {selectedSubject && (
@@ -323,14 +523,20 @@ return (
                   onSelect={handleUnitSelect}
                   onDeselect={handleUnitDeselect}
                   multiSelect={true}
+                  expanded={expandedSection === FilterSection.UNITS}
+                  onToggleExpand={toggleUnitsSection}
+                  onClearAll={selectedUnits.length > 0 ? clearUnitFilters : undefined}
                 />
               )}
 
               <FilterBox
-                title="Recent Sessions"
+                title="Available Sessions"
                 items={sessionFilters}
                 onSelect={handleSessionSelect}
                 onDeselect={handleSessionDeselect}
+                expanded={expandedSection === FilterSection.SESSIONS}
+                onToggleExpand={toggleSessionsSection}
+                onClearAll={selectedSession ? clearSessionFilters : undefined}
               />
             </div>
           </motion.div>

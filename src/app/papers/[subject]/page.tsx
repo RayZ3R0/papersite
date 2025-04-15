@@ -6,6 +6,21 @@ import subjectsData from '@/lib/data/subjects.json';
 import type { Subject, SubjectsData, Paper } from '@/types/subject';
 import { getPaperCode } from '@/utils/paperCodes';
 
+const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
+
+// Utility function to deduplicate papers
+function dedupePapers(papers: Paper[]): Paper[] {
+  const seenPdfUrls = new Set<string>();
+  
+  return papers.filter(paper => {
+    if (seenPdfUrls.has(paper.pdfUrl)) {
+      return false;
+    }
+    seenPdfUrls.add(paper.pdfUrl);
+    return true;
+  });
+}
+
 export default function SubjectPage() {
   const params = useParams();
   const subjectId = params.subject as string;
@@ -13,8 +28,17 @@ export default function SubjectPage() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   
-  // Get subject data
-  const subject = (subjectsData as SubjectsData).subjects[subjectId];
+  // Get subject data and deduplicate papers
+  const subject = useMemo(() => {
+    const rawSubject = castSubjectsData(subjectsData).subjects[subjectId];
+    if (!rawSubject) return null;
+    
+    // Create a copy with deduplicated papers
+    return {
+      ...rawSubject,
+      papers: dedupePapers(rawSubject.papers)
+    };
+  }, [subjectId]);
 
   // Get unique years and normalize sessions (combine May/June)
   const { years, sessions } = useMemo(() => {
@@ -56,6 +80,7 @@ export default function SubjectPage() {
       'October': 2
     };
 
+    // Filter papers
     return subject.papers
       .filter(paper => {
         const matchesUnit = paper.unitId === unitId;
@@ -76,6 +101,12 @@ export default function SubjectPage() {
         // Then by session (January, May/June, October)
         return (sessionOrder[a.session] || 0) - (sessionOrder[b.session] || 0);
       });
+  };
+
+  // Count papers per unit (for display)
+  const getUnitPaperCount = (unitId: string) => {
+    // Using the filtered papers but only matching unit
+    return subject.papers.filter(paper => paper.unitId === unitId).length;
   };
 
   // Reset filters
@@ -158,6 +189,7 @@ export default function SubjectPage() {
         {subject.units.map((unit) => {
           const unitPapers = getUnitPapers(unit.id);
           const isSelected = selectedUnit === unit.id;
+          const paperCount = getUnitPaperCount(unit.id);
           
           return (
             <div
@@ -177,7 +209,7 @@ export default function SubjectPage() {
                     {unit.name}
                   </h2>
                   <span className="text-sm text-text-muted ml-4">
-                    {unitPapers.length} papers
+                    {paperCount} papers
                   </span>
                 </div>
                 {unit.description && (
@@ -205,9 +237,10 @@ export default function SubjectPage() {
                               subject: subjectId,
                               unitId: paper.unitId,
                               year: paper.year,
-                              title: paper.title
+                              title: paper.title,
+                              session: paper.session
                             },
-                            subject.papers // Pass all subject papers as the second argument
+                            subject.papers // Pass deduplicated subject papers
                           ) && (
                             <span className="text-xs text-text-muted">
                               {getPaperCode(
@@ -215,9 +248,10 @@ export default function SubjectPage() {
                                   subject: subjectId,
                                   unitId: paper.unitId,
                                   year: paper.year,
-                                  title: paper.title
+                                  title: paper.title,
+                                  session: paper.session
                                 },
-                                subject.papers // Pass all subject papers as the second argument
+                                subject.papers
                               )}
                             </span>
                           )}

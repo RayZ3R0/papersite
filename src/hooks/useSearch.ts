@@ -25,6 +25,33 @@ function getStoredSearches(): SearchQuery[] {
   }
 }
 
+function normalizeSession(session: string | undefined): string[] {
+  if (!session) return [];
+  
+  const normalized = session.toLowerCase().trim();
+  
+  // Handle May/June as a special case
+  if (normalized === 'may' || normalized === 'june') {
+    return ['may', 'june'];
+  }
+  
+  return [normalized];
+}
+
+// Function to deduplicate search results based on pdfUrl
+function deduplicateResults(results: SearchResult[]): SearchResult[] {
+  const urlSet = new Set<string>();
+  return results.filter(result => {
+    // If we've seen this URL before, filter it out
+    if (urlSet.has(result.paper.pdfUrl)) {
+      return false;
+    }
+    // Otherwise, record this URL and keep the result
+    urlSet.add(result.paper.pdfUrl);
+    return true;
+  });
+}
+
 export function useSearch(options: UseSearchOptions = {}) {
   const { debounceMs = 300, maxResults = 20, maxRecentSearches = 5 } = options;
   
@@ -58,8 +85,6 @@ export function useSearch(options: UseSearchOptions = {}) {
     if (!text) return [];
 
     const suggestions: SearchSuggestion[] = [];
-
-    // Subject matches and common patterns sections removed
 
     // Unit suggestions if subject is known
     if (searchQuery.subject) {
@@ -102,14 +127,17 @@ export function useSearch(options: UseSearchOptions = {}) {
           const { results: searchResults, suggestions: searchSuggestions } = 
             searchPapers(searchQuery, castSubjectsData(subjectsData));
 
-          setResults(searchResults.slice(0, maxResults));
+          // Deduplicate results to ensure no double entries
+          const uniqueResults = deduplicateResults(searchResults);
+          
+          setResults(uniqueResults.slice(0, maxResults));
 
           // Merge search suggestions with quick suggestions
           const quickSuggestions = generateSuggestions(searchQuery);
           setSuggestions([...quickSuggestions, ...searchSuggestions]);
 
           // Store successful searches - but not on mobile to avoid excessive storage writes
-          if (searchResults.length > 0 && searchQuery.text && typeof window !== 'undefined' && window.innerWidth >= 768) {
+          if (uniqueResults.length > 0 && searchQuery.text && typeof window !== 'undefined' && window.innerWidth >= 768) {
             const searches = getStoredSearches();
             const newSearches = [
               searchQuery,

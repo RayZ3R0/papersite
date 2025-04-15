@@ -22,16 +22,33 @@ const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(({
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const innerRef = useRef<HTMLInputElement>(null);
   
-  // Fix: Properly handle forwarded ref without directly assigning to current
+  // Properly handle forwarded ref - improved approach
+  const inputRef = (ref || innerRef) as React.RefObject<HTMLInputElement>;
+  
+  // Attempt focus if focus param is true
   useEffect(() => {
-    if (inputRef.current) {
-      if (typeof ref === 'function') {
-        ref(inputRef.current);
+    if (searchParams.get("focus") === "true" && inputRef.current) {
+      // Try multiple approaches to ensure focus works
+      try {
+        // Try immediate focus
+        inputRef.current.focus();
+        
+        // On iOS, we sometimes need multiple attempts with delays
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+          const timer1 = setTimeout(() => inputRef.current?.focus(), 100);
+          const timer2 = setTimeout(() => inputRef.current?.focus(), 300);
+          return () => {
+            clearTimeout(timer1);
+            clearTimeout(timer2);
+          };
+        }
+      } catch (err) {
+        console.error("Focus error:", err);
       }
     }
-  }, [ref]);
+  }, [searchParams, inputRef]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;

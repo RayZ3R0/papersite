@@ -18,6 +18,9 @@ interface FilterBoxProps {
   onDeselect: (id: string) => void;
   multiSelect?: boolean;
   className?: string;
+  expanded: boolean;
+  onToggleExpand: () => void;
+  onClearAll?: () => void; // For clearing all selections
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
@@ -26,9 +29,11 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   onSelect,
   onDeselect,
   multiSelect = false,
-  className = ""
+  className = "",
+  expanded,
+  onToggleExpand,
+  onClearAll
 }) => {
-  const [expanded, setExpanded] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [itemsToShow, setItemsToShow] = useState<FilterItem[]>(items);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -46,35 +51,48 @@ const FilterBox: React.FC<FilterBoxProps> = ({
     setItemsToShow(filtered);
   }, [items, searchTerm]);
   
-  // Show selected items first
+  // Show selected items first, then high count items, then alphabetical
   const sortedItems = React.useMemo(() => {
     return [...itemsToShow].sort((a, b) => {
       // Selected items first
       if (a.isSelected && !b.isSelected) return -1;
       if (!a.isSelected && b.isSelected) return 1;
+      // Then sort by count (higher count first)
+      if (typeof a.count !== 'undefined' && typeof b.count !== 'undefined') {
+        if (a.count > b.count) return -1;
+        if (a.count < b.count) return 1;
+      }
       // Then alphabetical
       return a.name.localeCompare(b.name);
     });
   }, [itemsToShow]);
   
+  // Handle item selection with support for multi-select
   const handleClick = React.useCallback((item: FilterItem) => {
     if (item.isSelected) {
       onDeselect(item.id);
     } else {
+      // If not multiSelect and there's already a selection, first deselect all
+      if (!multiSelect) {
+        const selectedItems = items.filter(i => i.isSelected);
+        selectedItems.forEach(selected => {
+          onDeselect(selected.id);
+        });
+      }
       onSelect(item.id);
     }
-  }, [onSelect, onDeselect]);
+  }, [items, multiSelect, onSelect, onDeselect]);
   
-  const toggleExpand = () => {
-    setExpanded(prev => !prev);
-    // Focus search if expanding and has search input
-    if (!expanded && items.length > 5 && searchInputRef.current) {
+  // Focus search if expanding and has search input
+  useEffect(() => {
+    if (expanded && items.length > 5 && searchInputRef.current) {
       setTimeout(() => {
         searchInputRef.current?.focus();
       }, 300);
     }
-  };
+  }, [expanded, items.length]);
 
+  // Get selected count for badge display
   const selectedCount = items.filter(item => item.isSelected).length;
   const showSearch = items.length > 5;
 
@@ -82,7 +100,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
     <div className={`rounded-lg bg-surface-alt border border-border ${className}`}>
       {/* Header - better touch target */}
       <button
-        onClick={toggleExpand}
+        onClick={onToggleExpand}
         className="w-full flex items-center justify-between p-3
                   text-text hover:text-text-muted transition-colors
                   focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/30"
@@ -97,21 +115,37 @@ const FilterBox: React.FC<FilterBoxProps> = ({
             </span>
           )}
         </div>
-        <svg
-          className={`w-4 h-4 text-text-muted transform transition-transform duration-200 
-            ${expanded ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        <div className="flex items-center gap-2">
+          {/* Clear button - only visible when there are selections */}
+          {selectedCount > 0 && onClearAll && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent toggling the filter box
+                onClearAll();
+              }}
+              className="text-xs text-text-muted hover:text-primary 
+                        transition-colors mr-1"
+              aria-label={`Clear all ${title} filters`}
+            >
+              Clear
+            </button>
+          )}
+          <svg
+            className={`w-4 h-4 text-text-muted transform transition-transform duration-200 
+              ${expanded ? 'rotate-180' : ''}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
       </button>
 
       {/* Expandable content */}
@@ -165,13 +199,31 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                 </div>
               )}
 
+              {/* Selection count and select all option for multiSelect */}
+              {multiSelect && selectedCount > 0 && (
+                <div className="flex justify-between items-center pb-2 text-xs text-text-muted">
+                  <span>{selectedCount} of {items.length} selected</span>
+                  {selectedCount < items.length && (
+                    <button 
+                      onClick={() => {
+                        const unselectedItems = items.filter(i => !i.isSelected);
+                        unselectedItems.forEach(item => onSelect(item.id));
+                      }}
+                      className="text-primary hover:underline"
+                    >
+                      Select all
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Horizontally scrollable on mobile, grid on desktop */}
               <div className="relative -mx-3">
                 <div className={`
                   px-3 py-1 flex gap-2 overflow-x-auto md:grid md:grid-cols-2 md:gap-1.5
                   max-h-48 md:overflow-y-auto
                   scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent
-                  ios-fix-overflow
+                  ios-fix-overflow filter-scroll-container
                   ${showSearch ? '-mt-0.5' : ''}
                 `}
                 style={{
@@ -186,7 +238,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
                       onClick={() => handleClick(item)}
                       className={`
                         flex items-center justify-between whitespace-nowrap md:whitespace-normal
-                        shrink-0 md:shrink px-3 py-1.5 rounded-full text-sm
+                        shrink-0 md:shrink px-3 py-1.5 rounded-full text-sm filter-scroll-item
                         transition-all active:scale-[0.98]
                         ${item.isSelected
                           ? 'bg-primary/10 text-primary hover:bg-primary/20'

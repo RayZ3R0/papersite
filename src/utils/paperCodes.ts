@@ -8,7 +8,7 @@ export function getPaperCode(
   const { subject, unitId, year, session, title } = paper;
   
   // Return null for mathematics
-  if (subject.startsWith('math')) {
+  if (subject && subject.startsWith('math')) {
     return null;
   }
 
@@ -25,8 +25,6 @@ export function getPaperCode(
   // Get unit number from unitId (e.g., "unit1" -> "1")
   const unitNumber = unitId.replace('unit', '');
 
-
-  // For papers before 2019
   // Check if title contains "IAL" - also handle cases where it's in the filename
   const isIAL = title?.toLowerCase().includes('ial') || 
                 paper.pdfUrl?.toLowerCase().includes('(ial)') || 
@@ -39,10 +37,6 @@ export function getPaperCode(
     p.session === session
   );
   
-  // Debug info
-  console.log(`Paper: ${title}, Year: ${year}, Session: ${session}`);
-  console.log(`Found ${sameCategoryPapers.length} papers in same category`);
-  
   // Check if there's at least one IAL and one non-IAL paper in this session
   const hasIALPaper = sameCategoryPapers.some(p => 
     p.title?.toLowerCase().includes('ial') || 
@@ -54,6 +48,15 @@ export function getPaperCode(
     p.pdfUrl?.toLowerCase().includes('(ial)'))
   );
   
+  // Construct the paper code
+  let paperCode = `${subjectPrefix}${unitNumber}`;
+  
+  // Add IAL suffix if needed
+  if (hasIALPaper && hasNonIALPaper) {
+    paperCode += isIAL ? ' (IAL)' : ' (GCE)';
+  }
+  
+  return paperCode;
 }
 
 // Function to check if a paper is IAL

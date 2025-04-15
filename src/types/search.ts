@@ -4,8 +4,10 @@ export interface SearchQuery {
   text: string;
   subject?: string;
   unit?: string;
+  unitArray?: string[]; // Add unitArray property
   year?: number;
   session?: string;
+  sessionArray?: string[]; // Add sessionArray property
   type?: 'MCQ' | 'Written';
 }
 
@@ -25,7 +27,7 @@ export interface SearchResult {
 }
 
 export interface SearchSuggestion {
-  type: 'subject' | 'unit' | 'year' | 'session' | 'refinement';
+  type: 'subject' | 'unit' | 'year' | 'session' | 'refinement' | 'info'; // Add 'info' type
   text: string;
   value: string;
   score: number;
