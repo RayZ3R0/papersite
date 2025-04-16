@@ -21,7 +21,7 @@ export function ExamDetailsDrawer({
 }: ExamDetailsDrawerProps) {
   // Handle animation states
   const [isVisible, setIsVisible] = useState(false);
-  const { height, handlers, isAtFullHeight, key } = useDrawerGesture(onClose, isOpen);
+  const { height, handlers, pullBarHandlers, isAtFullHeight, isClosing, key } = useDrawerGesture(onClose, isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,7 +53,7 @@ export function ExamDetailsDrawer({
         className={`
           fixed inset-0 bg-black/30 backdrop-blur-sm z-40
           transition-opacity duration-300
-          ${isOpen ? "opacity-100" : "opacity-0"}
+          ${isOpen && !isClosing ? "opacity-100" : "opacity-0"}
           ${className}
         `}
         onClick={onClose}
@@ -80,15 +80,13 @@ export function ExamDetailsDrawer({
         `}
         style={{ height: window.innerWidth < 768 ? height : undefined }}
       >
-        {/* Rest of component remains the same */}
-        {/* Drag Handle - Mobile Only */}
+        
+        {/* Drag Handle - Mobile Only - More prominent and Instagram-like */}
         <div
-          className="md:hidden w-full flex justify-center pt-2 pb-1 touch-none"
-          onTouchStart={handlers.onTouchStart}
-          onTouchMove={handlers.onTouchMove}
-          onTouchEnd={handlers.onTouchEnd}
+          className="md:hidden w-full flex justify-center pt-2 pb-1 touch-none cursor-grab active:cursor-grabbing"
+          {...pullBarHandlers}
         >
-          <div className="w-8 h-1 rounded-full bg-border/60" />
+          <div className="w-12 h-1 rounded-full bg-border/60" />
         </div>
 
         {/* Main Header - Fixed and Draggable */}
@@ -98,9 +96,7 @@ export function ExamDetailsDrawer({
             md:hidden touch-none cursor-grab active:cursor-grabbing
             ${isAtFullHeight ? "rounded-t-none" : ""}
           `}
-          onTouchStart={handlers.onTouchStart}
-          onTouchMove={handlers.onTouchMove}
-          onTouchEnd={handlers.onTouchEnd}
+          {...handlers}
         >
           <div className="px-4 py-3 flex justify-between items-start">
             <div className="space-y-1">
@@ -148,8 +144,11 @@ export function ExamDetailsDrawer({
           </div>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+        {/* Scrollable Content - also draggable for Instagram-like UX */}
+        <div 
+          className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain"
+          {...handlers}
+        >
           {exams.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-text-muted p-4">
               <p className="text-center">No exams scheduled for this day</p>

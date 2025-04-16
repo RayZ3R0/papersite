@@ -1,251 +1,149 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-type DrawerHeight = 'closed' | 'compact' | 'default' | 'full';
+// Drawer can be in one of three states
+type DrawerState = 'closed' | 'open' | 'full';
 
-interface DrawerState {
-  currentHeight: number;
+interface GestureState {
   isDragging: boolean;
   startY: number;
   startHeight: number;
 }
 
-interface VelocityTracker {
-  positions: Array<{ y: number; time: number }>;
-  lastPosition: { y: number; time: number } | null;
-}
-
-// Height threshold for closing the drawer automatically
-const CLOSE_THRESHOLD = 15;
-
+// Height values in vh units
 const DRAWER_HEIGHTS = {
-  closed: 0,     // 0vh (fully closed)
-  compact: 30,   // 30vh (peek view)
-  default: 65,   // 65vh (standard view)
-  full: 90,      // 90vh (leaves space for top navbar)
+  closed: 0,
+  open: 70, // Standard open height
+  full: 92, // Almost full screen (leaves room for status bar)
 };
 
-// Maximum velocity to consider (prevents extreme flicks)
-const MAX_VELOCITY = 2.0;
-
-// Spring physics constants
-const SPRING_TENSION = 0.2;
-const FRICTION = 0.8;
-const BOUNCE_FACTOR = 0.05;
+// Physics constants - Instagram-like feel
+const SPRING_TENSION = 0.25;
+const SPRING_FRICTION = 0.85;
+const VELOCITY_THRESHOLD = 0.3; // Lower threshold makes it more responsive to quick swipes
 
 export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
-  // Force reset when drawer opens
-  const drawerKey = useRef(0);
+  // Track drawer animation
+  const [currentHeight, setCurrentHeight] = useState(0);
+  const [drawerState, setDrawerState] = useState<DrawerState>('closed');
+  const animationRef = useRef<number | null>(null);
+  const targetHeightRef = useRef<number>(0);
   
-  // Use a ref to track first mount vs subsequent renders
-  const initialRender = useRef(true);
-  
-  const [state, setState] = useState<DrawerState>({
-    currentHeight: DRAWER_HEIGHTS.default,
+  // Track touch gesture state
+  const [gesture, setGesture] = useState<GestureState>({
     isDragging: false,
     startY: 0,
-    startHeight: DRAWER_HEIGHTS.default,
+    startHeight: 0,
   });
   
-  // Animation frame reference for smoother animation
-  const animationRef = useRef<number | null>(null);
-  const targetHeightRef = useRef<number>(DRAWER_HEIGHTS.default);
-  
-  // Enhanced velocity tracking
-  const velocityTrackerRef = useRef<VelocityTracker>({
-    positions: [],
-    lastPosition: null,
+  // Enhanced velocity tracking with recent positions array
+  const velocityTrackerRef = useRef({
+    positions: [] as {y: number, time: number}[],
+    velocity: 0,
   });
-
-  // Reset drawer height when it opens
+  
+  // Unique key for forcing re-renders
+  const drawerKey = useRef(0);
+  
+  // Respond to external isOpen changes
   useEffect(() => {
     if (isOpen) {
-      // Increment key to force reset of hook state
-      drawerKey.current += 1;
-      
-      // Reset to default height when the drawer opens
-      setState({
-        currentHeight: DRAWER_HEIGHTS.default,
-        isDragging: false,
-        startY: 0,
-        startHeight: DRAWER_HEIGHTS.default,
-      });
-      
-      targetHeightRef.current = DRAWER_HEIGHTS.default;
-      
-      // Cancel any ongoing animation
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-      
-      // Reset velocity tracker
-      velocityTrackerRef.current = {
-        positions: [],
-        lastPosition: null,
-      };
+      openDrawer();
+    } else {
+      closeDrawer();
     }
   }, [isOpen]);
   
-  // Reset on mount to ensure consistent state
-  useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-      if (isOpen) {
-        setState({
-          currentHeight: DRAWER_HEIGHTS.default,
-          isDragging: false,
-          startY: 0,
-          startHeight: DRAWER_HEIGHTS.default,
-        });
-      }
-    }
-  }, [isOpen]);
-
-  // Calculate velocity based on position history
+  // Calculate velocity based on recent positions
   const calculateVelocity = useCallback(() => {
     const positions = velocityTrackerRef.current.positions;
-    
-    // Need at least 2 positions to calculate velocity
     if (positions.length < 2) return 0;
     
-    // Use the last 5 positions for a more stable velocity
-    const recentPositions = positions.slice(-5);
+    // Use the last 5 positions for smoother velocity calculation
+    const recent = positions.slice(-5);
+    if (recent.length < 2) return 0;
     
-    // If we have only one position, return 0
-    if (recentPositions.length < 2) return 0;
-    
-    const first = recentPositions[0];
-    const last = recentPositions[recentPositions.length - 1];
-    
+    const first = recent[0];
+    const last = recent[recent.length - 1];
     const timeDelta = last.time - first.time;
+    
     if (timeDelta <= 0) return 0;
     
-    // Calculate pixels per millisecond, then scale for better control
-    // Positive velocity means swiping DOWN, negative means swiping UP
-    const velocity = (last.y - first.y) / timeDelta * 10;
-    
-    // Cap velocity to prevent extreme flicks
-    return Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, velocity));
+    // Convert to vh units per second (+ is down, - is up)
+    return (last.y - first.y) / timeDelta * 1000 / window.innerHeight * 100;
   }, []);
-
-  // Improved animation with spring physics for more natural feel
-  const animateHeight = useCallback(() => {
-    const currentHeight = state.currentHeight;
-    const targetHeight = targetHeightRef.current;
-    const diff = targetHeight - currentHeight;
+  
+  // Animation function with spring physics
+  const animateToTarget = useCallback(() => {
+    const target = targetHeightRef.current;
+    const diff = target - currentHeight;
     
-    // Apply spring physics for natural movement
-    let force = diff * SPRING_TENSION;
+    // Apply spring physics for smooth motion
+    const force = diff * SPRING_TENSION;
+    const delta = force * SPRING_FRICTION;
     
-    // Apply bounce effect when hitting bounds
-    if (currentHeight <= 0) {
-      force += -currentHeight * BOUNCE_FACTOR;
-    } else if (currentHeight >= DRAWER_HEIGHTS.full) {
-      force += (DRAWER_HEIGHTS.full - currentHeight) * BOUNCE_FACTOR;
-    }
-    
-    // Calculate new height with simulated physics
-    const delta = force * FRICTION;
+    // Update position
     const newHeight = currentHeight + delta;
+    setCurrentHeight(newHeight);
     
     // Stop animation when we're close enough
     if (Math.abs(diff) < 0.1 && Math.abs(delta) < 0.05) {
-      setState(prev => ({
-        ...prev,
-        currentHeight: targetHeight,
-      }));
+      setCurrentHeight(target);
       animationRef.current = null;
       
       // If drawer is closed completely, call the onClose callback
-      if (targetHeight === DRAWER_HEIGHTS.closed && onClose) {
-        setTimeout(onClose, 100); // Slight delay to ensure animation completes
+      if (target === DRAWER_HEIGHTS.closed && onClose) {
+        setTimeout(() => onClose(), 50); // Small delay ensures animation completes
       }
       
       return;
     }
     
-    // Update state with new height
-    setState(prev => ({
-      ...prev,
-      currentHeight: newHeight,
-    }));
-    
     // Continue animation
-    animationRef.current = requestAnimationFrame(animateHeight);
-  }, [state.currentHeight, onClose]);
-
-  // Improved snap logic with better velocity sensitivity
-  const getSnapHeight = useCallback((height: number, velocity: number): DrawerHeight => {
-    // Different snap behavior based on velocity and position
-    
-    // Strong downward flick - always close
-    if (velocity > 0.8) {
-      return 'closed';
+    animationRef.current = requestAnimationFrame(animateToTarget);
+  }, [currentHeight, onClose]);
+  
+  // Start animation to target height
+  const animateTo = useCallback((targetState: DrawerState) => {
+    // Cancel existing animation if any
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
     }
     
-    // Strong upward flick - always maximize
-    if (velocity < -0.8) {
-      return 'full';
-    }
-    
-    // Close drawer if very close to bottom
-    if (height < CLOSE_THRESHOLD) {
-      return 'closed';
-    }
-    
-    // In-between movement with moderate velocity
-    if (Math.abs(velocity) > 0.3) {
-      if (velocity > 0) { // Moving down
-        // Handle downward motion with moderate velocity
-        if (height < DRAWER_HEIGHTS.default) {
-          // Below middle point, go to compact or close
-          return height < DRAWER_HEIGHTS.compact / 2 ? 'closed' : 'compact';
-        } else {
-          // Above middle point, go to default
-          return 'default';
-        }
-      } else { // Moving up
-        // Handle upward motion with moderate velocity
-        if (height < DRAWER_HEIGHTS.compact) {
-          // From bottom area, go to compact
-          return 'compact';
-        } else if (height < DRAWER_HEIGHTS.default) {
-          // From compact area, go to default
-          return 'default';
-        } else {
-          // From default or higher, go to full
-          return 'full';
-        }
-      }
-    }
-    
-    // No significant velocity - snap to closest point
-    const distances = Object.entries(DRAWER_HEIGHTS).map(([key, value]) => ({
-      key: key as DrawerHeight,
-      distance: Math.abs(value - height),
-    }));
-    
-    distances.sort((a, b) => a.distance - b.distance);
-    return distances[0].key;
-  }, []);
-
-  // Track movement for velocity calculation
-  const trackMovement = useCallback((y: number) => {
-    const now = Date.now();
+    setDrawerState(targetState);
+    targetHeightRef.current = DRAWER_HEIGHTS[targetState];
+    animationRef.current = requestAnimationFrame(animateToTarget);
+  }, [animateToTarget]);
+  
+  // Open drawer to default height
+  const openDrawer = useCallback(() => {
+    drawerKey.current += 1;
+    animateTo('open');
+  }, [animateTo]);
+  
+  // Open drawer to full screen
+  const openFullDrawer = useCallback(() => {
+    animateTo('full');
+  }, [animateTo]);
+  
+  // Close drawer completely
+  const closeDrawer = useCallback(() => {
+    animateTo('closed');
+  }, [animateTo]);
+  
+  // Track a touch position for velocity calculation
+  const trackPosition = useCallback((y: number) => {
     const positions = velocityTrackerRef.current.positions;
+    const now = Date.now();
     
-    // Keep recent positions for accurate velocity
     positions.push({ y, time: now });
     
-    // Limit the number of tracked positions to avoid memory buildup
+    // Keep array at a manageable size
     if (positions.length > 10) {
       positions.shift();
     }
-    
-    velocityTrackerRef.current.lastPosition = { y, time: now };
   }, []);
-
-  // Handle touch start
+  
+  // Touch start event handler
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
     
@@ -260,189 +158,172 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
     // Reset velocity tracking
     velocityTrackerRef.current = {
       positions: [{ y: touch.clientY, time: Date.now() }],
-      lastPosition: { y: touch.clientY, time: Date.now() },
+      velocity: 0,
     };
     
-    setState(prev => ({
-      ...prev,
+    setGesture({
       isDragging: true,
       startY: touch.clientY,
-      startHeight: prev.currentHeight,
-    }));
-  }, []);
-
-  // Handle touch move with improved tracking
+      startHeight: currentHeight,
+    });
+  }, [currentHeight]);
+  
+  // Touch move event handler
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
-    if (!state.isDragging) return;
-
+    if (!gesture.isDragging) return;
+    
     const touch = e.touches[0];
-    trackMovement(touch.clientY);
     
-    // Calculate relative movement in vh units
-    const deltaY = (state.startY - touch.clientY) / window.innerHeight * 100;
+    // Track position for velocity calculation
+    trackPosition(touch.clientY);
     
-    // Allow slight over-dragging with resistance
-    let newHeight = state.startHeight + deltaY;
+    // Calculate new height based on drag delta (in vh units)
+    const deltaY = (gesture.startY - touch.clientY) / window.innerHeight * 100;
+    let newHeight = gesture.startHeight + deltaY;
     
-    // Add resistance when dragging beyond limits
+    // Add resistance when pushing beyond limits (Instagram-like elastic feel)
     if (newHeight < 0) {
-      newHeight = newHeight * 0.3; // Strong resistance when pulled below closed
+      newHeight = newHeight * 0.2; // Strong resistance when below zero
     } else if (newHeight > DRAWER_HEIGHTS.full) {
-      const overDrag = newHeight - DRAWER_HEIGHTS.full;
-      newHeight = DRAWER_HEIGHTS.full + overDrag * 0.3; // Resistance when pulled above full
+      const overshoot = newHeight - DRAWER_HEIGHTS.full;
+      newHeight = DRAWER_HEIGHTS.full + overshoot * 0.2; // Resistance when over maximum
     }
-
-    setState(prev => ({
-      ...prev,
-      currentHeight: newHeight,
-    }));
-  }, [state.isDragging, state.startHeight, state.startY, trackMovement]);
-
-  // Handle touch end with improved velocity calculation
+    
+    setCurrentHeight(newHeight);
+  }, [gesture, trackPosition]);
+  
+  // Touch end event handler with improved swipe detection
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
-    if (!state.isDragging) return;
-
+    if (!gesture.isDragging) return;
+    
     // Track final position
-    trackMovement(e.changedTouches[0].clientY);
+    trackPosition(e.changedTouches[0].clientY);
     
-    // Calculate velocity (positive = downward, negative = upward)
+    // Calculate velocity using improved method
     const velocity = calculateVelocity();
+    let targetState: DrawerState;
     
-    // Get target height based on velocity and current position
-    const snapTo = getSnapHeight(state.currentHeight, velocity);
-    
-    // Set target height for animation
-    targetHeightRef.current = DRAWER_HEIGHTS[snapTo];
-    
-    // Start animation
-    if (animationRef.current === null) {
-      animationRef.current = requestAnimationFrame(animateHeight);
+    // Instagram-like behavior: any significant downward swipe closes the drawer
+    if (velocity > VELOCITY_THRESHOLD) {
+      // Fast downward swipe - close drawer
+      targetState = 'closed';
+    } else if (velocity < -VELOCITY_THRESHOLD) {
+      // Fast upward swipe - open to full
+      targetState = 'full';
+    } else if (currentHeight < DRAWER_HEIGHTS.open / 2) {
+      // Below halfway - close
+      targetState = 'closed';
+    } else if (currentHeight > (DRAWER_HEIGHTS.open + DRAWER_HEIGHTS.full) / 2) {
+      // Closer to full than open - go to full
+      targetState = 'full';
+    } else {
+      // Default to open state
+      targetState = 'open';
     }
     
-    setState(prev => ({
+    // Animate to target state
+    animateTo(targetState);
+    
+    setGesture(prev => ({
       ...prev,
       isDragging: false,
     }));
-  }, [state.isDragging, state.currentHeight, trackMovement, calculateVelocity, getSnapHeight, animateHeight]);
-
-  // Special handler for the pull bar - swipe down to close, up to maximize
-  const handlePullBarTouchStart = useCallback((e: React.TouchEvent) => {
-    handleTouchStart(e);
-  }, [handleTouchStart]);
-
-  const handlePullBarTouchMove = useCallback((e: React.TouchEvent) => {
-    handleTouchMove(e);
-  }, [handleTouchMove]);
-
+  }, [gesture.isDragging, currentHeight, animateTo, trackPosition, calculateVelocity]);
+  
+  // Specialized handler for pull bar that makes swipe down behavior more sensitive
   const handlePullBarTouchEnd = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
-    if (!state.isDragging) return;
-
+    if (!gesture.isDragging) return;
+    
     // Track final position
-    trackMovement(e.changedTouches[0].clientY);
+    trackPosition(e.changedTouches[0].clientY);
     
-    // Calculate velocity
+    // Calculate velocity using improved method
     const velocity = calculateVelocity();
+    let targetState: DrawerState;
     
-    // Special behavior for pull bar:
-    // If swiping down with sufficient velocity, close drawer
-    // If swiping up with sufficient velocity, maximize drawer
-    let snapTo: DrawerHeight;
-    
-    if (velocity > 0.2) {
-      // Swiping down - close drawer
-      snapTo = 'closed';
-    } else if (velocity < -0.2) {
-      // Swiping up - maximize drawer
-      snapTo = 'full';
+    // More sensitive to downward swipes on the pull bar (Instagram-like)
+    if (velocity > VELOCITY_THRESHOLD * 0.5) { // Even lower threshold for pull bar
+      // Downward swipe on pull bar - close drawer
+      targetState = 'closed';
+    } else if (velocity < -VELOCITY_THRESHOLD) {
+      // Fast upward swipe - open to full
+      targetState = 'full';
+    } else if (currentHeight < DRAWER_HEIGHTS.open / 2) {
+      // Below halfway - close
+      targetState = 'closed';
+    } else if (currentHeight > (DRAWER_HEIGHTS.open + DRAWER_HEIGHTS.full) / 2) {
+      // Closer to full than open - go to full
+      targetState = 'full';
     } else {
-      // No significant velocity - use normal snapping logic
-      snapTo = getSnapHeight(state.currentHeight, velocity);
+      // Default to open state
+      targetState = 'open';
     }
     
-    // Set target height for animation
-    targetHeightRef.current = DRAWER_HEIGHTS[snapTo];
+    // Animate to target state
+    animateTo(targetState);
     
-    // Start animation
-    if (animationRef.current === null) {
-      animationRef.current = requestAnimationFrame(animateHeight);
-    }
-    
-    setState(prev => ({
+    setGesture(prev => ({
       ...prev,
       isDragging: false,
     }));
-  }, [state.isDragging, trackMovement, calculateVelocity, getSnapHeight, animateHeight]);
-
-  // Clean up function
+  }, [gesture.isDragging, currentHeight, animateTo, trackPosition, calculateVelocity]);
+  
+  // Cleanup on unmount
   useEffect(() => {
-    const mql = window.matchMedia('(min-width: 768px)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        setState(prev => ({
-          ...prev,
-          isDragging: false,
-          currentHeight: DRAWER_HEIGHTS.default,
-        }));
-      }
-    };
-
-    mql.addEventListener('change', handleChange);
     return () => {
-      mql.removeEventListener('change', handleChange);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
   }, []);
-
-  // Set drawer to specific height (for programmatic control)
-  const setDrawerHeight = useCallback((heightType: DrawerHeight) => {
-    targetHeightRef.current = DRAWER_HEIGHTS[heightType];
+  
+  // Handle window resize
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 768px)');
+    const handleResize = () => {
+      // Reset to open state on resize
+      if (drawerState !== 'closed') {
+        setCurrentHeight(DRAWER_HEIGHTS.open);
+      }
+    };
     
-    // Start animation
-    if (animationRef.current === null) {
-      animationRef.current = requestAnimationFrame(animateHeight);
-    }
-  }, [animateHeight]);
-
-  // Close drawer programmatically
-  const closeDrawer = useCallback(() => {
-    setDrawerHeight('closed');
-  }, [setDrawerHeight]);
-
-  // Open drawer to default height programmatically
-  const openDrawer = useCallback(() => {
-    setDrawerHeight('default');
-  }, [setDrawerHeight]);
-
-  const height = `${state.currentHeight}vh`;
-  const isAtFullHeight = state.currentHeight >= DRAWER_HEIGHTS.full - 5;
-  const isClosing = !state.isDragging && targetHeightRef.current === DRAWER_HEIGHTS.closed;
-
+    mql.addEventListener('change', handleResize);
+    return () => mql.removeEventListener('change', handleResize);
+  }, [drawerState]);
+  
   return {
-    height,
-    isAtFullHeight,
-    isClosing,
+    // CSS height value
+    height: `${currentHeight}vh`,
+    
+    // State indicators
+    isAtFullHeight: drawerState === 'full',
+    isClosing: drawerState === 'closed',
+    
+    // Touch handlers for the main drawer content
     handlers: {
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
       onTouchEnd: handleTouchEnd,
     },
+    
+    // Specialized handlers for the pull bar with more sensitive close gesture
     pullBarHandlers: {
-      onTouchStart: handlePullBarTouchStart,
-      onTouchMove: handlePullBarTouchMove,
+      onTouchStart: handleTouchStart,
+      onTouchMove: handleTouchMove,
       onTouchEnd: handlePullBarTouchEnd,
     },
-    // Extra controls for programmatic manipulation
+    
+    // Controls for programmatic manipulation
     controls: {
       close: closeDrawer,
       open: openDrawer,
-      setHeight: setDrawerHeight,
+      openFull: openFullDrawer,
     },
-    // Add key to force re-render when drawer opens
+    
+    // For forcing re-renders when drawer opens
     key: drawerKey.current
   };
 }
