@@ -1,402 +1,483 @@
-'use client';
-
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import AnnotationLayer from './AnnotationLayer';
-import Toolbar from './Toolbar';
-import SaveProgress from './SaveProgress';
-import type { ToolType, Stroke } from '@/lib/annotationStore';
-import annotationStore from '@/lib/annotationStore';
-import PDFSaver from './PDFSaver';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import Toolbar from './Toolbar2';
+import ViewportController from './ViewportController';
+import AnnotationCanvas from './AnnotationCanvas';
+import SaveDialog from './SaveDialog';
+import PDFExporter from './PDFExporter';
+import { usePDFAnnotations } from '@/hooks/usePDFAnnotations';
+import type { ViewportState, PDFPageInfo, ToolState, ToolType } from '@/types/annotator';
 
-// Set up PDF.js worker
+// Worker config for react-pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface PDFViewerProps {
   file: File;
+  onClose?: () => void;
 }
 
-interface PageDimensions {
-  width: number;
-  height: number;
-}
-
-export default function PDFViewer({ file }: PDFViewerProps) {
-  // PDF state
-  const [numPages, setNumPages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1.0);
-  const [pageDimensions, setPageDimensions] = useState<PageDimensions | null>(null);
-  
-  // Tool settings
-  const [currentTool, setCurrentTool] = useState<ToolType>('pen');
-  const [currentColor, setCurrentColor] = useState(() => annotationStore.getToolSettings('pen').color);
-  const [strokeSize, setStrokeSize] = useState(() => annotationStore.getToolSettings('pen').size);
-  const [opacity, setOpacity] = useState(() => annotationStore.getToolSettings('pen').opacity);
-
-  // Undo/Redo state
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
-  
-  // Force remount key to trigger canvas redraw
-  const [redrawKey, setRedrawKey] = useState(0);
-  
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hasCalculatedScale = useRef(false);
-
-  // Initialize tool settings from store
-  useEffect(() => {
-    const settings = annotationStore.getToolSettings(currentTool);
-    setStrokeSize(settings.size);
-    setOpacity('opacity' in settings ? settings.opacity : 1);
-    if ('color' in settings) {
-      setCurrentColor(settings.color);
-    }
-  }, [currentTool]);
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
-
-  // Handle page load and dimensions
-  const onPageLoadSuccess = useCallback(({ width, height }: PageDimensions) => {
-    setPageDimensions({ width, height });
-    
-    if (!hasCalculatedScale.current && containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth;
-      const targetWidth = containerWidth - 48;
-      const initialScale = targetWidth / width;
-      setScale(initialScale);
-      hasCalculatedScale.current = true;
-    }
-  }, []);
-
-  // Update undo/redo state
-  const updateUndoRedoState = useCallback(() => {
-    setCanUndo(annotationStore.canUndo(currentPage));
-    setCanRedo(annotationStore.canRedo(currentPage));
-  }, [currentPage]);
-
-  // Handle tool change with settings
-  const handleToolChange = useCallback((tool: ToolType) => {
-    setCurrentTool(tool);
-    const settings = annotationStore.getToolSettings(tool);
-    setStrokeSize(settings.size);
-    setOpacity('opacity' in settings ? settings.opacity : 1);
-    if ('color' in settings) {
-      setCurrentColor(settings.color);
-    }
-  }, []);
-
-  // Handle settings updates
-  const handleColorChange = useCallback((color: string) => {
-    if (currentTool === 'eraser') return;
-    setCurrentColor(color);
-    annotationStore.updateToolSettings(currentTool, { color });
-  }, [currentTool]);
-
-  const handleSizeChange = useCallback((size: number) => {
-    setStrokeSize(size);
-    annotationStore.updateToolSettings(currentTool, { size });
-  }, [currentTool]);
-
-  const handleOpacityChange = useCallback((value: number) => {
-    if (currentTool === 'highlighter') {
-      setOpacity(value);
-      annotationStore.updateToolSettings('highlighter', { opacity: value });
-    }
-  }, [currentTool]);
-
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    updateUndoRedoState();
-  };
-
-  // Handle undo
-  const handleUndo = useCallback(() => {
-    const didUndo = annotationStore.undo(currentPage);
-    if (didUndo) {
-      updateUndoRedoState();
-      setRedrawKey(prev => prev + 1);
-    }
-  }, [currentPage, updateUndoRedoState]);
-
-  // Handle redo
-  const handleRedo = useCallback(() => {
-    const didRedo = annotationStore.redo(currentPage);
-    if (didRedo) {
-      updateUndoRedoState();
-      setRedrawKey(prev => prev + 1);
-    }
-  }, [currentPage, updateUndoRedoState]);
-
-  // Handle clear page
-  const handleClear = useCallback(() => {
-    if (window.confirm('Clear all annotations on this page?')) {
-      annotationStore.clearPage(currentPage);
-      updateUndoRedoState();
-      setRedrawKey(prev => prev + 1);
-    }
-  }, [currentPage, updateUndoRedoState]);
-
-  // Save progress state
-  const [saveProgress, setSaveProgress] = useState({
-    isVisible: false,
-    currentPage: 0,
-    totalPages: 0,
-    status: ''
+export default function PDFViewer({ file, onClose }: PDFViewerProps) {
+  // Central viewport state - single source of truth for positioning
+  const [viewport, setViewport] = useState<ViewportState>({
+    scale: 1,
+    rotation: 0,
+    offsetX: 0,
+    offsetY: 0,
+    width: 0,
+    height: 0,
+    pageNumber: 1,
+    numPages: 0
   });
-
-  // Handle save
-  const handleSave = useCallback(async () => {
-    try {
-      setSaveProgress({
-        isVisible: true,
-        currentPage: 0,
-        totalPages: numPages,
-        status: 'Preparing to save...'
-      });
   
-      const saver = new PDFSaver(file, scale);
-      const annotationsMap = new Map<number, Stroke[]>();
+  // Store page info for each PDF page
+  const [pdfPageInfo, setPdfPageInfo] = useState<Record<number, PDFPageInfo>>({});
+  
+  // Tool state
+  const [toolState, setToolState] = useState<ToolState>({
+    activeTool: 'pen',
+    color: '#000000',
+    size: 2,
+    opacity: 1
+  });
+  
+  // Add this state for tracking panning
+  const [isPanning, setIsPanning] = useState(false);
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
+  
+  // Refs for container and PDF elements
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pdfLayerRef = useRef<HTMLDivElement>(null);
+  
+  // Save/export state
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveProgress, setSaveProgress] = useState(0);
+  
+  // PDF annotation hook for centralized annotation management
+  const { 
+    annotations,
+    addStroke,
+    updateStroke,
+    finalizeStroke,
+    clearPage,
+    undo,
+    redo,
+    canUndo,
+    canRedo
+  } = usePDFAnnotations();
+  
+  // Handle PDF document load
+  const handleDocumentLoad = useCallback(({ numPages }: { numPages: number }) => {
+    setViewport(prev => ({ ...prev, numPages }));
+  }, []);
+  
+  // CRITICAL IMPROVEMENT: Use PDF.js viewport to get accurate scale and coordinates
+  const handlePageLoad = useCallback(
+    ({ 
+      width, 
+      height, 
+      originalWidth, 
+      originalHeight,
+      originalScale,
+      rotation,
+      _pageIndex
+    }: any) => {
+      if (!containerRef.current) return;
       
-      // Get annotations for all pages
-      for (let i = 1; i <= numPages; i++) {
-        const strokes = annotationStore.getStrokes(i);
-        if (strokes.length > 0) {
-          annotationsMap.set(i, strokes);
+      const container = containerRef.current;
+      const containerWidth = container.clientWidth - 48; // account for padding
+      const containerHeight = container.clientHeight - 48;
+      
+      // Calculate scale to fit either width or height, whichever is more constraining
+      const scaleWidth = containerWidth / width;
+      const scaleHeight = containerHeight / height;
+      const scaleToFit = Math.min(scaleWidth, scaleHeight, 1.0); // Don't scale up past 100%
+      
+      // Store the page information including PDF dimensions
+      // originalWidth/Height are in PDF units (points, 1/72 inch)
+      const pageNumber = _pageIndex + 1;
+      const userUnit = width / originalWidth; // User unit is the scaling from PDF points to displayed units
+      
+      setPdfPageInfo(prev => ({
+        ...prev, 
+        [pageNumber]: {
+          width: originalWidth,
+          height: originalHeight,
+          userUnit,
+          viewportScale: originalScale,
+          rotation
         }
-      }
-
-      // Save PDF with annotations
-      const blob = await saver.save(annotationsMap, (progress) => {
-        setSaveProgress({
-          isVisible: true,
-          currentPage: progress.currentPage,
-          totalPages: progress.totalPages,
-          status: progress.status
-        });
-      });
-
-      // Reset progress and download file
-      setSaveProgress(prev => ({ ...prev, status: 'Download starting...' }));
-      const fileName = file instanceof File ? file.name : 'annotated.pdf';
-      const newName = fileName.replace('.pdf', '_annotated.pdf');
-      PDFSaver.downloadBlob(blob, newName);
-      
-      // Hide progress after a brief delay
-      setTimeout(() => {
-        setSaveProgress(prev => ({ ...prev, isVisible: false }));
-      }, 500);
-    } catch (error) {
-      console.error('Error saving PDF:', error);
-      setSaveProgress(prev => ({
-        ...prev,
-        status: 'Failed to save PDF. Please try again.'
       }));
+      
+      setViewport(prev => ({
+        ...prev,
+        width,
+        height,
+        scale: scaleToFit,
+        // Center the page
+        offsetX: (containerWidth - (width * scaleToFit)) / 2,
+        offsetY: (containerHeight - (height * scaleToFit)) / 2,
+      }));
+    }, 
+    []
+  );
+  
+  // Synchronized zoom that maintains viewport relationships
+  const handleZoom = useCallback((newScale: number) => {
+    setViewport(prev => {
+      // Make sure scale is within reasonable bounds
+      const safeScale = Math.max(0.1, Math.min(4, newScale));
+      
+      if (!containerRef.current) return prev;
+      
+      // Get the container's visible area (accounting for scroll position)
+      const container = containerRef.current;
+      const visibleWidth = container.clientWidth;
+      const visibleHeight = container.clientHeight;
+      
+      // Calculate center of the visible viewport area
+      const viewportCenterX = container.scrollLeft + (visibleWidth / 2);
+      const viewportCenterY = container.scrollTop + (visibleHeight / 2);
+      
+      // Calculate relative position within the PDF (0-1)
+      const pdfRelativeX = viewportCenterX / (prev.width * prev.scale);
+      const pdfRelativeY = viewportCenterY / (prev.height * prev.scale);
+      
+      // Apply the new scale
+      const newWidth = prev.width * safeScale;
+      const newHeight = prev.height * safeScale;
+      
+      // Calculate new scroll position to maintain the same center point
+      const newScrollLeft = (pdfRelativeX * newWidth) - (visibleWidth / 2);
+      const newScrollTop = (pdfRelativeY * newHeight) - (visibleHeight / 2);
+      
+      // Schedule scroll update after render
       setTimeout(() => {
-        setSaveProgress(prev => ({ ...prev, isVisible: false }));
-      }, 2000);
+        if (containerRef.current) {
+          containerRef.current.scrollLeft = newScrollLeft;
+          containerRef.current.scrollTop = newScrollTop;
+        }
+      }, 0);
+      
+      return {
+        ...prev,
+        scale: safeScale,
+      };
+    });
+  }, []);
+  
+  // Page navigation
+  const handlePageChange = useCallback((pageNumber: number) => {
+    setViewport(prev => ({
+      ...prev,
+      pageNumber: Math.max(1, Math.min(prev.numPages, pageNumber))
+    }));
+  }, []);
+  
+  // Tool change handlers
+  const handleToolChange = useCallback((tool: ToolType) => {
+    setToolState(prev => ({ ...prev, activeTool: tool }));
+  }, []);
+  
+  const handleColorChange = useCallback((color: string) => {
+    setToolState(prev => ({ ...prev, color }));
+  }, []);
+  
+  const handleSizeChange = useCallback((size: number) => {
+    setToolState(prev => ({ ...prev, size }));
+  }, []);
+  
+  const handleOpacityChange = useCallback((opacity: number) => {
+    setToolState(prev => ({ ...prev, opacity }));
+  }, []);
+  
+  // Export annotated PDF
+  const handleExport = useCallback(async () => {
+    try {
+      setIsSaving(true);
+      setSaveProgress(0.05);
+      
+      // Use the PDF exporter with page info
+      const exporter = new PDFExporter(file, pdfPageInfo, annotations);
+      const blob = await exporter.export((progress) => {
+        setSaveProgress(progress);
+      });
+      
+      // Download the annotated PDF
+      const fileName = file.name.replace('.pdf', '_annotated.pdf');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      setIsSaving(false);
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      setIsSaving(false);
+      alert('Failed to save PDF. Please try again.');
     }
-  }, [file, numPages]);
-
-  // Update undo/redo state after strokes change
+  }, [file, pdfPageInfo, annotations]);
+  
+  // IMPROVED: Add panning functionality
   useEffect(() => {
-    const interval = setInterval(updateUndoRedoState, 100);
-    return () => clearInterval(interval);
-  }, [updateUndoRedoState]);
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (!containerRef.current || !pageDimensions) return;
-      if (hasCalculatedScale.current) return;
-
-      const containerWidth = containerRef.current.clientWidth;
-      const targetWidth = containerWidth - 48;
-      setScale(targetWidth / pageDimensions.width);
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const handleMouseDown = (e: MouseEvent) => {
+      // Only start panning on middle mouse button (wheel click) or when space is held
+      if (e.button === 1 || (e.button === 0 && e.getModifierState('Space'))) {
+        setIsPanning(true);
+        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+        container.style.cursor = 'grabbing';
+        e.preventDefault();
+      }
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [pageDimensions]);
-
-  // Handle keyboard shortcuts
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isPanning) return;
+      
+      const dx = e.clientX - lastMousePosRef.current.x;
+      const dy = e.clientY - lastMousePosRef.current.y;
+      
+      container.scrollLeft -= dx;
+      container.scrollTop -= dy;
+      
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+      e.preventDefault();
+    };
+    
+    const handleMouseUp = () => {
+      if (isPanning) {
+        setIsPanning(false);
+        container.style.cursor = 'default';
+      }
+    };
+    
+    // Add event listeners
+    container.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    
+    // Handle space key for pan mode
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !isPanning) {
+        container.style.cursor = 'grab';
+      }
+    };
+    
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !isPanning) {
+        container.style.cursor = 'default';
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isPanning]);
+  
+  // IMPROVED: Add mousewheel zoom
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const handleWheel = (e: WheelEvent) => {
+      // Zoom with Ctrl+wheel
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = -Math.sign(e.deltaY) * 0.1;
+        handleZoom(viewport.scale + delta);
+      }
+    };
+    
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, [viewport.scale, handleZoom]);
+  
+  // Keyboard shortcuts for navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts when typing in input fields
+      // Only handle shortcuts if not typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-
-      // Tool shortcuts
-      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
-        switch (e.key.toLowerCase()) {
-          case 'p':
-            handleToolChange('pen');
-            break;
-          case 'h':
-            handleToolChange('highlighter');
-            break;
-          case 'e':
-            handleToolChange('eraser');
-            break;
-        }
+      
+      // Page navigation
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') {
+        handlePageChange(viewport.pageNumber + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+        handlePageChange(viewport.pageNumber - 1);
       }
-
-      // Undo/Redo shortcuts
-      if (e.metaKey || e.ctrlKey) {
-        if (e.key === 'z') {
-          e.preventDefault();
-          if (e.shiftKey) {
-            handleRedo();
-          } else {
-            handleUndo();
-          }
-        } else if (e.key === 'y') {
-          e.preventDefault();
-          handleRedo();
+      
+      // Zoom shortcuts
+      if ((e.ctrlKey || e.metaKey) && e.key === '=') {
+        e.preventDefault();
+        handleZoom(viewport.scale + 0.1);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+        e.preventDefault();
+        handleZoom(viewport.scale - 0.1);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+        e.preventDefault();
+        handleZoom(1);
+      }
+      
+      // Undo/Redo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) {
+          if (canRedo(viewport.pageNumber)) redo(viewport.pageNumber);
+        } else {
+          if (canUndo(viewport.pageNumber)) undo(viewport.pageNumber);
         }
       }
     };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleUndo, handleRedo, handleToolChange]);
-
-  // Handle zoom controls
-  const handleZoom = (delta: number) => {
-    setScale(current => {
-      const newScale = Math.max(0.5, Math.min(2, current + delta));
-      hasCalculatedScale.current = true;
-      return newScale;
-    });
-  };
-
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [viewport.pageNumber, viewport.scale, handlePageChange, handleZoom, canUndo, canRedo, undo, redo]);
+  
+  // Get current page info
+  const currentPageInfo = pdfPageInfo[viewport.pageNumber];
+  
   return (
-    <>
-      <div className="flex flex-col h-full bg-surface">
-        {/* Controls */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-              disabled={currentPage <= 1}
-              className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <span className="text-sm">
-              Page {currentPage} of {numPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(Math.min(numPages, currentPage + 1))}
-              disabled={currentPage >= numPages}
-              className="p-2 rounded hover:bg-surface-alt disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleZoom(-0.1)}
-              className="p-2 rounded hover:bg-surface-alt transition-colors"
-            >
-              Zoom Out
-            </button>
-            <span className="text-sm w-20 text-center">
-              {Math.round(scale * 100)}%
-            </span>
-            <button
-              onClick={() => handleZoom(0.1)}
-              className="p-2 rounded hover:bg-surface-alt transition-colors"
-            >
-              Zoom In
-            </button>
-          </div>
-        </div>
-
-        {/* PDF Document */}
-        <div 
-          ref={containerRef}
-          className="flex-1 overflow-auto bg-surface-alt/50"
-        >
-          <div className="min-h-full w-full flex justify-center p-6">
-            <div className="relative bg-white shadow-lg">
-              <Document
-                file={file}
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading={
-                  <div className="flex items-center justify-center min-h-[60vh]">
-                    Loading PDF...
-                  </div>
-                }
-              >
-                <Page
-                  pageNumber={currentPage}
-                  scale={scale}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                  onLoadSuccess={onPageLoadSuccess}
-                  loading={
-                    <div className="w-full aspect-[1/1.414] bg-surface-alt animate-pulse" />
-                  }
-                />
-              </Document>
-
-              {pageDimensions && scale && (
-                <div className="absolute inset-0" key={redrawKey}>
-                  <AnnotationLayer
-                    width={pageDimensions.width}
-                    height={pageDimensions.height}
-                    scale={scale}
-                    pageNumber={currentPage}
-                    color={currentColor}
-                    size={strokeSize}
-                    tool={currentTool}
-                    opacity={opacity}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Toolbar rendered at root level */}
+    <div className="flex flex-col h-full bg-gray-100">
+      {/* Annotation toolbar */}
       <Toolbar
+        currentTool={toolState.activeTool}
+        currentColor={toolState.color}
+        currentSize={toolState.size}
+        currentOpacity={toolState.opacity}
         onToolChange={handleToolChange}
         onColorChange={handleColorChange}
         onSizeChange={handleSizeChange}
         onOpacityChange={handleOpacityChange}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        onClear={handleClear}
-        onSave={handleSave}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        currentTool={currentTool}
-        currentColor={currentColor}
-        currentSize={strokeSize}
-        currentOpacity={opacity}
-        initiallyVisible={true}
+        canUndo={canUndo(viewport.pageNumber)}
+        canRedo={canRedo(viewport.pageNumber)}
+        onUndo={() => undo(viewport.pageNumber)}
+        onRedo={() => redo(viewport.pageNumber)}
+        onClear={() => clearPage(viewport.pageNumber)}
+        onSave={handleExport}
       />
-
-      {/* Save Progress Modal */}
-      <SaveProgress
-        currentPage={saveProgress.currentPage}
-        totalPages={saveProgress.totalPages}
-        status={saveProgress.status}
-        isVisible={saveProgress.isVisible}
+      
+      {/* Page controls */}
+      <ViewportController
+        pageNumber={viewport.pageNumber}
+        numPages={viewport.numPages}
+        scale={viewport.scale}
+        onPageChange={handlePageChange}
+        onZoomIn={() => handleZoom(viewport.scale + 0.1)}
+        onZoomOut={() => handleZoom(viewport.scale - 0.1)}
+        onZoomReset={() => handleZoom(1)}
       />
-    </>
+      
+      {/* IMPROVED: Main PDF view area with better scrolling */}
+      <div 
+        ref={containerRef}
+        className={`flex-1 overflow-auto bg-gray-100 relative ${isPanning ? 'select-none' : ''}`}
+        style={{ 
+          overflow: 'auto',
+          cursor: isPanning ? 'grabbing' : 'default'
+        }}
+      >
+        <div className="min-h-full min-w-full flex justify-center p-6">
+          {/* PDF container with synchronized layers */}
+          <div 
+            ref={pdfLayerRef}
+            className="relative shadow-xl bg-white"
+            style={{
+              width: currentPageInfo ? 
+                `${currentPageInfo.width * viewport.scale}px` : 'auto',
+              height: currentPageInfo ? 
+                `${currentPageInfo.height * viewport.scale}px` : 'auto',
+              margin: '0 auto', // Center horizontally
+            }}
+          >
+            {/* PDF document layer */}
+            <Document
+              file={file}
+              onLoadSuccess={handleDocumentLoad}
+              loading={<div className="animate-pulse bg-gray-200 min-h-[60vh] w-full"></div>}
+            >
+              <Page
+                pageNumber={viewport.pageNumber}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+                onLoadSuccess={handlePageLoad}
+                loading={<div className="animate-pulse bg-gray-200 w-full aspect-[1/1.4]"></div>}
+                scale={1} // Keep scale at 1, we handle scaling with CSS transform
+              />
+            </Document>
+            
+            {/* Annotation canvas positioned absolutely over the PDF */}
+            {currentPageInfo && (
+              <div 
+                className="absolute inset-0"
+                style={{ 
+                  pointerEvents: isPanning ? 'none' : 'auto', // Disable interactions during panning
+                }}
+              >
+                <AnnotationCanvas
+                  viewport={viewport}
+                  pageInfo={currentPageInfo}
+                  toolState={toolState}
+                  annotations={annotations[viewport.pageNumber] || []}
+                  onStrokeStart={(stroke) => addStroke(viewport.pageNumber, stroke)}
+                  onStrokeUpdate={(stroke) => updateStroke(viewport.pageNumber, stroke)}
+                  onStrokeComplete={(stroke) => finalizeStroke(viewport.pageNumber, stroke)}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      {/* Save progress dialog */}
+      {isSaving && (
+        <SaveDialog progress={saveProgress} onCancel={() => setIsSaving(false)} />
+      )}
+      
+      {/* Instructions tooltip (new) */}
+      <div className="absolute bottom-4 right-4 bg-white/80 p-2 rounded shadow-sm text-xs text-gray-600 backdrop-blur-sm">
+        <p><strong>Zoom:</strong> Ctrl+scroll or Ctrl+/- keys</p>
+        <p><strong>Pan:</strong> Space+drag or middle-click drag</p>
+      </div>
+      
+      {/* Close button if needed */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 
+                  transition-colors z-10"
+          aria-label="Close PDF viewer"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="h-6 w-6" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M6 18L18 6M6 6l12 12" 
+            />
+          </svg>
+        </button>
+      )}
+    </div>
   );
 }
