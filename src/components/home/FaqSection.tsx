@@ -12,7 +12,7 @@ const faqs = [
   {
     id: 2,
     question: "Are all the papers free to access?",
-    answer: "Yes, all papers and marking schemes on PaperSite are completely free to access. We believe education resources should be available to everyone."
+    answer: "Yes, all papers and marking schemes on PaperVoid are completely free to access. We believe education resources should be available to everyone."
   },
   {
     id: 3,
@@ -56,7 +56,7 @@ export default function FaqSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-text-muted max-w-xl mx-auto">
-            Find answers to common questions about PaperSite
+            Find answers to common questions about PaperVoid
           </p>
         </motion.div>
         

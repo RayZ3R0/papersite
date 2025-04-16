@@ -6,13 +6,13 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 const testimonials = [
   {
     id: 1,
-    text: "PaperSite has been an incredibly helpful resource for my A-Level studies. The search feature makes finding past papers so much easier!",
+    text: "PaperVoid has been an incredibly helpful resource for my A-Level studies. The search feature makes finding past papers so much easier!",
     author: "Alex K.",
     role: "A-Level Student"
   },
   {
     id: 2,
-    text: "As a teacher, I recommend PaperSite to all my students. The organized collection of papers and mark schemes has improved our exam preparation.",
+    text: "As a teacher, I recommend PaperVoid to all my students. The organized collection of papers and mark schemes has improved our exam preparation.",
     author: "Sarah M.",
     role: "Chemistry Teacher"
   },
@@ -53,7 +53,7 @@ export default function TestimonialSection() {
             What Users Are Saying
           </h2>
           <p className="text-text-muted max-w-xl mx-auto">
-            Hear from students and teachers who use PaperSite
+            Hear from students and teachers who use PaperVoid
           </p>
         </motion.div>
         
