@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-// Drawer can be in one of three states
+// Drawer states
 type DrawerState = 'closed' | 'open' | 'full';
 
 interface GestureState {
@@ -9,17 +9,17 @@ interface GestureState {
   startHeight: number;
 }
 
-// Height values in vh units
+// Physics constants optimized for better cross-browser behavior
+const SPRING_TENSION = 0.3;    // Higher tension for snappier response
+const SPRING_FRICTION = 0.82;  // Lower friction for smoother movement
+const VELOCITY_THRESHOLD = 0.4; // Higher threshold for more predictable snapping
+
+// Height values in vh units 
 const DRAWER_HEIGHTS = {
   closed: 0,
-  open: 70, // Standard open height
-  full: 92, // Almost full screen (leaves room for status bar)
+  open: 80,   // Taller default open state
+  full: 94,   // Almost full screen with minimal status bar gap
 };
-
-// Physics constants - Instagram-like feel
-const SPRING_TENSION = 0.25;
-const SPRING_FRICTION = 0.85;
-const VELOCITY_THRESHOLD = 0.3; // Lower threshold makes it more responsive to quick swipes
 
 export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
   // Track drawer animation
@@ -72,12 +72,12 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
     return (last.y - first.y) / timeDelta * 1000 / window.innerHeight * 100;
   }, []);
   
-  // Animation function with spring physics
+  // Animation function with simpler spring physics
   const animateToTarget = useCallback(() => {
     const target = targetHeightRef.current;
     const diff = target - currentHeight;
     
-    // Apply spring physics for smooth motion
+    // Apply spring physics
     const force = diff * SPRING_TENSION;
     const delta = force * SPRING_FRICTION;
     
@@ -92,9 +92,8 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
       
       // If drawer is closed completely, call the onClose callback
       if (target === DRAWER_HEIGHTS.closed && onClose) {
-        setTimeout(() => onClose(), 50); // Small delay ensures animation completes
+        setTimeout(() => onClose(), 50);
       }
-      
       return;
     }
     
@@ -182,18 +181,18 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
     const deltaY = (gesture.startY - touch.clientY) / window.innerHeight * 100;
     let newHeight = gesture.startHeight + deltaY;
     
-    // Add resistance when pushing beyond limits (Instagram-like elastic feel)
+    // Simple resistance at boundaries
     if (newHeight < 0) {
-      newHeight = newHeight * 0.2; // Strong resistance when below zero
+      newHeight = newHeight * 0.3;
     } else if (newHeight > DRAWER_HEIGHTS.full) {
       const overshoot = newHeight - DRAWER_HEIGHTS.full;
-      newHeight = DRAWER_HEIGHTS.full + overshoot * 0.2; // Resistance when over maximum
+      newHeight = DRAWER_HEIGHTS.full + overshoot * 0.3;
     }
     
     setCurrentHeight(newHeight);
   }, [gesture, trackPosition]);
   
-  // Touch end event handler with improved swipe detection
+  // Shared touch end handler for both drawer and pull bar
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     e.stopPropagation();
     if (!gesture.isDragging) return;
@@ -201,61 +200,23 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
     // Track final position
     trackPosition(e.changedTouches[0].clientY);
     
-    // Calculate velocity using improved method
+    // Calculate velocity
     const velocity = calculateVelocity();
+    
+    // Determine target state based on velocity and position
     let targetState: DrawerState;
     
-    // Instagram-like behavior: any significant downward swipe closes the drawer
     if (velocity > VELOCITY_THRESHOLD) {
-      // Fast downward swipe - close drawer
+      // Fast downward swipe - close
       targetState = 'closed';
     } else if (velocity < -VELOCITY_THRESHOLD) {
-      // Fast upward swipe - open to full
+      // Fast upward swipe - open full
       targetState = 'full';
-    } else if (currentHeight < DRAWER_HEIGHTS.open / 2) {
-      // Below halfway - close
+    } else if (currentHeight < DRAWER_HEIGHTS.open * 0.4) {
+      // Below 40% of open height - close
       targetState = 'closed';
-    } else if (currentHeight > (DRAWER_HEIGHTS.open + DRAWER_HEIGHTS.full) / 2) {
-      // Closer to full than open - go to full
-      targetState = 'full';
-    } else {
-      // Default to open state
-      targetState = 'open';
-    }
-    
-    // Animate to target state
-    animateTo(targetState);
-    
-    setGesture(prev => ({
-      ...prev,
-      isDragging: false,
-    }));
-  }, [gesture.isDragging, currentHeight, animateTo, trackPosition, calculateVelocity]);
-  
-  // Specialized handler for pull bar that makes swipe down behavior more sensitive
-  const handlePullBarTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.stopPropagation();
-    if (!gesture.isDragging) return;
-    
-    // Track final position
-    trackPosition(e.changedTouches[0].clientY);
-    
-    // Calculate velocity using improved method
-    const velocity = calculateVelocity();
-    let targetState: DrawerState;
-    
-    // More sensitive to downward swipes on the pull bar (Instagram-like)
-    if (velocity > VELOCITY_THRESHOLD * 0.5) { // Even lower threshold for pull bar
-      // Downward swipe on pull bar - close drawer
-      targetState = 'closed';
-    } else if (velocity < -VELOCITY_THRESHOLD) {
-      // Fast upward swipe - open to full
-      targetState = 'full';
-    } else if (currentHeight < DRAWER_HEIGHTS.open / 2) {
-      // Below halfway - close
-      targetState = 'closed';
-    } else if (currentHeight > (DRAWER_HEIGHTS.open + DRAWER_HEIGHTS.full) / 2) {
-      // Closer to full than open - go to full
+    } else if (currentHeight > DRAWER_HEIGHTS.open * 1.4) {
+      // Above 140% of open height - go full
       targetState = 'full';
     } else {
       // Default to open state
@@ -302,18 +263,18 @@ export function useDrawerGesture(onClose?: () => void, isOpen?: boolean) {
     isAtFullHeight: drawerState === 'full',
     isClosing: drawerState === 'closed',
     
-    // Touch handlers for the main drawer content
+    // Touch handlers for both drawer and pull bar
     handlers: {
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
       onTouchEnd: handleTouchEnd,
     },
     
-    // Specialized handlers for the pull bar with more sensitive close gesture
+    // Use same handlers for pull bar
     pullBarHandlers: {
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
-      onTouchEnd: handlePullBarTouchEnd,
+      onTouchEnd: handleTouchEnd,
     },
     
     // Controls for programmatic manipulation
