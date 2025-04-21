@@ -111,7 +111,7 @@ export default function NavSearch() {
         {!isTransitioning && !isFocused && (
           <div className="absolute inset-y-0 right-2.5 hidden md:flex items-center pointer-events-none">
             <kbd className="text-[10px] px-1.5 py-0.5 rounded border border-border/50 text-text-muted/70 bg-surface-hover">
-              {navigator.platform.toLowerCase().includes("mac")
+              {typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes("mac")
                 ? "⌘K"
                 : "Ctrl K"}
             </kbd>

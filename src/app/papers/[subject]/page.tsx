@@ -1,112 +1,135 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useMemo } from 'react';
-import subjectsData from '@/lib/data/subjects.json';
-import type { Subject, SubjectsData, Paper } from '@/types/subject';
-import { getPaperCode } from '@/utils/paperCodes';
-
-const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
-
-// Utility function to deduplicate papers
-function dedupePapers(papers: Paper[]): Paper[] {
-  const seenPdfUrls = new Set<string>();
-  
-  return papers.filter(paper => {
-    if (seenPdfUrls.has(paper.pdfUrl)) {
-      return false;
-    }
-    seenPdfUrls.add(paper.pdfUrl);
-    return true;
-  });
-}
+import { useState, useEffect } from 'react';
+import { papersApi, type Unit, type Paper, type UnitSummary } from '@/lib/api/papers';
 
 export default function SubjectPage() {
   const params = useParams();
   const subjectId = params.subject as string;
+  
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   
-  // Get subject data and deduplicate papers
-  const subject = useMemo(() => {
-    const rawSubject = castSubjectsData(subjectsData).subjects[subjectId];
-    if (!rawSubject) return null;
-    
-    // Create a copy with deduplicated papers
-    return {
-      ...rawSubject,
-      papers: dedupePapers(rawSubject.papers)
-    };
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [papersByUnit, setPapersByUnit] = useState<Record<string, Paper[]>>({});
+  const [unitSummaries, setUnitSummaries] = useState<Record<string, UnitSummary>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load units and their summaries
+  useEffect(() => {
+    async function loadUnits() {
+      try {
+        const data = await papersApi.getSubjectUnits(subjectId);
+        setUnits(data);
+        
+        // Load summaries for all units
+        const summaries = await Promise.all(
+          data.map(unit => papersApi.getUnitSummary(subjectId, unit.id))
+        );
+        
+        // Create a map of unit ID to summary
+        const summaryMap = summaries.reduce((acc, summary) => {
+          acc[summary.id] = summary;
+          return acc;
+        }, {} as Record<string, UnitSummary>);
+        
+        setUnitSummaries(summaryMap);
+      } catch (err) {
+        setError('Failed to load subject units. Please try again later.');
+        console.error('Error loading units:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUnits();
   }, [subjectId]);
 
-  // Get unique years and normalize sessions (combine May/June)
-  const { years, sessions } = useMemo(() => {
-    const yearsSet = new Set<number>();
-    const sessionsMap = new Map<string, Set<string>>();
+  // Load papers when a unit is selected
+  useEffect(() => {
+    if (!selectedUnit) return;
     
-    subject?.papers.forEach(paper => {
-      yearsSet.add(paper.year);
-      // Normalize May/June into a single session option
-      const normalizedSession = paper.session === 'May' || paper.session === 'June' 
-        ? 'May/June' 
-        : paper.session;
-      if (!sessionsMap.has(normalizedSession)) {
-        sessionsMap.set(normalizedSession, new Set());
+    async function loadPapers(unitId: string) {
+      try {
+        const papers = await papersApi.getUnitPapers(subjectId, unitId);
+        setPapersByUnit(prev => ({
+          ...prev,
+          [unitId]: papers
+        }));
+      } catch (err) {
+        console.error('Error loading papers:', err);
       }
-      sessionsMap.get(normalizedSession)?.add(paper.session);
-    });
+    }
 
-    return {
-      years: Array.from(yearsSet).sort((a, b) => b - a),
-      sessions: Array.from(sessionsMap.keys()).sort()
-    };
-  }, [subject]);
+    // Only load if we haven't loaded this unit's papers before
+    if (!papersByUnit[selectedUnit]) {
+      loadPapers(selectedUnit);
+    }
+  }, [selectedUnit, subjectId, papersByUnit]);
 
-  if (!subject) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-text-muted">Subject not found</p>
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-surface-alt rounded w-1/4"></div>
+          <div className="h-4 bg-surface-alt rounded w-1/3"></div>
+          <div className="space-y-4 mt-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-24 bg-surface-alt rounded"></div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
-  // Get papers for the selected unit with filters and sort by year and session
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold text-text mb-2">Error</h2>
+          <p className="text-text-muted">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Get all available years and sessions from summaries
+  const { years, sessions } = Object.values(unitSummaries).reduce((acc, summary) => {
+    summary.years_with_sessions.forEach(year => {
+      acc.years.add(year.year);
+      year.sessions.forEach(session => acc.sessions.add(session));
+    });
+    return acc;
+  }, { years: new Set<number>(), sessions: new Set<string>() });
+
+  // Filter papers based on selected filters
   const getUnitPapers = (unitId: string) => {
-    const sessionOrder: Record<string, number> = {
-      'January': 0,
-      'May': 1,
-      'June': 1,
-      'October': 2
-    };
-
-    // Filter papers
-    return subject.papers
-      .filter(paper => {
-        const matchesUnit = paper.unitId === unitId;
-        const matchesYear = selectedYear ? paper.year === selectedYear : true;
-        const matchesSession = selectedSession ? (
-          selectedSession === 'May/June' 
-            ? (paper.session === 'May' || paper.session === 'June')
-            : paper.session === selectedSession
-        ) : true;
-        return matchesUnit && matchesYear && matchesSession;
-      })
-      .sort((a, b) => {
-        // Sort by year first (descending)
-        if (a.year !== b.year) {
-          return b.year - a.year;
-        }
-        
-        // Then by session (January, May/June, October)
-        return (sessionOrder[a.session] || 0) - (sessionOrder[b.session] || 0);
-      });
-  };
-
-  // Count papers per unit (for display)
-  const getUnitPaperCount = (unitId: string) => {
-    // Using the filtered papers but only matching unit
-    return subject.papers.filter(paper => paper.unitId === unitId).length;
+    const papers = papersByUnit[unitId] || [];
+    return papers.filter(paper => {
+      const matchesYear = selectedYear ? paper.year === selectedYear : true;
+      const matchesSession = selectedSession ? paper.session === selectedSession : true;
+      return matchesYear && matchesSession;
+    }).sort((a, b) => {
+      // Sort by year first (descending)
+      if (a.year !== b.year) return b.year - a.year;
+      // Then by session order (Jan, May/June, Oct)
+      const sessionOrder: Record<string, number> = {
+        'January': 0,
+        'May': 1,
+        'June': 1,
+        'October': 2
+      };
+      return (sessionOrder[a.session] || 0) - (sessionOrder[b.session] || 0);
+    });
   };
 
   // Reset filters
@@ -115,15 +138,19 @@ export default function SubjectPage() {
     setSelectedSession(null);
   };
 
+  // Get subject code from first unit's papers
+  const firstUnitSummary = unitSummaries[units[0]?.id];
+  const subjectCode = firstUnitSummary?.unit_codes[0]?.slice(0, -2);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-6">
       {/* Subject Header */}
       <header className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold capitalize mb-2 text-text">
-          {subject.name}
+          {subjectCode ? `${subjectCode} Papers` : 'Loading...'}
         </h1>
         <p className="text-text-muted">
-          {subject.units.length} units available • Select a unit to view papers
+          {units.length} units available • Select a unit to view papers
         </p>
       </header>
 
@@ -152,7 +179,7 @@ export default function SubjectPage() {
                 text-text focus:ring-2 focus:ring-primary/20"
             >
               <option value="">All Years</option>
-              {years.map(year => (
+              {Array.from(years).sort((a, b) => b - a).map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
@@ -164,7 +191,7 @@ export default function SubjectPage() {
               Session
             </label>
             <div className="flex flex-wrap gap-2">
-              {sessions.map(session => (
+              {Array.from(sessions).map(session => (
                 <button
                   key={session}
                   onClick={() => setSelectedSession(
@@ -184,12 +211,13 @@ export default function SubjectPage() {
         </div>
       </div>
 
-      {/* Vertical layout */}
+      {/* Units List */}
       <div className="space-y-6">
-        {subject.units.map((unit) => {
-          const unitPapers = getUnitPapers(unit.id);
+        {units.map((unit) => {
           const isSelected = selectedUnit === unit.id;
-          const paperCount = getUnitPaperCount(unit.id);
+          const unitPapers = getUnitPapers(unit.id);
+          const hasLoadedPapers = Boolean(papersByUnit[unit.id]);
+          const summary = unitSummaries[unit.id];
           
           return (
             <div
@@ -202,14 +230,16 @@ export default function SubjectPage() {
                   setSelectedUnit(isSelected ? null : unit.id);
                 }}
                 className="w-full p-4 text-left bg-surface hover:bg-surface-alt 
-                  transition-colors flex flex-col"
+                  transition-colors"
               >
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-text">
-                    {unit.name}
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-lg font-semibold text-text">
+                      {unit.name}
+                    </h2>
+                  </div>
                   <span className="text-sm text-text-muted ml-4">
-                    {paperCount} papers
+                    {summary?.total_papers ?? '...'} papers
                   </span>
                 </div>
                 {unit.description && (
@@ -217,105 +247,91 @@ export default function SubjectPage() {
                 )}
               </button>
 
-              {/* Papers List - Only show if selected and has papers */}
-              {isSelected && unitPapers.length > 0 && (
+              {/* Papers List */}
+              {isSelected && (
                 <div className="divide-y divide-border">
-                  {unitPapers.map((paper) => (
-                    <div
-                      key={paper.id}
-                      className="p-4 hover:bg-surface-alt transition-colors"
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-medium text-text">
-                            {/* Display original session name in the paper details */}
-                            {paper.session} {paper.year}
-                          </h3>
-                          {/* Add paper code in small, muted text */}
-                          {getPaperCode(
-                            {
-                              subject: subjectId,
-                              unitId: paper.unitId,
-                              year: paper.year,
-                              title: paper.title,
-                              session: paper.session
-                            },
-                            subject.papers // Pass deduplicated subject papers
-                          ) && (
-                            <span className="text-xs text-text-muted">
-                              {getPaperCode(
-                                {
-                                  subject: subjectId,
-                                  unitId: paper.unitId,
-                                  year: paper.year,
-                                  title: paper.title,
-                                  session: paper.session
-                                },
-                                subject.papers
-                              )}
-                            </span>
-                          )}
+                  {!hasLoadedPapers ? (
+                    <div className="p-4">
+                      <div className="animate-pulse flex space-x-4">
+                        <div className="flex-1 space-y-4 py-1">
+                          <div className="h-4 bg-surface-alt rounded w-3/4"></div>
+                          <div className="h-4 bg-surface-alt rounded w-1/2"></div>
                         </div>
                       </div>
-
-                      {/* Paper and Marking Scheme */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <a
-                          href={paper.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 p-3 
-                            bg-primary text-white rounded-lg hover:opacity-90 
-                            transition-colors shadow-sm hover:shadow"
-                        >
-                          <svg 
-                            className="w-4 h-4" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                            />
-                          </svg>
-                          Question Paper
-                        </a>
-                        <a
-                          href={paper.markingSchemeUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 p-3
-                            bg-secondary text-white rounded-lg hover:opacity-90
-                            transition-colors shadow-sm hover:shadow"
-                        >
-                          <svg 
-                            className="w-4 h-4" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round" 
-                              strokeWidth={2} 
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" 
-                            />
-                          </svg>
-                          Marking Scheme
-                        </a>
-                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* No papers message */}
-              {isSelected && unitPapers.length === 0 && (
-                <div className="p-4 text-center text-text-muted">
-                  No papers available for this unit with selected filters
+                  ) : unitPapers.length > 0 ? (
+                    unitPapers.map((paper) => (
+                      <div
+                        key={paper.id}
+                        className="p-4 hover:bg-surface-alt transition-colors"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h3 className="font-medium text-text flex items-center gap-2">
+                              {paper.session} {paper.year}
+                              <span className="text-sm px-2 py-0.5 bg-surface-alt rounded font-mono">
+                                {paper.unit_code}
+                              </span>
+                            </h3>
+                          </div>
+                        </div>
+
+                        {/* Paper and Marking Scheme */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <a
+                            href={paper.pdf_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 p-3 
+                              bg-primary text-white rounded-lg hover:opacity-90 
+                              transition-colors shadow-sm hover:shadow"
+                          >
+                            <svg 
+                              className="w-4 h-4" 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth={2} 
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                              />
+                            </svg>
+                            Question Paper
+                          </a>
+                          <a
+                            href={paper.marking_scheme_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 p-3
+                              bg-secondary text-white rounded-lg hover:opacity-90
+                              transition-colors shadow-sm hover:shadow"
+                          >
+                            <svg 
+                              className="w-4 h-4" 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth={2} 
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" 
+                              />
+                            </svg>
+                            Marking Scheme
+                          </a>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-text-muted">
+                      No papers available for this unit with selected filters
+                    </div>
+                  )}
                 </div>
               )}
             </div>
