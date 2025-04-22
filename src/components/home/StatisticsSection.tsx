@@ -1,18 +1,54 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import subjectsData from '@/lib/data/subjects.json';
-import { SubjectsData } from '@/types/subject';
+import { papersApi } from '@/lib/api/papers';
 
-// Type assertion helper
-const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
+// Interface for statistics data
+interface Statistics {
+  totalPapers: number;
+  totalSubjects: number;
+  totalUnits: number;
+}
 
 export default function StatisticsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const [stats, setStats] = useState<Statistics>({
+    totalPapers: 0,
+    totalSubjects: 0,
+    totalUnits: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
   
-  const { totalPapers, totalSubjects, totalUnits } = getStats();
+  // Fetch statistics from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Fetch subjects which include unit counts and other data
+        const subjects = await papersApi.getSubjects();
+        
+        // Calculate total units across all subjects
+        const totalUnits = subjects.reduce((sum, subject) => sum + subject.units.length, 0);
+        
+        // Calculate total papers (using total_papers from API)
+        const totalPapers = subjects.reduce((sum, subject) => sum + subject.total_papers, 0);
+        
+        // Update stats
+        setStats({
+          totalPapers,
+          totalSubjects: subjects.length,
+          totalUnits
+        });
+      } catch (error) {
+        console.error('Failed to fetch statistics:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchStats();
+  }, []);
   
   return (
     <section 
@@ -27,7 +63,7 @@ export default function StatisticsSection() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <StatItem 
-            value={totalPapers} 
+            value={stats.totalPapers} 
             label="Past Papers"
             icon={
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,10 +72,11 @@ export default function StatisticsSection() {
               </svg>
             }
             delay={0}
+            isLoading={isLoading}
           />
           
           <StatItem 
-            value={totalSubjects} 
+            value={stats.totalSubjects} 
             label="Subjects"
             icon={
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -48,10 +85,11 @@ export default function StatisticsSection() {
               </svg>
             }
             delay={0.2}
+            isLoading={isLoading}
           />
           
           <StatItem 
-            value={totalUnits} 
+            value={stats.totalUnits} 
             label="Units"
             icon={
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,6 +98,7 @@ export default function StatisticsSection() {
               </svg>
             }
             delay={0.4}
+            isLoading={isLoading}
           />
         </motion.div>
       </div>
@@ -72,9 +111,10 @@ interface StatItemProps {
   label: string;
   icon: React.ReactNode;
   delay: number;
+  isLoading?: boolean;
 }
 
-function StatItem({ value, label, icon, delay }: StatItemProps) {
+function StatItem({ value, label, icon, delay, isLoading = false }: StatItemProps) {
   return (
     <motion.div
       className="flex flex-col items-center p-6 rounded-xl"
@@ -86,7 +126,11 @@ function StatItem({ value, label, icon, delay }: StatItemProps) {
         {icon}
       </div>
       
-      <CountUpAnimation target={value} duration={2.5} delay={delay} />
+      {isLoading ? (
+        <div className="text-3xl md:text-4xl font-bold text-text h-10 w-20 animate-pulse bg-surface-alt/50 rounded" />
+      ) : (
+        <CountUpAnimation target={value} duration={2.5} delay={delay} />
+      )}
       
       <p className="text-lg text-text-muted mt-1">{label}</p>
     </motion.div>
@@ -145,32 +189,4 @@ function CountUpAnimation({ target, duration, delay }: { target: number, duratio
 // Easing function
 function easeOutQuart(x: number): number {
   return 1 - Math.pow(1 - x, 4);
-}
-
-// Helper function to calculate statistics
-function getStats() {
-  const { subjects } = castSubjectsData(subjectsData);
-  
-  // Count subjects
-  const totalSubjects = Object.keys(subjects).length;
-  
-  // Count units across all subjects
-  const totalUnits = Object.values(subjects).reduce(
-    (sum, subject) => sum + subject.units.length, 
-    0
-  );
-  
-  // Count unique papers (deduplicated by URL)
-  const paperUrls = new Set<string>();
-  Object.values(subjects).forEach(subject => {
-    subject.papers.forEach(paper => {
-      paperUrls.add(paper.pdfUrl);
-    });
-  });
-  
-  return {
-    totalPapers: paperUrls.size,
-    totalSubjects,
-    totalUnits
-  };
 }
