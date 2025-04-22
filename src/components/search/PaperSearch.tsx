@@ -624,66 +624,117 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                   
                   {/* Mobile-friendly action buttons with visual feedback */}
                   <div className="flex gap-2 sm:gap-2.5 sm:ml-6 mx-0 sm:-mx-1 sm:mx-0">
-                    <Link
-                      href={result.paper.pdf_url || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
-                        bg-primary text-white rounded-full hover:opacity-90
-                        transition-all shadow-sm hover:shadow active:scale-[0.98]
-                        touch-manipulation"
-                      style={{ 
-                        WebkitTapHighlightColor: 'transparent',
-                        touchAction: 'manipulation'
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
+                    {/* Question Paper Button */}
+                    {result.paper.pdf_url !== "/nopaper" ? (
+                      <Link
+                        href={result.paper.pdf_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                          bg-primary text-white rounded-full hover:opacity-90
+                          transition-all shadow-sm hover:shadow active:scale-[0.98]
+                          touch-manipulation"
+                        style={{ 
+                          WebkitTapHighlightColor: 'transparent',
+                          touchAction: 'manipulation'
+                        }}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="whitespace-nowrap">Paper</span>
-                    </Link>
-                    <Link
-                      href={result.paper.marking_scheme_url || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
-                        bg-secondary text-white rounded-full hover:opacity-90
-                        transition-all shadow-sm hover:shadow active:scale-[0.98]
-                        touch-manipulation"
-                      style={{ 
-                        WebkitTapHighlightColor: 'transparent',
-                        touchAction: 'manipulation'
-                      }}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        <span className="whitespace-nowrap">Paper</span>
+                      </Link>
+                    ) : (
+                      <button
+                        disabled
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                          bg-surface-alt text-text-muted rounded-full cursor-not-allowed
+                          transition-colors border border-border"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                        />
-                      </svg>
-                      <span className="whitespace-nowrap">MS</span>
-                    </Link>
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          />
+                        </svg>
+                        <span className="whitespace-nowrap">No Paper</span>
+                      </button>
+                    )}
+                    
+                    {/* Marking Scheme Button */}
+                    {result.paper.marking_scheme_url !== "/nopaper" ? (
+                      <Link
+                        href={result.paper.marking_scheme_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                          bg-secondary text-white rounded-full hover:opacity-90
+                          transition-all shadow-sm hover:shadow active:scale-[0.98]
+                          touch-manipulation"
+                        style={{ 
+                          WebkitTapHighlightColor: 'transparent',
+                          touchAction: 'manipulation'
+                        }}
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                          />
+                        </svg>
+                        <span className="whitespace-nowrap">MS</span>
+                      </Link>
+                    ) : (
+                      <button
+                        disabled
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm font-medium 
+                          bg-surface-alt text-text-muted rounded-full cursor-not-allowed
+                          transition-colors border border-border"
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          />
+                        </svg>
+                        <span className="whitespace-nowrap">No MS</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
