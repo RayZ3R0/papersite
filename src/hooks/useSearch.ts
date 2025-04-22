@@ -1,16 +1,136 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { SearchQuery, SearchResult, SearchSuggestion } from '@/types/search';
-import { searchPapers } from '@/utils/search/core';
-import { SubjectsData } from '@/types/subject';
+import { papersApi } from '@/lib/api/papers';
 import subjectsData from '@/lib/data/subjects.json';
-
-// Type assertion helper
-const castSubjectsData = (data: any): SubjectsData => data as SubjectsData;
+import type { Subject, Paper } from '@/types/subject';
 
 interface UseSearchOptions {
   debounceMs?: number;
-  maxResults?: number;
   maxRecentSearches?: number;
+  pageSize?: number;
+}
+
+// Map of math unit abbreviations to their full names
+const mathUnitAbbreviations: Record<string, string> = {
+  's1': 'statistics 1',
+  's2': 'statistics 2',
+  's3': 'statistics 3',
+  's4': 'statistics 4',
+  'm1': 'mechanics 1',
+  'm2': 'mechanics 2',
+  'm3': 'mechanics 3',
+  'm4': 'mechanics 4',
+  'm5': 'mechanics 5',
+  'fp1': 'further pure 1',
+  'fp2': 'further pure 2',
+  'fp3': 'further pure 3',
+  'p1': 'pure 1',
+  'p2': 'pure 2',
+  'p3': 'pure 3',
+  'p4': 'pure 4',
+  'd1': 'decision 1',
+  'd2': 'decision 2'
+};
+
+// Helper function to get subject and unit data
+function getSubjectAndUnitInfo(unitId: string) {
+  // Cast subjects data to the right type
+  const subjects = (subjectsData as any).subjects || {};
+  
+  // Find the subject that contains this unit
+  for (const subjectId in subjects) {
+    const subject = subjects[subjectId];
+    const unit = subject.units.find((u: any) => u.id === unitId);
+    
+    if (unit) {
+      return {
+        subject: {
+          id: subjectId,
+          name: subject.name,
+          units: subject.units || [],
+          papers: subject.papers || []
+        },
+        unit: {
+          id: unitId,
+          name: unit.name,
+          order: unit.order || 0
+        }
+      };
+    }
+  }
+  
+  // Special case for math units that might be using different unit_id formats
+  if (unitId && (
+      unitId.startsWith('s') ||
+      unitId.startsWith('m') ||
+      unitId.startsWith('fp') ||
+      unitId.startsWith('p') ||
+      unitId.startsWith('d')
+  )) {
+    // Check if this matches any known math unit abbreviation
+    const unitLower = unitId.toLowerCase();
+    for (const abbr in mathUnitAbbreviations) {
+      if (unitLower.includes(abbr)) {
+        // This is likely a math unit
+        return {
+          subject: { 
+            id: 'maths', 
+            name: 'Mathematics',
+            units: [],  
+            papers: []
+          },
+          unit: { 
+            id: unitId, 
+            // Try to format a better unit name
+            name: mathUnitAbbreviations[abbr]
+              .split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' '),
+            order: 0 
+          }
+        };
+      }
+    }
+  }
+  
+  // If not found, generate a basic name from the unit_id
+  let unitName = "Unknown Unit";
+  
+  if (unitId) {
+    // Convert 'unit1' to 'Unit 1'
+    const match = unitId.match(/unit(\d+)/i);
+    if (match && match[1]) {
+      unitName = `Unit ${match[1]}`;
+    }
+  }
+  
+  return {
+    subject: { 
+      id: '', 
+      name: 'Unknown Subject',
+      units: [],
+      papers: []
+    },
+    unit: { id: unitId, name: unitName, order: 0 }
+  };
+}
+
+// Helper to expand math abbreviations in the search query
+function expandMathAbbreviations(query: string): string {
+  if (!query) return query;
+  
+  const lowerQuery = query.toLowerCase().trim();
+  // Regex to match standalone math abbreviations like s1, m2, fp3, etc.
+  const matches = lowerQuery.match(/\b([smfpd][1-5]|fp[1-3])\b/g);
+  
+  if (matches && matches.length > 0) {
+    // If we find math unit abbreviations, prepend "maths" if it's not already there
+    if (!lowerQuery.includes('math')) {
+      return `maths ${query}`;
+    }
+  }
+  
+  return query;
 }
 
 const RECENT_SEARCHES_KEY = 'papersite:recent-searches';
@@ -25,35 +145,12 @@ function getStoredSearches(): SearchQuery[] {
   }
 }
 
-function normalizeSession(session: string | undefined): string[] {
-  if (!session) return [];
-  
-  const normalized = session.toLowerCase().trim();
-  
-  // Handle May/June as a special case
-  if (normalized === 'may' || normalized === 'june') {
-    return ['may', 'june'];
-  }
-  
-  return [normalized];
-}
-
-// Function to deduplicate search results based on pdfUrl
-function deduplicateResults(results: SearchResult[]): SearchResult[] {
-  const urlSet = new Set<string>();
-  return results.filter(result => {
-    // If we've seen this URL before, filter it out
-    if (urlSet.has(result.paper.pdfUrl)) {
-      return false;
-    }
-    // Otherwise, record this URL and keep the result
-    urlSet.add(result.paper.pdfUrl);
-    return true;
-  });
-}
-
 export function useSearch(options: UseSearchOptions = {}) {
-  const { debounceMs = 300, maxResults = 20, maxRecentSearches = 5 } = options;
+  const { 
+    debounceMs = 300, 
+    maxRecentSearches = 5,
+    pageSize = 20 
+  } = options;
   
   const [query, setQuery] = useState<SearchQuery>({ text: '' });
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -61,6 +158,11 @@ export function useSearch(options: UseSearchOptions = {}) {
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<SearchQuery[]>([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
   
   const debounceTimer = useRef<NodeJS.Timeout>();
   const searchAbortController = useRef<AbortController | null>(null);
@@ -79,33 +181,8 @@ export function useSearch(options: UseSearchOptions = {}) {
     }
   }, []);
 
-  // Generate quick suggestions based on current input
-  const generateSuggestions = useCallback((searchQuery: SearchQuery) => {
-    const text = searchQuery.text.toLowerCase().trim();
-    if (!text) return [];
-
-    const suggestions: SearchSuggestion[] = [];
-
-    // Unit suggestions if subject is known
-    if (searchQuery.subject) {
-      const subject = castSubjectsData(subjectsData).subjects[searchQuery.subject.toLowerCase()];
-      if (subject) {
-        subject.units.forEach(unit => {
-          suggestions.push({
-            type: 'unit',
-            text: unit.name,
-            value: unit.name,
-            score: 0.8
-          });
-        });
-      }
-    }
-
-    return suggestions.sort((a, b) => b.score - a.score).slice(0, 5);
-  }, []);
-
-  // Memoized search function - now with abort controller for cancellation
-  const performSearch = useCallback((searchQuery: SearchQuery) => {
+  // Memoized search function
+  const performSearch = useCallback(async (searchQuery: SearchQuery, page: number) => {
     setIsSearching(true);
     setError(null);
 
@@ -118,78 +195,108 @@ export function useSearch(options: UseSearchOptions = {}) {
     searchAbortController.current = new AbortController();
 
     try {
-      // Delay slightly to allow for UI updates
-      setTimeout(() => {
-        try {
-          // Check if this search was canceled
-          if (searchAbortController.current?.signal.aborted) return;
+      // Only search if we have a query
+      if (searchQuery.text.trim()) {
+        // Expand math abbreviations in the query
+        const expandedText = expandMathAbbreviations(searchQuery.text);
+        
+        // Build the search query string
+        const searchText = [
+          expandedText, // Use the expanded text
+          searchQuery.subject,
+          searchQuery.unit,
+          searchQuery.session,
+          searchQuery.year?.toString()
+        ].filter(Boolean).join(' ');
+
+        const papers = await papersApi.searchPapers(searchText, page, pageSize);
+
+        // Convert API results to SearchResult format
+        const searchResults: SearchResult[] = papers.map(paper => {
+          // Get subject and unit information from our local data
+          const { subject, unit } = getSubjectAndUnitInfo(paper.unit_id);
           
-          const { results: searchResults, suggestions: searchSuggestions } = 
-            searchPapers(searchQuery, castSubjectsData(subjectsData));
+          return {
+            paper: {
+              id: paper.id,
+              unit_id: paper.unit_id,
+              year: paper.year,
+              session: paper.session,
+              pdf_url: paper.pdf_url,
+              marking_scheme_url: paper.marking_scheme_url,
+              title: paper.title,
+              unit_code: paper.unit_code
+            },
+            unit,
+            subject,
+            score: 1,
+            matches: {
+              text: true,
+              subject: true,
+              unit: true,
+              year: true,
+              session: true
+            }
+          };
+        });
 
-          // Deduplicate results to ensure no double entries
-          const uniqueResults = deduplicateResults(searchResults);
-          
-          setResults(uniqueResults.slice(0, maxResults));
-
-          // Merge search suggestions with quick suggestions
-          const quickSuggestions = generateSuggestions(searchQuery);
-          setSuggestions([...quickSuggestions, ...searchSuggestions]);
-
-          // Store successful searches - but not on mobile to avoid excessive storage writes
-          if (uniqueResults.length > 0 && searchQuery.text && typeof window !== 'undefined' && window.innerWidth >= 768) {
-            const searches = getStoredSearches();
-            const newSearches = [
-              searchQuery,
-              ...searches.filter(s => s.text !== searchQuery.text)
-            ].slice(0, maxRecentSearches);
-            
-            localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
-            setRecentSearches(newSearches);
-          }
-        } catch (err) {
-          if (searchAbortController.current?.signal.aborted) return;
-          setError(err instanceof Error ? err.message : 'Search failed');
-          setResults([]);
-          setSuggestions(generateSuggestions(searchQuery));
-        } finally {
-          setIsSearching(false);
+        if (page === 1) {
+          setResults(searchResults);
+        } else {
+          setResults(prev => [...prev, ...searchResults]);
         }
-      }, 0);
+
+        setTotal(papers.length);
+        setHasMore(false); // Since we're getting all results at once
+        setCurrentPage(1);
+
+        // Store successful searches (using the original query, not expanded)
+        if (searchResults.length > 0 && searchQuery.text) {
+          const searches = getStoredSearches();
+          const newSearches = [
+            searchQuery,
+            ...searches.filter(s => s.text !== searchQuery.text)
+          ].slice(0, maxRecentSearches);
+          
+          localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
+          setRecentSearches(newSearches);
+        }
+      } else {
+        // Clear results if query is empty
+        setResults([]);
+        setSuggestions([]);
+        setTotal(0);
+        setHasMore(false);
+        setCurrentPage(1);
+      }
     } catch (err) {
+      if (searchAbortController.current?.signal.aborted) return;
       setError(err instanceof Error ? err.message : 'Search failed');
       setResults([]);
-      setSuggestions(generateSuggestions(searchQuery));
+      setSuggestions([]);
+    } finally {
       setIsSearching(false);
     }
-  }, [maxResults, maxRecentSearches, generateSuggestions]);
+  }, [pageSize, maxRecentSearches]);
 
-  // Debounced search - with longer delay on mobile
-  const debouncedSearch = useCallback((searchQuery: SearchQuery) => {
+  // Debounced search
+  const debouncedSearch = useCallback((searchQuery: SearchQuery, page: number = 1) => {
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
-
-    // Always update suggestions immediately for better UX
-    setSuggestions(generateSuggestions(searchQuery));
 
     // Use a longer debounce on mobile
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const mobileDebounceMs = isMobile ? debounceMs * 1.5 : debounceMs;
 
     debounceTimer.current = setTimeout(() => {
-      performSearch(searchQuery);
+      performSearch(searchQuery, page);
     }, mobileDebounceMs);
-  }, [debounceMs, performSearch, generateSuggestions]);
+  }, [debounceMs, performSearch]);
 
   // Update search when query changes
   useEffect(() => {
-    if (query.text.trim() || query.subject || query.unit || query.year || query.session) {
-      debouncedSearch(query);
-    } else {
-      setResults([]);
-      setSuggestions([]);
-    }
+    debouncedSearch(query, 1); // Reset to first page on new search
 
     return () => {
       if (debounceTimer.current) {
@@ -209,6 +316,13 @@ export function useSearch(options: UseSearchOptions = {}) {
     }));
   }, []);
 
+  // Function to load more results
+  const loadMore = useCallback(() => {
+    if (!isSearching && hasMore) {
+      debouncedSearch(query, currentPage + 1);
+    }
+  }, [query, currentPage, hasMore, isSearching, debouncedSearch]);
+
   // Function to clear search
   const clearSearch = useCallback(() => {
     // Cancel any in-flight search
@@ -220,23 +334,10 @@ export function useSearch(options: UseSearchOptions = {}) {
     setResults([]);
     setSuggestions([]);
     setError(null);
+    setCurrentPage(1);
+    setHasMore(false);
+    setTotal(0);
   }, []);
-
-  // Store successful searches when component unmounts
-  // This ensures we save the most recent search when navigating away
-  useEffect(() => {
-    return () => {
-      if (results.length > 0 && query.text) {
-        const searches = getStoredSearches();
-        const newSearches = [
-          query,
-          ...searches.filter(s => s.text !== query.text)
-        ].slice(0, maxRecentSearches);
-        
-        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(newSearches));
-      }
-    };
-  }, [query, results.length, maxRecentSearches]);
 
   return {
     query,
@@ -246,6 +347,11 @@ export function useSearch(options: UseSearchOptions = {}) {
     error,
     updateQuery,
     clearSearch,
-    recentSearches
+    recentSearches,
+    // Pagination-related
+    currentPage,
+    hasMore,
+    total,
+    loadMore
   };
 }

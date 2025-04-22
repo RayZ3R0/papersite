@@ -76,5 +76,9 @@ export const papersApi = {
 
   async getUnitSummary(subjectId: string, unitId: string): Promise<UnitSummary> {
     return fetchFromProxy(`/subjects/${subjectId}/units/${unitId}/summary`);
+  },
+
+  async searchPapers(query: string, page: number = 1, limit: number = 20): Promise<Paper[]> {
+    return fetchFromProxy(`/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
   }
 };

@@ -10,10 +10,8 @@ import React, {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSearch } from "@/hooks/useSearch";
-import { getPaperCode } from "@/utils/paperCodes";
 import SearchBox from "./SearchBox";
 import FilterBox from "./FilterBox";
-import { getTrendingSearches, logSearchQuery } from "@/utils/search/trending";
 import subjectsData from "@/lib/data/subjects.json";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Subject, Paper } from "@/types/subject";
@@ -96,7 +94,7 @@ const safeGetPaperUrl = (paper: Paper, subject: string): string => {
   const safeSubject = subject.toLowerCase();
   
   // Some papers might not have unitId, so provide fallbacks
-  const unitPath = paper.unitId || "unknown-unit";
+  const unitPath = paper.unit_id || "unknown-unit";
   const paperId = paper.id || "unknown-paper";
   
   return `/papers/${safeSubject}/${unitPath}/${paperId}`;
@@ -111,7 +109,29 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     updateQuery,
     clearSearch,
     recentSearches,
-  } = useSearch({ debounceMs: 300 });
+    hasMore,
+    loadMore
+  } = useSearch({ debounceMs: 300, pageSize: 20 });
+
+  // Infinite scroll handling
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isSearching) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, isSearching, loadMore]);
 
   // Search focus handling
   const searchRef = useRef<HTMLInputElement>(null);
@@ -197,9 +217,6 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Get trending searches
-  const [trendingSearches, setTrendingSearches] = useState<string[]>([]);
-
   // Save filter visibility preference
   useEffect(() => {
     localStorage.setItem(FILTERS_VISIBLE_KEY, showFilters.toString());
@@ -270,7 +287,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     return subject.units.map((unit) => ({
       id: unit.id,
       name: unit.name,
-      count: subject.papers.filter((p) => p.unitId === unit.id).length,
+      count: subject.papers.filter((p) => p.unit_id === unit.id).length,
       isSelected: selectedUnits.includes(unit.id),
     }));
   }, [selectedSubject, selectedUnits]);
@@ -285,7 +302,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
         // If units are selected, filter by those units
         if (selectedUnits.length > 0) {
           papersToFilter = subject.papers.filter(p => 
-            selectedUnits.includes(p.unitId)
+            selectedUnits.includes(p.unit_id)
           );
         } else {
           // Otherwise use all papers from the subject
@@ -302,10 +319,10 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
     // Deduplicate papers based on pdfUrl before creating session map
     const seenPdfUrls = new Set<string>();
     const uniquePapers = papersToFilter.filter(paper => {
-      if (seenPdfUrls.has(paper.pdfUrl)) {
+      if (seenPdfUrls.has(paper.pdf_url)) {
         return false;
       }
-      seenPdfUrls.add(paper.pdfUrl);
+      seenPdfUrls.add(paper.pdf_url);
       return true;
     });
     
@@ -426,51 +443,6 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
       prev === FilterSection.SESSIONS ? FilterSection.NONE : FilterSection.SESSIONS
     );
   }, []);
-
-  // Load trending searches on mount with delay for performance
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTrendingSearches(getTrendingSearches());
-    }, 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Log successful searches
-  useEffect(() => {
-    if (results.length > 0 && query.text) {
-      logSearchQuery(query.text);
-      setTrendingSearches(getTrendingSearches());
-    }
-  }, [results.length, query.text]);
-
-  // Get subject papers for a specific subject
-  const getSubjectPapers = useCallback((subjectId: string) => {
-    const subject = castSubjectsData(subjectsData).subjects[subjectId];
-    return subject?.papers || [];
-  }, []);
-
-  // Safely get paper code with error handling
-  const safeGetPaperCode = useCallback((paper: Paper, subjectId: string) => {
-    if (!paper || !subjectId) return "";
-    
-    try {
-      const papers = getSubjectPapers(subjectId);
-      return getPaperCode(
-        {
-          subject: subjectId,
-          unitId: paper.unitId,
-          year: paper.year,
-          title: paper.title,
-          pdfUrl: paper.pdfUrl,
-          session: paper.session,
-        },
-        papers
-      );
-    } catch (err) {
-      console.error("Error getting paper code:", err);
-      return "";
-    }
-  }, [getSubjectPapers]);
 
   return (
     <div className="w-full max-w-2xl mx-auto mobile-container-fix">
@@ -607,10 +579,10 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
           </div>
         ) : results.length > 0 ? (
           <div className="divide-y divide-border" role="list">
+            {/* Results */}
             {results.map((result: SearchResult, index) => {
-              // Create safe URLs using our helper function
+              // Create safe URL using our helper function
               const paperUrl = safeGetPaperUrl(result.paper, result.subject.id);
-              const paperCode = safeGetPaperCode(result.paper, result.subject.id);
               
               return (
                 <div
@@ -641,9 +613,9 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                     <div>
                       <p className="text-sm text-text-muted">
                         {result.paper.session || "Unknown"} {result.paper.year || ""}
-                        {paperCode && (
-                          <span className="text-xs ml-2">
-                            {paperCode}
+                        {result.paper.unit_code && (
+                          <span className="text-xs ml-2 font-mono bg-surface-alt/70 px-1.5 py-0.5 rounded">
+                            {result.paper.unit_code}
                           </span>
                         )}
                       </p>
@@ -653,7 +625,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                   {/* Mobile-friendly action buttons with visual feedback */}
                   <div className="flex gap-2 sm:gap-2.5 sm:ml-6 mx-0 sm:-mx-1 sm:mx-0">
                     <Link
-                      href={result.paper.pdfUrl || "#"}
+                      href={result.paper.pdf_url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
@@ -683,7 +655,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                       <span className="whitespace-nowrap">Paper</span>
                     </Link>
                     <Link
-                      href={result.paper.markingSchemeUrl || "#"}
+                      href={result.paper.marking_scheme_url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
@@ -716,6 +688,16 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                 </div>
               );
             })}
+            
+            {/* Infinite scroll loader */}
+            {(hasMore || isSearching) && (
+              <div
+                ref={observerTarget}
+                className="flex justify-center py-8 items-center"
+              >
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              </div>
+            )}
           </div>
         ) : query.text ? (
           <div className="px-4 py-12 text-center text-text-muted">
@@ -747,28 +729,6 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                       style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
                     >
                       {recent.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Trending Searches */}
-            {trendingSearches.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-text-muted mb-2">
-                  Popular Searches:
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {trendingSearches.map((search: string, index: number) => (
-                    <button
-                      key={`trending-${index}`}
-                      onClick={() => updateQuery({ text: search })}
-                      className="px-3 py-2 text-sm bg-primary/10 text-primary rounded-full
-                        hover:bg-primary/20 transition-colors group active:scale-[0.98]"
-                      style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      <span className="group-hover:underline">{search}</span>
                     </button>
                   ))}
                 </div>
