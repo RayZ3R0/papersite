@@ -29,7 +29,18 @@ const mathUnitAbbreviations: Record<string, string> = {
   'p3': 'pure 3',
   'p4': 'pure 4',
   'd1': 'decision 1',
-  'd2': 'decision 2'
+  'd2': 'decision 2',
+  // Add these additional mappings
+  'pure1': 'pure 1',
+  'pure2': 'pure 2',
+  'pure3': 'pure 3',
+  'pure4': 'pure 4',
+  'mech1': 'mechanics 1',
+  'mech2': 'mechanics 2',
+  'mech3': 'mechanics 3',
+  'stats1': 'statistics 1',
+  'stats2': 'statistics 2',
+  'stats3': 'statistics 3'
 };
 
 // Helper function to get subject and unit data
@@ -59,37 +70,73 @@ function getSubjectAndUnitInfo(unitId: string) {
     }
   }
   
-  // Special case for math units that might be using different unit_id formats
-  if (unitId && (
-      unitId.startsWith('s') ||
-      unitId.startsWith('m') ||
-      unitId.startsWith('fp') ||
-      unitId.startsWith('p') ||
-      unitId.startsWith('d')
-  )) {
-    // Check if this matches any known math unit abbreviation
+  // Special case for math units
+  if (unitId) {
     const unitLower = unitId.toLowerCase();
-    for (const abbr in mathUnitAbbreviations) {
-      if (unitLower.includes(abbr)) {
-        // This is likely a math unit
-        return {
-          subject: { 
-            id: 'maths', 
-            name: 'Mathematics',
-            units: [],  
-            papers: []
-          },
-          unit: { 
-            id: unitId, 
-            // Try to format a better unit name
-            name: mathUnitAbbreviations[abbr]
-              .split(' ')
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(' '),
-            order: 0 
-          }
-        };
+    
+    // 1. Direct lookup in our abbreviations dictionary
+    if (mathUnitAbbreviations[unitLower]) {
+      return {
+        subject: { 
+          id: 'maths', 
+          name: 'Mathematics',
+          units: [],  
+          papers: []
+        },
+        unit: { 
+          id: unitId, 
+          name: mathUnitAbbreviations[unitLower]
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' '),
+          order: 0 
+        }
+      };
+    }
+    
+    // 2. Check for patterns in the unit ID
+    // Check if this is a math unit by examining structure
+    if (
+      unitLower.includes('pure') || 
+      unitLower.includes('mech') || 
+      unitLower.includes('stats') || 
+      unitLower.includes('fp') ||
+      (unitLower.startsWith('s') && /s[1-4]/.test(unitLower)) ||
+      (unitLower.startsWith('m') && /m[1-5]/.test(unitLower)) ||
+      (unitLower.startsWith('p') && /p[1-4]/.test(unitLower)) ||
+      (unitLower.startsWith('d') && /d[1-2]/.test(unitLower))
+    ) {
+      // Generate a unit name from the unitId
+      let unitName = unitId
+        .replace(/pure/i, 'Pure ')
+        .replace(/mech/i, 'Mechanics ')
+        .replace(/stats/i, 'Statistics ');
+      
+      // For single-letter prefixes with numbers
+      if (/^[smfpd][1-5]$/i.test(unitLower)) {
+        const prefix = unitLower.charAt(0);
+        const number = unitLower.charAt(1);
+        
+        if (prefix === 's') unitName = `Statistics ${number}`;
+        else if (prefix === 'm') unitName = `Mechanics ${number}`;
+        else if (prefix === 'p') unitName = `Pure ${number}`;
+        else if (prefix === 'd') unitName = `Decision ${number}`;
+        else if (prefix === 'f' && unitLower.startsWith('fp')) unitName = `Further Pure ${unitLower.charAt(2)}`;
       }
+      
+      return {
+        subject: { 
+          id: 'maths', 
+          name: 'Mathematics',
+          units: [],  
+          papers: []
+        },
+        unit: { 
+          id: unitId, 
+          name: unitName,
+          order: 0 
+        }
+      };
     }
   }
   
