@@ -21,34 +21,68 @@ export default function StatisticsSection() {
   });
   const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch statistics from API
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        // Fetch subjects which include unit counts and other data
-        const subjects = await papersApi.getSubjects();
-        
-        // Calculate total units across all subjects
-        const totalUnits = subjects.reduce((sum, subject) => sum + subject.units.length, 0);
-        
-        // Calculate total papers (using total_papers from API)
-        const totalPapers = subjects.reduce((sum, subject) => sum + subject.total_papers, 0);
-        
-        // Update stats
-        setStats({
-          totalPapers,
-          totalSubjects: subjects.length,
-          totalUnits
-        });
-      } catch (error) {
-        console.error('Failed to fetch statistics:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchStats();
-  }, []);
+    // Fetch statistics from API
+    useEffect(() => {
+      const fetchStats = async () => {
+        try {
+          // Fetch subjects which include unit counts and other data
+          const subjects = await papersApi.getSubjects();
+          
+          // Calculate total units across all subjects
+          const totalUnits = subjects.reduce((sum, subject) => sum + subject.units.length, 0);
+          
+          // Initialize paper count 
+          let totalPapers = 0;
+          let unitsProcessed = 0;
+          const sampleSize = Math.min(10, totalUnits); // Limit API calls
+          
+          // Sample a few units to estimate total paper count (to avoid too many API calls)
+          const unitPromises = [];
+          
+          // Select one unit from each subject for sampling
+          for (const subject of subjects) {
+            if (subject.units.length > 0 && unitsProcessed < sampleSize) {
+              const unitSamplePromise = papersApi.getUnitSummary(subject.id, subject.units[0].id)
+                .then(summary => {
+                  if (summary.total_papers) {
+                    // Estimate papers for all units in this subject 
+                    // (assuming similar number of papers per unit in the same subject)
+                    totalPapers += summary.total_papers * subject.units.length;
+                    unitsProcessed++;
+                  }
+                })
+                .catch(error => {
+                  console.error(`Failed to fetch unit summary for ${subject.id}:`, error);
+                });
+              
+              unitPromises.push(unitSamplePromise);
+            }
+          }
+          
+          // Wait for all the sample fetches to complete
+          await Promise.all(unitPromises);
+          
+          // If we didn't get any data, use a fallback estimate
+          if (totalPapers === 0) {
+            // Fallback: estimate ~20 papers per unit
+            totalPapers = totalUnits * 20;
+          }
+          
+          // Update stats
+          setStats({
+            totalPapers,
+            totalSubjects: subjects.length,
+            totalUnits
+          });
+        } catch (error) {
+          console.error('Failed to fetch statistics:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      fetchStats();
+    }, []);
   
   return (
     <section 
