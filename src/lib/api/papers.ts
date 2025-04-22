@@ -7,6 +7,7 @@ export interface Paper {
   pdf_url: string;
   marking_scheme_url: string;
   title: string;
+  subject_name?: string;
 }
 
 export interface Unit {

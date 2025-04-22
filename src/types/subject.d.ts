@@ -1,12 +1,13 @@
 export interface Paper {
   id: string;
   unit_id: string;
+  unit_code: string;
   year: number;
   session: string;
   pdf_url: string;
   marking_scheme_url: string;
   title: string;
-  unit_code?: string;
+  subject_name?: string; 
 }
 
 export interface Unit {

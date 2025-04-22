@@ -44,8 +44,49 @@ const mathUnitAbbreviations: Record<string, string> = {
 };
 
 // Helper function to get subject and unit data
-function getSubjectAndUnitInfo(unitId: string) {
-  // Cast subjects data to the right type
+function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
+  // If paperData includes subject_name, use it directly
+  if (paperData && 'subject_name' in paperData) {
+    const subjectName = paperData.subject_name as string;
+    const subjectId = subjectName.toLowerCase().replace(/\s+/g, '_');
+    
+    // Try to extract unit number from unit_id or title
+    let unitName = "Unknown Unit";
+    
+    // Try to get unit name from title
+    if (paperData.title) {
+      // Extract unit name from title like "Psychology Unit 2 (IAL) - January 2018"
+      const unitMatch = paperData.title.match(/Unit\s+(\d+)|Paper\s+(\d+)/i);
+      if (unitMatch) {
+        const unitNumber = unitMatch[1] || unitMatch[2];
+        unitName = `Unit ${unitNumber}`;
+      }
+    }
+    
+    // If not found in title, try to extract from unit_id
+    if (unitName === "Unknown Unit" && unitId) {
+      const match = unitId.match(/unit(\d+)/i);
+      if (match && match[1]) {
+        unitName = `Unit ${match[1]}`;
+      }
+    }
+    
+    return {
+      subject: { 
+        id: subjectId, 
+        name: subjectName,
+        units: [],  
+        papers: []
+      },
+      unit: { 
+        id: unitId, 
+        name: unitName,
+        order: 0 
+      }
+    };
+  }
+  
+  // Fall back to checking subjects data
   const subjects = (subjectsData as any).subjects || {};
   
   // Find the subject that contains this unit
@@ -94,8 +135,7 @@ function getSubjectAndUnitInfo(unitId: string) {
       };
     }
     
-    // 2. Check for patterns in the unit ID
-    // Check if this is a math unit by examining structure
+    // 2. Check for patterns in the unit ID for math units
     if (
       unitLower.includes('pure') || 
       unitLower.includes('mech') || 
@@ -261,7 +301,7 @@ export function useSearch(options: UseSearchOptions = {}) {
         // Convert API results to SearchResult format
         const searchResults: SearchResult[] = papers.map(paper => {
           // Get subject and unit information from our local data
-          const { subject, unit } = getSubjectAndUnitInfo(paper.unit_id);
+          const { subject, unit } = getSubjectAndUnitInfo(paper.unit_id, paper);
           
           return {
             paper: {
@@ -272,7 +312,8 @@ export function useSearch(options: UseSearchOptions = {}) {
               pdf_url: paper.pdf_url,
               marking_scheme_url: paper.marking_scheme_url,
               title: paper.title,
-              unit_code: paper.unit_code
+              unit_code: paper.unit_code,
+              subject_name: paper.subject_name
             },
             unit,
             subject,
