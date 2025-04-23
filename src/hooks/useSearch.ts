@@ -68,15 +68,19 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
       
       // Format for consistency (capitalization)
       if (unitName !== "Unknown Unit") {
-        unitName = unitName
-          .replace(/pure/i, 'Pure ')
-          .replace(/mech/i, 'Mechanics ')
-          .replace(/stats/i, 'Statistics ')
-          .replace(/fp/i, 'Further Pure ')
-          .trim();
+        // Handle each pattern separately to avoid partial word replacements
+        if (/\bpure\b/i.test(unitName)) {
+          unitName = unitName.replace(/\bpure\b/i, 'Pure');
+        } else if (/\bmech(anics)?\b/i.test(unitName)) {
+          unitName = unitName.replace(/\bmech(anics)?\b/i, 'Mechanics');
+        } else if (/\bstats?(istics)?\b/i.test(unitName)) {
+          unitName = unitName.replace(/\bstats?(istics)?\b/i, 'Statistics');
+        } else if (/\bfp\b/i.test(unitName)) {
+          unitName = unitName.replace(/\bfp\b/i, 'Further Pure');
+        }
         
-        // Clean up any double spaces
-        unitName = unitName.replace(/\s+/g, ' ');
+        // Clean up any double spaces and ensure space before numbers
+        unitName = unitName.replace(/\s+/g, ' ').replace(/([A-Za-z])(\d)/g, '$1 $2').trim();
       }
     } else {
       // For other subjects, extract unit number from title
@@ -89,23 +93,44 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
     
     // If not found in title, try to extract from unit_id
     if (unitName === "Unknown Unit" && unitId) {
-      // For math unit ids like "pure1", "stats2"
       const unitLower = unitId.toLowerCase();
       
-      if (
-        unitLower.includes('pure') || 
-        unitLower.includes('mech') || 
-        unitLower.includes('stats') || 
-        unitLower.includes('fp')
-      ) {
-        unitName = unitId
-          .replace(/pure/i, 'Pure ')
-          .replace(/mech/i, 'Mechanics ')
-          .replace(/stats/i, 'Statistics ')
-          .replace(/fp/i, 'Further Pure ')
-          .trim();
-      } else {
-        // For regular "unit1", "unit2" format
+      // First check mathUnitAbbreviations directly
+      if (mathUnitAbbreviations[unitLower]) {
+        unitName = mathUnitAbbreviations[unitLower]
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+      }
+      // For math unit ids like "pure1", "stats2"
+      else if (unitLower.startsWith('pure')) {
+        const num = unitLower.replace(/pure/i, '').trim();
+        unitName = `Pure ${num}`;
+      } 
+      else if (unitLower.startsWith('mech')) {
+        const num = unitLower.replace(/mech(anics)?/i, '').trim();
+        unitName = `Mechanics ${num}`;
+      }
+      else if (unitLower.startsWith('stats')) {
+        const num = unitLower.replace(/stats?(istics)?/i, '').trim();
+        unitName = `Statistics ${num}`;
+      }
+      else if (unitLower.startsWith('fp')) {
+        const num = unitLower.replace(/fp/i, '').trim();
+        unitName = `Further Pure ${num}`;
+      }
+      // Single letter math abbreviations (s1, m2, etc)
+      else if (/^[smfpd][1-5]$/i.test(unitLower)) {
+        const prefix = unitLower.charAt(0);
+        const number = unitLower.charAt(1);
+        
+        if (prefix === 's') unitName = `Statistics ${number}`;
+        else if (prefix === 'm') unitName = `Mechanics ${number}`;
+        else if (prefix === 'p') unitName = `Pure ${number}`;
+        else if (prefix === 'd') unitName = `Decision ${number}`;
+      }
+      // For regular "unit1", "unit2" format
+      else {
         const match = unitId.match(/unit(\d+)/i);
         if (match && match[1]) {
           unitName = `Unit ${match[1]}`;
@@ -186,11 +211,28 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
       unitLower.includes('stats') || 
       unitLower.includes('fp')
     ) {
-      let unitName = unitId
-        .replace(/pure/i, 'Pure ')
-        .replace(/mech/i, 'Mechanics ')
-        .replace(/stats/i, 'Statistics ')
-        .replace(/fp/i, 'Further Pure ');
+      let unitName;
+      
+      // Process each type separately to avoid partial replacements
+      if (unitLower.startsWith('pure')) {
+        const num = unitLower.replace(/pure/i, '').trim();
+        unitName = `Pure ${num}`;
+      } 
+      else if (unitLower.startsWith('mech')) {
+        const num = unitLower.replace(/mech(anics)?/i, '').trim();
+        unitName = `Mechanics ${num}`;
+      }
+      else if (unitLower.startsWith('stats')) {
+        const num = unitLower.replace(/stats?(istics)?/i, '').trim();
+        unitName = `Statistics ${num}`;
+      }
+      else if (unitLower.startsWith('fp')) {
+        const num = unitLower.replace(/fp/i, '').trim();
+        unitName = `Further Pure ${num}`;
+      }
+      else {
+        unitName = unitId;
+      }
       
       // Clean up and format
       unitName = unitName.replace(/\s+/g, ' ').trim();
