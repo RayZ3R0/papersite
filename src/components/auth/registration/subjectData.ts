@@ -49,10 +49,10 @@ export const registrationSubjects: Record<string, Subject> = {
         type: 'AS',
         category: 'Mathematics',
         units: [
-            { id: 'WMA11', name: 'Pure Mathematics 1', description: 'Core algebra, functions, coordinate geometry' },
-            { id: 'WMA12', name: 'Pure Mathematics 2', description: 'Series, differentiation, integration' },
-            { id: 'WMA13', name: 'Pure Mathematics 3', description: 'Advanced functions, numerical methods' },
-            { id: 'WMA14', name: 'Pure Mathematics 4', description: 'Vectors, differential equations' },
+            { id: 'WMA11', name: 'Pure 1', description: 'Core algebra, functions, coordinate geometry' },
+            { id: 'WMA12', name: 'Pure 2', description: 'Series, differentiation, integration' },
+            { id: 'WMA13', name: 'Pure 3', description: 'Advanced functions, numerical methods' },
+            { id: 'WMA14', name: 'Pure 4', description: 'Vectors, differential equations' },
             { id: 'WME01', name: 'Mechanics 1', description: 'Kinematics, forces, Newton\'s laws' },
             { id: 'WME02', name: 'Mechanics 2', description: 'Momentum, circular motion, work and energy' },
             { id: 'WME03', name: 'Mechanics 3', description: 'Equilibrium, motion in a circle, elasticity' },
@@ -60,9 +60,9 @@ export const registrationSubjects: Record<string, Subject> = {
             { id: 'WST02', name: 'Statistics 2', description: 'Continuous distributions, hypothesis testing' },
             { id: 'WST03', name: 'Statistics 3', description: 'Combinations, distributions, inference' },
             { id: 'WDM11', name: 'Decision Mathematics 1', description: 'Algorithms, graph theory' },
-            { id: 'WFM01', name: 'Further Pure Mathematics 1', description: 'Complex numbers, matrices, proof' },
-            { id: 'WFM02', name: 'Further Pure Mathematics 2', description: 'Hyperbolic functions, polar coordinates' },
-            { id: 'WFM03', name: 'Further Pure Mathematics 3', description: 'Advanced calculus, series' }
+            { id: 'WFM01', name: 'Further Pure 1', description: 'Complex numbers, matrices, proof' },
+            { id: 'WFM02', name: 'Further Pure 2', description: 'Hyperbolic functions, polar coordinates' },
+            { id: 'WFM03', name: 'Further Pure 3', description: 'Advanced calculus, series' }
         ]
     },
     'YEC11': {
