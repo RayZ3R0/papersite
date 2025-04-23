@@ -45,17 +45,41 @@ const mathUnitAbbreviations: Record<string, string> = {
 
 // Helper function to get subject and unit data
 function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
-  // If paperData includes subject_name, use it directly
-  if (paperData && 'subject_name' in paperData) {
+  // If paperData includes subject_name and title, extract unit info from title
+  if (paperData && paperData.subject_name && paperData.title) {
     const subjectName = paperData.subject_name as string;
     const subjectId = subjectName.toLowerCase().replace(/\s+/g, '_');
     
-    // Try to extract unit number from unit_id or title
     let unitName = "Unknown Unit";
     
-    // Try to get unit name from title
-    if (paperData.title) {
-      // Extract unit name from title like "Psychology Unit 2 (IAL) - January 2018"
+    // For math papers, extract the unit name from the title
+    if (subjectName.toLowerCase() === 'mathematics') {
+      // Examples: "Mathematics Pure 1 (IAL) - January 2024", "Mathematics Statistics 2 - January 2024"
+      const mathUnitMatch = paperData.title.match(/Mathematics\s+([A-Za-z]+\s*\d+)/i);
+      if (mathUnitMatch && mathUnitMatch[1]) {
+        unitName = mathUnitMatch[1]; // e.g., "Pure 1", "Statistics 2"
+      }
+      
+      // Alternative formats: "Mathematics PURE1 (IAL) - January 2024"
+      const mathAltMatch = paperData.title.match(/Mathematics\s+([A-Za-z]+)(\d+)/i);
+      if (unitName === "Unknown Unit" && mathAltMatch && mathAltMatch[1] && mathAltMatch[2]) {
+        unitName = `${mathAltMatch[1]} ${mathAltMatch[2]}`;
+      }
+      
+      // Format for consistency (capitalization)
+      if (unitName !== "Unknown Unit") {
+        unitName = unitName
+          .replace(/pure/i, 'Pure ')
+          .replace(/mech/i, 'Mechanics ')
+          .replace(/stats/i, 'Statistics ')
+          .replace(/fp/i, 'Further Pure ')
+          .trim();
+        
+        // Clean up any double spaces
+        unitName = unitName.replace(/\s+/g, ' ');
+      }
+    } else {
+      // For other subjects, extract unit number from title
       const unitMatch = paperData.title.match(/Unit\s+(\d+)|Paper\s+(\d+)/i);
       if (unitMatch) {
         const unitNumber = unitMatch[1] || unitMatch[2];
@@ -65,9 +89,27 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
     
     // If not found in title, try to extract from unit_id
     if (unitName === "Unknown Unit" && unitId) {
-      const match = unitId.match(/unit(\d+)/i);
-      if (match && match[1]) {
-        unitName = `Unit ${match[1]}`;
+      // For math unit ids like "pure1", "stats2"
+      const unitLower = unitId.toLowerCase();
+      
+      if (
+        unitLower.includes('pure') || 
+        unitLower.includes('mech') || 
+        unitLower.includes('stats') || 
+        unitLower.includes('fp')
+      ) {
+        unitName = unitId
+          .replace(/pure/i, 'Pure ')
+          .replace(/mech/i, 'Mechanics ')
+          .replace(/stats/i, 'Statistics ')
+          .replace(/fp/i, 'Further Pure ')
+          .trim();
+      } else {
+        // For regular "unit1", "unit2" format
+        const match = unitId.match(/unit(\d+)/i);
+        if (match && match[1]) {
+          unitName = `Unit ${match[1]}`;
+        }
       }
     }
     
@@ -115,8 +157,13 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
   if (unitId) {
     const unitLower = unitId.toLowerCase();
     
-    // 1. Direct lookup in our abbreviations dictionary
+    // Check if it's a known math abbreviation
     if (mathUnitAbbreviations[unitLower]) {
+      const fullName = mathUnitAbbreviations[unitLower]
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+        
       return {
         subject: { 
           id: 'maths', 
@@ -126,43 +173,27 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
         },
         unit: { 
           id: unitId, 
-          name: mathUnitAbbreviations[unitLower]
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' '),
+          name: fullName,
           order: 0 
         }
       };
     }
     
-    // 2. Check for patterns in the unit ID for math units
+    // Handle longer math unit IDs like "pure1", "stats2", etc.
     if (
       unitLower.includes('pure') || 
       unitLower.includes('mech') || 
       unitLower.includes('stats') || 
-      unitLower.includes('fp') ||
-      (unitLower.startsWith('s') && /s[1-4]/.test(unitLower)) ||
-      (unitLower.startsWith('m') && /m[1-5]/.test(unitLower)) ||
-      (unitLower.startsWith('p') && /p[1-4]/.test(unitLower)) ||
-      (unitLower.startsWith('d') && /d[1-2]/.test(unitLower))
+      unitLower.includes('fp')
     ) {
-      // Generate a unit name from the unitId
       let unitName = unitId
         .replace(/pure/i, 'Pure ')
         .replace(/mech/i, 'Mechanics ')
-        .replace(/stats/i, 'Statistics ');
+        .replace(/stats/i, 'Statistics ')
+        .replace(/fp/i, 'Further Pure ');
       
-      // For single-letter prefixes with numbers
-      if (/^[smfpd][1-5]$/i.test(unitLower)) {
-        const prefix = unitLower.charAt(0);
-        const number = unitLower.charAt(1);
-        
-        if (prefix === 's') unitName = `Statistics ${number}`;
-        else if (prefix === 'm') unitName = `Mechanics ${number}`;
-        else if (prefix === 'p') unitName = `Pure ${number}`;
-        else if (prefix === 'd') unitName = `Decision ${number}`;
-        else if (prefix === 'f' && unitLower.startsWith('fp')) unitName = `Further Pure ${unitLower.charAt(2)}`;
-      }
+      // Clean up and format
+      unitName = unitName.replace(/\s+/g, ' ').trim();
       
       return {
         subject: { 
@@ -178,9 +209,38 @@ function getSubjectAndUnitInfo(unitId: string, paperData?: Paper) {
         }
       };
     }
+    
+    // Handle traditional abbreviated math units (s1, m2, etc.)
+    if (/^[smfpd][1-5]$/i.test(unitLower)) {
+      const prefix = unitLower.charAt(0);
+      const number = unitLower.charAt(1);
+      let unitName = '';
+      
+      if (prefix === 's') unitName = `Statistics ${number}`;
+      else if (prefix === 'm') unitName = `Mechanics ${number}`;
+      else if (prefix === 'p') unitName = `Pure ${number}`;
+      else if (prefix === 'd') unitName = `Decision ${number}`;
+      else if (prefix === 'f' && unitLower.startsWith('fp')) unitName = `Further Pure ${unitLower.charAt(2)}`;
+      
+      if (unitName) {
+        return {
+          subject: { 
+            id: 'maths', 
+            name: 'Mathematics',
+            units: [],  
+            papers: []
+          },
+          unit: { 
+            id: unitId, 
+            name: unitName,
+            order: 0 
+          }
+        };
+      }
+    }
   }
   
-  // If not found, generate a basic name from the unit_id
+  // Fallback for unknown units
   let unitName = "Unknown Unit";
   
   if (unitId) {
