@@ -156,7 +156,7 @@ export default function ThemePicker() {
                 className="text-primary hover:underline"
               >
                 Catppuccin
-              </a>
+              </a> and more
             </p>
           </div>
         </div>

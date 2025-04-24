@@ -21,9 +21,16 @@ export default function BookCard({ book }: BookCardProps) {
   return (
     <div className="relative group">
       <div 
-        className="relative bg-surface rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+        className="relative bg-surface rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer overflow-hidden"
         onClick={() => setIsTrayOpen(true)}
+        style={{ scrollbarWidth: 'none' }} // Firefox
       >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        
         <div className="relative aspect-[3/4] w-full">
           <Image
             src={imageSource}

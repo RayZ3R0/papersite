@@ -124,19 +124,49 @@ export default function SubjectsPage() {
               </div>
 
               {/* Quick Access Buttons */}
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <Link
                   href={`/latest#${subject.id}`}
-                  className="px-3 py-1 text-sm bg-surface-alt hover:bg-surface-alt/80
-                    text-text rounded-full transition-colors"
+                  className="flex items-center justify-center px-4 py-2 text-sm 
+                    bg-surface-alt hover:bg-primary hover:text-white
+                    text-text rounded-md transition-colors duration-200 
+                    flex-1 font-medium"
                 >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
                   Latest Papers
                 </Link>
                 <Link
                   href={`/papers/${subject.id}`}
-                  className="px-3 py-1 text-sm bg-surface-alt hover:bg-surface-alt/80
-                    text-text rounded-full transition-colors"
+                  className="flex items-center justify-center px-4 py-2 text-sm 
+                    bg-surface-alt hover:bg-primary hover:text-white
+                    text-text rounded-md transition-colors duration-200 
+                    flex-1 font-medium"
                 >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h7"
+                    />
+                  </svg>
                   View Units
                 </Link>
               </div>
