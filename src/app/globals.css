@@ -509,6 +509,29 @@
   /* Lighter border */
 }
 
+/* Cotton Candy Dreams */
+.cotton-candy-dreams {
+  --color-primary: #ff5c8d;
+    --color-primary-light: #ff7da3;
+    --color-primary-dark: #e54879;
+  
+    --color-secondary: #c17edb;
+    --color-secondary-light: #d39aea;
+    --color-secondary-dark: #9f60b6;
+  
+    --color-background: #ffe1ed;
+    --color-background-alt: #ffd4e3;
+  
+    --color-surface: #ffecf3;
+    --color-surface-alt: #ffc7da;
+  
+    --color-text: #69385c;
+    --color-text-muted: #986d8b;
+  
+    --color-border: #ffabc5;
+    --color-border-light: #ffc0d4;
+}
+
   /* Base HTML */
   html {
     @apply antialiased;

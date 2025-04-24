@@ -16,6 +16,7 @@ export type Theme =
   | "catppuccin-frappe"
   | "catppuccin-macchiato"
   | "catppuccin-mocha"
+  | "cotton-candy-dreams"
   | "matcha"
   | "nord"
   | "dracula"
@@ -37,6 +38,7 @@ export const themeNames: Record<Theme, string> = {
   "catppuccin-macchiato": "Catppuccin Macchiato",
   "catppuccin-mocha": "Catppuccin Mocha",
   matcha: "Matcha",
+  "cotton-candy-dreams": "Cotton Candy",
   nord: "Nord",
   dracula: "Dracula",
   "solarized-light": "Solarized Light",
@@ -115,6 +117,7 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
       "catppuccin-frappe",
       "catppuccin-macchiato",
       "catppuccin-mocha",
+      "cotton-candy-dreams",
       "matcha",
       "nord",
       "dracula",

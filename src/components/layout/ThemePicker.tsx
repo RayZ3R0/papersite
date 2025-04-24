@@ -24,6 +24,7 @@ const themePreviewColors: Record<Theme, string[]> = {
   "one-dark": ["#61afef", "#282c34", "#3e4451", "#abb2bf"],
   everforest: ["#a3be8c", "#2b3339", "#3c3836", "#d8dee9"],
   kanagawa: ["#7fdbca", "#1f1f28", "#2a273f", "#c8d3f5"],
+  "cotton-candy-dreams": ["#ff77e9", "#1a1a1a", "#2d2d2d", "#f5f5f5"],
 };
 
 export default function ThemePicker() {
