@@ -21,68 +21,56 @@ export default function StatisticsSection() {
   });
   const [isLoading, setIsLoading] = useState(true);
   
-    // Fetch statistics from API
-    useEffect(() => {
-      const fetchStats = async () => {
-        try {
-          // Fetch subjects which include unit counts and other data
-          const subjects = await papersApi.getSubjects();
-          
-          // Calculate total units across all subjects
-          const totalUnits = subjects.reduce((sum, subject) => sum + subject.units.length, 0);
-          
-          // Initialize paper count 
-          let totalPapers = 0;
-          let unitsProcessed = 0;
-          const sampleSize = Math.min(10, totalUnits); // Limit API calls
-          
-          // Sample a few units to estimate total paper count (to avoid too many API calls)
-          const unitPromises = [];
-          
-          // Select one unit from each subject for sampling
-          for (const subject of subjects) {
-            if (subject.units.length > 0 && unitsProcessed < sampleSize) {
-              const unitSamplePromise = papersApi.getUnitSummary(subject.id, subject.units[0].id)
-                .then(summary => {
-                  if (summary.total_papers) {
-                    // Estimate papers for all units in this subject 
-                    // (assuming similar number of papers per unit in the same subject)
-                    totalPapers += summary.total_papers * subject.units.length;
-                    unitsProcessed++;
-                  }
-                })
-                .catch(error => {
-                  console.error(`Failed to fetch unit summary for ${subject.id}:`, error);
-                });
-              
-              unitPromises.push(unitSamplePromise);
-            }
+  // Fetch statistics from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const subjects = await papersApi.getSubjects();
+        const totalUnits = subjects.reduce((sum, subject) => sum + subject.units.length, 0);
+        
+        let totalPapers = 0;
+        let unitsProcessed = 0;
+        const sampleSize = Math.min(5, totalUnits); // Reduced sample size for faster loading
+        
+        const unitPromises = [];
+        
+        for (const subject of subjects) {
+          if (subject.units.length > 0 && unitsProcessed < sampleSize) {
+            const unitSamplePromise = papersApi.getUnitSummary(subject.id, subject.units[0].id)
+              .then(summary => {
+                if (summary.total_papers) {
+                  totalPapers += summary.total_papers * subject.units.length;
+                  unitsProcessed++;
+                }
+              })
+              .catch(error => {
+                console.error(`Failed to fetch unit summary for ${subject.id}:`, error);
+              });
+            
+            unitPromises.push(unitSamplePromise);
           }
-          
-          // Wait for all the sample fetches to complete
-          await Promise.all(unitPromises);
-          
-          // If we didn't get any data, use a fallback estimate
-          if (totalPapers === 0) {
-            // Fallback: estimate ~20 papers per unit
-            totalPapers = totalUnits * 20;
-          }
-          
-          // Update stats
-          setStats({
-            totalPapers,
-            totalSubjects: subjects.length,
-            totalUnits
-          });
-        } catch (error) {
-          console.error('Failed to fetch statistics:', error);
-        } finally {
-          setIsLoading(false);
         }
-      };
-      
-      fetchStats();
-    }, []);
+        
+        await Promise.all(unitPromises);
+        
+        if (totalPapers === 0) {
+          totalPapers = totalUnits * 20;
+        }
+        
+        setStats({
+          totalPapers,
+          totalSubjects: subjects.length,
+          totalUnits
+        });
+      } catch (error) {
+        console.error('Failed to fetch statistics:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchStats();
+  }, []);
   
   return (
     <section 
@@ -140,6 +128,7 @@ export default function StatisticsSection() {
   );
 }
 
+// Stat Item Component with enhanced animations
 interface StatItemProps {
   value: number;
   label: string;
@@ -151,14 +140,18 @@ interface StatItemProps {
 function StatItem({ value, label, icon, delay, isLoading = false }: StatItemProps) {
   return (
     <motion.div
-      className="flex flex-col items-center p-6 rounded-xl"
+      className="flex flex-col items-center p-6 rounded-xl bg-surface/50 backdrop-blur-sm border border-border/30 shadow-sm"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
     >
-      <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+      <motion.div 
+        className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-primary/10 text-primary"
+        whileHover={{ scale: 1.05, backgroundColor: 'rgba(var(--color-primary-rgb), 0.15)' }}
+        transition={{ duration: 0.2 }}
+      >
         {icon}
-      </div>
+      </motion.div>
       
       {isLoading ? (
         <div className="text-3xl md:text-4xl font-bold text-text h-10 w-20 animate-pulse bg-surface-alt/50 rounded" />
@@ -171,7 +164,7 @@ function StatItem({ value, label, icon, delay, isLoading = false }: StatItemProp
   );
 }
 
-// Animated count-up component
+// Enhanced count-up animation
 function CountUpAnimation({ target, duration, delay }: { target: number, duration: number, delay: number }) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(nodeRef, { once: true });
@@ -202,7 +195,6 @@ function CountUpAnimation({ target, duration, delay }: { target: number, duratio
       }
     };
     
-    // Start animation after delay
     const timer = setTimeout(() => {
       animationFrame = requestAnimationFrame(updateValue);
     }, delay * 1000);

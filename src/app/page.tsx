@@ -4,11 +4,8 @@ import { Suspense, useEffect, useState } from 'react';
 import HeroSection from '@/components/home/HeroSection';
 import HomeSearch from '@/components/home/HomeSearch';
 import ActionGrid from '@/components/home/QuickAccess/ActionGrid';
-import RecentPapers from '@/components/home/RecentPapers';
 import StatisticsSection from '@/components/home/StatisticsSection';
-import TestimonialSection from '@/components/home/TestimonialSection';
 import FaqSection from '@/components/home/FaqSection';
-import NewsletterSection from '@/components/home/NewsletterSection';
 import { motion } from 'framer-motion';
 
 export default function HomePage() {
@@ -18,7 +15,7 @@ export default function HomePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 200);
+    }, 100); // Reduced from 200ms for faster initial rendering
     return () => clearTimeout(timer);
   }, []);
 
@@ -31,7 +28,7 @@ export default function HomePage() {
             className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-2 md:mb-4 leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             Find Past Papers <span className="text-primary">in Seconds</span>
           </motion.h1>
@@ -39,7 +36,7 @@ export default function HomePage() {
             className="text-base sm:text-lg md:text-xl text-white/80 mb-4 md:mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           >
             Access thousands of A-Level past papers, mark schemes, and study materials
           </motion.p>
@@ -47,7 +44,7 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
           >
             <Suspense fallback={
               <div className="w-full h-12 bg-white/10 animate-pulse rounded-xl"></div>
@@ -58,26 +55,16 @@ export default function HomePage() {
         </div>
       </HeroSection>
       
-      {/* Adjust the ActionGrid component positioning for mobile */}
+      {/* Quick Access Grid */}
       <div className="-mt-6 md:-mt-0">
         <ActionGrid />
       </div>
       
-      {/* Recently Added Papers Section - now with balanced display 
-      <RecentPapers />
-      */}
-      
       {/* Statistics Section */}
       <StatisticsSection />
       
-      {/* Social Proof/Testimonials */}
-      <TestimonialSection />
-      
       {/* FAQ Section */}
       <FaqSection />
-      
-      {/* Newsletter Section */}
-      <NewsletterSection />
     </main>
   );
 }

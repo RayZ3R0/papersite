@@ -50,7 +50,7 @@ export default function FaqSection() {
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <h2 className="text-2xl md:text-3xl font-bold text-text mb-3">
             Frequently Asked Questions
@@ -58,6 +58,14 @@ export default function FaqSection() {
           <p className="text-text-muted max-w-xl mx-auto">
             Find answers to common questions about PaperVoid
           </p>
+          
+          {/* Consistent separator line */}
+          <motion.div 
+            className="w-16 h-1 bg-primary rounded-full mx-auto mt-6"
+            initial={{ width: 0, opacity: 0 }}
+            animate={isInView ? { width: 64, opacity: 1 } : { width: 0, opacity: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          />
         </motion.div>
         
         <div className="space-y-4">
@@ -66,8 +74,8 @@ export default function FaqSection() {
               key={faq.id}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="border border-border rounded-lg overflow-hidden"
+              transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+              className="border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               <button
                 onClick={() => toggleFaq(faq.id)}
@@ -76,16 +84,19 @@ export default function FaqSection() {
                 aria-expanded={openId === faq.id}
               >
                 <span className="font-medium text-text">{faq.question}</span>
-                <svg 
-                  className={`w-5 h-5 text-text-muted transition-transform duration-200 ${
-                    openId === faq.id ? 'transform rotate-180' : ''
-                  }`} 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
+                <motion.div
+                  animate={{ rotate: openId === faq.id ? 180 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                  <svg 
+                    className="w-5 h-5 text-text-muted"
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </motion.div>
               </button>
               
               <AnimatePresence>
@@ -94,10 +105,10 @@ export default function FaqSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 py-4 bg-surface-alt/50 text-text-muted">
+                    <div className="px-6 py-4 bg-surface-alt/30 text-text-muted border-t border-border/50">
                       {faq.answer}
                     </div>
                   </motion.div>
