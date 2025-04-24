@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { SearchParamsProvider } from "@/components/providers/SearchParamsProvider";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import NyanCatEasterEgg from "@/components/easter-eggs/NyanCat";
 
 export const metadata: Metadata = {
   title: "Papers | A-Level Past Papers",
@@ -41,6 +42,9 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <div className="min-h-screen bg-background text-text">
+              {/* Easter Egg 🐱 */}
+              <NyanCatEasterEgg />
+              
               {/* Static navigation components */}
               <MainNav />
               <MobileNav />
