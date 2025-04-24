@@ -8,6 +8,7 @@ import { SearchParamsProvider } from "@/components/providers/SearchParamsProvide
 import { Suspense } from "react";
 import { Metadata } from "next";
 import NyanCatEasterEgg from "@/components/easter-eggs/NyanCat";
+import DarkAbyss from "@/components/easter-eggs/DarkAbyss";
 
 
 export const metadata: Metadata = {
@@ -45,6 +46,7 @@ export default function RootLayout({
             <div className="min-h-screen bg-background text-text">
               {/* Easter Egg 🐱 */}
               <NyanCatEasterEgg />
+              <DarkAbyss />
               
               {/* Static navigation components */}
               <MainNav />
