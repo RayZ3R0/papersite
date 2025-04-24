@@ -87,9 +87,12 @@ export default function HomeSearch({ className = "" }: HomeSearchProps) {
     
     setTimeout(() => {
       router.push(`/search?q=${encodeURIComponent(query.trim())}&focus=true`);
-    }, 200); // Reduced transition time for better UX
+    }, 200);
   };
 
+  // Determine whether to show search button or keyboard hint
+  const shouldShowSearchButton = isFocused || searchTerm || isMobile;
+  
   return (
     <div className={`w-full max-w-xl mx-auto ${className}`}>
       <form onSubmit={handleSubmit} action="/search">
@@ -159,40 +162,50 @@ export default function HomeSearch({ className = "" }: HomeSearchProps) {
           
           <input type="hidden" name="focus" value="true" />
 
-          {/* Keyboard shortcut hint - hide on mobile */}
-          {!isMobile && !isFocused && (
-            <motion.div 
-              className="flex-none ml-2 hidden sm:flex"
-              initial={{ opacity: 0.5 }}
-              animate={{ opacity: 0.7 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="flex items-center">
-                <div className="px-1.5 py-0.5 rounded border border-white/30 text-white/60 text-xs">
-                  /
-                </div>
-              </div>
-            </motion.div>
-          )}
-          
-          {/* Submit button with improved animation */}
-          <AnimatePresence>
-            {(searchTerm || isFocused) && (
-              <motion.button
-                type="submit"
-                className="flex-none ml-2 px-3 py-1.5 bg-primary text-white rounded-lg 
-                          hover:bg-primary-light active:bg-primary-dark
-                          shadow-md shadow-primary/20
-                          active:scale-95 transition-all duration-150"
-                initial={{ opacity: 0, scale: 0.9, x: 10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.9, x: 10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                Search
-              </motion.button>
-            )}
-          </AnimatePresence>
+          {/* Right side elements container with smooth animation */}
+          <div className="flex-none ml-2 relative w-16 h-10 flex items-center justify-end">
+            <AnimatePresence mode="sync" initial={false}>
+              {!shouldShowSearchButton && !isMobile ? (
+                <motion.div
+                  key="shortcut"
+                  className="absolute right-0 flex items-center"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ 
+                    duration: 0.15, 
+                    ease: "easeInOut"
+                  }}
+                >
+                  <div className="px-1.5 py-0.5 rounded border border-white/30 text-white/60 text-xs">
+                    /
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.button
+                  key="search-button"
+                  type="submit"
+                  disabled={!searchTerm}
+                  className={`
+                    px-3 py-1.5 bg-primary text-white rounded-lg 
+                    hover:bg-primary-light active:bg-primary-dark
+                    shadow-md shadow-primary/20
+                    active:scale-95
+                    ${!searchTerm ? 'cursor-default opacity-70' : ''}
+                  `}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ 
+                    duration: 0.15, 
+                    ease: "easeInOut"
+                  }}
+                >
+                  Search
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
       </form>
 
