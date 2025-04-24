@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense } from "react"; // Add this import
+import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookIcon, FileTextIcon, ForumIcon, NotesIcon } from "./icons";
 import ThemePicker from "./ThemePicker";
 import ProfileDropdown from "../profile/ProfileDropdown";
 import NavSearch from "./NavSearch";
+import QueryPreservingLink from "@/utils/QueryPreservingLink"; // Import the new component
 
 export default function MainNav() {
   const pathname = usePathname();
@@ -18,9 +19,9 @@ export default function MainNav() {
         {/* Left side - Logo and Navigation */}
         <div className="flex items-center gap-6">
           {/* Logo */}
-          <Link href="/" className="font-bold text-lg text-text">
+          <QueryPreservingLink href="/" className="font-bold text-lg text-text">
             PaperVoid
-          </Link>
+          </QueryPreservingLink>
 
           {/* Main Navigation */}
           <div className="flex items-center gap-1">
@@ -85,7 +86,7 @@ interface NavLinkProps {
 
 function NavLink({ href, icon: Icon, label, active }: NavLinkProps) {
   return (
-    <Link
+    <QueryPreservingLink
       href={href}
       prefetch={true}
       className={`
@@ -101,6 +102,6 @@ function NavLink({ href, icon: Icon, label, active }: NavLinkProps) {
     >
       <Icon className="w-5 h-5" />
       <span>{label}</span>
-    </Link>
+    </QueryPreservingLink>
   );
 }

@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import NyanCatEasterEgg from "@/components/easter-eggs/NyanCat";
 
+
 export const metadata: Metadata = {
   title: "Papers | A-Level Past Papers",
   description: "Access A-Level past papers and study materials",
