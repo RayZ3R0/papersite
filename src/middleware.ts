@@ -35,6 +35,8 @@ async function verifyTokenViaApi(token: string, baseUrl: string) {
 const NODE_RUNTIME_ROUTES = [
   '/api/auth/password/reset',
   '/api/auth/verify',
+  '/api/auth/register',
+  '/api/auth/login',
   '/api/email'
 ];
 

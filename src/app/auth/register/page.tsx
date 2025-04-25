@@ -2,12 +2,39 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { StepWrapper } from '@/components/auth/registration/StepWrapper';
-import { BasicInfoStep } from '@/components/auth/registration/BasicInfoStep';
-import { EnhancedSubjectSelector } from '@/components/auth/registration/EnhancedSubjectSelector';
-import { SessionSelector } from '@/components/auth/registration/SessionSelector';
-import { StudyPreferencesStep } from '@/components/auth/registration/StudyPreferencesStep';
 import { RegistrationData, RegistrationErrors, UserSubjectConfig, StudyPreferences, ExamSession } from '@/types/registration';
+
+// Dynamically import step components
+const BasicInfoStep = dynamic(
+  () => import('@/components/auth/registration/BasicInfoStep').then(mod => mod.BasicInfoStep),
+  { loading: () => <StepLoading /> }
+);
+
+const EnhancedSubjectSelector = dynamic(
+  () => import('@/components/auth/registration/EnhancedSubjectSelector').then(mod => mod.EnhancedSubjectSelector),
+  { loading: () => <StepLoading /> }
+);
+
+const SessionSelector = dynamic(
+  () => import('@/components/auth/registration/SessionSelector').then(mod => mod.SessionSelector),
+  { loading: () => <StepLoading /> }
+);
+
+const StudyPreferencesStep = dynamic(
+  () => import('@/components/auth/registration/StudyPreferencesStep').then(mod => mod.StudyPreferencesStep),
+  { loading: () => <StepLoading /> }
+);
+
+// Loading component for dynamic imports
+function StepLoading() {
+  return (
+    <div className="w-full flex items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  );
+}
 
 enum RegistrationStep {
   BASIC_INFO,
