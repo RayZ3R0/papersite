@@ -1,9 +1,35 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from '@/lib/auth/jwt';
 import { COOKIE_CONFIG } from '@/lib/auth/config';
 
 const { accessToken: ACCESS_TOKEN_CONFIG, refreshToken: REFRESH_TOKEN_CONFIG } = COOKIE_CONFIG;
+
+// Helper function to create login redirect URL
+function createLoginUrl(request: NextRequest, returnTo: string) {
+  const loginUrl = new URL('/auth/login', request.url);
+  loginUrl.searchParams.set('returnTo', returnTo);
+  return loginUrl;
+}
+
+// Helper function to verify token via API
+async function verifyTokenViaApi(token: string, baseUrl: string) {
+  try {
+    const response = await fetch(`${baseUrl}/api/auth/verify-token`, {
+      method: 'POST',
+      body: token,
+    });
+    
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.valid ? data.payload : null;
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return null;
+  }
+}
 
 // Routes that require Node.js runtime
 const NODE_RUNTIME_ROUTES = [
@@ -52,43 +78,34 @@ export async function middleware(request: NextRequest) {
 
   // Handle admin routes
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
-    // Get tokens from cookies
     const accessToken = request.cookies.get(ACCESS_TOKEN_CONFIG.name);
     const refreshToken = request.cookies.get(REFRESH_TOKEN_CONFIG.name);
     
     // No tokens - redirect to login
     if (!accessToken?.value && !refreshToken?.value) {
-      const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('returnTo', pathname);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(createLoginUrl(request, pathname));
     }
 
-    try {
-      let isValid = false;
+    // Try to verify via API
+    const baseUrl = request.nextUrl.origin;
+    let payload = null;
 
-      // Try access token first
-      if (accessToken?.value) {
-        const payload = await verifyToken(accessToken.value);
-        isValid = payload?.role === 'admin';
-      }
-
-      // Try refresh token if access token is invalid
-      if (!isValid && refreshToken?.value) {
-        const payload = await verifyToken(refreshToken.value);
-        isValid = payload?.role === 'admin';
-      }
-
-      if (!isValid) {
-        throw new Error('Insufficient permissions');
-      }
-
-      return NextResponse.next();
-    } catch (error) {
-      // Invalid tokens - redirect to login
-      const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('returnTo', pathname);
-      return NextResponse.redirect(loginUrl);
+    // Try access token first
+    if (accessToken?.value) {
+      payload = await verifyTokenViaApi(accessToken.value, baseUrl);
     }
+
+    // Try refresh token if access token failed
+    if (!payload && refreshToken?.value) {
+      payload = await verifyTokenViaApi(refreshToken.value, baseUrl);
+    }
+
+    // Check if user is admin
+    if (!payload || payload.role !== 'admin') {
+      return NextResponse.redirect(createLoginUrl(request, pathname));
+    }
+
+    return NextResponse.next();
   }
 
   // Handle other protected routes
