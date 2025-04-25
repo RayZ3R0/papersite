@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import { hash } from 'bcrypt';
-import { MongoClient } from 'mongodb';
-import { connectToDatabase } from '@/lib/mongodb';
+import { Db } from 'mongodb';
+import dbConnect from '@/lib/mongodb';
 import { COOKIE_CONFIG } from '@/lib/auth/config';
 import { signAccessToken, signRefreshToken } from '@/lib/auth/jwt';
 import { AuthError } from '@/lib/authTypes';
+
+// Helper function to get database connection
+async function getDb(): Promise<Db> {
+  const mongoose = await dbConnect();
+  return mongoose.connection.db;
+}
 
 // Specify Node.js runtime
 export const runtime = 'nodejs';
@@ -28,8 +34,8 @@ export async function POST(request: Request) {
 
     const { username, email, password } = basicInfo;
 
-    // Connect to database
-    const { db } = await connectToDatabase();
+    // Get database connection
+    const db = await getDb();
 
     // Check if username or email already exists
     const existingUser = await db.collection('users').findOne({
