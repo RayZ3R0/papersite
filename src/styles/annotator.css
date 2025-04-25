@@ -1,0 +1,102 @@
+/* Custom cursors for annotation tools */
+.cursor-pencil {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19l7-7 3 3-7 7-3-3z'/%3E%3Cpath d='M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z'/%3E%3C/svg%3E") 0 24,
+    default;
+}
+
+.cursor-eraser {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20H7L3 16c-1.5-1.5-1.5-3.5 0-5L14 0l7 7-11 11 3 3h7v-1Z'/%3E%3C/svg%3E") 0 24,
+    default;
+}
+
+/* Canvas styles */
+.annotation-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.annotation-layer.active {
+  pointer-events: all;
+}
+
+/* Toolbar styles */
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: var(--surface);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tool-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.tool-button:hover {
+  background-color: var(--surface-hover);
+}
+
+.tool-button.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Tool preview */
+.tool-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+}
+
+/* Slider styles */
+.stroke-width-slider {
+  width: 8rem;
+  height: 2px;
+  -webkit-appearance: none;
+  background: var(--border);
+  outline: none;
+  border-radius: 1px;
+}
+
+.stroke-width-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stroke-width-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.stroke-width-slider::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.stroke-width-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}

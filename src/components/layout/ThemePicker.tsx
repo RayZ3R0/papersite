@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState } from "react";
 import { useTheme, themeNames, Theme } from "@/hooks/useTheme";
 
 // Get theme-specific colors without CSS variables
-// Get theme-specific colors without CSS variables
 const themePreviewColors: Record<Theme, string[]> = {
   light: ["#3b82f6", "#f9fafb", "#ffffff", "#1f2937"],
   dark: ["#60a5fa", "#111827", "#1f2937", "#f9fafb"],
@@ -27,10 +26,72 @@ const themePreviewColors: Record<Theme, string[]> = {
   "cotton-candy-dreams": ["#ff77e9", "#1a1a1a", "#2d2d2d", "#f5f5f5"],
 };
 
+// Local storage key for recent themes
+const RECENT_THEMES_KEY = 'recent-themes';
+const MAX_RECENT_THEMES = 5;
+
+// Group themes by category for better organization
+const themeCategories: Record<string, Theme[]> = {
+  "Catppuccin": ["catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"],
+  "Light": ["light", "solarized-light", "matcha"],
+  "Dark": ["dark", "one-dark", "tokyo-night", "gruvbox", "dracula", "nord", "solarized-dark", "rose-pine", "everforest", "kanagawa", "crimson", "cotton-candy-dreams"]
+};
+
 export default function ThemePicker() {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [recentThemes, setRecentThemes] = useState<Theme[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Load recent themes from localStorage
+  useEffect(() => {
+    const storedRecent = localStorage.getItem(RECENT_THEMES_KEY);
+    if (storedRecent) {
+      try {
+        const parsed = JSON.parse(storedRecent) as Theme[];
+        // Ensure current theme is first in the list if it exists
+        const updatedRecent = parsed.includes(theme) 
+          ? [theme, ...parsed.filter(t => t !== theme)] 
+          : [theme, ...parsed];
+          
+        setRecentThemes(updatedRecent.slice(0, MAX_RECENT_THEMES));
+      } catch (e) {
+        console.error('Failed to parse recent themes', e);
+        // Fallback: at least include current theme
+        setRecentThemes([theme]);
+      }
+    } else {
+      // Initialize with current theme
+      setRecentThemes([theme]);
+    }
+  }, []);
+
+  // Update recent themes when theme changes
+  useEffect(() => {
+    // Always update when theme changes, even on first render
+    const updatedRecent = [theme, ...recentThemes.filter(t => t !== theme)].slice(0, MAX_RECENT_THEMES);
+    setRecentThemes(updatedRecent);
+    
+    // Store in localStorage
+    try {
+      localStorage.setItem(RECENT_THEMES_KEY, JSON.stringify(updatedRecent));
+    } catch (e) {
+      console.error('Failed to store recent themes', e);
+    }
+  }, [theme]);
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    } else {
+      setSearchQuery('');
+    }
+  }, [isOpen]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -46,6 +107,68 @@ export default function ThemePicker() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Close on escape
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
+  // Filter themes based on search query
+  const filteredThemes = Object.entries(themeNames).filter(([themeKey, themeName]) => 
+    themeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    themeKey.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Sort function to organize themes by category
+  const sortThemes = (themes: [string, string][]) => {
+    return [...themes].sort((a, b) => {
+      const aName = themeNames[a[0] as Theme] || a[1];
+      const bName = themeNames[b[0] as Theme] || b[1];
+      return aName.localeCompare(bName);
+    });
+  };
+
+  // Group themes: recent first, then by category (when not searching)
+  const groupedThemes = () => {
+    if (searchQuery) {
+      // When searching, just show sorted results
+      return sortThemes(filteredThemes);
+    }
+    
+    // Start with recent themes in their explicit order
+    const recentThemeEntries = recentThemes
+      .map(themeKey => [themeKey, themeNames[themeKey]] as [string, string]);
+    
+    // Find themes that aren't in the recent list
+    const remainingThemes = filteredThemes
+      .filter(([themeKey]) => !recentThemes.includes(themeKey as Theme));
+    
+    // Sort the remaining themes
+    const sortedRemaining = sortThemes(remainingThemes);
+    
+    // Return recent themes followed by remaining sorted themes
+    return [...recentThemeEntries, ...sortedRemaining];
+  };
+  
+  // Get the theme category for better descriptions
+  const getThemeCategory = (themeKey: string): string => {
+    for (const [category, themes] of Object.entries(themeCategories)) {
+      if (themes.includes(themeKey as Theme)) {
+        return category;
+      }
+    }
+    return "Custom";
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -87,80 +210,193 @@ export default function ThemePicker() {
         <div
           className="absolute right-0 mt-2 w-72 sm:w-64 py-2 bg-surface border border-border 
             rounded-lg shadow-lg z-50 theme-fade-in"
+          role="dialog"
+          aria-label="Theme Picker"
         >
           <div className="px-4 py-2 border-b border-border">
-            <h3 className="text-sm font-medium">Select Theme</h3>
-            <p className="text-xs text-text-muted mt-0.5">
-              Choose your preferred color scheme
-            </p>
-          </div>
-
-          <div className="max-h-[min(420px,70vh)] overflow-y-auto py-1">
-            {Object.entries(themeNames).map(([themeKey, themeName]) => (
-              <button
-                key={themeKey}
-                onClick={() => {
-                  setTheme(themeKey as Theme);
-                  setIsOpen(false);
-                }}
-                className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-surface-alt
-                  transition-all duration-200 text-left group
-                  ${
-                    theme === themeKey
-                      ? "bg-surface-alt text-primary"
-                      : "text-text"
-                  }`}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium">Select Theme</h3>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="text-text-muted hover:text-text rounded-full p-1 
+                  hover:bg-surface-alt transition-colors"
+                aria-label="Close theme picker"
               >
-                {/* Theme Preview with hover effect */}
-                <div
-                  className="w-9 h-9 rounded-md border border-border overflow-hidden grid grid-cols-2 gap-px
-                  transition-transform duration-200 group-hover:scale-105"
-                >
-                  {themePreviewColors[themeKey as Theme].map((color, i) => (
-                    <div
-                      key={i}
-                      className="w-full h-full"
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-
-                {/* Theme Name with description */}
-                <div className="flex-1">
-                  <div className="font-medium">
-                    {themeName}
-                    {theme === themeKey && (
-                      <span className="text-xs text-primary ml-2">
-                        (Active)
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-text-muted mt-0.5">
-                    {themeKey.includes("catppuccin")
-                      ? "Catppuccin Theme"
-                      : "Base Theme"}
-                  </div>
-                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
               </button>
-            ))}
+            </div>
+            
+            {/* Search input with icon */}
+            <div className="relative mt-2">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search themes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-8 py-2 bg-surface-alt border border-border rounded-md
+                text-sm text-text placeholder:text-text-muted focus:outline-none
+                focus:ring-1 focus:ring-primary"
+                aria-label="Search themes"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted
+                  hover:text-text focus:outline-none p-1 rounded-full hover:bg-surface"
+                  aria-label="Clear search"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Footer with attribution */}
+          {/* Section headers - Only shown when not searching and when there are recent themes */}
+          {!searchQuery && recentThemes.length > 0 && (
+            <div className="sticky top-0 z-10 px-4 py-1.5 border-b border-border bg-surface">
+              <h4 className="text-xs font-medium text-text-muted">RECENTLY USED</h4>
+            </div>
+          )}
+
+          <div className="max-h-[min(420px,70vh)] overflow-y-auto py-1 thin-scrollbar">
+            {groupedThemes().map(([themeKey, themeName], index) => {
+              const isRecent = !searchQuery && recentThemes.includes(themeKey as Theme);
+              const isFirstNonRecent = !searchQuery && index === recentThemes.length && recentThemes.length > 0;
+              
+              return (
+                <React.Fragment key={themeKey}>
+                  {/* Separator between recent and other themes */}
+                  {isFirstNonRecent && (
+                    <div className="sticky top-0 z-10 px-4 py-1.5 border-y border-border mt-1 bg-surface">
+                      <h4 className="text-xs font-medium text-text-muted">ALL THEMES</h4>
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      setTheme(themeKey as Theme);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-surface-alt
+                      transition-colors duration-200 text-left group
+                      ${isRecent ? "bg-surface-alt/50" : ""}
+                      ${theme === themeKey ? "bg-primary/10 text-primary" : "text-text"}`}
+                  >
+                    {/* Theme Preview with improved hover effect */}
+                    <div
+                      className={`w-9 h-9 rounded-md border overflow-hidden grid grid-cols-2 gap-px
+                      transition-all duration-300 group-hover:scale-105 group-hover:shadow-md
+                      ${theme === themeKey ? 'border-primary shadow-sm' : 'border-border'}`}
+                    >
+                      {themePreviewColors[themeKey as Theme].map((color, i) => (
+                        <div
+                          key={i}
+                          className="w-full h-full"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Theme Name with improved description */}
+                    <div className="flex-1">
+                      <div className="font-medium flex items-center gap-1.5">
+                        {themeName}
+                        {theme === themeKey && (
+                          <span className="flex items-center text-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-text-muted mt-0.5 flex items-center gap-2">
+                        {isRecent && (
+                          <span className="flex items-center gap-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            Recent
+                          </span>
+                        )}
+                        <span>{getThemeCategory(themeKey)}</span>
+                      </div>
+                    </div>
+                  </button>
+                </React.Fragment>
+              );
+            })}
+            
+            {/* No results message with improved styling */}
+            {filteredThemes.length === 0 && (
+              <div className="px-4 py-8 text-center text-text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm">No themes match your search</p>
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="text-primary text-sm hover:underline mt-2 focus:outline-none
+                    px-3 py-1 border border-primary/30 rounded-md hover:bg-primary/10"
+                >
+                  Clear search
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Footer with additional features */}
           <div className="px-4 pt-2 mt-1 border-t border-border">
-            <p className="text-xs text-text-muted">
-              Colors from{" "}
-              <a
-                href="https://github.com/catppuccin/catppuccin"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Catppuccin
-              </a> and more
-            </p>
+            <div className="flex items-center justify-between text-xs">
+              <p className="text-text-muted">
+                <a
+                  href="https://github.com/catppuccin/catppuccin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Catppuccin
+                </a>
+                {" "}& more
+              </p>
+              <span className="text-text-muted">{Object.keys(themePreviewColors).length} themes</span>
+            </div>
           </div>
         </div>
       )}
+      
+      {/* Add a global style for thin scrollbars */}
+      <style jsx global>{`
+        .thin-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .thin-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .thin-scrollbar::-webkit-scrollbar-thumb {
+          background-color: var(--border);
+          border-radius: 4px;
+        }
+        .theme-fade-in {
+          animation: themeDropdownFadeIn 0.15s ease-out;
+        }
+        @keyframes themeDropdownFadeIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
