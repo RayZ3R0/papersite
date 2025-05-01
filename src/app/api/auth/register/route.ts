@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
-import { hash } from 'bcrypt';
-import { Db } from 'mongodb';
-import dbConnect from '@/lib/mongodb';
-import { COOKIE_CONFIG } from '@/lib/auth/config';
-import { signAccessToken, signRefreshToken } from '@/lib/auth/jwt';
-import { AuthError } from '@/lib/authTypes';
+import { NextResponse } from "next/server";
+import { hash } from "bcryptjs";
+import { Db } from "mongodb";
+import dbConnect from "@/lib/mongodb";
+import { COOKIE_CONFIG } from "@/lib/auth/config";
+import { signAccessToken, signRefreshToken } from "@/lib/auth/jwt";
+import { AuthError } from "@/lib/authTypes";
 
 // Helper function to get database connection
 async function getDb(): Promise<Db> {
@@ -13,22 +13,18 @@ async function getDb(): Promise<Db> {
 }
 
 // Specify Node.js runtime
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const {
-      basicInfo,
-      subjects,
-      currentSession,
-      studyPreferences
-    } = await request.json();
+    const { basicInfo, subjects, currentSession, studyPreferences } =
+      await request.json();
 
     // Validate required fields
     if (!basicInfo?.username || !basicInfo?.email || !basicInfo?.password) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: "Missing required fields" },
+        { status: 400 },
       );
     }
 
@@ -38,20 +34,19 @@ export async function POST(request: Request) {
     const db = await getDb();
 
     // Check if username or email already exists
-    const existingUser = await db.collection('users').findOne({
+    const existingUser = await db.collection("users").findOne({
       $or: [
         { username: username.toLowerCase() },
-        { email: email.toLowerCase() }
-      ]
+        { email: email.toLowerCase() },
+      ],
     });
 
     if (existingUser) {
-      const field = existingUser.username === username.toLowerCase() 
-        ? 'username' 
-        : 'email';
+      const field =
+        existingUser.username === username.toLowerCase() ? "username" : "email";
       return NextResponse.json(
         { error: `This ${field} is already registered` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,23 +58,23 @@ export async function POST(request: Request) {
       username: username.toLowerCase(),
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: 'user',
+      role: "user",
       verified: false,
       banned: false,
       subjects: subjects || [],
       currentSession: currentSession || null,
       studyPreferences: studyPreferences || {},
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
-    await db.collection('users').insertOne(user);
+    await db.collection("users").insertOne(user);
 
     // Generate tokens
     const payload = {
       userId: user._id.toString(),
       username: user.username,
-      role: user.role
+      role: user.role,
     };
 
     const accessToken = await signAccessToken(payload);
@@ -89,33 +84,29 @@ export async function POST(request: Request) {
       user: {
         ...payload,
         email: user.email,
-        verified: user.verified
-      }
+        verified: user.verified,
+      },
     });
 
     // Set cookies
     response.cookies.set(
       COOKIE_CONFIG.accessToken.name,
       accessToken,
-      COOKIE_CONFIG.accessToken.options
+      COOKIE_CONFIG.accessToken.options,
     );
 
     response.cookies.set(
       COOKIE_CONFIG.refreshToken.name,
       refreshToken,
-      COOKIE_CONFIG.refreshToken.options
+      COOKIE_CONFIG.refreshToken.options,
     );
 
     return response;
-
   } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: 'Registration failed' },
-      { status: 500 }
-    );
+    console.error("Registration error:", error);
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }
 
 // Force this route to be processed as a Node.js API route
-export const preferredRegion = 'home';
+export const preferredRegion = "home";
