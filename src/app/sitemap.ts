@@ -1,30 +1,46 @@
 import { MetadataRoute } from "next";
 
-// Replace with your actual API function to get subjects
-async function getSubjects() {
-  // This is a placeholder. Replace with your actual API call or data source
-  return [
-    { id: "mathematics", name: "Mathematics" },
-    { id: "physics", name: "Physics" },
-    { id: "chemistry", name: "Chemistry" },
-    { id: "biology", name: "Biology" },
-    { id: "economics", name: "Economics" },
-    { id: "accounting", name: "Accounting" },
-    { id: "psychology", name: "Psychology" },
-  ];
+// Types for better structure
+interface Subject {
+  id: string;
+  name: string;
+  units?: Unit[];
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Make sure baseUrl doesn't end with a slash
-  const baseUrl = (
-    process.env.NEXT_PUBLIC_APP_URL || "https://edexcel.vercel.app"
-  ).replace(/\/$/, "");
+interface Unit {
+  id: string;
+  name: string;
+  order: number;
+  description: string;
+}
 
-  // Get all subjects
-  const subjects = await getSubjects();
+/**
+ * Fetch all subjects with their units from the API
+ */
+async function fetchSubjects(): Promise<Subject[]> {
+  try {
+    const response = await fetch('https://papervoid-api-rgic.shuttle.app/api/subjects', {
+      // Adding cache control to optimize API calls during builds
+      next: { revalidate: 3600 } // Revalidate every hour
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch subjects:', error);
+    return []; // Return empty array as fallback
+  }
+}
 
-  // Base routes
-  const routes = [
+/**
+ * Get important pages that should always be in the sitemap
+ * These are based on your actual directory structure
+ */
+function getStaticPages(baseUrl: string, lastModified: string): MetadataRoute.Sitemap {
+  return [
     {
       url: `${baseUrl}`,
       lastModified,
@@ -61,15 +77,86 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/latest`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/search`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/profile`,
+      lastModified, 
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    // Authentication pages (public facing ones only)
+    {
+      url: `${baseUrl}/auth/login`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/auth/register`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    }
   ];
+}
 
-  // Add subject pages
+/**
+ * Generate analytics data for the sitemap
+ */
+function generateAnalyticsData(entries: MetadataRoute.Sitemap) {
+  // Instead of writing to filesystem, log to console during development
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Sitemap generated with ${entries.length} URLs`);
+  }
+  
+  return {
+    generated: new Date().toISOString(),
+    entryCount: entries.length
+  };
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Make sure baseUrl doesn't end with a slash
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_APP_URL || "https://edexcel.vercel.app"
+  ).replace(/\/$/, "");
+
+  // Default lastModified date for static pages
+  const defaultLastModified = new Date().toISOString();
+  
+  // Get static pages
+  const staticRoutes = getStaticPages(baseUrl, defaultLastModified);
+  
+  // Get all subjects with their units from API
+  const subjects = await fetchSubjects();
+  
+  // Add main subject pages (these definitely exist based on your folder structure)
   const subjectRoutes = subjects.map((subject) => ({
     url: `${baseUrl}/papers/${subject.id}`,
-    lastModified,
+    lastModified: defaultLastModified,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
-
-  return [...routes, ...subjectRoutes];
+  
+  // Combine all routes
+  const allRoutes = [
+    ...staticRoutes,
+    ...subjectRoutes,
+  ];
+  
+  // Generate analytics data
+  generateAnalyticsData(allRoutes);
+  
+  return allRoutes;
 }

@@ -2,11 +2,23 @@ import { ImageResponse } from "next/og";
 
 // Route segment config
 export const runtime = "edge";
-export const alt = "Edexcel Past Papers";
+export const alt = "Edexcel Past Papers & Mark Schemes - Free Download";  // Enhanced alt text
 export const contentType = "image/png";
 export const size = {
   width: 1200,
   height: 630,
+};
+
+// Map subject IDs to more SEO-friendly full names
+const subjectEnhancedNames: Record<string, string> = {
+  mathematics: "Mathematics A-Level", 
+  physics: "Physics A-Level",
+  chemistry: "Chemistry A-Level",
+  biology: "Biology A-Level",
+  economics: "Economics A-Level",
+  accounting: "Accounting A-Level",
+  psychology: "Psychology A-Level",
+  // Add more subjects with appropriate qualifications
 };
 
 export default async function Image({
@@ -14,9 +26,10 @@ export default async function Image({
 }: {
   params: { subject: string };
 }) {
-  const subject = params.subject
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  // Get enhanced subject name or format the param as fallback
+  const subjectId = params.subject;
+  const subjectName = subjectEnhancedNames[subjectId] || 
+    subjectId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   return new ImageResponse(
     (
@@ -28,21 +41,58 @@ export default async function Image({
           justifyContent: "center",
           width: "100%",
           height: "100%",
-          backgroundColor: "#f8f9fa",
           fontFamily: "sans-serif",
           padding: "40px",
           background: "linear-gradient(to right, #4a6cf7, #33bcef)",
           color: "white",
+          position: "relative",
         }}
       >
-        <div style={{ fontSize: 60, fontWeight: "bold", marginBottom: 20 }}>
-          {subject} Past Papers
+        {/* Logo placeholder - ideally your actual site logo */}
+        <div style={{ 
+          position: "absolute", 
+          top: 40, 
+          left: 40, 
+          fontSize: 24, 
+          fontWeight: "bold" 
+        }}>
+          Edexcel Papers
         </div>
-        <div style={{ fontSize: 30, opacity: 0.9 }}>
-          Edexcel Exam Papers & Mark Schemes
+        
+        {/* Main heading - using the enhanced subject name */}
+        <div style={{ fontSize: 72, fontWeight: "bold", marginBottom: 20, textAlign: "center" }}>
+          {subjectName} Past Papers
         </div>
-        <div style={{ marginTop: 40, fontSize: 24, opacity: 0.7 }}>
-          Free Download • A-Level & GCSE
+        
+        {/* SEO-rich subtitle */}
+        <div style={{ fontSize: 32, opacity: 0.9, textAlign: "center" }}>
+          Complete Exam Papers & Mark Schemes
+        </div>
+        
+        {/* Features - important keywords */}
+        <div style={{ 
+          marginTop: 40, 
+          fontSize: 26, 
+          opacity: 0.95,
+          background: "rgba(0,0,0,0.2)",
+          padding: "12px 24px",
+          borderRadius: "12px"
+        }}>
+          Free • Verified • Examiner-Approved • Latest Syllabus
+        </div>
+        
+        {/* Call to action */}
+        <div style={{ 
+          position: "absolute", 
+          bottom: 40, 
+          fontSize: 28,
+          fontWeight: "bold",
+          background: "#ffffff",
+          color: "#4a6cf7",
+          padding: "12px 32px",
+          borderRadius: "8px"
+        }}>
+          Download Now
         </div>
       </div>
     ),
