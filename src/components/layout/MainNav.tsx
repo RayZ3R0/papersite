@@ -20,7 +20,7 @@ export default function MainNav() {
         <div className="flex items-center gap-6">
           {/* Logo */}
           <QueryPreservingLink href="/" className="font-bold text-lg text-text">
-            PaperVoid
+            PaperNexus
           </QueryPreservingLink>
 
           {/* Main Navigation */}

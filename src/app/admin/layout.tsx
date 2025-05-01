@@ -68,7 +68,7 @@ function AdminContent({ children }: { children: React.ReactNode }) {
                   },
                 },
                 null,
-                2
+                2,
               )}
             </pre>
           )}
@@ -86,7 +86,7 @@ function AdminContent({ children }: { children: React.ReactNode }) {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/admin" className="text-lg font-bold text-text">
-                  PaperVoid Admin
+                  PaperNexus Admin
                 </Link>
               </div>
 

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authentication - PaperVoid",
-  description: "Sign in or create an account to access PaperVoid features",
+  title: "Authentication - PaperNexus",
+  description: "Sign in or create an account to access PaperNexus features",
 };
 
 export default function AuthLayout({
@@ -17,7 +17,7 @@ export default function AuthLayout({
         <div className="container mx-auto px-4">
           <div className="flex justify-center">
             <a href="/" className="text-2xl font-bold text-text">
-              PaperVoid
+              PaperNexus
             </a>
           </div>
         </div>
@@ -33,7 +33,7 @@ export default function AuthLayout({
         <div className="container mx-auto px-4">
           <div className="text-center text-sm text-text-muted">
             <p>
-              &copy; {new Date().getFullYear()} PaperVoid. All rights reserved.
+              &copy; {new Date().getFullYear()} PaperNexus. All rights reserved.
             </p>
           </div>
         </div>
