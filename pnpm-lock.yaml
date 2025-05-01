@@ -150,6 +150,9 @@ importers:
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0(canvas@3.1.0)
+      next-sitemap:
+        specifier: ^4.2.3
+        version: 4.2.3(next@14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328))
       null-loader:
         specifier: ^4.0.1
         version: 4.0.1(webpack@5.98.0)
@@ -331,6 +334,9 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@corex/deepmerge@4.0.43':
+    resolution: {integrity: sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ==}
 
   '@emnapi/core@1.4.0':
     resolution: {integrity: sha512-H+N/FqT07NmLmt6OFFtDfwe8PNygprzBikrEMyQfgqSmT0vzE515Pz7R8izwB9q/zsH/MA64AKoul3sA6/CzVg==}
@@ -581,6 +587,9 @@ packages:
 
   '@napi-rs/wasm-runtime@0.2.7':
     resolution: {integrity: sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw==}
+
+  '@next/env@13.5.11':
+    resolution: {integrity: sha512-fbb2C7HChgM7CemdCY+y3N1n8pcTKdqtQLbC7/EQtPdLvlMUT9JX/dBYl8MMZAtYG4uVMyPFHXckb68q/NRwqg==}
 
   '@next/env@14.1.0':
     resolution: {integrity: sha512-Py8zIo+02ht82brwwhTg36iogzFqGLPXlRGKQw5s+qP/kMNc4MAyDeEwBKDijk6zTIbegEgu8Qy7C1LboslQAw==}
@@ -2686,6 +2695,13 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
+  next-sitemap@4.2.3:
+    resolution: {integrity: sha512-vjdCxeDuWDzldhCnyFCQipw5bfpl4HmZA7uoo3GAaYGjGgfL4Cxb1CiztPuWGmS+auYs7/8OekRS8C2cjdAsjQ==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      next: '*'
+
   next@14.1.0:
     resolution: {integrity: sha512-wlzrsbfeSU48YQBjZhDzOwhWhGsy+uQycR8bHAOt1LY1bn3zZEcDyHQOEoN3aWzQ8LHCAJ1nqrWCc9XF2+O45Q==}
     engines: {node: '>=18.17.0'}
@@ -3911,6 +3927,8 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@corex/deepmerge@4.0.43': {}
+
   '@emnapi/core@1.4.0':
     dependencies:
       '@emnapi/wasi-threads': 1.0.1
@@ -4250,6 +4268,8 @@ snapshots:
       '@emnapi/runtime': 1.4.0
       '@tybys/wasm-util': 0.9.0
     optional: true
+
+  '@next/env@13.5.11': {}
 
   '@next/env@14.1.0': {}
 
@@ -6776,6 +6796,14 @@ snapshots:
   natural-compare@1.4.0: {}
 
   neo-async@2.6.2: {}
+
+  next-sitemap@4.2.3(next@14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)):
+    dependencies:
+      '@corex/deepmerge': 4.0.43
+      '@next/env': 13.5.11
+      fast-glob: 3.3.3
+      minimist: 1.2.8
+      next: 14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
 
   next@14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328):
     dependencies:

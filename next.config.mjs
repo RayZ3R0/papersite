@@ -108,6 +108,11 @@ const nextConfig = {
       ],
     };
   },
+
+  // Sitemap and robots.txt configuration
+  async redirects() {
+    return [];
+  },
 };
 
 export default nextConfig;
