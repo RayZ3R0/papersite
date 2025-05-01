@@ -26,6 +26,9 @@ importers:
       '@types/react-pdf':
         specifier: ^7.0.0
         version: 7.0.0(@types/react@18.2.67)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@vercel/analytics':
+        specifier: ^1.5.0
+        version: 1.5.0(next@14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
       autoprefixer:
         specifier: 10.4.18
         version: 10.4.18(postcss@8.4.35)
@@ -927,6 +930,32 @@ packages:
     resolution: {integrity: sha512-XBWpUP0mHya6yGBwNefhyEa6V7HgYKCxEAY4qhTm/PcAQyBPNmjj97VZJOJkVdUsyuuii7xmq0pXWX/c2aToHQ==}
     cpu: [x64]
     os: [win32]
+
+  '@vercel/analytics@1.5.0':
+    resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
+    peerDependencies:
+      '@remix-run/react': ^2
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@remix-run/react':
+        optional: true
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -4595,6 +4624,11 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.3.2':
     optional: true
+
+  '@vercel/analytics@1.5.0(next@14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)':
+    optionalDependencies:
+      next: 14.1.0(@babel/core@7.26.10)(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
+      react: 19.1.0-canary-ef4bc8b4-20250328
 
   '@webassemblyjs/ast@1.14.1':
     dependencies:

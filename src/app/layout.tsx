@@ -8,22 +8,23 @@ import { SearchParamsProvider } from "@/components/providers/SearchParamsProvide
 import { Suspense } from "react";
 import { Metadata } from "next";
 import NyanCatEasterEgg from "@/components/easter-eggs/NyanCat";
-// import DarkAbyss from "@/components/easter-eggs/DarkAbyss";
+import { Analytics } from "@vercel/analytics/next";
 
+// import DarkAbyss from "@/components/easter-eggs/DarkAbyss";
 
 export const metadata: Metadata = {
   title: "Papers | A-Level Past Papers",
   description: "Access A-Level past papers and study materials",
   viewport: {
     width: "device-width",
-    initialScale: 1, 
+    initialScale: 1,
     viewportFit: "cover", // Support for notched phones
     minimumScale: 1,
-    maximumScale: 5
+    maximumScale: 5,
   },
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#121212" }
+    { media: "(prefers-color-scheme: dark)", color: "#121212" },
   ],
 };
 
@@ -46,21 +47,14 @@ export default function RootLayout({
             <div className="min-h-screen bg-background text-text">
               {/* Easter Egg 🐱 */}
               <NyanCatEasterEgg />
-              {/* <DarkAbyss /> */}
-              
               {/* Static navigation components */}
               <MainNav />
               <MobileNav />
 
               {/* Auth context that may update with navigation */}
               <AuthLoadingProvider>
-                {/* 
-                  Adjusted main content wrapper - removed all top and bottom padding
-                  The MobileNav component already adds the necessary spacing elements
-                */}
                 <main className="md:pt-16 overflow-x-hidden">
-                  {/* Single loading boundary for all dynamic content */}
-                  <Suspense 
+                  <Suspense
                     fallback={
                       <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -76,6 +70,8 @@ export default function RootLayout({
             </div>
           </AuthProvider>
         </ThemeProvider>
+        <Analytics />{" "}
+        {/* Add the Analytics component here, at the end of body */}
       </body>
     </html>
   );
