@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#121212" },
   ],
+  verification: {
+    google: "vzFYE9pfsXvKB92BiPTTpyCbB5fldL7SwuGVv9mZRQI",
+  },
 };
 
 // Prevent static generation for auth-dependent pages
