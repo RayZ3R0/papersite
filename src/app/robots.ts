@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/admin/"],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || "https://edexcel.vercel.app"}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || "https://papernexus.vercel.app/"}sitemap.xml`,
   };
 }
