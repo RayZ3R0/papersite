@@ -12,6 +12,14 @@ interface GradeBoundary {
   grade: string;
   raw: number;
   ums: number;
+  lowerBound: number;
+}
+
+interface GradeStyle {
+  bgColor: string;
+  hoverBgColor: string;
+  textColor: string;
+  label: string;
 }
 
 export default function GradeBoundaries({
@@ -30,50 +38,75 @@ export default function GradeBoundaries({
     const maxRaw = Math.max(...conversionData.data.map(entry => entry.RAW));
     const maxUms = Math.max(...conversionData.data.map(entry => entry.UMS));
 
-    const boundaries = new Map<string, GradeBoundary>();
+    // Sort data by RAW marks in descending order
+    const sortedData = [...conversionData.data].sort((a, b) => b.RAW - a.RAW);
     
-    // Find all entries that achieve maximum UMS score
-    const maxUmsMarks = conversionData.data
-      .filter(entry => entry.UMS >= maxUms)
-      .map(entry => entry.RAW);
-      
-    if (maxUmsMarks.length > 0) {
-      // For Full UMS, use the minimum RAW mark that achieves maximum UMS
-      const minFullUmsRaw = Math.min(...maxUmsMarks);
-      boundaries.set('Full UMS', {
-        grade: 'Full UMS',
-        raw: minFullUmsRaw,
-        ums: maxUms
-      });
+    const boundaries = new Map<string, GradeBoundary>();
+
+    // Find Full UMS boundary (marks needed for max UMS)
+    const maxUmsEntries = sortedData.filter(entry => entry.UMS === maxUms);
+    const minFullUmsRaw = Math.min(...maxUmsEntries.map(entry => entry.RAW));
+    boundaries.set('Full UMS', {
+      grade: 'Full UMS',
+      raw: maxRaw,
+      ums: maxUms,
+      lowerBound: minFullUmsRaw
+    });
+
+    // Check if dataset has A* grade
+    const hasAStarGrade = sortedData.some(entry => entry.GRADE === "*");
+
+    // Find A* boundary if it exists
+    if (hasAStarGrade) {
+      const aStarEntry = sortedData.find(entry => entry.GRADE === "*" && entry.RAW < minFullUmsRaw);
+      if (aStarEntry) {
+        boundaries.set('A*', {
+          grade: 'A*',
+          raw: minFullUmsRaw - 1,
+          ums: aStarEntry.UMS,
+          lowerBound: aStarEntry.RAW
+        });
+      }
     }
 
-    // Then add regular grade boundaries
-    conversionData.data.forEach(entry => {
-      if (entry.GRADE === "*") return; // Skip Full UMS entries
-      
-      if (!boundaries.has(entry.GRADE) || entry.RAW < boundaries.get(entry.GRADE)!.raw) {
-        boundaries.set(entry.GRADE, {
-          grade: entry.GRADE,
-          raw: entry.RAW,
-          ums: entry.UMS
+    // Find other grade boundaries
+    const grades = ['A', 'B', 'C', 'D', 'E', 'U'];
+    // Start from maxRaw or A* boundary depending on what we have
+    let lastBoundary = hasAStarGrade ? 
+      sortedData.find(entry => entry.GRADE === "*")?.RAW ?? (minFullUmsRaw - 1) : 
+      minFullUmsRaw - 1;
+
+    grades.forEach(grade => {
+      // Find first entry with this grade
+      const entry = sortedData.find(e => e.GRADE === grade);
+      if (entry) {
+        // Find the lowest raw mark for this grade
+        const lowestMarkForGrade = Math.min(
+          ...sortedData
+            .filter(e => e.GRADE === grade)
+            .map(e => e.RAW)
+        );
+        
+        boundaries.set(grade, {
+          grade,
+          raw: grade === 'A' && !hasAStarGrade ? lastBoundary : entry.RAW,
+          ums: entry.UMS,
+          lowerBound: lowestMarkForGrade
         });
+        
+        // Update lastBoundary for next iteration
+        lastBoundary = lowestMarkForGrade - 1;
       }
     });
 
-    // Add "U" grade with 0 marks if not present
-    if (!boundaries.has("U")) {
-      boundaries.set("U", {
-        grade: "U",
-        raw: 0,
-        ums: 0
-      });
-    }
-
     // Convert to array and sort:
-    // Full UMS first, then other grades by descending RAW marks
+    // Full UMS first, then A*, then other grades by descending RAW marks
     const sortedBoundaries = Array.from(boundaries.values()).sort((a, b) => {
       if (a.grade === 'Full UMS') return -1;
       if (b.grade === 'Full UMS') return 1;
+      if (a.grade === 'A*') return -1;
+      if (b.grade === 'A*') return 1;
+      // For other grades, sort by raw mark in descending order
       return b.raw - a.raw;
     });
 
@@ -84,32 +117,93 @@ export default function GradeBoundaries({
     };
   }, [conversionData]);
 
-  // Calculate maximum marks achieved for each grade (for progress bars)
-  const gradeDistribution = useMemo(() => {
-    if (!conversionData) return new Map<string, number>();
+  // Helper function to get color styles based on grade
+  const getGradeStyle = (grade: string): GradeStyle => {
+    switch (grade) {
+      case 'Full UMS':
+        return {
+          bgColor: '#9333EA', // Purple
+          hoverBgColor: '#A855F7',
+          textColor: '#9333EA',
+          label: 'Full UMS'
+        };
+      case 'A*':
+        return {
+          bgColor: '#3B82F6', // Blue
+          hoverBgColor: '#60A5FA',
+          textColor: '#3B82F6',
+          label: 'Grade A*'
+        };
+      case 'A':
+        return {
+          bgColor: '#10B981', // Green
+          hoverBgColor: '#34D399',
+          textColor: '#10B981',
+          label: 'Grade A'
+        };
+      case 'B':
+        return {
+          bgColor: '#06B6D4', // Cyan
+          hoverBgColor: '#22D3EE',
+          textColor: '#06B6D4',
+          label: 'Grade B'
+        };
+      case 'C':
+        return {
+          bgColor: '#F59E0B', // Amber
+          hoverBgColor: '#FBBF24',
+          textColor: '#F59E0B',
+          label: 'Grade C'
+        };
+      case 'D':
+        return {
+          bgColor: '#EA580C', // Darker orange
+          hoverBgColor: '#F97316',
+          textColor: '#9A3412',
+          label: 'Grade D'
+        };
+      case 'E':
+        return {
+          bgColor: '#B91C1C', // Darker red
+          hoverBgColor: '#DC2626',
+          textColor: '#B91C1C',
+          label: 'Grade E'
+        };
+      case 'U':
+        return {
+          bgColor: '#6B7280', // Gray
+          hoverBgColor: '#9CA3AF',
+          textColor: '#6B7280',
+          label: 'Grade U'
+        };
+      default:
+        return {
+          bgColor: '#6B7280', // Gray
+          hoverBgColor: '#9CA3AF',
+          textColor: '#6B7280',
+          label: `Grade ${grade}`
+        };
+    }
+  };
 
-    const distribution = new Map<string, number>();
+  // Calculate the correct range for each grade
+  const getGradeRangeInfo = (boundaries: GradeBoundary[], index: number) => {
+    const boundary = boundaries[index];
+    let lowerBound = 0;
     
-    // First handle Full UMS entries
-    const maxUmsMarks = conversionData.data
-      .filter(entry => entry.UMS >= maxUms)
-      .map(entry => entry.RAW);
-
-    if (maxUmsMarks.length > 0) {
-      distribution.set('Full UMS', Math.max(...maxUmsMarks));
+    // Find the next lower boundary
+    if (index < boundaries.length - 1) {
+      lowerBound = boundaries[index + 1].raw + 1;
+    } else if (boundary.grade !== 'U') {
+      // For the lowest grade that's not U, set the lower bound to 1
+      lowerBound = 1;
     }
     
-    // Then handle regular grades
-    conversionData.data.forEach(entry => {
-      if (entry.GRADE === "*") return; // Skip Full UMS entries
-      
-      if (!distribution.has(entry.GRADE) || entry.RAW > distribution.get(entry.GRADE)!) {
-        distribution.set(entry.GRADE, entry.RAW);
-      }
-    });
-
-    return distribution;
-  }, [conversionData]);
+    return {
+      upperBound: boundary.raw,
+      lowerBound: lowerBound
+    };
+  };
 
   if (loading) {
     return (
@@ -158,17 +252,18 @@ export default function GradeBoundaries({
           </thead>
           <tbody className="divide-y divide-border">
             {gradeBoundaries.map((boundary, index) => {
-              const isFullUms = boundary.grade === 'Full UMS';
+              const gradeStyle = getGradeStyle(boundary.grade);
               return (
                 <tr
                   key={boundary.grade}
-                  className={`hover:bg-surface-alt transition-colors ${
-                    isFullUms ? 'bg-surface-highlight font-medium' : ''
-                  }`}
+                  className="hover:bg-surface-alt transition-colors"
+                  style={{
+                    backgroundColor: boundary.grade === 'Full UMS' ? 'rgba(147, 51, 234, 0.05)' : undefined
+                  }}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`text-lg font-medium ${isFullUms ? 'text-accent' : 'text-text'}`}>
-                      {isFullUms ? 'Full UMS' : boundary.grade}
+                    <span className="text-lg font-medium text-text">
+                      {boundary.grade === 'Full UMS' ? 'Full UMS' : boundary.grade}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-text">
@@ -191,37 +286,67 @@ export default function GradeBoundaries({
       <div className="bg-surface rounded-lg border border-border p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-text">Grade Distribution</h3>
-          <div className="text-sm text-text-muted">
-            * Full UMS indicates minimum marks needed for maximum UMS score
+        </div>
+        
+        {/* Stacked Progress Bar */}
+        <div className="mb-6">
+          <div className="h-8 rounded-lg overflow-hidden flex">
+            {gradeBoundaries.map((boundary, index) => {
+              // Calculate the correct range and percentage
+              const { lowerBound, upperBound } = getGradeRangeInfo(gradeBoundaries, index);
+              const range = upperBound - lowerBound + 1;
+              const percentage = (range / maxRaw) * 100;
+              const gradeStyle = getGradeStyle(boundary.grade);
+              
+              return (
+                <div
+                  key={boundary.grade}
+                  className="relative h-full group cursor-pointer transition-all"
+                  style={{ 
+                    width: `${percentage}%`, 
+                    backgroundColor: gradeStyle.bgColor 
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = gradeStyle.hoverBgColor;
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = gradeStyle.bgColor;
+                  }}
+                >
+                  {/* Tooltip */}
+                  <div className="absolute invisible group-hover:visible bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-popover text-popover-foreground rounded shadow-lg whitespace-nowrap text-sm z-10">
+                    <div className="font-medium">
+                      {gradeStyle.label}
+                    </div>
+                    <div className="text-xs opacity-80">
+                      {lowerBound} - {upperBound} marks ({percentage.toFixed(1)}%)
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div className="space-y-4">
+
+        {/* Grade Legend */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {gradeBoundaries.map((boundary, index) => {
-            const nextBoundary = gradeBoundaries[index + 1];
-            const range = nextBoundary
-              ? boundary.raw - nextBoundary.raw
-              : boundary.raw;
-            // Use gradeDistribution for progress bar width
-            const maxGradeRaw = gradeDistribution.get(boundary.grade) || boundary.raw;
-            const percentage = (maxGradeRaw / maxRaw) * 100;
-            
-            const isFullUms = boundary.grade === 'Full UMS';
+            const { lowerBound, upperBound } = getGradeRangeInfo(gradeBoundaries, index);
+            const gradeStyle = getGradeStyle(boundary.grade);
 
             return (
-              <div key={boundary.grade} className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className={`${isFullUms ? 'text-accent font-medium' : 'text-text-muted'}`}>
-                    {isFullUms ? 'Full UMS*' : `Grade ${boundary.grade}`}
-                  </span>
-                  <span className={`${isFullUms ? 'text-accent font-medium' : 'text-text-muted'}`}>
-                    {boundary.raw} marks
-                  </span>
-                </div>
-                <div className="h-2 bg-surface-alt rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${isFullUms ? 'bg-accent' : 'bg-primary'} rounded-full transition-all`}
-                    style={{ width: `${percentage}%` }}
-                  />
+              <div key={boundary.grade} className="flex items-center gap-2">
+                <div 
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: gradeStyle.bgColor }}
+                />
+                <div>
+                  <div className="text-sm font-medium" style={{ color: gradeStyle.textColor }}>
+                    {gradeStyle.label}
+                  </div>
+                  <div className="text-xs text-text-muted">
+                    {lowerBound} - {upperBound} marks
+                  </div>
                 </div>
               </div>
             );
@@ -234,6 +359,8 @@ export default function GradeBoundaries({
         <div>Maximum Raw Mark: {maxRaw}</div>
         <div>Maximum UMS: {maxUms}</div>
         <div>Session: {conversionData.metadata.session}</div>
+        <div>Subject: {conversionData.metadata.subject}</div>
+        <div>Unit: {conversionData.metadata.unit.split('\n')[0]}</div>
       </div>
     </div>
   );
