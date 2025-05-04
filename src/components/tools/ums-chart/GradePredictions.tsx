@@ -12,15 +12,15 @@ interface GradePredictionsProps {
   onPredictionUpdate?: (predictions: Array<{grade: string; prediction: number}>) => void;
 }
 
-// Grade colors based on UK examination grades
+// Simple grade colors with good contrast
 const GRADE_COLORS = {
-  "A*": "#4C1D95", // Deep purple
-  "A": "#1E40AF", // Deep blue
-  "B": "#047857", // Deep green
-  "C": "#B45309", // Deep amber
-  "D": "#9D174D", // Deep pink
-  "E": "#9CA3AF", // Gray
-  "U": "#6B7280"  // Dark gray
+  "A*": "#4C1D95", // Purple
+  "A": "#1E40AF",  // Blue
+  "B": "#047857",  // Green
+  "C": "#B45309",  // Amber
+  "D": "#9D174D",  // Pink
+  "E": "#9CA3AF",  // Gray
+  "U": "#6B7280"   // Dark gray
 };
 
 export default function GradePredictions({
@@ -32,22 +32,11 @@ export default function GradePredictions({
 }: GradePredictionsProps) {
   const [hoveredGrade, setHoveredGrade] = useState<string | null>(null);
   
-  // Calculate predictions using the improved algorithm
+  // Calculate predictions
   const predictionResults = useMemo(() => {
     if (!historicalData.length) return [];
     
     try {
-      // Group data by grade for more efficient processing
-      const gradeGroups: Record<string, GradeBoundary[]> = {};
-      
-      historicalData.forEach(boundary => {
-        if (!gradeGroups[boundary.grade]) {
-          gradeGroups[boundary.grade] = [];
-        }
-        gradeGroups[boundary.grade].push(boundary);
-      });
-      
-      // Get predictions for all requested grades
       return improvedPredictGradeBoundaries(historicalData, grades, targetSession);
     } catch (error) {
       console.error("Error generating predictions:", error);
@@ -55,7 +44,7 @@ export default function GradePredictions({
     }
   }, [historicalData, grades, targetSession]);
   
-  // Update parent component when predictions change
+  // Update parent component
   useEffect(() => {
     if (onPredictionUpdate && predictionResults.length > 0) {
       onPredictionUpdate(
@@ -67,10 +56,10 @@ export default function GradePredictions({
     }
   }, [predictionResults, onPredictionUpdate]);
 
-  // Don't render if there's no historical data
+  // Empty state handlers
   if (!historicalData.length) {
     return (
-      <div className="w-full h-[500px] flex items-center justify-center bg-surface/30 border border-border rounded-lg">
+      <div className="w-full h-[400px] flex items-center justify-center bg-surface/30 border border-border rounded-lg">
         <div className="text-center p-6">
           <div className="text-2xl text-text-muted mb-2">No Historical Data</div>
           <p className="text-text-muted max-w-md">
@@ -81,15 +70,13 @@ export default function GradePredictions({
     );
   }
 
-  // Don't render if no predictions could be generated
   if (!predictionResults.length) {
     return (
-      <div className="w-full h-[500px] flex items-center justify-center bg-surface/30 border border-border rounded-lg">
+      <div className="w-full h-[400px] flex items-center justify-center bg-surface/30 border border-border rounded-lg">
         <div className="text-center p-6">
           <div className="text-2xl text-text-muted mb-2">Unable to Generate Predictions</div>
           <p className="text-text-muted max-w-md">
             There isn't enough historical data to make reliable predictions.
-            Need at least 2 data points per grade.
           </p>
         </div>
       </div>
@@ -98,16 +85,12 @@ export default function GradePredictions({
 
   // Format session name for display
   const formattedSession = targetSession.replace('_', ' ');
-
-  // Find the maximum predicted value to scale the chart properly
-  const maxPrediction = Math.max(
-    ...predictionResults.map(result => result.prediction),
-    ...predictionResults.map(result => result.confidence.upper),
-    ...historicalData.map(h => h.marks)
-  );
-
-  // Determine the scale for visualization (round up to nearest 10)
-  const chartMaxScale = Math.ceil(maxPrediction / 10) * 10;
+  
+  // Find max mark value for the chart (round up to nearest 5)
+  const maxMark = Math.ceil(Math.max(
+    ...historicalData.map(h => h.marks),
+    ...predictionResults.map(p => p.confidence.upper)
+  ) / 5) * 5;
 
   return (
     <div className="space-y-8">
@@ -123,187 +106,123 @@ export default function GradePredictions({
         
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left side: Visualization */}
-            <div className="relative h-[400px] bg-surface/30 rounded-lg border border-border/50 overflow-hidden p-4">
-              {/* Visual scale - now dynamic based on max value */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-b from-surface to-surface flex flex-col justify-between py-6 px-4 text-sm text-text-muted">
-                <span>{chartMaxScale}</span>
-                <span>{Math.round(chartMaxScale * 0.75)}</span>
-                <span>{Math.round(chartMaxScale * 0.5)}</span>
-                <span>{Math.round(chartMaxScale * 0.25)}</span>
-                <span>0</span>
-              </div>
-              
-              {/* Grid lines for better readability */}
-              <div className="absolute left-16 right-4 top-6 bottom-6 grid grid-rows-4 pointer-events-none">
-                {[0.75, 0.5, 0.25, 0].map((level, i) => (
-                  <div 
-                    key={i} 
-                    className="border-t border-border/30"
-                    style={{ height: i === 3 ? '1px' : 'auto' }}
-                  ></div>
-                ))}
-              </div>
-              
-              {/* Prediction bars */}
-              <div className="ml-16 h-full flex items-end space-x-3 relative px-4">
-                {predictionResults.map((result: ImprovedPredictionResult) => {
-                  // Calculate percentages based on the chart scale
-                  const heightPercentage = (result.prediction / chartMaxScale) * 100;
-                  const isHovered = hoveredGrade === result.grade;
-                  const gradeColor = GRADE_COLORS[result.grade as keyof typeof GRADE_COLORS] || "#6B7280";
+            {/* Left side: Simple bar chart */}
+            <div className="relative h-[360px] bg-surface/30 border border-border rounded-lg p-4">
+              <div className="flex items-end h-full space-x-2">
+                {/* Y-axis labels */}
+                <div className="pr-2 h-full flex flex-col justify-between text-right text-sm text-text-muted">
+                  <span>{maxMark}</span>
+                  <span>{Math.round(maxMark * 0.75)}</span>
+                  <span>{Math.round(maxMark * 0.5)}</span>
+                  <span>{Math.round(maxMark * 0.25)}</span>
+                  <span>0</span>
+                </div>
+                
+                {/* Chart bars */}
+                <div className="flex-1 flex items-end justify-around h-full relative">
+                  {/* Grid lines */}
+                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                    <div className="border-t border-border/30"></div>
+                    <div className="border-t border-border/30"></div>
+                    <div className="border-t border-border/30"></div>
+                    <div className="border-t border-border/30"></div>
+                    <div className="border-t border-border/30"></div>
+                  </div>
                   
-                  // Calculate historical range
-                  const gradeData = historicalData.filter(h => h.grade === result.grade);
-                  const minHistorical = Math.min(...gradeData.map(h => h.marks));
-                  const maxHistorical = Math.max(...gradeData.map(h => h.marks));
-                  const minHeightPercentage = (minHistorical / chartMaxScale) * 100;
-                  const maxHeightPercentage = (maxHistorical / chartMaxScale) * 100;
-                  
-                  // Calculate confidence intervals
-                  const lowerConfidence = (result.confidence.lower / chartMaxScale) * 100;
-                  const upperConfidence = (result.confidence.upper / chartMaxScale) * 100;
-                  
-                  return (
-                    <div 
-                      key={result.grade}
-                      className="flex-1 flex flex-col items-center justify-end relative group"
-                      onMouseEnter={() => setHoveredGrade(result.grade)}
-                      onMouseLeave={() => setHoveredGrade(null)}
-                    >
-                      {/* Render historical data points */}
-                      {gradeData.map((dataPoint, idx) => {
-                        const pointHeight = (dataPoint.marks / chartMaxScale) * 100;
-                        const isRecent = dataPoint.session.includes("2023") || 
-                                        parseInt(dataPoint.session.split('_')[1]) >= 2023;
-                        
-                        return (
-                          <div 
-                            key={`${dataPoint.session}-${idx}`}
-                            className={`absolute w-2 h-2 rounded-full transform -translate-x-1/2 border-2 ${
-                              isRecent ? 'border-primary' : 'border-text-muted/50'
-                            }`}
-                            style={{
-                              bottom: `${pointHeight}%`,
-                              left: '50%',
-                              backgroundColor: isRecent ? GRADE_COLORS[result.grade as keyof typeof GRADE_COLORS] : 'transparent'
-                            }}
-                            title={`${dataPoint.session}: ${dataPoint.marks} marks`}
-                          />
-                        );
-                      })}
-                      
-                      {/* Historical range */}
+                  {/* Bars */}
+                  {predictionResults.map((result) => {
+                    const isSelected = hoveredGrade === result.grade;
+                    const gradeColor = GRADE_COLORS[result.grade as keyof typeof GRADE_COLORS] || "#6B7280";
+                    const heightPercentage = (result.prediction / maxMark) * 100;
+                    
+                    // Get most recent data point
+                    const gradeData = historicalData.filter(h => h.grade === result.grade);
+                    const recentData = gradeData.filter(d => 
+                      d.session.includes("2023") || parseInt(d.session.split('_')[1]) >= 2023
+                    );
+                    
+                    let latestValue = null;
+                    if (recentData.length > 0) {
+                      const latest = [...recentData].sort((a, b) => {
+                        return parseInt(b.session.split('_')[1]) - parseInt(a.session.split('_')[1]);
+                      })[0];
+                      latestValue = latest.marks;
+                    }
+                    
+                    return (
                       <div 
-                        className="absolute w-6 border border-text-muted/30 bg-text-muted/5"
-                        style={{
-                          bottom: `${minHeightPercentage}%`,
-                          height: `${maxHeightPercentage - minHeightPercentage}%`,
-                          left: 'calc(50% - 0.75rem)'
-                        }}
-                      />
-                      
-                      {/* Confidence interval */}
-                      {showConfidenceIntervals && (
+                        key={result.grade}
+                        className="relative flex flex-col items-center"
+                        style={{ width: `${100 / predictionResults.length}%` }}
+                        onMouseEnter={() => setHoveredGrade(result.grade)}
+                        onMouseLeave={() => setHoveredGrade(null)}
+                      >
+                        {/* Confidence interval */}
+                        {showConfidenceIntervals && (
+                          <div 
+                            className="absolute bottom-0 w-4 rounded opacity-30"
+                            style={{
+                              height: `${(result.confidence.upper / maxMark) * 100}%`,
+                              backgroundColor: gradeColor
+                            }}
+                          />
+                        )}
+                        
+                        {/* Main bar */}
                         <div 
-                          className={`absolute w-10 ${isHovered ? 'bg-text-muted/20' : 'bg-text-muted/10'} transition-colors`}
+                          className={`w-8 rounded-t transition-all ${isSelected ? 'shadow-md' : ''}`}
                           style={{
-                            bottom: `${lowerConfidence}%`,
-                            height: `${upperConfidence - lowerConfidence}%`,
-                            left: 'calc(50% - 1.25rem)'
+                            height: `${heightPercentage}%`, 
+                            backgroundColor: gradeColor
                           }}
                         />
-                      )}
-                      
-                      {/* Prediction bar */}
-                      <div 
-                        className={`w-3 transition-all duration-200 ${isHovered ? 'bg-accent' : ''}`}
-                        style={{
-                          height: `${heightPercentage}%`, 
-                          backgroundColor: isHovered ? undefined : gradeColor,
-                          boxShadow: isHovered ? '0 0 10px rgba(0,0,0,0.2)' : 'none'
-                        }}
-                      />
-                      
-                      {/* Prediction marker (horizontal line) */}
-                      <div 
-                        className={`absolute w-10 h-0.5 -translate-x-1/2 ${isHovered ? 'bg-accent' : gradeColor}`}
-                        style={{
-                          bottom: `${heightPercentage}%`,
-                          left: '50%'
-                        }}
-                      />
-
-                      {/* Grade label */}
-                      <div className={`mt-4 font-medium transition-transform duration-200 ${isHovered ? 'scale-110 text-foreground' : 'text-text-muted'}`}>
-                        {result.grade}
-                      </div>
-                      
-                      {/* Tooltip */}
-                      <div className={`
-                        absolute bottom-full mb-2 bg-popover border border-border rounded-lg p-3 shadow-lg
-                        transition-all duration-200 w-56 text-sm z-10
-                        ${isHovered ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}
-                      `}>
-                        <div className="font-medium text-lg text-center mb-2">
-                          Grade {result.grade}
-                          <div className="text-xs text-text-muted font-normal">
-                            Prediction for {formattedSession}
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-text-muted">Prediction:</span>
-                            <span className="font-medium">{result.prediction} marks</span>
-                          </div>
-                          {showConfidenceIntervals && (
-                            <div className="flex justify-between">
-                              <span className="text-text-muted">Range:</span>
-                              <span>{result.confidence.lower} - {result.confidence.upper}</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between">
-                            <span className="text-text-muted">Historical range:</span>
-                            <span>{minHistorical} - {maxHistorical}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-text-muted">Latest (2023+):</span>
-                            <span>
-                              {(() => {
-                                const recentData = gradeData.filter(d => 
-                                  d.session.includes("2023") || parseInt(d.session.split('_')[1]) >= 2023
-                                );
-                                return recentData.length > 0 
-                                  ? `${recentData[recentData.length-1].marks} marks` 
-                                  : "No data";
-                              })()}
+                        
+                        {/* Last known value marker */}
+                        {latestValue && (
+                          <div 
+                            className="absolute w-10 border-t border-dashed border-text-muted/50"
+                            style={{ bottom: `${(latestValue / maxMark) * 100}%` }}
+                          >
+                            <span className="absolute -right-2 -top-5 text-xs opacity-60">
+                              {latestValue}
                             </span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-text-muted">Confidence:</span>
-                            <span>{Math.round(result.reliability * 100)}%</span>
-                          </div>
+                        )}
+                        
+                        {/* Prediction value */}
+                        <div 
+                          className={`absolute text-sm font-medium transition-all ${
+                            isSelected ? 'text-foreground' : 'text-text-muted'
+                          }`}
+                          style={{ bottom: `${heightPercentage + 2}%` }}
+                        >
+                          {result.prediction}
+                        </div>
+                        
+                        {/* Grade label */}
+                        <div className={`mt-2 font-medium ${isSelected ? 'text-foreground' : 'text-text-muted'}`}>
+                          {result.grade}
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
               
               {/* Legend */}
-              <div className="absolute left-16 bottom-0 right-0 flex justify-center space-x-4 pb-1 pt-2 text-xs text-text-muted border-t border-border/30">
+              <div className="mt-4 flex justify-center space-x-4 text-xs text-text-muted border-t border-border/30 pt-2">
                 <div className="flex items-center">
-                  <div className="w-2 h-2 rounded-full border-2 border-primary mr-1"></div>
-                  <span>Recent data (2023+)</span>
+                  <div className="w-3 h-3 rounded opacity-30 bg-text-muted mr-1"></div>
+                  <span>Confidence interval</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 rounded-full border-2 border-text-muted/50 mr-1"></div>
-                  <span>Historical data</span>
+                  <div className="w-3 border-t border-dashed border-text-muted/50 mr-1"></div>
+                  <span>Latest known value</span>
                 </div>
               </div>
             </div>
             
-            {/* Right side: Detailed data */}
+            {/* Right side: Data table */}
             <div>
               <div className="rounded-lg border border-border overflow-hidden">
                 <table className="w-full text-sm">
@@ -360,55 +279,49 @@ export default function GradePredictions({
                 </table>
               </div>
               
-              {/* Historical data summary */}
-              <div className="mt-6 bg-surface/30 p-4 rounded-lg border border-border/50">
-                <h4 className="font-medium mb-2">Historical Data Summary</h4>
-                <div className="space-y-3 text-sm">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-text-muted block">Sessions:</span>
-                      <span>{[...new Set(historicalData.map(d => d.session.replace('_', ' ')))].join(', ')}</span>
-                    </div>
-                    <div>
-                      <span className="text-text-muted block">Date Range:</span>
-                      <span>
-                        {
-                          [...new Set(historicalData.map(d => d.session.split('_')[1]))]
-                            .sort()
-                            .join(' - ')
-                        }
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <span className="text-text-muted block">Recent Data (2023+):</span>
-                    <span className="text-accent-foreground">
-                      {(() => {
-                        const recentData = historicalData.filter(d => 
-                          d.session.includes("2023") || parseInt(d.session.split('_')[1]) >= 2023
-                        );
-                        return recentData.length > 0 
-                          ? `${recentData.length} records (weighted heavily in predictions)` 
-                          : "None available";
-                      })()}
-                    </span>
-                  </div>
+              {/* Simple data recency indicator */}
+              <div className="mt-4 p-4 bg-surface/20 border border-border rounded-lg">
+                <h4 className="text-sm font-medium mb-2">Recent Data Summary</h4>
+                <div className="space-y-2">
+                  {grades.map(grade => {
+                    const allGradeData = historicalData.filter(h => h.grade === grade);
+                    const recentGradeData = allGradeData.filter(h => 
+                      h.session.includes("2023") || parseInt(h.session.split('_')[1]) >= 2023
+                    );
+                    
+                    if (allGradeData.length === 0) return null;
+                    
+                    return (
+                      <div key={grade} className="flex items-center gap-2">
+                        <div className="w-8 text-xs font-medium">{grade}</div>
+                        <div className="flex-1 h-1.5 bg-surface/50 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full"
+                            style={{ width: `${Math.round((recentGradeData.length / allGradeData.length) * 100)}%` }}
+                          />
+                        </div>
+                        <div className="text-xs text-text-muted">
+                          {recentGradeData.length}/{allGradeData.length} recent
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
+                <p className="text-xs text-text-muted mt-3">
+                  Recent data (2023+) is given significantly higher weight in predictions.
+                </p>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Explanation and methodology footer */}
         <div className="bg-surface/20 p-4 border-t border-border/30">
           <details className="text-sm text-text-muted">
             <summary className="cursor-pointer font-medium">About this prediction</summary>
             <p className="mt-2 leading-relaxed">
-              These predictions use advanced statistical modeling techniques including trend analysis, 
-              seasonality detection, and weighted historical patterns. Data from June 2023 onwards is given
-              significantly higher weight in the predictions to reflect recent examination patterns.
-              {showConfidenceIntervals && " Confidence intervals represent the likely range for the actual boundary."}
+              These predictions use statistical modeling including trend analysis and
+              weighted historical patterns. Data from June 2023 onwards is given
+              significantly higher weight to reflect recent examination patterns.
             </p>
           </details>
         </div>

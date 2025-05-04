@@ -11,6 +11,7 @@ import {
   SearchIcon,
   UserIcon,
   HomeIcon,
+  ToolsIcon
 } from "./icons";
 import { useAuth } from "@/components/auth/AuthContext";
 import { useReturnTo } from "@/hooks/useReturnTo";
@@ -32,6 +33,10 @@ export default function MobileNav() {
   const { theme } = useTheme();
   const { saveCurrentPath } = useReturnTo();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const toolsMenuRef = useRef<HTMLDivElement>(null);
+  const toolsButtonRef = useRef<HTMLButtonElement>(null);
+
   const isActive = (path: string) => pathname?.startsWith(path);
   
   // State for scroll-aware behavior
@@ -60,6 +65,7 @@ export default function MobileNav() {
       // Detect scroll direction with some hysteresis to prevent flickering
       if (currentScrollY > lastScrollY.current + 20 && currentScrollY > 100) {
         setIsVisible(false);
+        setShowToolsMenu(false); // Close tools menu when scrolling down
       } else if (currentScrollY < lastScrollY.current - 5 || currentScrollY < 50) {
         setIsVisible(true);
       }
@@ -85,7 +91,31 @@ export default function MobileNav() {
   // Ensure nav is visible when active path changes
   useEffect(() => {
     setIsVisible(true);
+    setShowToolsMenu(false); // Close tools menu on navigation
   }, [pathname]);
+  
+  // Handle click outside for tools menu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (showToolsMenu &&
+          toolsMenuRef.current && 
+          toolsButtonRef.current && 
+          !toolsMenuRef.current.contains(event.target as Node) &&
+          !toolsButtonRef.current.contains(event.target as Node)) {
+        setShowToolsMenu(false);
+      }
+    }
+    
+    // Add event listener for clicks
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [showToolsMenu]);
   
   const handleNavLinkClick = () => {
     // On navigation, ensure drawer is closed
@@ -176,18 +206,11 @@ export default function MobileNav() {
         style={{
           transform: isVisible ? 'translate3d(0,0,0)' : 'translate3d(0,100%,0)',
           backfaceVisibility: 'hidden',
-          WebkitBackdropFilter: 'blur(2px)', // Subtle blur for Safari
+          WebkitBackdropFilter: 'blur(2px)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)'
         }}
       >
-        <div className="flex items-center justify-around h-16">
-          <NavLink
-            href="/books"
-            icon={BookIcon}
-            label="Books"
-            active={isActive("/books")}
-            onClick={handleNavLinkClick}
-          />
+        <div className="flex items-center justify-between px-1 h-16">
           <NavLink
             href="/papers"
             icon={FileTextIcon}
@@ -195,13 +218,91 @@ export default function MobileNav() {
             active={isActive("/papers")}
             onClick={handleNavLinkClick}
           />
+          
           <NavLink
-            href="/forum"
-            icon={MessageCircleIcon}
-            label="Forum"
-            active={isActive("/forum")}
+            href="/books"
+            icon={BookIcon}
+            label="Books"
+            active={isActive("/books")}
             onClick={handleNavLinkClick}
           />
+          
+          {/* Tools dropdown - centered */}
+          <div className="relative">
+            <button
+              ref={toolsButtonRef}
+              className={`
+                flex flex-col items-center justify-center
+                min-w-[4rem] p-2 transition-all
+                active:scale-[0.95] relative group
+                ${isActive("/tools") 
+                  ? "text-primary" 
+                  : "text-text-muted hover:text-text"}
+              `}
+              onClick={() => setShowToolsMenu(!showToolsMenu)}
+              aria-expanded={showToolsMenu}
+            >
+              {/* Active background indicator */}
+              {isActive("/tools") && (
+                <span 
+                  className="absolute inset-x-1 -inset-y-0.5 rounded-md bg-primary/10 -z-10"
+                  aria-hidden="true"
+                />
+              )}
+              
+              <span className={`
+                flex items-center justify-center w-6 h-6 mb-1
+                transition-transform 
+                ${isActive("/tools") ? 'scale-110' : 'scale-100'}
+              `}>
+                <ToolsIcon className="w-[22px] h-[22px]" />
+              </span>
+              <span className={`
+                text-xs transition-opacity
+                ${isActive("/tools") ? 'opacity-100 font-medium' : 'opacity-80'}
+              `}>
+                Tools
+              </span>
+              
+              {/* Underline indicator for active state */}
+              {isActive("/tools") && (
+                <span 
+                  className="absolute -bottom-0.5 w-8 h-0.5 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+            
+            {/* Mobile Tools Menu */}
+            {showToolsMenu && (
+              <div 
+                ref={toolsMenuRef}
+                className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 z-50"
+              >
+                <Link
+                  href="/tools/raw-to-ums"
+                  className="block px-4 py-3 text-sm hover:bg-surface-hover border-b border-border/30"
+                  onClick={() => {
+                    setShowToolsMenu(false);
+                    handleNavLinkClick();
+                  }}
+                >
+                  Raw to UMS Converter
+                </Link>
+                <Link
+                  href="/tools/ums-chart"
+                  className="block px-4 py-3 text-sm hover:bg-surface-hover"
+                  onClick={() => {
+                    setShowToolsMenu(false);
+                    handleNavLinkClick();
+                  }}
+                >
+                  UMS Grade Predictor
+                </Link>
+              </div>
+            )}
+          </div>
+          
           <NavLink
             href="/notes"
             icon={GridIcon}
@@ -209,6 +310,7 @@ export default function MobileNav() {
             active={isActive("/notes")}
             onClick={handleNavLinkClick}
           />
+          
           <NavLink
             href="/search"
             icon={SearchIcon}
@@ -219,11 +321,18 @@ export default function MobileNav() {
         </div>
       </nav>
 
-
       {/* Profile Drawer - Over everything else */}
       <ProfileDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+        // Pass the forum link and associated props to the ProfileDrawer
+        forumLink={{
+          href: "/forum",
+          icon: MessageCircleIcon,
+          label: "Forum",
+          active: isActive("/forum"),
+          onClick: handleNavLinkClick
+        }}
       />
     </>
   );
@@ -265,7 +374,7 @@ function NavLink({
         <Icon className="w-[22px] h-[22px]" />
       </span>
       <span className={`
-        text-xs transition-opacity
+        text-xs transition-opacity text-center
         ${active ? 'opacity-100 font-medium' : 'opacity-80'}
       `}>
         {label}
