@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { conversionApi } from "@/lib/api/conversion";
+import { extractUnitCode } from "@/utils/unitCodes";
 
 interface SubjectSelectorProps {
+  session: string | null;
   selectedSubject: string | null;
   selectedUnit: string | null;
   onSubjectChange: (subjectId: string | null) => void;
@@ -11,21 +13,35 @@ interface SubjectSelectorProps {
 }
 
 export default function SubjectSelector({
+  session,
   selectedSubject,
   selectedUnit,
   onSubjectChange,
   onUnitChange,
 }: SubjectSelectorProps) {
   const [subjects, setSubjects] = useState<string[]>([]);
-  const [units, setUnits] = useState<{ id: string; name: string }[]>([]);
+  interface UnitOption {
+    id: string;           // "WAC11-01"
+    displayCode: string;  // "WAC11"
+    name: string;         // "The_Accounting_System_and_Costing"
+    apiPath: string;      // "WAC11-01_-_The_Accounting_System_and_Costing"
+  }
+  
+  const [units, setUnits] = useState<UnitOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load subjects on component mount
   useEffect(() => {
     async function loadSubjects() {
+      if (!session) {
+        setSubjects([]);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const data = await conversionApi.getSubjects();
+        const data = await conversionApi.getSubjectsForSession(session);
         setSubjects(data);
         setLoading(false);
       } catch (err) {
@@ -34,26 +50,32 @@ export default function SubjectSelector({
       }
     }
     loadSubjects();
-  }, []);
+  }, [session]);
 
   // Load units when subject changes
   useEffect(() => {
     async function loadUnits() {
-      if (!selectedSubject) {
+      if (!selectedSubject || !session) {
         setUnits([]);
         return;
       }
 
       try {
-        const data = await conversionApi.getUnitsForSubject(selectedSubject);
-        setUnits(data);
+        const data = await conversionApi.getUnitsForSubjectAndSession(selectedSubject, session);
+        const transformedUnits = data.map(unit => ({
+          id: unit.id,
+          displayCode: unit.id.split("-")[0],
+          name: unit.name,
+          apiPath: `${unit.id}_-_${unit.name}`
+        }));
+        setUnits(transformedUnits);
       } catch (err) {
         setError("Failed to load units");
         console.error("Error loading units:", err);
       }
     }
     loadUnits();
-  }, [selectedSubject]);
+  }, [selectedSubject, session]);
 
   if (loading) {
     return (
@@ -73,40 +95,48 @@ export default function SubjectSelector({
 
   return (
     <div className="space-y-4">
-      {/* Subject Dropdown */}
-      <div>
-        <select
-          value={selectedSubject || ""}
-          onChange={(e) => onSubjectChange(e.target.value || null)}
-          className="w-full p-2 bg-surface border border-border rounded-md
-            text-text focus:ring-2 focus:ring-primary/20"
-        >
-          <option value="">Select Subject</option>
-          {subjects.map((subject) => (
-            <option key={subject} value={subject.toLowerCase()}>
-              {subject}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Unit Dropdown */}
-      {selectedSubject && (
-        <div>
-          <select
-            value={selectedUnit || ""}
-            onChange={(e) => onUnitChange(e.target.value || null)}
-            className="w-full p-2 bg-surface border border-border rounded-md
-              text-text focus:ring-2 focus:ring-primary/20"
-          >
-            <option value="">Select Unit</option>
-            {units.map((unit) => (
-              <option key={unit.id} value={unit.id}>
-                {unit.name}
-              </option>
-            ))}
-          </select>
+      {!session ? (
+        <div className="text-text-muted text-sm p-2 bg-surface-alt rounded">
+          Please select a session first
         </div>
+      ) : (
+        <>
+          {/* Subject Dropdown */}
+          <div>
+            <select
+              value={selectedSubject || ""}
+              onChange={(e) => onSubjectChange(e.target.value || null)}
+              className="w-full p-2 bg-surface border border-border rounded-md
+                text-text focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="">Select Subject</option>
+              {subjects.map((subject) => (
+                <option key={subject} value={subject}>
+                  {subject}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Unit Dropdown */}
+          {selectedSubject && (
+            <div>
+              <select
+                value={selectedUnit || ""}
+                onChange={(e) => onUnitChange(e.target.value || null)}
+                className="w-full p-2 bg-surface border border-border rounded-md
+                  text-text focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="">Select Unit</option>
+                {units.map((unit) => (
+                  <option key={unit.id} value={unit.apiPath} title={unit.name}>
+                    {unit.displayCode}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

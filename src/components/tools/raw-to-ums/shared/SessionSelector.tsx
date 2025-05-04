@@ -1,32 +1,53 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { conversionApi } from "@/lib/api/conversion";
+
 interface SessionSelectorProps {
   selectedSession: string | null;
-  availableSessions: string[];
   onSessionChange: (session: string | null) => void;
-  disabled?: boolean;
 }
 
 export default function SessionSelector({
   selectedSession,
-  availableSessions,
   onSessionChange,
-  disabled = false,
 }: SessionSelectorProps) {
-  if (disabled) {
+  const [sessions, setSessions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load all available sessions on mount
+  useEffect(() => {
+    async function loadSessions() {
+      try {
+        const data = await conversionApi.getSessions();
+        setSessions(data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load sessions");
+        console.error("Error loading sessions:", err);
+        setLoading(false);
+      }
+    }
+    loadSessions();
+  }, []);
+
+  if (loading) {
     return (
-      <select
-        disabled
-        className="w-full p-2 bg-surface-alt border border-border rounded-md
-          text-text-muted cursor-not-allowed"
-      >
-        <option>Select Subject & Unit First</option>
-      </select>
+      <div className="animate-pulse h-10 bg-surface-alt rounded" />
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-text-muted text-sm p-2 bg-surface-alt rounded">
+        {error}
+      </div>
     );
   }
 
   // Sort sessions in reverse chronological order
-  const sortedSessions = [...availableSessions].sort((a, b) => {
+  const sortedSessions = [...sessions].sort((a, b) => {
     const [monthA, yearA] = a.split(" ");
     const [monthB, yearB] = b.split(" ");
     

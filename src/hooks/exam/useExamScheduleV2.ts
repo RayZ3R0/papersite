@@ -38,47 +38,47 @@ interface RegistrationSubject {
 // Helper function to find registration subject for an exam subject
 const findRegSubject = (exam: Examination): RegistrationSubject | null => {
   if (process.env.NODE_ENV === 'development') {
-    console.log('\nFinding registration subject for:', {
-      examCode: exam.code,
-      examSubject: exam.subject
-    });
+    // console.log('\nFinding registration subject for:', {
+    //   examCode: exam.code,
+    //   examSubject: exam.subject
+    // });
   }
 
   // Look for exact subject name match
   const regSubject = Object.values(registrationSubjects).find(s => {
     const matches = s.name === exam.subject;
     if (process.env.NODE_ENV === 'development') {
-      console.log('Checking:', {
-        regSubjectCode: s.code,
-        regSubjectName: s.name,
-        matches
-      });
+      // console.log('Checking:', {
+      //   regSubjectCode: s.code,
+      //   regSubjectName: s.name,
+      //   matches
+      // });
     }
     return matches;
   });
 
   if (process.env.NODE_ENV === 'development') {
     if (regSubject) {
-      console.log('✅ Found registration subject:', {
-        code: regSubject.code,
-        name: regSubject.name,
-        hasMatchingUnit: regSubject.units.some((u: RegistrationUnit) => {
-          const matches = normalizeCode(u.id) === normalizeCode(exam.code);
-          if (process.env.NODE_ENV === 'development' && matches) {
-            console.log('Found matching unit:', {
-              unitId: u.id,
-              unitName: u.name,
-              normalizedUnit: normalizeCode(u.id),
-              normalizedExam: normalizeCode(exam.code)
-            });
-          }
-          return matches;
-        })
-      });
+      // console.log('✅ Found registration subject:', {
+      //   code: regSubject.code,
+      //   name: regSubject.name,
+      //   hasMatchingUnit: regSubject.units.some((u: RegistrationUnit) => {
+      //     const matches = normalizeCode(u.id) === normalizeCode(exam.code);
+      //     if (process.env.NODE_ENV === 'development' && matches) {
+      //       console.log('Found matching unit:', {
+      //         unitId: u.id,
+      //         unitName: u.name,
+      //         normalizedUnit: normalizeCode(u.id),
+      //         normalizedExam: normalizeCode(exam.code)
+      //       });
+      //     }
+      //     return matches;
+      //   })
+      // });
     } else {
-      console.log('❌ No registration subject found');
-      console.log('Available subjects:', Object.values(registrationSubjects)
-        .map(s => `${s.code} (${s.name})`));
+      // console.log('❌ No registration subject found');
+      // console.log('Available subjects:', Object.values(registrationSubjects)
+      //   .map(s => `${s.code} (${s.name})`));
     }
   }
 
@@ -100,25 +100,25 @@ const isUnitRelevant = (exam: Examination, unit: { unitCode: string; examSession
     const matches = normalizedRegistrationCode === normalizedUnitCode &&
                    normalizedRegistrationCode === normalizedExamCode;
 
-    if (process.env.NODE_ENV === 'development' && matches) {
-      console.log('✅ Found unit match:', {
-        exam: {
-          code: exam.code,
-          subject: exam.subject,
-          normalized: normalizedExamCode
-        },
-        regUnit: {
-          id: regUnit.id,
-          normalized: normalizedRegistrationCode,
-          name: regUnit.name
-        },
-        userUnit: {
-          code: unit.unitCode,
-          normalized: normalizedUnitCode,
-          session: unit.examSession
-        }
-      });
-    }
+    // if (process.env.NODE_ENV === 'development' && matches) {
+    //   console.log('✅ Found unit match:', {
+    //     exam: {
+    //       code: exam.code,
+    //       subject: exam.subject,
+    //       normalized: normalizedExamCode
+    //     },
+    //     regUnit: {
+    //       id: regUnit.id,
+    //       normalized: normalizedRegistrationCode,
+    //       name: regUnit.name
+    //     },
+    //     userUnit: {
+    //       code: unit.unitCode,
+    //       normalized: normalizedUnitCode,
+    //       session: unit.examSession
+    //     }
+    //   });
+    // }
 
     return matches;
   });
@@ -161,24 +161,24 @@ const isExamRelevant = (exam: Examination, userSubjects: UserSubjectConfig[]): b
           };
         });
 
-      console.log('🎯 Found relevant exam:', {
-        exam: {
-          code: exam.code,
-          subject: exam.subject,
-          date: exam.date,
-          time: exam.time
-        },
-        matchingSubjects: matchingInfo
-      });
+      // console.log('🎯 Found relevant exam:', {
+      //   exam: {
+      //     code: exam.code,
+      //     subject: exam.subject,
+      //     date: exam.date,
+      //     time: exam.time
+      //   },
+      //   matchingSubjects: matchingInfo
+      // });
     } else {
-      console.log('❌ Not relevant:', {
-        exam: {
-          code: exam.code,
-          subject: exam.subject,
-          normalized: normalizeCode(exam.code)
-        },
-        reason: 'No matching units in user subjects'
-      });
+      // console.log('❌ Not relevant:', {
+      //   exam: {
+      //     code: exam.code,
+      //     subject: exam.subject,
+      //     normalized: normalizeCode(exam.code)
+      //   },
+      //   reason: 'No matching units in user subjects'
+      // });
     }
   }
 
@@ -202,7 +202,7 @@ const getNextExamMonth = (userSubjects?: UserSubjectConfig[]): Date => {
 
     if (nextRelevantExamDate) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('Found next relevant exam month:', format(nextRelevantExamDate, 'MMMM yyyy'));
+        // console.log('Found next relevant exam month:', format(nextRelevantExamDate, 'MMMM yyyy'));
       }
       return nextRelevantExamDate;
     }
@@ -215,7 +215,7 @@ const getNextExamMonth = (userSubjects?: UserSubjectConfig[]): Date => {
     .sort((a, b) => a.getTime() - b.getTime())[0];
 
   if (process.env.NODE_ENV === 'development') {
-    console.log('Using fallback exam month:', format(nextExamDate || now, 'MMMM yyyy'));
+    // console.log('Using fallback exam month:', format(nextExamDate || now, 'MMMM yyyy'));
   }
 
   return nextExamDate || now;
@@ -225,7 +225,7 @@ const getNextExamMonth = (userSubjects?: UserSubjectConfig[]): Date => {
 const findRelevantExams = (exams: Examination[], userSubjects: UserSubjectConfig[]): Examination[] => {
   if (!userSubjects) {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Finding next exam: No user subjects, showing all exams');
+      // console.log('Finding next exam: No user subjects, showing all exams');
     }
     return [];
   }
@@ -235,39 +235,39 @@ const findRelevantExams = (exams: Examination[], userSubjects: UserSubjectConfig
     .filter(exam => parseISO(exam.date) > now)
     .sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime());
   
-  if (process.env.NODE_ENV === 'development') {
-    console.log('\n==== Finding Next Exam ====');
-    console.log(`Found ${futureExams.length} future exams`);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   console.log('\n==== Finding Next Exam ====');
+  //   console.log(`Found ${futureExams.length} future exams`);
+  // }
 
   const relevantExams = futureExams.filter(exam => {
     const isRelevant = isExamRelevant(exam, userSubjects);
     
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Checking future exam: ${exam.code} (${exam.subject})`, {
-        date: format(parseISO(exam.date), 'dd MMM yyyy'),
-        isRelevant,
-        matchingUnits: isRelevant ? userSubjects
-          .flatMap(s => s.units)
-          .filter(u => isUnitRelevant(exam, u))
-          .map(u => u.unitCode) : []
-      });
+      // console.log(`Checking future exam: ${exam.code} (${exam.subject})`, {
+      //   date: format(parseISO(exam.date), 'dd MMM yyyy'),
+      //   isRelevant,
+      //   matchingUnits: isRelevant ? userSubjects
+      //     .flatMap(s => s.units)
+      //     .filter(u => isUnitRelevant(exam, u))
+      //     .map(u => u.unitCode) : []
+      // });
     }
     
     return isRelevant;
   });
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`Found ${relevantExams.length} relevant future exams`);
-    if (relevantExams.length > 0) {
-      console.log('Next exam:', {
-        code: relevantExams[0].code,
-        subject: relevantExams[0].subject,
-        date: format(parseISO(relevantExams[0].date), 'dd MMM yyyy')
-      });
-    }
-    console.log('=======================\n');
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   console.log(`Found ${relevantExams.length} relevant future exams`);
+  //   if (relevantExams.length > 0) {
+  //     console.log('Next exam:', {
+  //       code: relevantExams[0].code,
+  //       subject: relevantExams[0].subject,
+  //       date: format(parseISO(relevantExams[0].date), 'dd MMM yyyy')
+  //     });
+  //   }
+  //   console.log('=======================\n');
+  // }
 
   return relevantExams;
 };
@@ -291,119 +291,119 @@ export function useExamScheduleV2() {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       if (isLoading) {
-        console.log('Loading profile data...');
+        // console.log('Loading profile data...');
         return;
       }
 
-      console.log('\n==== Profile State ====');
+      // console.log('\n==== Profile State ====');
       if (!profile) {
-        console.log('No profile data available');
+        // console.log('No profile data available');
       } else {
-        console.log('Profile loaded:', {
-          hasSubjects: !!profile.subjects,
-          subjectCount: profile.subjects?.length,
-          subjects: profile.subjects?.map(s => ({
-            code: s.subjectCode,
-            name: registrationSubjects[s.subjectCode]?.name,
-            unitCount: s.units.length,
-            units: s.units.map(u => ({
-              code: u.unitCode,
-              normalized: normalizeCode(u.unitCode),
-              registered: registrationSubjects[s.subjectCode]?.units
-                .some((ru: RegistrationUnit) => normalizeCode(ru.id) === normalizeCode(u.unitCode)) || false,
-              registrationUnit: registrationSubjects[s.subjectCode]?.units
-                .find((ru: RegistrationUnit) => normalizeCode(ru.id) === normalizeCode(u.unitCode))?.name || null
-            }))
-          })),
-          examSessions: Array.from(new Set(profile.subjects?.flatMap(s =>
-            s.units.map(u => u.examSession)
-          ))).sort()
-        });
+        // console.log('Profile loaded:', {
+        //   hasSubjects: !!profile.subjects,
+        //   subjectCount: profile.subjects?.length,
+        //   subjects: profile.subjects?.map(s => ({
+        //     code: s.subjectCode,
+        //     name: registrationSubjects[s.subjectCode]?.name,
+        //     unitCount: s.units.length,
+        //     units: s.units.map(u => ({
+        //       code: u.unitCode,
+        //       normalized: normalizeCode(u.unitCode),
+        //       registered: registrationSubjects[s.subjectCode]?.units
+        //         .some((ru: RegistrationUnit) => normalizeCode(ru.id) === normalizeCode(u.unitCode)) || false,
+        //       registrationUnit: registrationSubjects[s.subjectCode]?.units
+        //         .find((ru: RegistrationUnit) => normalizeCode(ru.id) === normalizeCode(u.unitCode))?.name || null
+        //     }))
+        //   })),
+        //   examSessions: Array.from(new Set(profile.subjects?.flatMap(s =>
+        //     s.units.map(u => u.examSession)
+        //   ))).sort()
+        // });
       }
-      console.log('====================\n');
+      // console.log('====================\n');
     }
   }, [profile, isLoading]);
 
   // Mark all relevant exams based on user's subjects
   useEffect(() => {
     if (!profile?.subjects) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('No subjects found in profile');
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log('No subjects found in profile');
+      // }
       setExaminations(typedExaminations.map(exam => ({ ...exam, isRelevant: false })));
       return;
     }
 
     // Detailed debug logging for exam matching
-    if (process.env.NODE_ENV === 'development') {
-      console.log('\n==== Begin Exam Matching ====');
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('\n==== Begin Exam Matching ====');
       
-      // Log user's subjects and units
-      console.log('User\'s subjects:', profile.subjects.map(s => {
-        const regSubject = registrationSubjects[s.subjectCode];
-        return {
-          code: s.subjectCode,
-          name: regSubject?.name,
-          units: s.units.map(u => ({
-            code: u.unitCode,
-            normalized: normalizeCode(u.unitCode),
-            session: u.examSession,
-            registrationMatch: regSubject?.units.find((ru: { id: string; name: string }) =>
-              normalizeCode(ru.id) === normalizeCode(u.unitCode)
-            )?.name || null
-          }))
-        };
-      }));
+    //   // Log user's subjects and units
+    //   console.log('User\'s subjects:', profile.subjects.map(s => {
+    //     const regSubject = registrationSubjects[s.subjectCode];
+    //     return {
+    //       code: s.subjectCode,
+    //       name: regSubject?.name,
+    //       units: s.units.map(u => ({
+    //         code: u.unitCode,
+    //         normalized: normalizeCode(u.unitCode),
+    //         session: u.examSession,
+    //         registrationMatch: regSubject?.units.find((ru: { id: string; name: string }) =>
+    //           normalizeCode(ru.id) === normalizeCode(u.unitCode)
+    //         )?.name || null
+    //       }))
+    //     };
+    //   }));
 
-      // Log available exams
-      console.log('\nAvailable exams:', typedExaminations.map(e => ({
-        code: e.code,
-        normalized: normalizeCode(e.code),
-        subject: e.subject,
-        registrationSubject: findRegSubject(e)?.name
-      })));
+    //   // Log available exams
+    //   console.log('\nAvailable exams:', typedExaminations.map(e => ({
+    //     code: e.code,
+    //     normalized: normalizeCode(e.code),
+    //     subject: e.subject,
+    //     registrationSubject: findRegSubject(e)?.name
+    //   })));
 
-      console.log('=======================\n');
-    }
+    //   console.log('=======================\n');
+    // }
 
     // Debug exam matching logic
-    if (process.env.NODE_ENV === 'development') {
-      console.log('\n==== Matching Logic Debug ====');
-      // Log registration subjects
-      console.log('Registration subjects:', Object.entries(registrationSubjects).map(([code, subject]: [string, RegistrationSubject]) => ({
-        code,
-        name: subject.name,
-        units: subject.units.map((u: RegistrationUnit) => ({
-          id: u.id,
-          normalized: normalizeCode(u.id),
-          name: u.name
-        }))
-      })));
+    // if (process.env.NODE_ENV === 'development') {
+    //   console.log('\n==== Matching Logic Debug ====');
+    //   // Log registration subjects
+    //   console.log('Registration subjects:', Object.entries(registrationSubjects).map(([code, subject]: [string, RegistrationSubject]) => ({
+    //     code,
+    //     name: subject.name,
+    //     units: subject.units.map((u: RegistrationUnit) => ({
+    //       id: u.id,
+    //       normalized: normalizeCode(u.id),
+    //       name: u.name
+    //     }))
+    //   })));
 
-      // Log exam subject mappings
-      console.log('\nExam subject mappings:', typedExaminations.map(e => {
-        const regSubject = findRegSubject(e);
-        return {
-          examCode: e.code,
-          examSubject: e.subject,
-          normalizedCode: normalizeCode(e.code),
-          foundMapping: !!regSubject,
-          mappedTo: regSubject ? {
-            code: regSubject.code,
-            name: regSubject.name,
-            matchingUnits: regSubject.units
-              .filter(u => normalizeCode(u.id) === normalizeCode(e.code))
-              .map(u => u.id)
-          } : null
-        };
-      }));
-      console.log('=======================\n');
-    }
+    //   // Log exam subject mappings
+    //   console.log('\nExam subject mappings:', typedExaminations.map(e => {
+    //     const regSubject = findRegSubject(e);
+    //     return {
+    //       examCode: e.code,
+    //       examSubject: e.subject,
+    //       normalizedCode: normalizeCode(e.code),
+    //       foundMapping: !!regSubject,
+    //       mappedTo: regSubject ? {
+    //         code: regSubject.code,
+    //         name: regSubject.name,
+    //         matchingUnits: regSubject.units
+    //           .filter(u => normalizeCode(u.id) === normalizeCode(e.code))
+    //           .map(u => u.id)
+    //       } : null
+    //     };
+    //   }));
+    //   console.log('=======================\n');
+    // }
 
     const updatedExams = typedExaminations.map(exam => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`\nChecking exam: ${exam.code} (${exam.subject})`);
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log(`\nChecking exam: ${exam.code} (${exam.subject})`);
+      // }
 
       const matchingUnits = profile.subjects
         .flatMap(s => s.units)
@@ -411,30 +411,30 @@ export function useExamScheduleV2() {
       
       const relevant = matchingUnits.length > 0;
 
-      if (process.env.NODE_ENV === 'development') {
-        if (relevant) {
-          console.log('✅ Exam is relevant:', {
-            exam: {
-              code: exam.code,
-              normalized: normalizeCode(exam.code),
-              subject: exam.subject,
-              date: exam.date
-            },
-            matchingUnits: matchingUnits.map(u => ({
-              code: u.unitCode,
-              normalized: normalizeCode(u.unitCode),
-              session: u.examSession
-            }))
-          });
-        } else {
-          console.log('❌ Exam not relevant:', {
-            code: exam.code,
-            normalized: normalizeCode(exam.code),
-            subject: exam.subject,
-            reason: 'No matching units found'
-          });
-        }
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   if (relevant) {
+      //     console.log('✅ Exam is relevant:', {
+      //       exam: {
+      //         code: exam.code,
+      //         normalized: normalizeCode(exam.code),
+      //         subject: exam.subject,
+      //         date: exam.date
+      //       },
+      //       matchingUnits: matchingUnits.map(u => ({
+      //         code: u.unitCode,
+      //         normalized: normalizeCode(u.unitCode),
+      //         session: u.examSession
+      //       }))
+      //     });
+      //   } else {
+      //     console.log('❌ Exam not relevant:', {
+      //       code: exam.code,
+      //       normalized: normalizeCode(exam.code),
+      //       subject: exam.subject,
+      //       reason: 'No matching units found'
+      //     });
+      //   }
+      // }
 
       return { ...exam, isRelevant: relevant };
     });
@@ -442,24 +442,24 @@ export function useExamScheduleV2() {
     setExaminations(updatedExams);
 
     // Log summary with details
-    if (process.env.NODE_ENV === 'development') {
-      const relevantExams = updatedExams.filter(e => e.isRelevant);
-      console.log('\n==== Matching Summary ====');
-      console.log(`Found ${relevantExams.length} relevant exams out of ${updatedExams.length} total`);
+    // if (process.env.NODE_ENV === 'development') {
+    //   const relevantExams = updatedExams.filter(e => e.isRelevant);
+    //   console.log('\n==== Matching Summary ====');
+    //   console.log(`Found ${relevantExams.length} relevant exams out of ${updatedExams.length} total`);
       
-      if (relevantExams.length > 0) {
-        console.log('Relevant Exams:', relevantExams.map(e => ({
-          code: e.code,
-          subject: e.subject,
-          date: e.date,
-          matchingUnits: profile.subjects
-            .flatMap(s => s.units)
-            .filter(u => isUnitRelevant(e, u))
-            .map(u => u.unitCode)
-        })));
-      }
-      console.log('=======================\n');
-    }
+    //   if (relevantExams.length > 0) {
+    //     console.log('Relevant Exams:', relevantExams.map(e => ({
+    //       code: e.code,
+    //       subject: e.subject,
+    //       date: e.date,
+    //       matchingUnits: profile.subjects
+    //         .flatMap(s => s.units)
+    //         .filter(u => isUnitRelevant(e, u))
+    //         .map(u => u.unitCode)
+    //     })));
+    //   }
+    //   console.log('=======================\n');
+    // }
   }, [profile?.subjects]);
 
   // Filter exams based on current state

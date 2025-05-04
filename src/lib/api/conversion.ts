@@ -1,39 +1,56 @@
-import { ConversionData } from "@/types/conversion";
+import { ConversionData, ConversionRecord } from "@/types/conversion";
+import { marksApi } from "./marks";
+import { UnitInfo } from "@/types/marks";
 
-export interface UnitInfo {
-  id: string;
-  name: string;
+export type { UnitInfo };
+
+function processDuplicates(data: ConversionData): ConversionData {
+  // Group entries by RAW/UMS pair
+  const groups = new Map<string, ConversionRecord[]>();
+  
+  data.data.forEach(entry => {
+    const key = `${entry.RAW}-${entry.UMS}`;
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
+    groups.get(key)!.push(entry);
+  });
+
+  // Process each group to handle duplicates
+  const processedData: ConversionRecord[] = [];
+  groups.forEach(entries => {
+    if (entries.length === 1) {
+      // No duplicates, just keep the entry
+      processedData.push(entries[0]);
+    } else {
+      // Check for Max Mark entry
+      const maxMarkEntry = entries.find(e => e.GRADE === "Max Mark");
+      if (maxMarkEntry) {
+        processedData.push(maxMarkEntry);
+      } else {
+        // No Max Mark entry, just keep the first one
+        processedData.push(entries[0]);
+      }
+    }
+  });
+
+  // Sort by RAW score descending
+  processedData.sort((a, b) => b.RAW - a.RAW);
+
+  return {
+    ...data,
+    metadata: {
+      ...data.metadata,
+      recordCount: processedData.length
+    },
+    data: processedData
+  };
 }
 
 class ConversionAPI {
-  private readonly apiBaseUrl = "https://papervoid-api-rgic.shuttle.app/api/marks";
-  
-  private async fetchJSON<T>(endpoint: string): Promise<T> {
-    const response = await fetch(endpoint);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  }
-
-  async getSubjects(): Promise<string[]> {
-    // Get the latest session first, then get subjects for that session
-    const sessions = await this.getSessions();
-    if (sessions.length === 0) {
-      return [];
-    }
-    
-    // Default to the most recent session
-    const latestSession = sessions[0];
-    return this.getSubjectsForSession(latestSession);
-  }
-
   async getSessions(): Promise<string[]> {
     try {
-      const sessions: string[] = await this.fetchJSON(`${this.apiBaseUrl}/sessions`);
-      
-      // Transform session names from January_2025 to January 2025 format
-      return sessions.map(session => session.replace('_', ' '));
+      return await marksApi.getSessions();
     } catch (error) {
       console.error("Failed to fetch sessions:", error);
       return [];
@@ -42,51 +59,37 @@ class ConversionAPI {
 
   async getSubjectsForSession(session: string): Promise<string[]> {
     try {
-      // Transform session from "January 2025" to "January_2025" format for API
-      const formattedSession = session.replace(' ', '_');
-      const subjects: string[] = await this.fetchJSON(
-        `${this.apiBaseUrl}/sessions/${formattedSession}`
-      );
-      return subjects;
+      return await marksApi.getSubjectsForSession(session);
     } catch (error) {
       console.error(`Failed to fetch subjects for session ${session}:`, error);
       return [];
     }
   }
 
+  async getSubjects(): Promise<string[]> {
+    try {
+      return await marksApi.getSubjects();
+    } catch (error) {
+      console.error("Failed to fetch subjects:", error);
+      return [];
+    }
+  }
+
   async getUnitsForSubject(subjectId: string): Promise<UnitInfo[]> {
     try {
-      // Get the latest session first
-      const sessions = await this.getSessions();
-      if (sessions.length === 0) {
-        return [];
-      }
-      
-      // Default to the most recent session
-      const latestSession = sessions[0];
-      return this.getUnitsForSubjectAndSession(subjectId, latestSession);
+      return await marksApi.getUnitsForSubject(subjectId);
     } catch (error) {
       console.error(`Failed to fetch units for subject ${subjectId}:`, error);
       return [];
     }
   }
 
-  async getUnitsForSubjectAndSession(subjectId: string, session: string): Promise<UnitInfo[]> {
+  async getUnitsForSubjectAndSession(
+    subjectId: string, 
+    session: string
+  ): Promise<UnitInfo[]> {
     try {
-      const formattedSession = session.replace(' ', '_');
-      const unitPaths: string[] = await this.fetchJSON(
-        `${this.apiBaseUrl}/sessions/${formattedSession}/${subjectId}`
-      );
-      
-      // Transform unit paths to UnitInfo objects
-      return unitPaths.map(unitPath => {
-        // Extract unit code and name from format like "WPH11-01_-_Mechanics_and_Materials"
-        const parts = unitPath.split('_-_');
-        const id = parts[0];
-        const name = parts[1]?.replace(/_/g, ' ') || unitPath;
-        
-        return { id, name };
-      });
+      return await marksApi.getUnitsForSubjectAndSession(subjectId, session);
     } catch (error) {
       console.error(`Failed to fetch units for ${subjectId} in ${session}:`, error);
       return [];
@@ -98,25 +101,7 @@ class ConversionAPI {
     unitId: string
   ): Promise<string[]> {
     try {
-      // We need to check each session if it has the subject and unit
-      const allSessions = await this.getSessions();
-      const availableSessions: string[] = [];
-      
-      for (const session of allSessions) {
-        try {
-          const units = await this.getUnitsForSubjectAndSession(subjectId, session);
-          const unitExists = units.some(unit => unit.id === unitId);
-          
-          if (unitExists) {
-            availableSessions.push(session);
-          }
-        } catch {
-          // If this session doesn't have the subject/unit, just skip it
-          continue;
-        }
-      }
-      
-      return availableSessions;
+      return await marksApi.getAvailableSessions(subjectId, unitId);
     } catch (error) {
       console.error(`Failed to fetch available sessions for ${subjectId}/${unitId}:`, error);
       return [];
@@ -125,31 +110,16 @@ class ConversionAPI {
 
   async getConversionData(
     subjectId: string,
-    unitId: string,
+    apiPath: string,
     session: string
   ): Promise<ConversionData> {
     try {
-      // Get all units for this subject and session first
-      const units = await this.getUnitsForSubjectAndSession(subjectId, session);
-      
-      // Find the matching unit to get the full path
-      const unit = units.find(u => u.id === unitId);
-      if (!unit) {
-        throw new Error(`Unit ${unitId} not found for ${subjectId} in ${session}`);
-      }
-      
-      // Construct the unit path based on API format
-      const unitPath = `${unitId}_-_${unit.name.replace(/ /g, '_')}`;
-      
-      // Fetch the conversion data
-      const formattedSession = session.replace(' ', '_');
-      const data: ConversionData = await this.fetchJSON(
-        `${this.apiBaseUrl}/sessions/${formattedSession}/${subjectId}/${unitPath}`
-      );
-      
-      return data;
+      // Extract unitId from the API path (format: "WAC11-01_-_The_Accounting_System_and_Costing")
+      const unitId = apiPath.split("_-_")[0];
+      const data = await marksApi.getConversionData(subjectId, unitId, session);
+      return processDuplicates(data);
     } catch (error) {
-      console.error(`Failed to fetch conversion data for ${session}/${subjectId}/${unitId}:`, error);
+      console.error(`Failed to fetch conversion data for ${session}/${subjectId}/${apiPath}:`, error);
       throw error;
     }
   }

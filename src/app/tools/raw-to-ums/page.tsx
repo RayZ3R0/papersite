@@ -32,52 +32,34 @@ export default function RawToUmsPage() {
   const [conversionData, setConversionData] = useState<ConversionData | null>(null);
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
 
-  // Reset unit and session when subject changes
+  // Handle session change - this comes first in the flow
+  const handleSessionChange = (session: string | null) => {
+    setSelectedSession(session);
+    setSelectedSubject(null);
+    setSelectedUnit(null);
+    setConversionData(null);
+  };
+
+  // Handle subject change - depends on session
   const handleSubjectChange = (subjectId: string | null) => {
     setSelectedSubject(subjectId);
     setSelectedUnit(null);
-    setSelectedSession(null);
     setConversionData(null);
-    setAvailableSessions([]);
   };
 
-  // Reset session and load available sessions when unit changes
-  const handleUnitChange = async (unitId: string | null) => {
-    setSelectedUnit(unitId);
-    setSelectedSession(null);
+  // Handle unit change - depends on session and subject
+  const handleUnitChange = async (apiPath: string | null) => {
+    setSelectedUnit(apiPath);
     setConversionData(null);
 
-    if (unitId && selectedSubject) {
-      setLoading(true);
-      setError(null);
-      try {
-        const sessions = await conversionApi.getAvailableSessions(
-          selectedSubject,
-          unitId
-        );
-        setAvailableSessions(sessions);
-      } catch (err) {
-        setError("Failed to load available sessions. Please try again.");
-        console.error("Error loading sessions:", err);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setAvailableSessions([]);
-    }
-  };
-
-  // Load conversion data when session is selected
-  const handleSessionChange = async (session: string | null) => {
-    setSelectedSession(session);
-    if (session && selectedSubject && selectedUnit) {
+    if (apiPath && selectedSubject && selectedSession) {
       setLoading(true);
       setError(null);
       try {
         const data = await conversionApi.getConversionData(
           selectedSubject,
-          selectedUnit,
-          session
+          apiPath,
+          selectedSession
         );
         setConversionData(data);
       } catch (err) {
@@ -86,8 +68,6 @@ export default function RawToUmsPage() {
       } finally {
         setLoading(false);
       }
-    } else {
-      setConversionData(null);
     }
   };
 
@@ -95,9 +75,22 @@ export default function RawToUmsPage() {
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Page Header */}
       <header className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
-          Raw to UMS Converter
-        </h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-text">
+            Raw to UMS Converter
+          </h1>
+          <button
+            onClick={() => {
+              setSelectedSession(null);
+              setSelectedSubject(null);
+              setSelectedUnit(null);
+              setConversionData(null);
+            }}
+            className="text-sm text-text-muted hover:text-text transition-colors duration-200"
+          >
+            Reset filters
+          </button>
+        </div>
         <p className="text-text-muted">
           Convert raw marks to UMS scores and view grade boundaries
         </p>
@@ -111,12 +104,15 @@ export default function RawToUmsPage() {
             <label className="block text-sm font-medium text-text-muted">
               Subject & Unit
             </label>
-            <SubjectSelector
-              selectedSubject={selectedSubject}
-              selectedUnit={selectedUnit}
-              onSubjectChange={handleSubjectChange}
-              onUnitChange={handleUnitChange}
-            />
+            <div className="transition-all duration-200">
+              <SubjectSelector
+                session={selectedSession}
+                selectedSubject={selectedSubject}
+                selectedUnit={selectedUnit}
+                onSubjectChange={handleSubjectChange}
+                onUnitChange={handleUnitChange}
+              />
+            </div>
           </div>
 
           {/* Session Selection */}
@@ -124,12 +120,12 @@ export default function RawToUmsPage() {
             <label className="block text-sm font-medium text-text-muted">
               Session
             </label>
-            <SessionSelector
-              selectedSession={selectedSession}
-              availableSessions={availableSessions}
-              onSessionChange={handleSessionChange}
-              disabled={!selectedUnit}
-            />
+            <div className="transition-all duration-200">
+              <SessionSelector
+                selectedSession={selectedSession}
+                onSessionChange={handleSessionChange}
+              />
+            </div>
           </div>
         </div>
       </div>

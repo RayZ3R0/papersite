@@ -54,6 +54,7 @@ function isStaticPath(pathname: string) {
     pathname.startsWith('/notes') ||
     pathname.startsWith('/subjects') ||
     pathname.startsWith('/search') ||
+    pathname.startsWith('/tools') ||
     pathname === '/favicon.ico'
   );
 }
