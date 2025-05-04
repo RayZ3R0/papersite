@@ -83,6 +83,42 @@ const sortSessions = (sessions: string[]): string[] => {
   });
 };
 
+const Card = ({
+  children,
+  className = ""
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={`bg-card rounded-xl border border-border shadow-sm overflow-hidden ${className}`}>
+    {children}
+  </div>
+);
+
+const CardHeader = ({
+  children,
+  className = ""
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={`p-4 bg-surface/40 border-b border-border/50 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardContent = ({
+  children,
+  className = ""
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={`p-5 ${className}`}>
+    {children}
+  </div>
+);
+
 const TabButton = ({
   active,
   onClick,
@@ -100,11 +136,15 @@ const TabButton = ({
     onClick={onClick}
     role={role}
     aria-selected={ariaSelected}
-    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-      active
+    className={`
+      px-4 py-2 rounded-lg font-medium
+      transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-primary/30
+      ${active
         ? "bg-primary text-primary-foreground shadow-sm"
-        : "bg-surface hover:bg-surface-alt"
-    }`}
+        : "text-text-muted hover:text-text hover:bg-surface-hover"
+      }
+    `}
   >
     {children}
   </button>
@@ -113,7 +153,11 @@ const TabButton = ({
 const UnitSelector = ({ unit, subject }: { unit: Unit; subject: Subject }) => (
   <div className="relative group">
     <div
-      className="px-4 py-2 rounded-lg bg-surface border border-border hover:bg-surface-alt transition-colors"
+      className="
+        px-4 py-2 rounded-lg bg-surface border border-border
+        hover:bg-surface-hover hover:border-border/80
+        transition-all duration-200 cursor-pointer
+      "
       role="button"
       aria-haspopup="true"
       aria-expanded="false"
@@ -121,12 +165,19 @@ const UnitSelector = ({ unit, subject }: { unit: Unit; subject: Subject }) => (
       <span className="font-mono font-medium text-lg">{unit.id}</span>
     </div>
     <div
-      className="absolute z-10 left-0 top-full mt-1 hidden group-hover:block w-[300px]"
+      className="
+        absolute z-10 left-0 top-full mt-2 opacity-0 invisible
+        group-hover:opacity-100 group-hover:visible
+        transition-all duration-200 w-[300px]
+      "
       role="tooltip"
     >
-      <div className="bg-white dark:bg-gray-800 text-popover-foreground p-4 rounded-lg shadow-lg">
+      <div className="
+        bg-popover text-popover-foreground p-4 rounded-lg
+        shadow-lg border border-border/50 backdrop-blur-sm
+      ">
         <div className="border-b border-border pb-2 mb-2">
-          <h4 className="font-medium text-lg">{subject.name}</h4>
+          <h4 className="font-semibold text-lg">{subject.name}</h4>
           <p className="text-sm text-text-muted mt-1">{unit.name}</p>
         </div>
         {unit.description && (
@@ -137,26 +188,30 @@ const UnitSelector = ({ unit, subject }: { unit: Unit; subject: Subject }) => (
   </div>
 );
 
-const SessionButton = ({ 
-  session, 
-  selected, 
-  color, 
-  onClick, 
-  metadata 
-}: { 
-  session: string; 
-  selected: boolean; 
+const SessionButton = ({
+  session,
+  selected,
+  color,
+  onClick,
+  metadata
+}: {
+  session: string;
+  selected: boolean;
   color: string;
   onClick: () => void;
   metadata: { recordCount: number; timestamp: string };
 }) => (
   <div className="relative group">
     <button
-      className={`px-4 py-2 rounded-lg transition-all ${
-        selected
-          ? "bg-primary/10 text-primary-foreground shadow-sm"
-          : "bg-surface hover:bg-surface-alt"
-      }`}
+      className={`
+        px-4 py-2 rounded-lg
+        transition-all duration-200
+        focus:outline-none focus:ring-2 focus:ring-primary/30
+        ${selected
+          ? "bg-background shadow-sm"
+          : "bg-surface hover:bg-surface-hover"
+        }
+      `}
       style={{
         borderColor: color,
         borderWidth: 2,
@@ -169,14 +224,27 @@ const SessionButton = ({
     >
       {formatSessionName(session)}
     </button>
-    <div className="absolute z-10 left-0 top-full mt-2 hidden group-hover:block">
-      <div className="bg-white dark:bg-gray-800 text-popover-foreground p-3 rounded-lg shadow-lg min-w-[160px]">
+    <div className="
+      absolute z-10 left-0 top-full mt-2
+      opacity-0 invisible
+      group-hover:opacity-100 group-hover:visible
+      transition-all duration-200
+    ">
+      <div className="
+        bg-popover text-popover-foreground p-3 rounded-lg
+        shadow-lg min-w-[160px] border border-border/50
+      ">
         <div className="font-medium mb-1" style={{ color }}>
           {formatSessionName(session)}
         </div>
-        <p className="text-xs text-text-muted mt-1">
-          {metadata.timestamp}
-        </p>
+        <div className="space-y-1">
+          <p className="text-xs text-text-muted">
+            {metadata.recordCount} records
+          </p>
+          <p className="text-xs text-text-muted">
+            {metadata.timestamp}
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -275,7 +343,7 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
       grid: {
         top: 60,
         right: 40,
-        bottom: 80,
+        bottom: 100,
         left: 60,
         containLabel: true
       },
@@ -385,7 +453,7 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
         type: 'value',
         name: 'Raw Mark',
         nameLocation: 'middle',
-        nameGap: 30,
+        nameGap: 45,
         min: 0,
         max: 'dataMax',
         splitLine: {
@@ -490,43 +558,55 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
 
   if (loading) {
     return (
-      <div className="animate-pulse space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="h-10 w-32 bg-surface-alt rounded-lg"></div>
-          <div className="flex gap-2">
-            <div className="h-10 w-40 bg-surface-alt rounded-lg"></div>
-            <div className="h-10 w-40 bg-surface-alt rounded-lg"></div>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="flex gap-2">
+              <div className="h-10 w-40 bg-surface-alt rounded-lg animate-pulse"></div>
+              <div className="h-10 w-40 bg-surface-alt rounded-lg animate-pulse"></div>
+            </div>
           </div>
-        </div>
-        <div className="h-96 bg-surface-alt rounded-lg"></div>
-        <div className="flex flex-wrap gap-2">
-          <div className="h-10 w-32 bg-surface-alt rounded-lg"></div>
-          <div className="h-10 w-32 bg-surface-alt rounded-lg"></div>
-          <div className="h-10 w-32 bg-surface-alt rounded-lg"></div>
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-96 bg-surface-alt rounded-lg animate-pulse mb-6"></div>
+          <div className="flex flex-wrap gap-2 mt-6">
+            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!subject || !unit) {
     return (
-      <div className="text-center p-12 bg-surface rounded-lg border border-border">
-        <h3 className="text-xl font-medium text-text mb-3">No Unit Selected</h3>
-        <p className="text-text-muted max-w-md mx-auto">
-          Please select a subject and unit from the dropdown menu to view UMS conversion charts.
-        </p>
-      </div>
+      <Card>
+        <CardContent className="py-12">
+          <div className="text-center max-w-lg mx-auto">
+            <h3 className="text-xl font-medium text-text mb-3">No Unit Selected</h3>
+            <p className="text-text-muted">
+              Please select a subject and unit from the dropdown menu to view UMS conversion charts.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!umsData || !umsData.sessions.length) {
     return (
-      <div className="text-center p-12 bg-surface rounded-lg border border-border">
-        <h3 className="text-xl font-medium text-text mb-3">No Data Available</h3>
-        <p className="text-text-muted max-w-md mx-auto">
-          No UMS conversion data is currently available for this unit. Please try selecting a different unit.
-        </p>
-      </div>
+      <Card>
+        <CardContent className="py-12">
+          <div className="text-center max-w-lg mx-auto">
+            <h3 className="text-xl font-medium text-text mb-3">No Data Available</h3>
+            <p className="text-text-muted">
+              No UMS conversion data is currently available for this unit. Please try selecting a different unit.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -534,125 +614,137 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
   const sortedSessions = sortSessions(umsData.sessions.map(s => s.session));
 
   return (
-    <div className="space-y-6">
-      {/* Header with Unit Info and View Selector */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        {/* Unit Info */}
-        <UnitSelector unit={unit} subject={subject} />
-        
-        {/* View Type Selector */}
-        <div role="tablist" className="flex gap-2 p-1 bg-surface-alt/30 rounded-xl">
-          <TabButton
-            active={viewType === VIEW_TYPES.GRADE_DIST}
-            onClick={() => {
-              setViewType(VIEW_TYPES.GRADE_DIST);
-              window.history.replaceState(null, '', `?view=grade-dist`);
-            }}
-            role="tab"
-            aria-selected={viewType === VIEW_TYPES.GRADE_DIST}
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <Card>
+        {/* Header with Unit Info and View Selector */}
+        <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Unit Info */}
+          <UnitSelector unit={unit} subject={subject} />
+          
+          {/* View Type Selector */}
+          <div 
+            role="tablist" 
+            className="flex gap-2 p-1.5 bg-background rounded-xl shadow-sm border border-border/50"
           >
-            Grade Distribution
-          </TabButton>
-          <TabButton
-            active={viewType === VIEW_TYPES.SESSION_COMP}
-            onClick={() => {
-              setViewType(VIEW_TYPES.SESSION_COMP);
-              window.history.replaceState(null, '', `?view=session-comp`);
-            }}
-            role="tab"
-            aria-selected={viewType === VIEW_TYPES.SESSION_COMP}
-          >
-            Session Comparison
-          </TabButton>
-        </div>
-      </div>
+            <TabButton
+              active={viewType === VIEW_TYPES.GRADE_DIST}
+              onClick={() => {
+                setViewType(VIEW_TYPES.GRADE_DIST);
+                window.history.replaceState(null, '', `?view=grade-dist`);
+              }}
+              role="tab"
+              aria-selected={viewType === VIEW_TYPES.GRADE_DIST}
+            >
+              Grade Distribution
+            </TabButton>
+            <TabButton
+              active={viewType === VIEW_TYPES.SESSION_COMP}
+              onClick={() => {
+                setViewType(VIEW_TYPES.SESSION_COMP);
+                window.history.replaceState(null, '', `?view=session-comp`);
+              }}
+              role="tab"
+              aria-selected={viewType === VIEW_TYPES.SESSION_COMP}
+            >
+              Session Comparison
+            </TabButton>
+          </div>
+        </CardHeader>
 
-      {/* Chart View */}
-      <div className="h-96 bg-surface rounded-lg border border-border p-6 shadow-sm">
-        {options ? (
-          <ReactECharts
-            option={options}
-            style={{ height: '100%', width: '100%' }}
-            className="transition-all duration-300"
-            opts={{ renderer: 'svg' }}
-            notMerge={true}
-          />
-        ) : (
-          <div className="h-full flex items-center justify-center text-text-muted">
-            <div className="text-center">
-              <p className="mb-2 text-lg">No chart data available</p>
-              <p className="text-sm">Please select at least one session to display data</p>
+        {/* Chart View */}
+        <div className="h-[450px] p-6 relative overflow-hidden border-b border-border/50">
+          {options ? (
+            <ReactECharts
+              option={options}
+              style={{ height: '100%', width: '100%' }}
+              className="transition-all duration-300"
+              opts={{ renderer: 'svg' }}
+              notMerge={true}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center space-y-2 text-text-muted/80">
+                <p className="text-lg font-medium">No chart data available</p>
+                <p className="text-sm">Please select at least one session to display data</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Session Selection */}
+        <CardContent>
+          <h3 className="text-lg font-semibold mb-4">Exam Sessions</h3>
+          <div className="flex flex-wrap gap-3 mb-4 transition-all">
+            {sortedSessions.map((session, index) => {
+              const sessionData = umsData.sessions.find(s => s.session === session);
+              return (
+                <SessionButton
+                  key={session}
+                  session={session}
+                  selected={selectedSessions.includes(session)}
+                  color={SESSION_COLORS[index % SESSION_COLORS.length]}
+                  metadata={sessionData?.metadata || { recordCount: 0, timestamp: "" }}
+                  onClick={() => {
+                    setSelectedSessions((prev) =>
+                      prev.includes(session)
+                        ? prev.filter((s) => s !== session)
+                        : [...prev, session]
+                    );
+                  }}
+                />
+              );
+            })}
+          </div>
+          
+          <div className="flex flex-wrap gap-3 mt-6 border-t border-border/50 pt-4">
+            <button
+              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+              onClick={() => setSelectedSessions(sortedSessions)}
+            >
+              Select all
+            </button>
+            <button
+              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+              onClick={() => setSelectedSessions([])}
+            >
+              Clear selection
+            </button>
+            <button
+              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+              onClick={() => setSelectedSessions(sortedSessions.slice(0, 3))}
+            >
+              Latest 3 sessions
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Metadata Card */}
+      <Card>
+        <CardHeader>
+          <h3 className="font-semibold">Dataset Information</h3>
+        </CardHeader>
+        <CardContent className="bg-background">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <span className="block text-text-muted text-sm mb-1">Subject</span>
+              <span className="font-medium">{subject?.name}</span>
+            </div>
+            <div>
+              <span className="block text-text-muted text-sm mb-1">Unit</span>
+              <span className="font-medium">{unit?.name}</span>
+            </div>
+            <div>
+              <span className="block text-text-muted text-sm mb-1">Papers Found</span>
+              <span className="font-medium">{umsData?.total_papers_found}</span>
+            </div>
+            <div>
+              <span className="block text-text-muted text-sm mb-1">Available Sessions</span>
+              <span className="font-medium">{umsData?.sessions.length}</span>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Session Selection */}
-      <div className="p-4 bg-surface-alt/30 rounded-lg border border-border">
-        <h3 className="text-lg font-medium mb-3">Exam Sessions</h3>
-        <div className="flex flex-wrap gap-3">
-          {sortedSessions.map((session, index) => {
-            const sessionData = umsData.sessions.find(s => s.session === session);
-            return (
-              <SessionButton
-                key={session}
-                session={session}
-                selected={selectedSessions.includes(session)}
-                color={SESSION_COLORS[index % SESSION_COLORS.length]}
-                metadata={sessionData?.metadata || { recordCount: 0, timestamp: "" }}
-                onClick={() => {
-                  setSelectedSessions((prev) =>
-                    prev.includes(session)
-                      ? prev.filter((s) => s !== session)
-                      : [...prev, session]
-                  );
-                }}
-              />
-            );
-          })}
-        </div>
-        
-        <div className="flex gap-4 mt-4">
-          <button 
-            className="text-sm text-primary hover:text-primary-hover underline"
-            onClick={() => setSelectedSessions(sortedSessions)}
-          >
-            Select all
-          </button>
-          <button 
-            className="text-sm text-primary hover:text-primary-hover underline"
-            onClick={() => setSelectedSessions([])}
-          >
-            Clear selection
-          </button>
-          <button 
-            className="text-sm text-primary hover:text-primary-hover underline"
-            onClick={() => setSelectedSessions(sortedSessions.slice(0, 3))}
-          >
-            Latest 3 sessions
-          </button>
-        </div>
-      </div>
-
-      {/* Metadata */}
-      <div className="text-sm text-text-muted grid sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-surface rounded-lg border border-border">
-        <div>
-          <span className="block text-text font-medium">Subject</span>
-          <span>{subject?.name}</span>
-        </div>
-        <div>
-          <span className="block text-text font-medium">Unit</span>
-          <span>{unit?.name}</span>
-        </div>
-        <div>
-          <span className="block text-text font-medium">Papers Found</span>
-          <span>{umsData?.total_papers_found}</span>
-        </div>
-        <div>
-          <span className="block text-text font-medium">Available Sessions</span>
-          <span>{umsData?.sessions.length}</span>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
