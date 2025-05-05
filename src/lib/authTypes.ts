@@ -64,6 +64,7 @@ export interface JWTPayload {
   exp?: number;
   iat?: number;
   sub?: string;
+  jti?: string; // JWT ID for token tracking and revocation
 }
 
 export interface AuthSession {

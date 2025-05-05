@@ -26,11 +26,28 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Time to refresh token before expiry (5 minutes)
-const REFRESH_MARGIN = 5 * 60 * 1000;
+// Session configuration
+const SECURITY_CONFIG = {
+  session: {
+    // Refresh 5 minutes before expiry
+    renewalThreshold: 5 * 60 * 1000,
+    // Check every minute
+    checkInterval: 60 * 1000,
+    // Max retries for refresh
+    maxRetries: 3,
+    // Backoff settings
+    backoff: {
+      initialDelay: 1000,
+      maxDelay: 30000,
+      factor: 2
+    }
+  }
+};
 
-// Refresh interval (10 minutes)
-const REFRESH_INTERVAL = 10 * 60 * 1000;
+// Request deduplication
+let refreshPromise: Promise<UserWithoutPassword | null> | null = null;
+let lastRefreshTime = 0;
+let refreshRetries = 0;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserWithoutPassword | null>(null);
@@ -41,67 +58,160 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   // Function to refresh the session
+  const backoff = (attempt: number) => {
+    const { initialDelay, maxDelay, factor } = SECURITY_CONFIG.session.backoff;
+    const delay = Math.min(initialDelay * Math.pow(factor, attempt), maxDelay);
+    return new Promise(resolve => setTimeout(resolve, delay));
+  };
+
   const refreshSession = async () => {
+    const now = Date.now();
+    const sessionId = Math.random().toString(36).slice(2);
+    
+    console.debug(`[Auth ${sessionId}] Refresh attempt:`, {
+      timeSinceLastRefresh: now - lastRefreshTime,
+      hasExistingPromise: !!refreshPromise,
+      retryCount: refreshRetries
+    });
+    
+    // Deduplicate requests within 1 second window
+    if (now - lastRefreshTime < 1000 && refreshPromise) {
+      console.debug(`[Auth ${sessionId}] Using existing refresh promise`);
+      return refreshPromise;
+    }
+
+    // Reset retries if it's been more than 1 minute since last attempt
+    if (now - lastRefreshTime > 60000) {
+      refreshRetries = 0;
+    }
+
     try {
-      const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-        credentials: "include",
-      });
+      // Create new refresh promise
+      refreshPromise = (async () => {
+        for (let attempt = 0; attempt <= refreshRetries; attempt++) {
+          try {
+            console.debug(`[Auth ${sessionId}] Making refresh request:`, {
+              attempt: attempt + 1,
+              backoffDelay: attempt > 0 ? SECURITY_CONFIG.session.backoff.initialDelay * Math.pow(SECURITY_CONFIG.session.backoff.factor, attempt) : 0
+            });
+            
+            const response = await fetch("/api/auth/refresh", {
+              method: "POST",
+              credentials: "include",
+            });
 
-      if (!response.ok) {
-        const data = await response.json();
-        if (response.status === 401) {
-          setUser(null);
-          return null;
+            if (!response.ok) {
+              const data = await response.json();
+              if (response.status === 401) {
+                setUser(null);
+                return null;
+              }
+              throw new Error(data.error || "Failed to refresh session");
+            }
+
+            const data = await response.json();
+            console.debug(`[Auth ${sessionId}] Refresh response:`, {
+              status: response.status,
+              hasUser: !!data.user
+            });
+            
+            if (data.user) {
+              setUser(data.user);
+              setLastRefresh(new Date());
+              refreshRetries = 0; // Reset retries on success
+              return data.user;
+            }
+
+            setUser(null);
+            return null;
+
+          } catch (error) {
+            if (attempt < SECURITY_CONFIG.session.maxRetries) {
+              console.warn(`Refresh attempt ${attempt + 1} failed, retrying...`);
+              await backoff(attempt);
+              continue;
+            }
+            throw error;
+          }
         }
-        throw new Error(data.error || "Failed to refresh session");
-      }
+        throw new Error("Max refresh retries exceeded");
+      })();
 
-      const data = await response.json();
-      if (data.user) {
-        setUser(data.user);
-        setLastRefresh(new Date());
-        return data.user;
-      }
+      lastRefreshTime = now;
+      return await refreshPromise;
 
-      setUser(null);
-      return null;
     } catch (error) {
       console.error("Session refresh error:", error);
+      refreshRetries++;
       setUser(null);
       return null;
+    } finally {
+      refreshPromise = null;
     }
   };
 
-  // Enhanced session management - only initialize once
+  // Enhanced session management with token expiry prediction
   useEffect(() => {
     let refreshTimer: NodeJS.Timeout;
+    let mounted = true;
     
     async function initializeSession() {
+      if (!mounted) return;
+      
       setIsLoading(true);
       try {
         const userData = await refreshSession();
-        if (userData) {
-          // Set up periodic refresh only if we have a user
-          refreshTimer = setInterval(refreshSession, REFRESH_INTERVAL);
+        if (userData && mounted) {
+          // Start periodic checks for token expiry
+          refreshTimer = setInterval(() => {
+            const tokenData = document.cookie
+              .split('; ')
+              .find(row => row.startsWith('auth-token='));
+              
+            if (tokenData) {
+              const token = tokenData.split('=')[1];
+              try {
+                // Extract expiry from token without full verification
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const expiryTime = payload.exp * 1000;
+                const timeUntilExpiry = expiryTime - Date.now();
+                const shouldRefresh = timeUntilExpiry <= SECURITY_CONFIG.session.renewalThreshold;
+                
+                console.debug('Token status check:', {
+                  timeUntilExpiry: Math.floor(timeUntilExpiry / 1000),
+                  shouldRefresh,
+                  tokenId: payload.jti
+                });
+                
+                // Refresh if within renewal threshold
+                if (shouldRefresh) {
+                  refreshSession();
+                }
+              } catch (e) {
+                // Token is invalid/malformed - trigger refresh
+                refreshSession();
+              }
+            }
+          }, SECURITY_CONFIG.session.checkInterval);
         }
       } catch (error) {
         console.error("Session initialization error:", error);
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    // Initialize session once on mount
     initializeSession();
 
-    // Cleanup timer on unmount
     return () => {
+      mounted = false;
       if (refreshTimer) {
         clearInterval(refreshTimer);
       }
     };
-  }, []); // Only run on mount
+  }, []);
 
   const handleAuthResponse = async (response: Response) => {
     if (!response.ok) {
