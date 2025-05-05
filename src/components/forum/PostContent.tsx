@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
 import UserActionMenu from './UserActionMenu';
 import EditPostDialog from './EditPostDialog';
 import { formatDate, canPerformAction } from '@/lib/forumUtils';
+import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
+import { performance as perfLogger } from '@/lib/errorUtils';
 
 interface PostContentProps {
   post: {
@@ -40,6 +42,7 @@ export default function PostContent({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [error, setError] = useState('');
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const contentLength = post.content.length;
   const isLongContent = contentLength > 500;
@@ -47,16 +50,27 @@ export default function PostContent({
     ? post.content.slice(0, 500) + '...' 
     : post.content;
 
-  const handleEdit = async (title: string, content: string) => {
+  const handleEdit = useCallback(async (title: string, content: string) => {
+    const startTime = window.performance.now();
+    setIsRetrying(true);
     try {
       if (!onEdit) return;
       await onEdit(title, content);
+      perfLogger.trackPostLoad(window.performance.now() - startTime, true);
+      setError('');
     } catch (err) {
+      perfLogger.trackPostLoad(window.performance.now() - startTime, false);
+      perfLogger.trackClientError(
+        err instanceof Error ? err : new Error('Failed to edit post'),
+        { component: 'PostContent', action: 'edit', postId: post._id }
+      );
       setError(err instanceof Error ? err.message : 'Failed to edit post');
+    } finally {
+      setIsRetrying(false);
     }
-  };
+  }, [onEdit, post._id]);
 
-  return (
+  const PostContent = (
     <article
       className="bg-surface rounded-lg shadow-sm border border-divider overflow-hidden"
       aria-labelledby={`post-title-${post._id}`}
@@ -190,5 +204,28 @@ export default function PostContent({
         type="post"
       />
     </article>
+  );
+
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="p-4 rounded-lg bg-error/10 border border-error/20">
+          <h2 className="text-lg font-semibold text-error mb-2">
+            Failed to load post
+          </h2>
+          <p className="text-sm text-error/80">
+            There was an error displaying this post. Our team has been notified.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+          >
+            Reload page
+          </button>
+        </div>
+      }
+    >
+      {PostContent}
+    </ErrorBoundary>
   );
 }

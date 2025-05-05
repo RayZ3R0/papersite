@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/AuthContext";
 import ProtectedContent from "@/components/auth/ProtectedContent";
-import { LoadingSpinner } from "@/components/forum/LoadingSpinner";
 import Link from "next/link";
 import ForumHeader from "@/components/forum/ForumHeader";
 import { useReturnTo } from "@/hooks/useReturnTo";
+import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
+import { ForumLoadingState } from "@/components/forum/ForumLoadingState";
+import { performance as perfLogger } from "@/lib/errorUtils";
 
 interface Post {
   _id: string;
@@ -26,15 +28,27 @@ export default function ForumPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const startTime = window.performance.now();
+    let isMounted = true;
+
     async function fetchPosts() {
       try {
         setIsLoading(true);
         setError(null);
         const response = await fetch("/api/forum/posts");
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || "Failed to fetch posts");
         }
+
         const data = await response.json();
+        
+        // Track successful load time
+        perfLogger.trackPostLoad(window.performance.now() - startTime, true);
+        
+        if (!isMounted) return;
+
         // Handle nested data structure and ensure proper date parsing
         const posts = data.data?.posts || [];
         setPosts(posts.map((post: any) => ({
@@ -48,18 +62,32 @@ export default function ForumPage() {
             : post.createdAt || new Date().toISOString()
         })));
       } catch (error) {
-        console.error("Failed to fetch posts:", error);
-        setError(
-          error instanceof Error ? error.message : "Failed to load posts"
+        if (!isMounted) return;
+        
+        // Track failed load time
+        perfLogger.trackPostLoad(window.performance.now() - startTime, false);
+        
+        // Track client error with device info
+        perfLogger.trackClientError(
+          error instanceof Error ? error : new Error("Failed to load posts"),
+          { component: "ForumPage", action: "fetchPosts" }
         );
+
+        setError(error instanceof Error ? error.message : "Failed to load posts");
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
     if (user) {
       fetchPosts();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   return (
@@ -108,53 +136,66 @@ export default function ForumPage() {
             </div>
 
             <div className="space-y-4">
-              {isLoading ? (
-                <div className="text-center py-8">
-                  <LoadingSpinner />
-                  <p className="text-text-muted mt-2">Loading discussions...</p>
-                </div>
-              ) : error ? (
-                <div className="p-4 bg-error/10 border border-error/20 rounded text-error text-center">
-                  {error}
-                </div>
-              ) : posts.length === 0 ? (
-                <div className="text-center py-8 text-text-muted">
-                  No posts yet. Be the first to start a discussion!
-                </div>
-              ) : (
-                posts.map((post) => (
-                  <Link
-                    key={post._id}
-                    href={`/forum/posts/${post._id}`}
-                    className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
-                  >
-                    <h2 className="text-lg font-semibold mb-2 text-text">
-                      {post.title}
-                    </h2>
-                    <div className="flex items-center text-sm text-text-muted">
-                      <span>By {post.username}</span>
-                      <span className="mx-2">•</span>
-                      <span>
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </span>
-                      <span className="mx-2">•</span>
-                      <span>{post.replyCount} replies</span>
-                    </div>
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="mt-2 space-x-2">
-                        {post.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-block px-2 py-1 text-xs bg-surface-alt rounded text-text-muted"
-                          >
-                            {tag}
+              <ErrorBoundary>
+                <ForumLoadingState 
+                  isLoading={isLoading}
+                  error={error}
+                  retry={() => {
+                    if (user) {
+                      setIsLoading(true);
+                      setError(null);
+                      const startTime = window.performance.now();
+                      fetch("/api/forum/posts")
+                        .then(res => res.json())
+                        .then(data => {
+                          perfLogger.trackPostLoad(window.performance.now() - startTime, true);
+                          setPosts(data.data?.posts || []);
+                        })
+                        .catch(err => {
+                          perfLogger.trackPostLoad(window.performance.now() - startTime, false);
+                          setError(err.message);
+                        })
+                        .finally(() => setIsLoading(false));
+                    }
+                  }}
+                />
+                {!isLoading && !error && posts.length > 0 && (
+                  <div className="space-y-4">
+                    {posts.map((post) => (
+                      <Link
+                        key={post._id}
+                        href={`/forum/posts/${post._id}`}
+                        className="block p-4 bg-surface rounded-lg hover:shadow transition-all hover:bg-surface-alt"
+                      >
+                        <h2 className="text-lg font-semibold mb-2 text-text">
+                          {post.title}
+                        </h2>
+                        <div className="flex items-center text-sm text-text-muted">
+                          <span>By {post.username}</span>
+                          <span className="mx-2">•</span>
+                          <span>
+                            {new Date(post.createdAt).toLocaleDateString()}
                           </span>
-                        ))}
-                      </div>
-                    )}
-                  </Link>
-                ))
-              )}
+                          <span className="mx-2">•</span>
+                          <span>{post.replyCount} replies</span>
+                        </div>
+                        {post.tags && post.tags.length > 0 && (
+                          <div className="mt-2 space-x-2">
+                            {post.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="inline-block px-2 py-1 text-xs bg-surface-alt rounded text-text-muted"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </ErrorBoundary>
             </div>
           </div>
         </ProtectedContent>
