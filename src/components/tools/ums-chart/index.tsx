@@ -336,7 +336,7 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
       });
     })();
 
-    // Common chart options
+    
     const commonOptions: EChartsOption = {
       animation: true,
       animationDuration: 500,
@@ -377,7 +377,8 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
         formatter: formatSessionName,
         itemGap: 20,
         textStyle: {
-          fontSize: 12
+          fontSize: 12,
+          color: '#64748B' // This slate-500 color works in both light and dark modes
         }
       }
     };
