@@ -1,13 +1,44 @@
 {
-  "builds": [
+  "version": 2,
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "src/app/forum/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "crons": [
     {
-      "src": "package.json",
-      "use": "@vercel/next"
+      "path": "/api/health",
+      "schedule": "*/5 * * * *"
     }
   ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=60, stale-while-revalidate=300"
+        }
+      ]
+    },
+    {
+      "source": "/forum/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=30, stale-while-revalidate=60"
+        }
+      ]
+    }
+  ],
+  "regions": ["iad1"],
   "env": {
-    "MONGODB_CONNECTION_TIMEOUT": "30000",
-    "MONGODB_SOCKET_TIMEOUT": "45000",
-    "MONGODB_SERVER_SELECTION_TIMEOUT": "30000"
+    "NODE_ENV": "production",
+    "MONGODB_CONNECTION_LIMIT": "10"
   }
 }

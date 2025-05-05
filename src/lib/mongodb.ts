@@ -6,16 +6,21 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Connection options based on runtime
 // Production (Vercel) optimized options
 const PROD_OPTIONS = {
-  maxPoolSize: 1,
-  minPoolSize: 0,
-  serverSelectionTimeoutMS: 15000,
-  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  minPoolSize: 5,
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 30000,
   family: 4,
-  heartbeatFrequencyMS: 5000,
+  heartbeatFrequencyMS: 10000,
   autoIndex: false,
   retryWrites: true,
-  connectTimeoutMS: 15000,
-  waitQueueTimeoutMS: 15000
+  connectTimeoutMS: 10000,
+  waitQueueTimeoutMS: 10000,
+  maxIdleTimeMS: 60000,
+  compressors: ['zlib'],
+  zlibCompressionLevel: 6,
+  keepAlive: true,
+  keepAliveInitialDelay: 300000
 };
 
 // Development options with more relaxed settings
@@ -65,16 +70,49 @@ if (!global.mongoose) {
   global.mongoose = cached;
 }
 
-// Validate connection health
+// Validate connection health with enhanced checks
 async function validateConnection(): Promise<boolean> {
   if (!cached.conn?.connection?.db) return false;
   
   try {
-    // Attempt a lightweight operation to verify connection
+    // Multi-step validation
+    const startTime = Date.now();
+    
+    // 1. Basic ping check
     await cached.conn.connection.db.admin().ping();
+    
+    // 2. Check connection latency
+    const latency = Date.now() - startTime;
+    if (latency > 1000) {
+      console.warn(`High MongoDB latency: ${latency}ms`);
+    }
+    
+    // 3. Check if connection is authorized
+    const isAuthorized = await cached.conn.connection.db.admin().command({ connectionStatus: 1 });
+    if (!isAuthorized.ok) {
+      throw new Error('Connection not authorized');
+    }
+
+    // 4. Check server stats for health indicators
+    const stats = await cached.conn.connection.db.admin().serverStatus();
+    if (stats.connections.current >= stats.connections.available) {
+      console.warn('Connection pool near capacity');
+    }
+
     return true;
   } catch (error) {
-    console.error('Connection validation failed:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Connection validation failed:', errorMessage);
+    if (process.env.NODE_ENV === 'production') {
+      // Send error to monitoring service in production
+      await fetch('/api/metrics/report', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: 'db_validation_error',
+          error: errorMessage
+        }),
+      }).catch(console.error);
+    }
     return false;
   }
 }
@@ -87,8 +125,8 @@ async function validateConnection(): Promise<boolean> {
  */
 async function dbConnect(options: ConnectionOptions = {}): Promise<typeof mongoose> {
   const {
-    maxRetries = process.env.NODE_ENV === 'production' ? 5 : 3,
-    retryDelay = process.env.NODE_ENV === 'production' ? 2000 : 1000,
+    maxRetries = process.env.NODE_ENV === 'production' ? 10 : 3,
+    retryDelay = process.env.NODE_ENV === 'production' ? 1000 : 1000,
     validateConnection: shouldValidate = process.env.NODE_ENV !== 'production',
     ...mongooseOptions
   } = options;
