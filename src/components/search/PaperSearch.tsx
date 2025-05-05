@@ -82,7 +82,7 @@ const getRawSession = (formattedSession: string): {session: string, year: string
   return { session, year };
 };
 
-const FILTERS_VISIBLE_KEY = "papersite:filters-visible";
+const FILTERS_VISIBLE_KEY = "papernexus:filters-visible";
 
 // Safe URL generator to prevent null/undefined href values
 const safeGetPaperUrl = (paper: Paper, subject: string): string => {

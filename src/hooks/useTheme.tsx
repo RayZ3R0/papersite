@@ -74,7 +74,7 @@ interface ThemeContextType {
 }
 
 const DEFAULT_THEME: Theme = "matcha"; // Set default to Matcha
-const DB_NAME = "papersite";
+const DB_NAME = "papernexus";
 const DB_VERSION = 1;
 const THEME_STORE = "preferences";
 const THEME_KEY = "theme";

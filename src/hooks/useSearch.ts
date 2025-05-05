@@ -322,7 +322,7 @@ function expandMathAbbreviations(query: string): string {
   return query;
 }
 
-const RECENT_SEARCHES_KEY = 'papersite:recent-searches';
+const RECENT_SEARCHES_KEY = 'papernexus:recent-searches';
 
 function getStoredSearches(): SearchQuery[] {
   if (typeof window === 'undefined') return [];
