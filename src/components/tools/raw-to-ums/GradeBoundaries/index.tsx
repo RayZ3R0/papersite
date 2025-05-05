@@ -41,66 +41,51 @@ export default function GradeBoundaries({
     // Sort data by RAW marks in descending order
     const sortedData = [...conversionData.data].sort((a, b) => b.RAW - a.RAW);
     
+    // Use a Map to prevent duplicate grades
     const boundaries = new Map<string, GradeBoundary>();
-
-    // Find Full UMS boundary (marks needed for max UMS)
-    const maxUmsEntries = sortedData.filter(entry => entry.UMS === maxUms);
-    const minFullUmsRaw = Math.min(...maxUmsEntries.map(entry => entry.RAW));
-    boundaries.set('Full UMS', {
-      grade: 'Full UMS',
-      raw: maxRaw,
-      ums: maxUms,
-      lowerBound: minFullUmsRaw
+    
+    // Group data by grade
+    const gradeGroups: Record<string, ConversionRecord[]> = {};
+    conversionData.data.forEach(record => {
+      if (!record.GRADE) return;
+      
+      if (!gradeGroups[record.GRADE]) {
+        gradeGroups[record.GRADE] = [];
+      }
+      gradeGroups[record.GRADE].push(record);
     });
 
-    // Check if dataset has A* grade
-    const hasAStarGrade = sortedData.some(entry => entry.GRADE === "*");
-
-    // Find A* boundary if it exists
-    if (hasAStarGrade) {
-      const aStarEntry = sortedData.find(entry => entry.GRADE === "*" && entry.RAW < minFullUmsRaw);
-      if (aStarEntry) {
-        boundaries.set('A*', {
-          grade: 'A*',
-          raw: minFullUmsRaw - 1,
-          ums: aStarEntry.UMS,
-          lowerBound: aStarEntry.RAW
-        });
-      }
+    // Find Full UMS boundary (minimum marks needed for max UMS)
+    const maxUmsEntries = sortedData.filter(entry => entry.UMS === maxUms);
+    if (maxUmsEntries.length > 0) {
+      const minFullUmsRaw = Math.min(...maxUmsEntries.map(entry => entry.RAW));
+      boundaries.set('Full UMS', {
+        grade: 'Full UMS',
+        raw: minFullUmsRaw,
+        ums: maxUms,
+        lowerBound: minFullUmsRaw
+      });
     }
 
-    // Find other grade boundaries
-    const grades = ['A', 'B', 'C', 'D', 'E', 'U'];
-    // Start from maxRaw or A* boundary depending on what we have
-    let lastBoundary = hasAStarGrade ? 
-      sortedData.find(entry => entry.GRADE === "*")?.RAW ?? (minFullUmsRaw - 1) : 
-      minFullUmsRaw - 1;
+    // Process each grade to find the minimum raw mark required
+    Object.entries(gradeGroups).forEach(([grade, records]) => {
+      if (!records.length) return;
 
-    grades.forEach(grade => {
-      // Find first entry with this grade
-      const entry = sortedData.find(e => e.GRADE === grade);
-      if (entry) {
-        // Find the lowest raw mark for this grade
-        const lowestMarkForGrade = Math.min(
-          ...sortedData
-            .filter(e => e.GRADE === grade)
-            .map(e => e.RAW)
-        );
-        
-        boundaries.set(grade, {
-          grade,
-          raw: grade === 'A' && !hasAStarGrade ? lastBoundary : entry.RAW,
-          ums: entry.UMS,
-          lowerBound: lowestMarkForGrade
-        });
-        
-        // Update lastBoundary for next iteration
-        lastBoundary = lowestMarkForGrade - 1;
-      }
+      if(grade === '*') grade = "A*"; 
+      
+      // Find the minimum raw mark for this grade
+      const minRawForGrade = Math.min(...records.map(record => record.RAW));
+      const umsForMinRaw = records.find(record => record.RAW === minRawForGrade)?.UMS || 0;
+      
+      boundaries.set(grade, {
+        grade,
+        raw: minRawForGrade,
+        ums: umsForMinRaw,
+        lowerBound: minRawForGrade
+      });
     });
 
-    // Convert to array and sort:
-    // Full UMS first, then A*, then other grades by descending RAW marks
+    // Convert to array and preserve the sort order from original code
     const sortedBoundaries = Array.from(boundaries.values()).sort((a, b) => {
       if (a.grade === 'Full UMS') return -1;
       if (b.grade === 'Full UMS') return 1;
@@ -117,7 +102,7 @@ export default function GradeBoundaries({
     };
   }, [conversionData]);
 
-  // Helper function to get color styles based on grade
+  // Helper function to get color styles based on grade - UNCHANGED
   const getGradeStyle = (grade: string): GradeStyle => {
     switch (grade) {
       case 'Full UMS':
@@ -186,7 +171,7 @@ export default function GradeBoundaries({
     }
   };
 
-  // Calculate the correct range for each grade
+  // Calculate the correct range for each grade - UNCHANGED
   const getGradeRangeInfo = (boundaries: GradeBoundary[], index: number) => {
     const boundary = boundaries[index];
     let lowerBound = 0;
@@ -205,6 +190,7 @@ export default function GradeBoundaries({
     };
   };
 
+  // Rest of component remains UNCHANGED
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
@@ -282,7 +268,7 @@ export default function GradeBoundaries({
         </table>
       </div>
 
-      {/* Visual Representation */}
+      {/* Visual Representation - UNCHANGED */}
       <div className="bg-surface rounded-lg border border-border p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-text">Grade Distribution</h3>

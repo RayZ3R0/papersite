@@ -19,7 +19,8 @@ interface Unit {
  */
 async function fetchSubjects(): Promise<Subject[]> {
   try {
-    const response = await fetch('https://papervoid-api-rgic.shuttle.app/api/subjects', {
+    const apiRoot = process.env.PAPERVOID_API_URL;
+    const response = await fetch(`${apiRoot}/api/subjects`, {
       // Adding cache control to optimize API calls during builds
       next: { revalidate: 3600 } // Revalidate every hour
     });

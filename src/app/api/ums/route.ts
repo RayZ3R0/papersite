@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Get base API URL from environment variable
-const apiBaseUrl = process.env.PAPERVOID_API_URL ?? "https://papervoid-api-rgic.shuttle.app/api";
+const apiBaseUrl = process.env.PAPERVOID_API_URL || '';
+
+// Add a warning if the environment variable is not set
+if (!apiBaseUrl) {
+  console.warn('PAPERVOID_API_URL environment variable is not set');
+}
 
 // Remove trailing /api if present in env var to avoid double /api
 const normalizedBaseUrl = apiBaseUrl.endsWith('/api')
