@@ -107,10 +107,16 @@ export default function UMSChartPage() {
     const fetchSubjects = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://papervoid-api-rgic.shuttle.app/api/ums/subjects');
+        // Use the proxy API endpoint instead of direct call
+        const response = await fetch('/api/ums?path=/subjects');
         if (!response.ok) throw new Error('Failed to fetch subjects');
-        const data = await response.json();
-        setSubjects(data);
+        
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to fetch subjects');
+        }
+        
+        setSubjects(result.data);
         setError(undefined);
       } catch (err) {
         setError('Failed to load subjects. Please try again.');
@@ -134,12 +140,18 @@ export default function UMSChartPage() {
     setAvailableUnits([]);
     
     try {
+      // Use the proxy API endpoint instead of direct call
       const response = await fetch(
-        `https://papervoid-api-rgic.shuttle.app/api/ums/subjects/${subject.id}/units`
+        `/api/ums?path=/subjects/${subject.id}/units`
       );
       if (!response.ok) throw new Error("Failed to fetch units");
       
-      const units: Unit[] = await response.json();
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch units");
+      }
+      
+      const units: Unit[] = result.data;
       
       // Filter out duplicate units by ID (the API returns duplicates for WMA14)
       const uniqueUnits = units.reduce((acc: Unit[], unit) => {
@@ -171,12 +183,18 @@ export default function UMSChartPage() {
     setPredictions([]);
 
     try {
+      // Use the proxy API endpoint instead of direct call
       const response = await fetch(
-        `https://papervoid-api-rgic.shuttle.app/api/ums/subjects/${selectedSubject.id}/units/${unit.id}`
+        `/api/ums?path=/subjects/${selectedSubject.id}/units/${unit.id}`
       );
       if (!response.ok) throw new Error("Failed to fetch UMS data");
       
-      const data: UMSData = await response.json();
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch UMS data");
+      }
+      
+      const data: UMSData = result.data;
       setUMSData(data);
       setError(undefined);
     } catch (err) {
