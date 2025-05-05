@@ -159,8 +159,15 @@ export default function PostContent({
 
           {isLongContent && (
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-3 text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsExpanded(!isExpanded);
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                setIsExpanded(!isExpanded);
+              }}
+              className="mt-3 text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1 touch-none"
               aria-expanded={isExpanded}
               aria-controls={`content-${post._id}`}
             >

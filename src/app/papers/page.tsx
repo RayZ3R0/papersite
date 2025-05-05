@@ -170,11 +170,6 @@ export default function SubjectsPage() {
                   View Units
                 </Link>
               </div>
-
-              {/* Latest Update */}
-              <div className="mt-4 text-xs text-text-muted">
-                Last updated: {new Date().toLocaleDateString()}
-              </div>
             </div>
           </Link>
         ))}

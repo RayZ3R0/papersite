@@ -33,6 +33,7 @@ export async function getFormattedPost(postId: string) {
     replies: replies.map(reply => ({
       ...reply,
       _id: reply._id.toString(),
+      postId: reply.postId.toString(), // Convert postId to string
       author: reply.author.toString(),
       createdAt: reply.createdAt?.toISOString(),
       editedAt: reply.editedAt?.toISOString(),

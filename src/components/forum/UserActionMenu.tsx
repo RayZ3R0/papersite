@@ -57,35 +57,60 @@ export default function UserActionMenu({
     }
   };
 
-  const handleToggleMenu = () => {
+  const handleToggleMenu = (e: React.MouseEvent | React.TouchEvent) => {
+    // Prevent default behavior to avoid double firing on mobile
+    e.preventDefault();
     if (!buttonRef.current) return;
 
     const rect = buttonRef.current.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceRight = window.innerWidth - rect.right;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
-    setMenuPos({
-      top: spaceBelow < 200 ? rect.top - 200 : rect.bottom,
-      left: spaceRight < 200 ? rect.right - 200 : rect.left
-    });
+    // Adjust positioning for mobile viewports
+    const isMobile = windowWidth <= 768;
+    const menuWidth = isMobile ? windowWidth * 0.8 : 208; // 208px is 52rem
+    const menuHeight = 200; // Approximate menu height
 
+    let top = rect.bottom;
+    let left = rect.left;
+
+    // Ensure menu stays within viewport bounds
+    if (top + menuHeight > windowHeight) {
+      top = Math.max(rect.top - menuHeight, 0);
+    }
+
+    if (left + menuWidth > windowWidth) {
+      left = Math.max(windowWidth - menuWidth - 16, 0); // 16px padding
+    }
+
+    setMenuPos({ top, left });
     setIsOpen(!isOpen);
   };
 
   const menu = isOpen && (
-    <div 
-      ref={menuRef}
-      className="fixed w-52 bg-surface rounded-lg shadow-xl border border-divider overflow-hidden z-[9999] animate-in slide-in-from-top-2 duration-200"
-      style={{
-        top: `${menuPos.top}px`,
-        left: `${menuPos.left}px`,
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)'
-      }}
+    <div
+     ref={menuRef}
+     className="fixed bg-surface rounded-lg shadow-xl border border-divider overflow-hidden z-[9999] animate-in slide-in-from-top-2 duration-200"
+     style={{
+       top: `${menuPos.top}px`,
+       left: `${menuPos.left}px`,
+       width: window.innerWidth <= 768 ? '80vw' : '13rem',
+       maxWidth: '20rem',
+       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
+       transform: 'translateZ(0)' // Force GPU acceleration for smoother animations
+     }}
     >
       <div className="py-1">
         {canEdit && onEdit && (
           <button
-            onClick={() => handleAction(onEdit)}
+            onClick={(e) => {
+              e.preventDefault();
+              handleAction(onEdit);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              handleAction(onEdit);
+            }}
             className="w-full px-4 py-3 text-left text-text hover:bg-surface-alt/50 active:bg-surface-alt transition-colors flex items-center gap-3 group"
           >
             <svg className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,7 +139,14 @@ export default function UserActionMenu({
 
         {canPin && onPin && (
           <button
-            onClick={() => handleAction(onPin)}
+            onClick={(e) => {
+              e.preventDefault();
+              handleAction(onPin);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              handleAction(onPin);
+            }}
             className="w-full px-4 py-3 text-left text-text hover:bg-surface-alt/50 active:bg-surface-alt transition-colors flex items-center gap-3 group"
           >
             <svg className={`w-4 h-4 ${isPinned ? 'text-primary' : ''} group-hover:scale-110 transition-transform`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +158,14 @@ export default function UserActionMenu({
 
         {canLock && onLock && (
           <button
-            onClick={() => handleAction(onLock)}
+            onClick={(e) => {
+              e.preventDefault();
+              handleAction(onLock);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              handleAction(onLock);
+            }}
             className="w-full px-4 py-3 text-left text-text hover:bg-surface-alt/50 active:bg-surface-alt transition-colors flex items-center gap-3 group"
           >
             {isLocked ? (
@@ -161,6 +200,7 @@ export default function UserActionMenu({
       <button
         ref={buttonRef}
         onClick={handleToggleMenu}
+        onTouchEnd={handleToggleMenu}
         className={`p-2 rounded-full transition-all duration-200 transform ${
           isOpen 
             ? 'bg-surface-alt text-text scale-105' 
