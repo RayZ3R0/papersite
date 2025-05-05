@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { ConversionData, ConversionRecord } from "@/types/conversion";
+import GradeBoundaryChart from "./chart";
 
 interface GradeBoundariesProps {
   conversionData: ConversionData | null;
@@ -102,7 +103,7 @@ export default function GradeBoundaries({
     };
   }, [conversionData]);
 
-  // Helper function to get color styles based on grade - UNCHANGED
+  // Helper function to get color styles based on grade
   const getGradeStyle = (grade: string): GradeStyle => {
     switch (grade) {
       case 'Full UMS':
@@ -171,26 +172,6 @@ export default function GradeBoundaries({
     }
   };
 
-  // Calculate the correct range for each grade - UNCHANGED
-  const getGradeRangeInfo = (boundaries: GradeBoundary[], index: number) => {
-    const boundary = boundaries[index];
-    let lowerBound = 0;
-    
-    // Find the next lower boundary
-    if (index < boundaries.length - 1) {
-      lowerBound = boundaries[index + 1].raw + 1;
-    } else if (boundary.grade !== 'U') {
-      // For the lowest grade that's not U, set the lower bound to 1
-      lowerBound = 1;
-    }
-    
-    return {
-      upperBound: boundary.raw,
-      lowerBound: lowerBound
-    };
-  };
-
-  // Rest of component remains UNCHANGED
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
@@ -237,7 +218,7 @@ export default function GradeBoundaries({
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {gradeBoundaries.map((boundary, index) => {
+            {gradeBoundaries.map((boundary) => {
               const gradeStyle = getGradeStyle(boundary.grade);
               return (
                 <tr
@@ -267,87 +248,7 @@ export default function GradeBoundaries({
           </tbody>
         </table>
       </div>
-
-      {/* Visual Representation - UNCHANGED */}
-      <div className="bg-surface rounded-lg border border-border p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-text">Grade Distribution</h3>
-        </div>
-        
-        {/* Stacked Progress Bar */}
-        <div className="mb-6">
-          <div className="h-8 rounded-lg overflow-hidden flex">
-            {gradeBoundaries.map((boundary, index) => {
-              // Calculate the correct range and percentage
-              const { lowerBound, upperBound } = getGradeRangeInfo(gradeBoundaries, index);
-              const range = upperBound - lowerBound + 1;
-              const percentage = (range / maxRaw) * 100;
-              const gradeStyle = getGradeStyle(boundary.grade);
-              
-              return (
-                <div
-                  key={boundary.grade}
-                  className="relative h-full group cursor-pointer transition-all"
-                  style={{ 
-                    width: `${percentage}%`, 
-                    backgroundColor: gradeStyle.bgColor 
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = gradeStyle.hoverBgColor;
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = gradeStyle.bgColor;
-                  }}
-                >
-                  {/* Tooltip */}
-                  <div className="absolute invisible group-hover:visible bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-popover text-popover-foreground rounded shadow-lg whitespace-nowrap text-sm z-10">
-                    <div className="font-medium">
-                      {gradeStyle.label}
-                    </div>
-                    <div className="text-xs opacity-80">
-                      {lowerBound} - {upperBound} marks ({percentage.toFixed(1)}%)
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Grade Legend */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {gradeBoundaries.map((boundary, index) => {
-            const { lowerBound, upperBound } = getGradeRangeInfo(gradeBoundaries, index);
-            const gradeStyle = getGradeStyle(boundary.grade);
-
-            return (
-              <div key={boundary.grade} className="flex items-center gap-2">
-                <div 
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: gradeStyle.bgColor }}
-                />
-                <div>
-                  <div className="text-sm font-medium" style={{ color: gradeStyle.textColor }}>
-                    {gradeStyle.label}
-                  </div>
-                  <div className="text-xs text-text-muted">
-                    {lowerBound} - {upperBound} marks
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Metadata */}
-      <div className="text-sm text-text-muted">
-        <div>Maximum Raw Mark: {maxRaw}</div>
-        <div>Maximum UMS: {maxUms}</div>
-        <div>Session: {conversionData.metadata.session}</div>
-        <div>Subject: {conversionData.metadata.subject}</div>
-        <div>Unit: {conversionData.metadata.unit.split('\n')[0]}</div>
-      </div>
+      <GradeBoundaryChart conversionData={conversionData} loading={loading} />
     </div>
   );
 }
