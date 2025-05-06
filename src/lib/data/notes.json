@@ -42,24 +42,34 @@
             "id": "p3-full",
             "title": "Complete P3 Notes",
             "type": "pdf",
-            "downloadUrl": "https://papervoid.netlify.app/notes/mathematics/p3/P3 Full Notes.pdf",
+            "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/mathematics/p3/P3 Full Notes.pdf",
             "previewImage": "/previews/p3.png",
-            "tags": ["mathematics", "calculus", "p3", "pure 3", "graphs", "functions", "trigonometry"]
-          },
-          "topics": [{
-            "id": "p3-notes",
-            "name": "Notes",
-            "resources": [
-              {
-                "id": "p3-notes",
-                "title": "More P3 Notes",
-                "type": "pdf",
-                "downloadUrl": "https://drive.google.com/file/d/1q4vzNEoKu4mZQucQnD8jflpfS3Xd5Y70/view",
-                "previewImage": "/previews/p3notes.png",
-                "tags": ["mathematics", "calculus", "p3", "pure 3"]
-              }
+            "tags": [
+              "mathematics",
+              "calculus",
+              "p3",
+              "pure 3",
+              "graphs",
+              "functions",
+              "trigonometry"
             ]
-          }]
+          },
+          "topics": [
+            {
+              "id": "p3-notes",
+              "name": "Notes",
+              "resources": [
+                {
+                  "id": "p3-notes",
+                  "title": "More P3 Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://drive.google.com/file/d/1q4vzNEoKu4mZQucQnD8jflpfS3Xd5Y70/view",
+                  "previewImage": "/previews/p3notes.png",
+                  "tags": ["mathematics", "calculus", "p3", "pure 3"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "p4",
@@ -142,7 +152,12 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/fDxbKQurgx_Statistics-1-Notes",
             "previewImage": "/previews/s1.png",
-            "tags": ["mathematics", "statistics", "s1", "statistical distributions"]
+            "tags": [
+              "mathematics",
+              "statistics",
+              "s1",
+              "statistical distributions"
+            ]
           },
           "topics": []
         },
@@ -156,7 +171,12 @@
             "type": "pdf",
             "downloadUrl": "https://drive.google.com/file/d/1r2MvgJvX0P7TRSEjZn9X-wRqeYmUn6FG/view",
             "previewImage": "/previews/s2.png",
-            "tags": ["mathematics", "statistics", "s2", "statistical distributions"]
+            "tags": [
+              "mathematics",
+              "statistics",
+              "s2",
+              "statistical distributions"
+            ]
           },
           "topics": []
         },
@@ -218,7 +238,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/stRNbPuJZu_Unit_2_Intermolecular_Forces",
                   "previewImage": "/previews/int.png",
-                  "tags": ["chemistry", "kinetics", "unit 2", "further kinetics"]
+                  "tags": [
+                    "chemistry",
+                    "kinetics",
+                    "unit 2",
+                    "further kinetics"
+                  ]
                 }
               ]
             },
@@ -360,9 +385,14 @@
                   "id": "further-kinetics",
                   "title": "Further Kinetics",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/Unit 4 - Further Kinetics.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Further Kinetics.pdf",
                   "previewImage": "/previews/kinetics.png",
-                  "tags": ["chemistry", "kinetics", "unit 4", "further kinetics"]
+                  "tags": [
+                    "chemistry",
+                    "kinetics",
+                    "unit 4",
+                    "further kinetics"
+                  ]
                 }
               ]
             },
@@ -374,7 +404,7 @@
                   "id": "organic-chemistry",
                   "title": "Organic Chemistry",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/Unit 4 - Organic Chemistry.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Organic Chemistry.pdf",
                   "previewImage": "/previews/organic.png",
                   "tags": ["chemistry", "organic", "unit 4"]
                 }
@@ -388,7 +418,7 @@
                   "id": "acid-base-equilibria",
                   "title": "Acid-Base Equilibria",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/Unit 4 - Acid Base Equilibrium.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Acid Base Equilibrium.pdf",
                   "previewImage": "/previews/acid-base.png",
                   "tags": ["chemistry", "acid-base", "unit 4"]
                 }
@@ -402,7 +432,7 @@
                   "id": "chemical-equilibria",
                   "title": "Chemical Equilibria",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/Unit 4 - Chemical Equilibrium.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Chemical Equilibrium.pdf",
                   "previewImage": "/previews/equilibria.png",
                   "tags": ["chemistry", "equilibria", "unit 4"]
                 }
@@ -416,7 +446,7 @@
                   "id": "nmr",
                   "title": "Nuclear Magnetic Resonance (NMR)",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/NMR Spectroscopy.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/NMR Spectroscopy.pdf",
                   "previewImage": "/previews/nmr.png",
                   "tags": ["chemistry", "nmr", "unit 4"]
                 }
@@ -430,7 +460,7 @@
                   "id": "energetics-and-entropy",
                   "title": "Energetics and Entropy",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit4/Energetics and Entropy.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Energetics and Entropy.pdf",
                   "previewImage": "/previews/entropy.png",
                   "tags": ["chemistry", "energetics", "entropy", "unit 4"]
                 }
@@ -452,7 +482,7 @@
                   "id": "transition-metals-notes",
                   "title": "Transition Metals",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit5/Topic%2017%20Transition%20Metals.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Topic%2017%20Transition%20Metals.pdf",
                   "previewImage": "/previews/transition-metals.png",
                   "tags": ["chemistry", "transition metals", "unit 5"]
                 },
@@ -460,7 +490,7 @@
                   "id": "transition-metals-mindmap",
                   "title": "Transition Metals Ligand Colors",
                   "type": "pdf",
-                  "downloadUrl": "https://cyberdrop.me/f/0v2g1a3x4G5d7",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/ligands.pdf",
                   "previewImage": "/previews/colors.png",
                   "tags": ["chemistry", "transition metals", "unit 5"]
                 }
@@ -474,7 +504,7 @@
                   "id": "fuel-cells",
                   "title": "Fuel Cells",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit5/Fuel_Cells.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Fuel_Cells.pdf",
                   "previewImage": "/previews/fuel-cells.png",
                   "tags": ["chemistry", "fuel cells", "unit 5"]
                 }
@@ -488,7 +518,7 @@
                   "id": "redox-equilibria",
                   "title": "Redox Equlibria",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit5/Redox Equilibria.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Redox Equilibria.pdf",
                   "previewImage": "/previews/redox-reactions.png",
                   "tags": ["chemistry", "redox equilibria", "unit 5"]
                 }
@@ -502,7 +532,7 @@
                   "id": "organic-synthesis",
                   "title": "Organic Synthesis",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit5/Organic Synthesis.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Organic Synthesis.pdf",
                   "previewImage": "/previews/organic-synthesis.png",
                   "tags": ["chemistry", "electrolysis", "unit 5"]
                 },
@@ -532,7 +562,7 @@
                   "id": "organic-chemistry-u5",
                   "title": "Organic Chemistry",
                   "type": "pdf",
-                  "downloadUrl": "https://papervoid.netlify.app/notes/chemistry/unit5/Unit 5 - Organic Chemistry.pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Unit 5 - Organic Chemistry.pdf",
                   "previewImage": "/previews/organic-chemistry.png",
                   "tags": ["chemistry", "organic chemistry", "unit 5"]
                 }
@@ -552,20 +582,22 @@
             "previewImage": "/previews/chemu6.png",
             "tags": ["chemistry", "unit 6", "complete notes"]
           },
-          "topics": [{
-            "id": "u6-core-practical",
-            "name": "Core Practical",
-            "resources": [
-              {
-                "id": "u6-core-practical",
-                "title": "Chemistry Unit 6 Core Practicals",
-                "type": "pdf",
-                "downloadUrl": "https://pdfhost.io/v/SYfdgg2YEq_practical-guide-international-edexcel",
-                "previewImage": "/previews/chemu6core.png",
-                "tags": ["chemistry", "unit 6", "core practical"]
-              }
-            ]
-          }]
+          "topics": [
+            {
+              "id": "u6-core-practical",
+              "name": "Core Practical",
+              "resources": [
+                {
+                  "id": "u6-core-practical",
+                  "title": "Chemistry Unit 6 Core Practicals",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/SYfdgg2YEq_practical-guide-international-edexcel",
+                  "previewImage": "/previews/chemu6core.png",
+                  "tags": ["chemistry", "unit 6", "core practical"]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -853,21 +885,21 @@
           "name": "Unit 6",
           "number": 1,
           "topics": [
-          {
-            "id": "u6-uncertainty",
-            "name": "Uncertainty",
-            "resources": [
-              {
-                "id": "u6-uncertainty",
-                "title": "All About Uncertainty",
-                "type": "pdf",
-                "downloadUrl": "https://pdfhost.io/v/bANpNdxbNj_All_about_UNCERTAINTY-Unit-6",
-                "previewImage": "/previews/phyu6uncert.png",
-                "tags": ["physics", "unit 6", "uncertainty"]
-              }
-            ]
-          }
-        ]
+            {
+              "id": "u6-uncertainty",
+              "name": "Uncertainty",
+              "resources": [
+                {
+                  "id": "u6-uncertainty",
+                  "title": "All About Uncertainty",
+                  "type": "pdf",
+                  "downloadUrl": "https://pdfhost.io/v/bANpNdxbNj_All_about_UNCERTAINTY-Unit-6",
+                  "previewImage": "/previews/phyu6uncert.png",
+                  "tags": ["physics", "unit 6", "uncertainty"]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
