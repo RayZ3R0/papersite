@@ -17,6 +17,73 @@ interface Tab {
   label: string;
 }
 
+// Notification component
+interface NotificationProps {
+  message: string;
+  isVisible: boolean;
+  onClose: () => void;
+}
+
+const Notification = ({ message, isVisible, onClose }: NotificationProps) => {
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+
+  return (
+    <div
+      className={`
+        fixed bottom-4 right-4 z-50
+        transform transition-all duration-300 ease-in-out
+        ${isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0 pointer-events-none"}
+      `}
+    >
+      <div className="bg-surface border border-border shadow-lg rounded-lg px-4 py-3 flex items-center gap-3">
+        <div className="flex-shrink-0 text-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </div>
+        <p className="text-sm font-medium text-text">{message}</p>
+        <button
+          onClick={onClose}
+          className="flex-shrink-0 ml-2 text-text-muted hover:text-text transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const tabs: Tab[] = [
   { id: "quick", label: "Quick Convert" },
   { id: "table", label: "Conversion Table" },
@@ -26,7 +93,7 @@ const tabs: Tab[] = [
 export default function RawToUmsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   // Get initial values from URL query parameters
   const initialTab = (searchParams.get("tab") as TabId) || "quick";
   const initialSession = searchParams.get("session");
@@ -34,14 +101,42 @@ export default function RawToUmsPage() {
   const initialUnit = searchParams.get("unit");
 
   const [selectedTab, setSelectedTab] = useState<TabId>(initialTab);
-  const [selectedSession, setSelectedSession] = useState<string | null>(initialSession);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(initialSubject);
+  const [selectedSession, setSelectedSession] = useState<string | null>(
+    initialSession,
+  );
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(
+    initialSubject,
+  );
   const [selectedUnit, setSelectedUnit] = useState<string | null>(initialUnit);
   const [loading, setLoading] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [conversionData, setConversionData] = useState<ConversionData | null>(null);
+  const [conversionData, setConversionData] = useState<ConversionData | null>(
+    null,
+  );
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
+
+  // Notification state
+  const [notification, setNotification] = useState({
+    message: "",
+    isVisible: false,
+  });
+
+  // Show notification
+  const showNotification = (message: string) => {
+    setNotification({
+      message,
+      isVisible: true,
+    });
+  };
+
+  // Hide notification
+  const hideNotification = () => {
+    setNotification((prev) => ({
+      ...prev,
+      isVisible: false,
+    }));
+  };
 
   // Update URL parameters when selections change
   const updateUrlParams = (params: {
@@ -51,11 +146,11 @@ export default function RawToUmsPage() {
     unit?: string | null;
   }) => {
     const newParams = new URLSearchParams(searchParams);
-    
+
     if (params.tab) {
       newParams.set("tab", params.tab);
     }
-    
+
     if (params.session !== undefined) {
       if (params.session) {
         newParams.set("session", params.session);
@@ -63,7 +158,7 @@ export default function RawToUmsPage() {
         newParams.delete("session");
       }
     }
-    
+
     if (params.subject !== undefined) {
       if (params.subject) {
         newParams.set("subject", params.subject);
@@ -71,7 +166,7 @@ export default function RawToUmsPage() {
         newParams.delete("subject");
       }
     }
-    
+
     if (params.unit !== undefined) {
       if (params.unit) {
         newParams.set("unit", params.unit);
@@ -79,7 +174,7 @@ export default function RawToUmsPage() {
         newParams.delete("unit");
       }
     }
-    
+
     // Update URL without reloading the page
     router.push(`?${newParams.toString()}`, { scroll: false });
   };
@@ -120,7 +215,7 @@ export default function RawToUmsPage() {
         const data = await conversionApi.getConversionData(
           selectedSubject,
           apiPath,
-          selectedSession
+          selectedSession,
         );
         setConversionData(data);
       } catch (err) {
@@ -135,26 +230,34 @@ export default function RawToUmsPage() {
   // Load data on initial mount if URL params are present
   useEffect(() => {
     const loadInitialData = async () => {
-      if (initialSession && initialSubject && initialUnit && !initialLoadComplete) {
+      if (
+        initialSession &&
+        initialSubject &&
+        initialUnit &&
+        !initialLoadComplete
+      ) {
         setLoading(true);
         setError(null);
         try {
           const data = await conversionApi.getConversionData(
             initialSubject,
             initialUnit,
-            initialSession
+            initialSession,
           );
           setConversionData(data);
           setInitialLoadComplete(true);
         } catch (err) {
           setError("Failed to load conversion data. Please try again.");
-          console.error("Error loading conversion data from URL parameters:", err);
+          console.error(
+            "Error loading conversion data from URL parameters:",
+            err,
+          );
         } finally {
           setLoading(false);
         }
       }
     };
-    
+
     loadInitialData();
   }, [initialSession, initialSubject, initialUnit, initialLoadComplete]);
 
@@ -261,12 +364,22 @@ export default function RawToUmsPage() {
                 onClick={() => {
                   const shareUrl = window.location.href;
                   navigator.clipboard.writeText(shareUrl);
-                  alert("Link copied to clipboard");
+                  showNotification("Link copied to clipboard");
                 }}
                 className="px-3 py-1 text-sm bg-surface border border-border rounded-md
                   text-text-muted hover:text-text flex items-center gap-2"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
@@ -298,6 +411,13 @@ export default function RawToUmsPage() {
           </div>
         </>
       )}
+
+      {/* Notification Component */}
+      <Notification
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+      />
     </div>
   );
 }
