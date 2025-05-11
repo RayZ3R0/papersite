@@ -1,3 +1,4 @@
+// Fix for src/app/layout.tsx
 import "@/app/globals.css";
 import MainNav from "@/components/layout/MainNav";
 import MobileNav from "@/components/layout/MobileNav";
@@ -7,10 +8,29 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { SearchParamsProvider } from "@/components/providers/SearchParamsProvider";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import NyanCatEasterEgg from "@/components/easter-eggs/NyanCat";
-import { Analytics } from "@vercel/analytics/next";
+// Change the import name to avoid conflict
+import dynamicImport from "next/dynamic";
 
-// import DarkAbyss from "@/components/easter-eggs/DarkAbyss";
+// Lazy load non-essential components
+const NyanCatEasterEgg = dynamicImport(
+  () => import("@/components/easter-eggs/NyanCat"),
+  { ssr: false, loading: () => null },
+);
+
+// Lazy load analytics to not impact core page loading
+const Analytics = dynamicImport(
+  () =>
+    import("@vercel/analytics/next").then((mod) => ({
+      default: mod.Analytics,
+    })),
+  { ssr: false },
+);
+
+// Create a connection-aware component that will be used to optimize performance
+const ConnectionAwareOptimizer = dynamicImport(
+  () => import("@/components/providers/ConnectionAwareOptimizer"),
+  { ssr: false },
+);
 
 export const metadata: Metadata = {
   title: "Papers | A-Level Past Papers",
@@ -43,38 +63,68 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        {/* Providers that don't need to remount on navigation */}
-        <ThemeProvider>
-          <AuthProvider>
-            <div className="min-h-screen bg-background text-text">
-              {/* Easter Egg 🐱 */}
-              <NyanCatEasterEgg />
-              {/* Static navigation components */}
-              <MainNav />
-              <MobileNav />
-
-              {/* Auth context that may update with navigation */}
-              <AuthLoadingProvider>
-                <main className="md:pt-16 overflow-x-hidden">
-                  <Suspense
-                    fallback={
-                      <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                      </div>
+      <head>
+        {/* Preload critical resources */}
+        <link rel="preload" as="image" href="/banner.jpg" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        {/* Register service worker */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(registration) {
+                      // Registration was successful
+                      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    },
+                    function(err) {
+                      // registration failed
+                      console.log('ServiceWorker registration failed: ', err);
                     }
-                  >
-                    <SearchParamsProvider fallback={null}>
-                      {children}
-                    </SearchParamsProvider>
-                  </Suspense>
-                </main>
-              </AuthLoadingProvider>
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
-        <Analytics />{" "}
-        {/* Add the Analytics component here, at the end of body */}
+                  );
+                });
+              }
+            `,
+          }}
+        />
+      </head>
+      <body>
+        {/* Connection-aware optimizations */}
+        <ConnectionAwareOptimizer>
+          {/* Providers that don't need to remount on navigation */}
+          <ThemeProvider>
+            <AuthProvider>
+              <div className="min-h-screen bg-background text-text">
+                {/* Easter Egg 🐱 - now lazy loaded */}
+                <NyanCatEasterEgg />
+
+                {/* Static navigation components */}
+                <MainNav />
+                <MobileNav />
+
+                {/* Auth context that may update with navigation */}
+                <AuthLoadingProvider>
+                  <main className="md:pt-16 overflow-x-hidden">
+                    <Suspense
+                      fallback={
+                        <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+                      }
+                    >
+                      <SearchParamsProvider fallback={null}>
+                        {children}
+                      </SearchParamsProvider>
+                    </Suspense>
+                  </main>
+                </AuthLoadingProvider>
+              </div>
+            </AuthProvider>
+          </ThemeProvider>
+          <Analytics />
+        </ConnectionAwareOptimizer>
       </body>
     </html>
   );
