@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ConversionData } from "@/types/conversion";
 import { conversionApi } from "@/lib/api/conversion";
@@ -25,6 +25,7 @@ interface NotificationProps {
 }
 
 const Notification = ({ message, isVisible, onClose }: NotificationProps) => {
+  // Effect for auto-closing the notification
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -35,11 +36,28 @@ const Notification = ({ message, isVisible, onClose }: NotificationProps) => {
     }
   }, [isVisible, onClose]);
 
+  // Check if we're on a mobile device
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Set initial value
+    setIsMobile(window.innerWidth < 768);
+
+    // Add resize listener
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div
       className={`
-        fixed bottom-4 right-4 z-50
+        fixed right-4 z-[9999]
         transform transition-all duration-300 ease-in-out
+        ${isMobile ? "bottom-20" : "bottom-4"}
         ${isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0 pointer-events-none"}
       `}
     >
