@@ -2,8 +2,8 @@
 
 import { Subject, Unit, UMSData } from "@/types/ums";
 import { useMemo, useState, useEffect } from "react";
-import ReactECharts from 'echarts-for-react';
-import type { EChartsOption } from 'echarts';
+import ReactECharts from "echarts-for-react";
+import type { EChartsOption } from "echarts";
 
 interface UMSChartProps {
   subject?: Subject;
@@ -15,9 +15,10 @@ interface UMSChartProps {
 const VIEW_TYPES = {
   GRADE_DIST: "grade-dist",
   SESSION_COMP: "session-comp",
+  GRADE_BOUNDS: "grade-bounds",
 } as const;
 
-type ViewType = typeof VIEW_TYPES[keyof typeof VIEW_TYPES];
+type ViewType = (typeof VIEW_TYPES)[keyof typeof VIEW_TYPES];
 
 interface ChartDataPoint {
   raw: number;
@@ -27,6 +28,15 @@ interface ChartDataPoint {
 interface GradeDistribution {
   grade: string;
   [key: string]: string | number;
+}
+
+interface GradeBoundaryTrend {
+  grade: string;
+  data: {
+    session: string;
+    raw: number;
+  }[];
+  color: string;
 }
 
 const SESSION_COLORS = [
@@ -42,62 +52,78 @@ const SESSION_COLORS = [
   "#D946EF", // Fuchsia
 ];
 
+const GRADE_COLORS: Record<string, string> = {
+  "Full UMS": "#9333EA", // Purple
+  "A*": "#3B82F6", // Blue
+  "*": "#3B82F6", // Blue (same as A*)
+  A: "#10B981", // Green
+  B: "#06B6D4", // Cyan
+  C: "#F59E0B", // Amber
+  D: "#EA580C", // Orange
+  E: "#B91C1C", // Red
+  U: "#6B7280", // Gray
+};
+
 const getChangeColor = (change: number | null) => {
-  if (change === null) return '';
-  return change > 0 ? 'text-emerald-500' : change < 0 ? 'text-rose-500' : '';
+  if (change === null) return "";
+  return change > 0 ? "text-emerald-500" : change < 0 ? "text-rose-500" : "";
 };
 
 const formatChange = (change: number | null) => {
-  if (change === null) return '';
-  return `${change > 0 ? '+' : ''}${change}`;
+  if (change === null) return "";
+  return `${change > 0 ? "+" : ""}${change}`;
 };
 
 // Format session name (e.g., "January_2025" -> "January 2025")
 const formatSessionName = (session: string): string => {
-  return session.replace(/_/g, ' ');
+  return session.replace(/_/g, " ");
 };
 
 // Sort sessions chronologically (newest first)
 const sortSessions = (sessions: string[]): string[] => {
   return [...sessions].sort((a, b) => {
     // Extract month and year from session name
-    const [monthA, yearA] = a.split('_');
-    const [monthB, yearB] = b.split('_');
-    
+    const [monthA, yearA] = a.split("_");
+    const [monthB, yearB] = b.split("_");
+
     // Compare years first (higher year first for reverse chronological order)
     if (yearA !== yearB) return parseInt(yearB, 10) - parseInt(yearA, 10);
-    
+
     // If years are the same, compare months
     const monthOrder = {
-      'January': 1,
-      'March': 3, 
-      'May': 5,
-      'June': 6,
-      'August': 8,
-      'October': 10,
-      'November': 11
+      January: 1,
+      March: 3,
+      May: 5,
+      June: 6,
+      August: 8,
+      October: 10,
+      November: 11,
     };
-    
-    return (monthOrder[monthB as keyof typeof monthOrder] || 0) - 
-           (monthOrder[monthA as keyof typeof monthOrder] || 0);
+
+    return (
+      (monthOrder[monthB as keyof typeof monthOrder] || 0) -
+      (monthOrder[monthA as keyof typeof monthOrder] || 0)
+    );
   });
 };
 
 const Card = ({
   children,
-  className = ""
+  className = "",
 }: {
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className={`bg-card rounded-xl border border-border shadow-sm overflow-hidden ${className}`}>
+  <div
+    className={`bg-card rounded-xl border border-border shadow-sm overflow-hidden ${className}`}
+  >
     {children}
   </div>
 );
 
 const CardHeader = ({
   children,
-  className = ""
+  className = "",
 }: {
   children: React.ReactNode;
   className?: string;
@@ -109,22 +135,18 @@ const CardHeader = ({
 
 const CardContent = ({
   children,
-  className = ""
+  className = "",
 }: {
   children: React.ReactNode;
   className?: string;
-}) => (
-  <div className={`p-5 ${className}`}>
-    {children}
-  </div>
-);
+}) => <div className={`p-5 ${className}`}>{children}</div>;
 
 const TabButton = ({
   active,
   onClick,
   children,
   role,
-  "aria-selected": ariaSelected
+  "aria-selected": ariaSelected,
 }: {
   active: boolean;
   onClick: () => void;
@@ -140,9 +162,10 @@ const TabButton = ({
       px-4 py-2 rounded-lg font-medium
       transition-all duration-200
       focus:outline-none focus:ring-2 focus:ring-primary/30
-      ${active
-        ? "bg-primary text-primary-foreground shadow-sm"
-        : "text-text-muted hover:text-text hover:bg-surface-hover"
+      ${
+        active
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-text-muted hover:text-text hover:bg-surface-hover"
       }
     `}
   >
@@ -172,16 +195,20 @@ const UnitSelector = ({ unit, subject }: { unit: Unit; subject: Subject }) => (
       "
       role="tooltip"
     >
-      <div className="
+      <div
+        className="
         bg-popover text-popover-foreground p-4 rounded-lg
         shadow-lg border border-border/50 backdrop-blur-sm
-      ">
+      "
+      >
         <div className="border-b border-border pb-2 mb-2">
           <h4 className="font-semibold text-lg">{subject.name}</h4>
           <p className="text-sm text-text-muted mt-1">{unit.name}</p>
         </div>
         {unit.description && (
-          <p className="text-sm text-text-muted leading-relaxed">{unit.description}</p>
+          <p className="text-sm text-text-muted leading-relaxed">
+            {unit.description}
+          </p>
         )}
       </div>
     </div>
@@ -193,7 +220,7 @@ const SessionButton = ({
   selected,
   color,
   onClick,
-  metadata
+  metadata,
 }: {
   session: string;
   selected: boolean;
@@ -207,9 +234,10 @@ const SessionButton = ({
         px-4 py-2 rounded-lg
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-primary/30
-        ${selected
-          ? "bg-background shadow-sm"
-          : "bg-surface hover:bg-surface-hover"
+        ${
+          selected
+            ? "bg-background shadow-sm"
+            : "bg-surface hover:bg-surface-hover"
         }
       `}
       style={{
@@ -217,23 +245,27 @@ const SessionButton = ({
         borderWidth: 2,
         borderStyle: "solid",
         color: selected ? color : undefined,
-        fontWeight: selected ? 500 : 400
+        fontWeight: selected ? 500 : 400,
       }}
       onClick={onClick}
       aria-pressed={selected}
     >
       {formatSessionName(session)}
     </button>
-    <div className="
+    <div
+      className="
       absolute z-10 left-0 top-full mt-2
       opacity-0 invisible
       group-hover:opacity-100 group-hover:visible
       transition-all duration-200
-    ">
-      <div className="
+    "
+    >
+      <div
+        className="
         bg-popover text-popover-foreground p-3 rounded-lg
         shadow-lg min-w-[160px] border border-border/50
-      ">
+      "
+      >
         <div className="font-medium mb-1" style={{ color }}>
           {formatSessionName(session)}
         </div>
@@ -241,321 +273,556 @@ const SessionButton = ({
           <p className="text-xs text-text-muted">
             {metadata.recordCount} records
           </p>
-          <p className="text-xs text-text-muted">
-            {metadata.timestamp}
-          </p>
+          <p className="text-xs text-text-muted">{metadata.timestamp}</p>
         </div>
       </div>
     </div>
   </div>
 );
 
-export default function UMSChart({ subject, unit, umsData, loading = false }: UMSChartProps) {
+export default function UMSChart({
+  subject,
+  unit,
+  umsData,
+  loading = false,
+}: UMSChartProps) {
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [viewType, setViewType] = useState<ViewType>(VIEW_TYPES.GRADE_DIST);
-  const [focusedPoint, setFocusedPoint] = useState<null | { raw: number; session: string }>(null);
-  
+  const [focusedPoint, setFocusedPoint] = useState<null | {
+    raw: number;
+    session: string;
+  }>(null);
+
   // Sort sessions and set initial selection when umsData changes
   useEffect(() => {
     if (umsData?.sessions) {
-      const sortedSessions = sortSessions(umsData.sessions.map(s => s.session));
+      const sortedSessions = sortSessions(
+        umsData.sessions.map((s) => s.session),
+      );
       // Initially select the latest 3 sessions or all if less than 3
-      setSelectedSessions(sortedSessions.slice(0, Math.min(3, sortedSessions.length)));
+      setSelectedSessions(
+        sortedSessions.slice(0, Math.min(3, sortedSessions.length)),
+      );
     }
   }, [umsData]);
 
   // Get URL parameters on component mount
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const view = searchParams.get('view');
-    if (view === 'grade-dist' || view === 'session-comp') {
+    const view = searchParams.get("view");
+    if (
+      view === "grade-dist" ||
+      view === "session-comp" ||
+      view === "grade-bounds"
+    ) {
       setViewType(view);
     }
   }, []);
 
   // Memoize all chart data and options
-  const { chartData, gradeDistData, options } = useMemo(() => {
-    if (!umsData || !selectedSessions.length) {
-      return {
-        chartData: [],
-        gradeDistData: [],
-        options: null as EChartsOption | null
-      };
-    }
+  const { chartData, gradeDistData, gradeBoundaryData, options } =
+    useMemo(() => {
+      if (!umsData || !selectedSessions.length) {
+        return {
+          chartData: [],
+          gradeDistData: [],
+          gradeBoundaryData: [],
+          options: null as EChartsOption | null,
+        };
+      }
 
-    // Calculate chart data
-    const chartData: ChartDataPoint[] = (() => {
-      const maxRaw = Math.max(
-        ...umsData.sessions.flatMap(session => session.data).map(record => record.RAW)
-      );
+      // Calculate chart data
+      const chartData: ChartDataPoint[] = (() => {
+        const maxRaw = Math.max(
+          ...umsData.sessions
+            .flatMap((session) => session.data)
+            .map((record) => record.RAW),
+        );
 
-      return Array.from({ length: maxRaw + 1 }, (_, i) => {
-        const point: ChartDataPoint = { raw: i };
+        return Array.from({ length: maxRaw + 1 }, (_, i) => {
+          const point: ChartDataPoint = { raw: i };
 
+          selectedSessions.forEach((sessionName) => {
+            const sessionData = umsData.sessions.find(
+              (s) => s.session === sessionName,
+            );
+            const currentUMS =
+              sessionData?.data.find((d) => d.RAW === i)?.UMS ?? null;
+
+            const prevSessionIndex =
+              umsData.sessions.findIndex((s) => s.session === sessionName) - 1;
+            const prevSession =
+              prevSessionIndex >= 0 ? umsData.sessions[prevSessionIndex] : null;
+            const prevUMS =
+              prevSession?.data.find((d) => d.RAW === i)?.UMS ?? null;
+
+            point[sessionName] = currentUMS;
+            point[`${sessionName}_change`] =
+              prevUMS !== null && currentUMS !== null
+                ? currentUMS - prevUMS
+                : null;
+
+            const record = sessionData?.data.find((d) => d.RAW === i);
+            if (record?.GRADE) {
+              point[`${sessionName}_grade`] = record.GRADE;
+            }
+          });
+
+          return point;
+        });
+      })();
+
+      // Calculate grade distribution data
+      const gradeDistData: GradeDistribution[] = (() => {
+        const gradeMap = new Map<string, GradeDistribution>();
+
+        selectedSessions.forEach((session) => {
+          const sessionData =
+            umsData.sessions.find((s) => s.session === session)?.data || [];
+          sessionData.forEach((record) => {
+            if (!record.GRADE) return;
+
+            if (!gradeMap.has(record.GRADE)) {
+              gradeMap.set(record.GRADE, { grade: record.GRADE });
+            }
+            const gradeData = gradeMap.get(record.GRADE)!;
+            gradeData[session] = record.RAW;
+          });
+        });
+
+        return Array.from(gradeMap.values()).sort((a, b) => {
+          const gradeOrder = ["A*", "A", "B", "C", "D", "E", "U"];
+          return gradeOrder.indexOf(a.grade) - gradeOrder.indexOf(b.grade);
+        });
+      })();
+
+      // Extract grade boundaries across sessions
+      const gradeBoundaryData: GradeBoundaryTrend[] = (() => {
+        // Define the grades we're interested in
+        const gradesOfInterest = ["A*", "*", "A", "B", "C", "D", "E", "U"];
+
+        // Create a map to track lowest raw mark for each grade in each session
+        const gradeBoundariesMap = new Map<string, Map<string, number>>();
+
+        // Initialize with all grades of interest
+        gradesOfInterest.forEach((grade) => {
+          gradeBoundariesMap.set(grade, new Map<string, number>());
+        });
+
+        // Add "Full UMS" as a special category
+        gradeBoundariesMap.set("Full UMS", new Map<string, number>());
+
+        // Process each session
         selectedSessions.forEach((sessionName) => {
-          const sessionData = umsData.sessions.find(s => s.session === sessionName);
-          const currentUMS = sessionData?.data.find((d) => d.RAW === i)?.UMS ?? null;
-          
-          const prevSessionIndex = umsData.sessions.findIndex(s => s.session === sessionName) - 1;
-          const prevSession = prevSessionIndex >= 0 ? umsData.sessions[prevSessionIndex] : null;
-          const prevUMS = prevSession?.data.find(d => d.RAW === i)?.UMS ?? null;
-          
-          point[sessionName] = currentUMS;
-          point[`${sessionName}_change`] = prevUMS !== null && currentUMS !== null ? currentUMS - prevUMS : null;
-          
-          const record = sessionData?.data.find(d => d.RAW === i);
-          if (record?.GRADE) {
-            point[`${sessionName}_grade`] = record.GRADE;
+          const sessionData =
+            umsData.sessions.find((s) => s.session === sessionName)?.data || [];
+
+          // Find max UMS for the session
+          const maxUms = Math.max(...sessionData.map((d) => d.UMS));
+
+          // Find the minimum raw mark needed for max UMS
+          const maxUmsEntries = sessionData.filter(
+            (entry) => entry.UMS === maxUms,
+          );
+          if (maxUmsEntries.length > 0) {
+            const minFullUmsRaw = Math.min(
+              ...maxUmsEntries.map((entry) => entry.RAW),
+            );
+            gradeBoundariesMap.get("Full UMS")?.set(sessionName, minFullUmsRaw);
           }
-        });
 
-        return point;
-      });
-    })();
+          // Process each grade
+          gradesOfInterest.forEach((grade) => {
+            // Find all records with this grade
+            const gradeRecords = sessionData.filter(
+              (record) => record.GRADE === grade,
+            );
 
-    // Calculate grade distribution data
-    const gradeDistData: GradeDistribution[] = (() => {
-      const gradeMap = new Map<string, GradeDistribution>();
-
-      selectedSessions.forEach(session => {
-        const sessionData = umsData.sessions.find(s => s.session === session)?.data || [];
-        sessionData.forEach(record => {
-          if (!record.GRADE) return;
-
-          if (!gradeMap.has(record.GRADE)) {
-            gradeMap.set(record.GRADE, { grade: record.GRADE });
-          }
-          const gradeData = gradeMap.get(record.GRADE)!;
-          gradeData[session] = record.RAW;
-        });
-      });
-
-      return Array.from(gradeMap.values()).sort((a, b) => {
-        const gradeOrder = ['A*', 'A', 'B', 'C', 'D', 'E', 'U'];
-        return gradeOrder.indexOf(a.grade) - gradeOrder.indexOf(b.grade);
-      });
-    })();
-
-    
-    const commonOptions: EChartsOption = {
-      animation: true,
-      animationDuration: 500,
-      grid: {
-        top: 60,
-        right: 40,
-        bottom: 100,
-        left: 60,
-        containLabel: true
-      },
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: 8,
-        borderWidth: 1,
-        padding: 12,
-        textStyle: {
-          color: '#1f2937'
-        },
-        extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.15);'
-      },
-      dataZoom: [
-        {
-          type: 'inside',
-          start: 0,
-          end: 100
-        },
-        {
-          type: 'slider',
-          show: true,
-          start: 0,
-          end: 100,
-          bottom: 5
-        }
-      ],
-      legend: {
-        bottom: 35,
-        formatter: formatSessionName,
-        itemGap: 20,
-        textStyle: {
-          fontSize: 12,
-          color: '#64748B' // This slate-500 color works in both light and dark modes
-        }
-      }
-    };
-
-    // Create chart options based on view type
-    const options: EChartsOption = viewType === VIEW_TYPES.GRADE_DIST ? {
-      ...commonOptions,
-      xAxis: {
-        type: 'category',
-        data: gradeDistData.map(d => d.grade),
-        axisLabel: { 
-          interval: 0,
-          fontSize: 12,
-          fontWeight: 'bold'
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Raw Mark',
-        nameLocation: 'middle',
-        nameGap: 40,
-        splitLine: {
-          lineStyle: {
-            type: 'dashed'
-          }
-        }
-      },
-      series: selectedSessions.map((session, index) => ({
-        name: session,
-        type: 'bar',
-        data: gradeDistData.map(d => d[session]),
-        itemStyle: {
-          color: SESSION_COLORS[index % SESSION_COLORS.length],
-          borderRadius: [4, 4, 0, 0]
-        },
-        emphasis: {
-          itemStyle: {
-            borderWidth: 1,
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.3)'
-          }
-        }
-      })),
-      tooltip: {
-        ...commonOptions.tooltip,
-        formatter: (params: any) => {
-          if (!Array.isArray(params)) return '';
-          
-          const grade = params[0].name;
-          let content = `<div style="font-weight: 500; margin-bottom: 8px;">Grade: ${grade}</div>`;
-          
-          params.forEach((param: any) => {
-            const sessionName = param.seriesName;
-            const rawMark = param.value;
-            const color = param.color;
-            
-            content += `
-              <div style="margin-top: 8px;">
-                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
-                <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
-                <div style="padding-left: 16px;">Raw Mark: ${rawMark !== undefined ? rawMark : 'N/A'}</div>
-              </div>
-            `;
+            // If we have records for this grade, find the minimum raw mark required
+            if (gradeRecords.length > 0) {
+              const minRawForGrade = Math.min(
+                ...gradeRecords.map((record) => record.RAW),
+              );
+              gradeBoundariesMap.get(grade)?.set(sessionName, minRawForGrade);
+            }
           });
-          
-          return content;
+        });
+
+        // Convert the map to array format for the chart
+        const result: GradeBoundaryTrend[] = [];
+
+        // Add Full UMS first
+        const fullUmsData = Array.from(
+          gradeBoundariesMap.get("Full UMS")?.entries() || [],
+        ).map(([session, raw]) => ({ session, raw }));
+
+        if (fullUmsData.length > 0) {
+          result.push({
+            grade: "Full UMS",
+            data: fullUmsData,
+            color: GRADE_COLORS["Full UMS"],
+          });
         }
-      }
-    } : {
-      ...commonOptions,
-      xAxis: {
-        type: 'value',
-        name: 'Raw Mark',
-        nameLocation: 'middle',
-        nameGap: 45,
-        min: 0,
-        max: 'dataMax',
-        splitLine: {
-          lineStyle: {
-            type: 'dashed'
+
+        // Add A* (which could be stored as either "A*" or "*")
+        const aStarData = new Map<string, number>();
+
+        // Check for "*" notation first
+        gradeBoundariesMap.get("*")?.forEach((raw, session) => {
+          aStarData.set(session, raw);
+        });
+
+        // Then check for "A*" notation (overriding "*" if both exist)
+        gradeBoundariesMap.get("A*")?.forEach((raw, session) => {
+          aStarData.set(session, raw);
+        });
+
+        if (aStarData.size > 0) {
+          result.push({
+            grade: "A*",
+            data: Array.from(aStarData.entries()).map(([session, raw]) => ({
+              session,
+              raw,
+            })),
+            color: GRADE_COLORS["A*"],
+          });
+        }
+
+        // Add remaining grades
+        ["A", "B", "C", "D", "E", "U"].forEach((grade) => {
+          const gradeData = Array.from(
+            gradeBoundariesMap.get(grade)?.entries() || [],
+          ).map(([session, raw]) => ({ session, raw }));
+
+          if (gradeData.length > 0) {
+            result.push({
+              grade,
+              data: gradeData,
+              color: GRADE_COLORS[grade],
+            });
           }
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'UMS',
-        nameLocation: 'middle',
-        nameGap: 40,
-        splitLine: {
-          lineStyle: {
-            type: 'dashed'
-          }
-        }
-      },
-      series: selectedSessions.map((session, index) => ({
-        name: session,
-        type: 'line',
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 2,
-        sampling: 'average',
-        data: chartData.map(point => [point.raw, point[session]]),
-        lineStyle: {
-          color: SESSION_COLORS[index % SESSION_COLORS.length],
-          width: 2
+        });
+
+        return result;
+      })();
+
+      const commonOptions: EChartsOption = {
+        animation: true,
+        animationDuration: 500,
+        grid: {
+          top: 60,
+          right: 40,
+          bottom: 100,
+          left: 60,
+          containLabel: true,
         },
-        emphasis: {
-          focus: 'series',
-          lineStyle: {
-            width: 3
+        tooltip: {
+          trigger: "axis",
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          borderRadius: 8,
+          borderWidth: 1,
+          padding: 12,
+          textStyle: {
+            color: "#1f2937",
           },
-          itemStyle: {
-            borderWidth: 2
-          }
+          extraCssText: "box-shadow: 0 4px 12px rgba(0,0,0,0.15);",
         },
-        markPoint: {
-          data: [
-            { type: 'max', name: 'Max', symbolSize: 60 },
-            { type: 'min', name: 'Min', symbolSize: 60 }
-          ],
-          label: {
-            fontSize: 12
-          }
+        dataZoom: [
+          {
+            type: "inside",
+            start: 0,
+            end: 100,
+          },
+          {
+            type: "slider",
+            show: true,
+            start: 0,
+            end: 100,
+            bottom: 5,
+          },
+        ],
+        legend: {
+          bottom: 35,
+          formatter: formatSessionName,
+          itemGap: 20,
+          textStyle: {
+            fontSize: 12,
+            color: "#64748B", // This slate-500 color works in both light and dark modes
+          },
         },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [{
-              offset: 0, 
-              color: SESSION_COLORS[index % SESSION_COLORS.length] + '20' // 20% opacity
-            }, {
-              offset: 1, 
-              color: SESSION_COLORS[index % SESSION_COLORS.length] + '00' // 0% opacity
-            }]
-          }
-        }
-      })),
-      tooltip: {
-        ...commonOptions.tooltip,
-        formatter: (params: any) => {
-          if (!Array.isArray(params)) return '';
-          
-          const raw = params[0]?.value?.[0];
-          if (raw === undefined) return '';
-          
-          let content = `<div style="font-weight: 500; margin-bottom: 8px;">Raw Mark: ${raw}</div>`;
-          
-          params.forEach((param: any) => {
-            if (!param.value) return;
-            
-            const sessionName = param.seriesName;
-            const ums = param.value[1];
-            const grade = chartData[raw]?.[`${sessionName}_grade`];
-            const color = param.color;
-            
-            content += `
-              <div style="margin-top: 8px;">
-                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
-                <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
-                <div style="padding-left: 16px;">UMS: ${ums ?? 'N/A'}</div>
-                ${grade ? `<div style="padding-left: 16px;">Grade: ${grade}</div>` : ''}
-              </div>
-            `;
-          });
-          
-          return content;
-        }
-      }
-    };
+      };
 
-    return { chartData, gradeDistData, options };
-  }, [umsData, selectedSessions, viewType]);
+      // Create chart options based on view type
+      const options: EChartsOption =
+        viewType === VIEW_TYPES.GRADE_DIST
+          ? {
+              ...commonOptions,
+              xAxis: {
+                type: "category",
+                data: gradeDistData.map((d) => d.grade),
+                axisLabel: {
+                  interval: 0,
+                  fontSize: 12,
+                  fontWeight: "bold",
+                },
+              },
+              yAxis: {
+                type: "value",
+                name: "Raw Mark",
+                nameLocation: "middle",
+                nameGap: 40,
+                splitLine: {
+                  lineStyle: {
+                    type: "dashed",
+                  },
+                },
+              },
+              series: selectedSessions.map((session, index) => ({
+                name: session,
+                type: "bar",
+                data: gradeDistData.map((d) => d[session]),
+                itemStyle: {
+                  color: SESSION_COLORS[index % SESSION_COLORS.length],
+                  borderRadius: [4, 4, 0, 0],
+                },
+                emphasis: {
+                  itemStyle: {
+                    borderWidth: 1,
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: "rgba(0, 0, 0, 0.3)",
+                  },
+                },
+              })),
+              tooltip: {
+                ...commonOptions.tooltip,
+                formatter: (params: any) => {
+                  if (!Array.isArray(params)) return "";
+
+                  const grade = params[0].name;
+                  let content = `<div style="font-weight: 500; margin-bottom: 8px;">Grade: ${grade}</div>`;
+
+                  params.forEach((param: any) => {
+                    const sessionName = param.seriesName;
+                    const rawMark = param.value;
+                    const color = param.color;
+
+                    content += `
+                <div style="margin-top: 8px;">
+                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
+                  <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
+                  <div style="padding-left: 16px;">Raw Mark: ${rawMark !== undefined ? rawMark : "N/A"}</div>
+                </div>
+              `;
+                  });
+
+                  return content;
+                },
+              },
+            }
+          : viewType === VIEW_TYPES.GRADE_BOUNDS
+            ? {
+                ...commonOptions,
+                xAxis: {
+                  type: "category",
+                  data: selectedSessions.map(formatSessionName),
+                  axisLabel: {
+                    interval: 0,
+                    fontSize: 12,
+                    rotate: 45,
+                    align: "right",
+                  },
+                },
+                yAxis: {
+                  type: "value",
+                  name: "Raw Mark",
+                  nameLocation: "middle",
+                  nameGap: 40,
+                  splitLine: {
+                    lineStyle: {
+                      type: "dashed",
+                    },
+                  },
+                },
+                series: gradeBoundaryData.map((boundary) => ({
+                  name: boundary.grade,
+                  type: "line",
+                  data: selectedSessions.map((session) => {
+                    const dataPoint = boundary.data.find(
+                      (d) => d.session === session,
+                    );
+                    return dataPoint ? dataPoint.raw : null;
+                  }),
+                  symbolSize: 8,
+                  lineStyle: {
+                    width: 3,
+                    color: boundary.color,
+                  },
+                  itemStyle: {
+                    color: boundary.color,
+                  },
+                  smooth: false,
+                  connectNulls: false,
+                  emphasis: {
+                    focus: "series",
+                    lineStyle: {
+                      width: 4,
+                    },
+                  },
+                  label: {
+                    show: true,
+                    formatter: "{c}",
+                    fontSize: 12,
+                    position: "top",
+                  },
+                })),
+                tooltip: {
+                  ...commonOptions.tooltip,
+                  formatter: (params: any) => {
+                    if (!Array.isArray(params)) return "";
+
+                    const sessionName = params[0].name;
+                    let content = `<div style="font-weight: 500; margin-bottom: 8px;">${sessionName}</div>`;
+
+                    params.forEach((param: any) => {
+                      const grade = param.seriesName;
+                      const rawMark = param.value;
+                      const color = param.color;
+
+                      if (rawMark !== null && rawMark !== undefined) {
+                        content += `
+                  <div style="margin-top: 8px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
+                    <span style="font-weight: 500; color: ${color};">${grade}</span>
+                    <div style="padding-left: 16px;">Raw Mark: ${rawMark}</div>
+                  </div>
+                `;
+                      }
+                    });
+
+                    return content;
+                  },
+                },
+                legend: {
+                  ...commonOptions.legend,
+                  formatter: (name: string) => name,
+                },
+              }
+            : {
+                ...commonOptions,
+                xAxis: {
+                  type: "value",
+                  name: "Raw Mark",
+                  nameLocation: "middle",
+                  nameGap: 45,
+                  min: 0,
+                  max: "dataMax",
+                  splitLine: {
+                    lineStyle: {
+                      type: "dashed",
+                    },
+                  },
+                },
+                yAxis: {
+                  type: "value",
+                  name: "UMS",
+                  nameLocation: "middle",
+                  nameGap: 40,
+                  splitLine: {
+                    lineStyle: {
+                      type: "dashed",
+                    },
+                  },
+                },
+                series: selectedSessions.map((session, index) => ({
+                  name: session,
+                  type: "line",
+                  smooth: true,
+                  symbol: "circle",
+                  symbolSize: 2,
+                  sampling: "average",
+                  data: chartData.map((point) => [point.raw, point[session]]),
+                  lineStyle: {
+                    color: SESSION_COLORS[index % SESSION_COLORS.length],
+                    width: 2,
+                  },
+                  emphasis: {
+                    focus: "series",
+                    lineStyle: {
+                      width: 3,
+                    },
+                    itemStyle: {
+                      borderWidth: 2,
+                    },
+                  },
+                  markPoint: {
+                    data: [
+                      { type: "max", name: "Max", symbolSize: 60 },
+                      { type: "min", name: "Min", symbolSize: 60 },
+                    ],
+                    label: {
+                      fontSize: 12,
+                    },
+                  },
+                  areaStyle: {
+                    color: {
+                      type: "linear",
+                      x: 0,
+                      y: 0,
+                      x2: 0,
+                      y2: 1,
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color:
+                            SESSION_COLORS[index % SESSION_COLORS.length] +
+                            "20", // 20% opacity
+                        },
+                        {
+                          offset: 1,
+                          color:
+                            SESSION_COLORS[index % SESSION_COLORS.length] +
+                            "00", // 0% opacity
+                        },
+                      ],
+                    },
+                  },
+                })),
+                tooltip: {
+                  ...commonOptions.tooltip,
+                  formatter: (params: any) => {
+                    if (!Array.isArray(params)) return "";
+
+                    const raw = params[0]?.value?.[0];
+                    if (raw === undefined) return "";
+
+                    let content = `<div style="font-weight: 500; margin-bottom: 8px;">Raw Mark: ${raw}</div>`;
+
+                    params.forEach((param: any) => {
+                      if (!param.value) return;
+
+                      const sessionName = param.seriesName;
+                      const ums = param.value[1];
+                      const grade = chartData[raw]?.[`${sessionName}_grade`];
+                      const color = param.color;
+
+                      content += `
+                <div style="margin-top: 8px;">
+                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
+                  <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
+                  <div style="padding-left: 16px;">UMS: ${ums ?? "N/A"}</div>
+                  ${grade ? `<div style="padding-left: 16px;">Grade: ${grade}</div>` : ""}
+                </div>
+              `;
+                    });
+
+                    return content;
+                  },
+                },
+              };
+
+      return { chartData, gradeDistData, gradeBoundaryData, options };
+    }, [umsData, selectedSessions, viewType]);
 
   if (loading) {
     return (
@@ -586,9 +853,12 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
       <Card>
         <CardContent className="py-12">
           <div className="text-center max-w-lg mx-auto">
-            <h3 className="text-xl font-medium text-text mb-3">No Unit Selected</h3>
+            <h3 className="text-xl font-medium text-text mb-3">
+              No Unit Selected
+            </h3>
             <p className="text-text-muted">
-              Please select a subject and unit from the dropdown menu to view UMS conversion charts.
+              Please select a subject and unit from the dropdown menu to view
+              UMS conversion charts.
             </p>
           </div>
         </CardContent>
@@ -601,9 +871,12 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
       <Card>
         <CardContent className="py-12">
           <div className="text-center max-w-lg mx-auto">
-            <h3 className="text-xl font-medium text-text mb-3">No Data Available</h3>
+            <h3 className="text-xl font-medium text-text mb-3">
+              No Data Available
+            </h3>
             <p className="text-text-muted">
-              No UMS conversion data is currently available for this unit. Please try selecting a different unit.
+              No UMS conversion data is currently available for this unit.
+              Please try selecting a different unit.
             </p>
           </div>
         </CardContent>
@@ -612,7 +885,7 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
   }
 
   // Get sorted sessions for UI display
-  const sortedSessions = sortSessions(umsData.sessions.map(s => s.session));
+  const sortedSessions = sortSessions(umsData.sessions.map((s) => s.session));
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -621,17 +894,17 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
         <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/* Unit Info */}
           <UnitSelector unit={unit} subject={subject} />
-          
+
           {/* View Type Selector */}
-          <div 
-            role="tablist" 
+          <div
+            role="tablist"
             className="flex gap-2 p-1.5 bg-background rounded-xl shadow-sm border border-border/50"
           >
             <TabButton
               active={viewType === VIEW_TYPES.GRADE_DIST}
               onClick={() => {
                 setViewType(VIEW_TYPES.GRADE_DIST);
-                window.history.replaceState(null, '', `?view=grade-dist`);
+                window.history.replaceState(null, "", `?view=grade-dist`);
               }}
               role="tab"
               aria-selected={viewType === VIEW_TYPES.GRADE_DIST}
@@ -642,12 +915,23 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
               active={viewType === VIEW_TYPES.SESSION_COMP}
               onClick={() => {
                 setViewType(VIEW_TYPES.SESSION_COMP);
-                window.history.replaceState(null, '', `?view=session-comp`);
+                window.history.replaceState(null, "", `?view=session-comp`);
               }}
               role="tab"
               aria-selected={viewType === VIEW_TYPES.SESSION_COMP}
             >
               Session Comparison
+            </TabButton>
+            <TabButton
+              active={viewType === VIEW_TYPES.GRADE_BOUNDS}
+              onClick={() => {
+                setViewType(VIEW_TYPES.GRADE_BOUNDS);
+                window.history.replaceState(null, "", `?view=grade-bounds`);
+              }}
+              role="tab"
+              aria-selected={viewType === VIEW_TYPES.GRADE_BOUNDS}
+            >
+              Grade Boundaries
             </TabButton>
           </div>
         </CardHeader>
@@ -657,16 +941,18 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
           {options ? (
             <ReactECharts
               option={options}
-              style={{ height: '100%', width: '100%' }}
+              style={{ height: "100%", width: "100%" }}
               className="transition-all duration-300"
-              opts={{ renderer: 'svg' }}
+              opts={{ renderer: "svg" }}
               notMerge={true}
             />
           ) : (
             <div className="h-full flex items-center justify-center">
               <div className="text-center space-y-2 text-text-muted/80">
                 <p className="text-lg font-medium">No chart data available</p>
-                <p className="text-sm">Please select at least one session to display data</p>
+                <p className="text-sm">
+                  Please select at least one session to display data
+                </p>
               </div>
             </div>
           )}
@@ -677,26 +963,30 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
           <h3 className="text-lg font-semibold mb-4">Exam Sessions</h3>
           <div className="flex flex-wrap gap-3 mb-4 transition-all">
             {sortedSessions.map((session, index) => {
-              const sessionData = umsData.sessions.find(s => s.session === session);
+              const sessionData = umsData.sessions.find(
+                (s) => s.session === session,
+              );
               return (
                 <SessionButton
                   key={session}
                   session={session}
                   selected={selectedSessions.includes(session)}
                   color={SESSION_COLORS[index % SESSION_COLORS.length]}
-                  metadata={sessionData?.metadata || { recordCount: 0, timestamp: "" }}
+                  metadata={
+                    sessionData?.metadata || { recordCount: 0, timestamp: "" }
+                  }
                   onClick={() => {
                     setSelectedSessions((prev) =>
                       prev.includes(session)
                         ? prev.filter((s) => s !== session)
-                        : [...prev, session]
+                        : [...prev, session],
                     );
                   }}
                 />
               );
             })}
           </div>
-          
+
           <div className="flex flex-wrap gap-3 mt-6 border-t border-border/50 pt-4">
             <button
               className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
@@ -728,7 +1018,9 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
         <CardContent className="bg-background">
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <span className="block text-text-muted text-sm mb-1">Subject</span>
+              <span className="block text-text-muted text-sm mb-1">
+                Subject
+              </span>
               <span className="font-medium">{subject?.name}</span>
             </div>
             <div>
@@ -736,11 +1028,15 @@ export default function UMSChart({ subject, unit, umsData, loading = false }: UM
               <span className="font-medium">{unit?.name}</span>
             </div>
             <div>
-              <span className="block text-text-muted text-sm mb-1">Papers Found</span>
+              <span className="block text-text-muted text-sm mb-1">
+                Papers Found
+              </span>
               <span className="font-medium">{umsData?.total_papers_found}</span>
             </div>
             <div>
-              <span className="block text-text-muted text-sm mb-1">Available Sessions</span>
+              <span className="block text-text-muted text-sm mb-1">
+                Available Sessions
+              </span>
               <span className="font-medium">{umsData?.sessions.length}</span>
             </div>
           </div>
