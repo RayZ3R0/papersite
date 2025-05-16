@@ -17,6 +17,7 @@ export default function SubjectPage() {
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [selectedYears, setSelectedYears] = useState<Set<number>>(new Set());
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [papersByUnit, setPapersByUnit] = useState<Record<string, Paper[]>>({});
@@ -130,7 +131,9 @@ export default function SubjectPage() {
     const papers = papersByUnit[unitId] || [];
     return papers
       .filter((paper) => {
-        const matchesYear = selectedYear ? paper.year === selectedYear : true;
+        const matchesYear = selectedYears.size > 0
+          ? selectedYears.has(paper.year)
+          : true;
         const matchesSession = selectedSession
           ? paper.session === selectedSession
           : true;
@@ -152,7 +155,7 @@ export default function SubjectPage() {
 
   // Reset filters
   const resetFilters = () => {
-    setSelectedYear(null);
+    setSelectedYears(new Set());
     setSelectedSession(null);
   };
 
@@ -215,30 +218,89 @@ export default function SubjectPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {/* Year Filter */}
+            {/* Year Filter - Enhanced UI */}
             <div>
-              <label className="block text-sm font-medium text-text-muted mb-2">
-                Year
-              </label>
-              <select
-                value={selectedYear || ""}
-                onChange={(e) =>
-                  setSelectedYear(
-                    e.target.value ? Number(e.target.value) : null,
-                  )
-                }
-                className="w-full p-2 bg-surface border border-border rounded-md
-                  text-text focus:ring-2 focus:ring-primary/20"
-              >
-                <option value="">All Years</option>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-text-muted">
+                  Year
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedYears(new Set())}
+                    className={`text-xs px-2 py-0.5 rounded transition-colors
+                      ${selectedYears.size === 0
+                        ? "bg-primary text-white"
+                        : "text-primary hover:text-primary-dark"
+                      }`}
+                  >
+                    All Years
+                  </button>
+                </div>
+              </div>
+              
+              {/* Years Grid */}
+              <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 bg-surface border border-border rounded-md">
                 {Array.from(years)
                   .sort((a, b) => b - a)
-                  .map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-              </select>
+                  .map((year) => {
+                    const isSelected = selectedYears.has(year);
+                    return (
+                      <button
+                        key={year}
+                        onClick={() => {
+                          const newSelectedYears = new Set(selectedYears);
+                          if (isSelected) {
+                            newSelectedYears.delete(year);
+                          } else {
+                            newSelectedYears.add(year);
+                          }
+                          setSelectedYears(newSelectedYears);
+                        }}
+                        className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all
+                          ${isSelected
+                            ? "bg-primary text-white shadow-sm"
+                            : "bg-surface-alt text-text hover:bg-surface-alt/80"
+                          } flex items-center justify-center min-w-[3rem]`}
+                      >
+                        {year}
+                        {isSelected && (
+                          <svg className="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+              </div>
+              
+              {/* Quick Year Ranges - FIXED */}
+              <div className="flex gap-1.5 mt-2">
+                {[
+                  { label: "Recent 3", years: 3 },
+                  { label: "Last 5", years: 5 }, 
+                  { label: "Clear All", years: 0 }
+                ].map((range) => (
+                  <button
+                    key={range.label}
+                    onClick={() => {
+                      if (range.years === 0) {
+                        setSelectedYears(new Set());
+                      } else {
+                        // Get sorted array of years (descending)
+                        const sortedYears = Array.from(years).sort((a, b) => b - a);
+                        
+                        // Take the first N years where N is range.years
+                        const recentYears = sortedYears.slice(0, range.years);
+                        setSelectedYears(new Set(recentYears));
+                      }
+                    }}
+                    className="text-xs px-2 py-1 bg-surface-alt rounded-md hover:bg-surface-alt/80 
+                      transition-colors flex-1 text-center text-text-muted font-medium"
+                  >
+                    {range.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Session Filter */}
