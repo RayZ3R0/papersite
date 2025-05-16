@@ -33,7 +33,7 @@ const ConnectionAwareOptimizer = dynamicImport(
 );
 
 export const metadata: Metadata = {
-  title: "Papers | A-Level Past Papers",
+  title: "PaperNexus",
   description: "Access A-Level past papers and study materials",
   viewport: {
     width: "device-width",

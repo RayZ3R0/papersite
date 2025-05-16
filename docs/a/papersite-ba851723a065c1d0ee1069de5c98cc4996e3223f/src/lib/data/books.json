@@ -1,0 +1,263 @@
+{
+  "books": [
+    {
+      "id": "chemistry-1",
+      "title": "New Chemistry Student Book 1",
+      "pdfUrl": "https://mega.nz/file/6JZmQLLL#pBKTtIMr5mQCCCim4lMqKcnc8SPRVYpGIXQgofPTFHc",
+      "solutionUrl": "https://mega.nz/file/LYhgBYxD#nCRJerUGf-GT6jLoUgQOyw_NqVqjyyIpfg7NGbANc0Q",
+      "subject": "Chemistry",
+      "imageUrl": "https://4get.sudovanilla.org/proxy?i=https%3A%2F%2Fcoocoovayia.com%2Fcoocoo_content%2Fwp-content%2Fuploads%2F2019%2F07%2Fedex-as-chem.jpg"
+    },
+    {
+      "id": "chemistry-2",
+      "title": "New Chemistry Student Book 2",
+      "pdfUrl": "https://mega.nz/file/yFJg1bxb#F9AGbFi_Iur_lAQDxRMqBaWCT1jfHgx0bgmsA7kMmCQ",
+      "solutionUrl": "https://mega.nz/file/aVwg3CQT#vTWRexIYF5C31-P71Ij2ijCY629qfVWkFNVr6OqjhcA",
+      "subject": "Chemistry",
+      "imageUrl": "/books/chem2.png"
+    },
+    {
+      "id": "chemistry-3",
+      "title": "Chemistry Lab Book",
+      "pdfUrl": "https://mega.nz/file/aUI2nJwB#ZVme3eKRHGF50sbMIOeFYGTfOG7KWU4gXYSOgvcH0Qs",
+      "subject": "Chemistry",
+      "imageUrl": "/books/chemlab.png"
+    },
+    {
+      "id": "psychology-1",
+      "name": "Psychology Student Book 1",
+      "pdfUrl": "https://pdfhost.io/v/ZVpy99AYyq_Psychology_Book_1",
+      "solutionUrl": "https://pdfhost.io/v/6V3YqPnpnr_ias-psychology-exam-practice-answers",
+      "subject": "Psychology",
+      "imageUrl": "/books/psych1.png"
+    },
+    {
+      "id": "psychology-2",
+      "name": "Psychology Student Book 2",
+      "pdfUrl": "https://pdfhost.io/v/RfgL6wAzkb_Psychology_Book_2",
+      "solutionUrl": "https://pdfhost.io/v/5hNnGWmMPy_IAL-Psychology-Answers",
+      "subject": "Psychology",
+      "imageUrl": "/books/psych2.png"
+    },
+    {
+      "id": "accounting-1",
+      "name": "Accounting Student Book 1",
+      "pdfUrl": "https://mega.nz/file/achGTbhK#zzG_s3LZYXGxgNlSeefehDCycB77A0-Jmezl2Bd1lL0",
+      "solutionUrl": "https://mega.nz/file/CcQgmb7T#57b3xDp_ycNmfYbICQNQMoDw0iyahJik3FvZ-Rb-e-E",
+      "subject": "Accounting",
+      "imageUrl": "/books/acc1.png"
+    },
+    {
+      "id": "accounting-2",
+      "name": "Accounting Student Book 2",
+      "pdfUrl": "https://mega.nz/file/vFwmSDCQ#vDPX5zCz-ct3EFl6-8DcpH-NGBEhwlm8qCjJrOc3r7w",
+      "solutionUrl": "https://mega.nz/file/CBYUxbaD#71vUtYGDBcuxIKk5-wr15ioHKhwkqkELlUUDMeNxF2M",
+      "subject": "Accounting",
+      "imageUrl": "/books/acc2.png"
+    },
+    {
+      "id": "business-1",
+      "name": "Business Student Book 1",
+      "pdfUrl": "https://mega.nz/file/LEZwhRKB#0pY6pBekifgL9PhsB4amvuw71Z3DLHtvZ_suXj2a9Iw",
+      "solutionUrl": "https://mega.nz/file/OIJ1RKxQ#6-SA7ySBK0WXImPmZHoP-h4JikefmzFjI7HsdG0WTYw",
+      "subject": "Business",
+      "imageUrl": "/books/bus1.png"
+    },
+    {
+      "id": "business-2",
+      "name": "Business Student Book 2",
+      "pdfUrl": "https://mega.nz/file/DAREVRaA#v1wPxflWoJ42di1MONxzh0_5qfUMmvqdqDh5FgOJiHw",
+      "solutionUrl": "https://mega.nz/file/WRQHGCYQ#Px7jYflKXli9_2KSv6m59NDSobmqMI9PkO4ouR3BlEU",
+      "subject": "Business",
+      "imageUrl": "/books/bus2.png"
+    },
+    {
+      "id": "economics-1",
+      "name": "Economics Student Book 1",
+      "pdfUrl": "https://mega.nz/file/vNwRkKpY#S8lAXULNBBNTu7zdvR94BJLIrAi4q_76vbGFbGe1m-4",
+      "solutionUrl": "https://mega.nz/file/CR52xBIb#trWkL7NW3EOUG0dD6sNmKanOXoHSuyJw10HF7rjhGqU",
+      "subject": "Economics",
+      "imageUrl": "/books/econ1.png"
+    },
+    {
+      "id": "economics-2",
+      "name": "Economics Student Book 2",
+      "pdfUrl": "https://mega.nz/file/nFhAXY5B#Dvu491Cp-doFICFuzq-1CikbJJdWRH7KBsWIsOOmYQA",
+      "solutionUrl": "https://mega.nz/file/3NoiRRjJ#ktOqP2yG27FXEjaS1T3QAH9aIllYVnElcPRnOE4_gbY",
+      "subject": "Economics",
+      "imageUrl": "/books/econ2.png"
+    },
+    {
+      "id": "physics-1",
+      "name": "Physics Student Book 1",
+      "pdfUrl": "https://mega.nz/file/yBZVBYLL#rZ_ciFZkRSOz1bk2EF6X6cJhz7XsAowmElbM7Ko5Nok",
+      "solutionUrl": "https://mega.nz/file/qJQVnYCa#ahLBGqEVRwC2fxgSrymd3rwyX0lXjhssQjVv0A1buNw",
+      "subject": "Physics",
+      "imageUrl": "/books/phys1.png"
+    },
+    {
+      "id": "physics-2",
+      "name": "Physics Student Book 2",
+      "pdfUrl": "https://mega.nz/file/PNITCK6J#VXHvdB5mgw9nHO9i1DUq2KKOvfPWj0FbaHRBCRB_iI0",
+      "solutionUrl": "https://mega.nz/file/WBADSQIJ#U8fKZPI5-58kMwyaragEWnyfmTGy8rTIUD-qSZI6DKQ",
+      "subject": "Physics",
+      "imageUrl": "/books/phys2.png"
+    },
+    {
+      "id": "physics-3",
+      "name": "Physics Lab Book",
+      "pdfUrl": "https://mega.nz/file/iNJmUbSL#B3pWE4mqvhu8z6d_qyFGHVgOIt7hsjd8w6shkgWIPUU",
+      "subject": "Physics",
+      "imageUrl": "/books/phys3.png"
+    },
+    {
+      "id": "biology-1",
+      "name": "Biology Student Book 1",
+      "pdfUrl": "https://mega.nz/file/jFhRgQBS#XOySJ8XVMgUXUWfTiwMGw7HiMfJb7SXcg1D33SufyCI",
+      "solutionUrl": "https://mega.nz/file/bJBQlbZa#tg9JwzXyWQkUr_OJ6p9_P6X2dgtgiF_g5EJrE5lp3JI",
+      "subject": "Biology",
+      "imageUrl": "/books/bio1.png"
+    },
+    {
+      "id": "biology-2",
+      "name": "Biology Student Book 2",
+      "pdfUrl": "https://mega.nz/file/GcJVyS7b#rQUOfoGGtHSkfB01QrGnMxb7ChtIigW1KFg27lKM27k",
+      "solutionUrl": "https://mega.nz/file/2cIylZTD#U7Wx_2m50fIf5-ImtsNG2pNOcuZzT2MppEZPfzLTC74",
+      "subject": "Biology",
+      "imageUrl": "/books/bio2.png"
+    },
+    {
+      "id": "biology-3",
+      "name": "Biology Lab Book",
+      "pdfUrl": "https://mega.nz/file/bQAUBDBR#BcAhmeoAAvbei5uvipRunEmNrhbYS20qJjElG0IMb84",
+      "subject": "Biology",
+      "imageUrl": "/books/bio3.png"
+    },
+    {
+      "id": "it-1",
+      "name": "IT Student Book 1",
+      "pdfUrl": "https://drive.proton.me/urls/9GY0DPPNJR#ZxvDJEV94TVX",
+      "subject": "IT",
+      "imageUrl": "/books/it1.png"
+    },
+    {
+      "id": "it-2",
+      "name": "IT Student Book 2",
+      "pdfUrl": "https://drive.proton.me/urls/HBEYPRFR5R#0Ae7Ii51Qsl5",
+      "subject": "IT",
+      "imageUrl": "/books/it2.png"
+    },
+    {
+      "id": "p-1",
+      "title": "Pure Mathematics 1",
+      "pdfUrl": "https://mega.nz/file/vZYHkKzS#MM2bVmZ7b8Varq1FEdOWiPbkA8Vb76voh4qH7O6F_ug",
+      "solutionUrl": "https://mega.nz/file/7cZXBSTS#CCuanIyWkz2ZncsVZFadVRL-Q9palcgns8corWBLtGY",
+      "subject": "Mathematics",
+      "imageUrl": "/books/p1.png"
+    },
+    {
+      "id": "p-2",
+      "title": "Pure Mathematics 2",
+      "pdfUrl": "https://mega.nz/file/aRwjTAAT#7LvS8-RFftsNDbOW-_hv5yWOXj8HCOVXWJ9uotybkHE",
+      "solutionUrl": "https://mega.nz/file/DUgQGZab#38uKx52hJJlroio3Yho-nWEXXMkwXT1eZ602ys9Link",
+      "subject": "Mathematics",
+      "imageUrl": "/books/p2.png"
+    },
+    {
+      "id": "p-3",
+      "title": "Pure Mathematics 3",
+      "pdfUrl": "https://mega.nz/file/2RgAnLxY#DbJ2yaJuhnuw-El4x94nMs26V3bOod7X3ecDFQz25Ts",
+      "solutionUrl": "https://mega.nz/file/eZ4QnL5S#eIBBFTPDsQ858Egpi3SmVyfYZBzDSN74XmNdhs3j2Ws",
+      "subject": "Mathematics",
+      "imageUrl": "/books/p3.png"
+    },
+    {
+      "id": "p-4",
+      "title": "Pure Mathematics 4",
+      "pdfUrl": "https://mega.nz/file/GZBzXAgb#6_JzbAWB-JiMFBbx20VKLZNxNMj7CaVVfEvDNZRkmv4",
+      "solutionUrl": "https://mega.nz/file/vQpkhT4I#vUilsEcfkPYWxyFxrMNAbHTi0OFbEuGwNh0BPV4dPeE",
+      "subject": "Mathematics",
+      "imageUrl": "/books/p4.png"
+    },
+    {
+      "id": "m-1",
+      "title": "Mechanics 1",
+      "pdfUrl": "https://mega.nz/file/LQhmCYZK#VF1XwZhs8W6WtbnJrSQUMRJKaUlNv6EvkaHNnNZpQD0",
+      "solutionUrl": "https://mega.nz/file/Pcx0FIDR#1VT75Hl-Zv-9NVOkbbYSkSUk3Td0FpSepU9VbHu48IE",
+      "subject": "Mathematics",
+      "imageUrl": "/books/m1.png"
+    },
+    {
+      "id": "m-2",
+      "title": "Mechanics 2",
+      "pdfUrl": "https://mega.nz/file/zdxgyIrY#XmXsUpLlT4X05gOeisllOCnXMVqlMP49jGp2cs6J7KU",
+      "solutionUrl": "https://drive.google.com/file/d/1xoZti68HYb2XFeleZ9YM8RgNv3F9gcHQ/view",
+      "subject": "Mathematics",
+      "imageUrl": "/books/m2.png"
+    },
+    {
+      "id": "m-3",
+      "title": "Mechanics 3",
+      "pdfUrl": "https://mega.nz/file/7NgB1bYD#vQXAPPS1r0uLx3S3P1EMXUPGG_M0rKXalEEdBd9wm9w",
+      "solutionUrl": "https://mega.nz/file/HYACVZaa#gL3b8VEIpDQIA9IY9c0YNiv2C16_KEtrDoYlaBaHPAU",
+      "subject": "Mathematics",
+      "imageUrl": "/books/m3.png"
+    },
+    {
+      "id": "s-1",
+      "title": "Statistics 1",
+      "pdfUrl": "https://mega.nz/file/6R4CQYJI#CHQO9ZW971KooFqFYVyYdHarsjUr25wgI5fRk5X86oQ",
+      "solutionUrl": "https://drive.google.com/file/d/1M0hbQRpa77dSFLovoVDSahjjDUdP1rxM/view",
+      "subject": "Mathematics",
+      "imageUrl": "/books/s1.png"
+    },
+    {
+      "id": "s-2",
+      "title": "Statistics 2",
+      "pdfUrl": "https://mega.nz/file/eAYFwYoa#PQrP4oJG8epoQf6-2t29ODmBpPqqWY1hZSNfV6NB37g",
+      "solutionUrl": "https://drive.google.com/file/d/1PDz7H9Ubg1H9uwJ2PN7mcWhP6KqLIJyo/view",
+      "subject": "Mathematics",
+      "imageUrl": "/books/s2.png"
+    },
+    {
+      "id": "s-3",
+      "title": "Statistics 3",
+      "pdfUrl": "https://mega.nz/file/SdRHQDpC#2ZLCZfKn30H-DQ6rggRIom5EtDlKXWemnGGRPZmi2FU",
+      "solutionUrl": "https://mega.nz/file/GAgDjCZD#vjRolDEp1HVTljD3sfNOx6qO8Ro4ahmuLEf1YmgUjoM",
+      "subject": "Mathematics",
+      "imageUrl": "/books/s3.png"
+    },
+    {
+      "id": "fp-1",
+      "title": "Further Pure Mathematics 1",
+      "pdfUrl": "https://mega.nz/file/fExATIZR#7-Qu6ygyJR0S_bPfW--L2u_O2KCiF_e4ZZW-oBhxc0k",
+      "solutionUrl": "https://mega.nz/file/jQJGFBgB#OcVanBnRvsvsl7d1CdwBJGZqcI8bfcSkFp1crJ8zRqw",
+      "subject": "Mathematics",
+      "imageUrl": "/books/fp1.png"
+    },
+    {
+      "id": "fp-2",
+      "title": "Further Pure Mathematics 2",
+      "pdfUrl": "https://mega.nz/file/qYpmSQxY#aH_ftdzYAhHOkcIQHRlO1aqOewKUPZStleWGhrvA4Zs",
+      "solutionUrl": "https://mega.nz/file/3FwCjIhB#D4W2t05nDgtLrv4CySVYTeg5k2ZkMKHxTqiGYYMkw9c",
+      "subject": "Mathematics",
+      "imageUrl": "/books/fp2.png"
+    },
+    {
+      "id": "fp-3",
+      "title": "Further Pure Mathematics 3",
+      "pdfUrl": "https://mega.nz/file/7d5gWA6a#W0ixbxV4o1A8s2RKiTEYtpOdqg6OhQEf5_baxDeE2e8",
+      "solutionUrl": "https://mega.nz/file/GQhGBaSY#oUDBQfixB3-MYH_skudMc9-McTEzaQqsH3QDcnPfY_o",
+      "subject": "Mathematics",
+      "imageUrl": "/books/fp3.png"
+    },
+    {
+      "id": "d-1",
+      "title": "Decision Mathematics 1",
+      "pdfUrl": "https://mega.nz/file/mUQCCZKD#Mv233TpBrNc70Aj199u3bHfMXrIgTJAVuGXP0uiXrBw",
+      "solutionUrl": "https://mega.nz/file/6AwWGAhJ#1KuIz_T5Anch_O6S608V7DuAV1jqiKMvl1PNZKGTqB8",
+      "subject": "Mathematics",
+      "imageUrl": "/books/d1.png"
+    }
+  ]
+}

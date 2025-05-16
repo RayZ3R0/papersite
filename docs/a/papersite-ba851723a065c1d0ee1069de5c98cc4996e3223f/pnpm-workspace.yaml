@@ -1,0 +1,8 @@
+packages:
+  - src/**
+  - scripts/**
+  - '!**/node_modules'
+  - '!**/dist'
+  - '!**/.next'
+ignoredBuiltDependencies:
+  - canvas

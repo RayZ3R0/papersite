@@ -1,0 +1,585 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* Default Light Theme */
+  .light {
+    --color-primary: #3b82f6;
+    --color-primary-light: #60a5fa;
+    --color-primary-dark: #2563eb;
+
+    --color-secondary: #6b7280;
+    --color-secondary-light: #9ca3af;
+    --color-secondary-dark: #4b5563;
+
+    --color-background: #f9fafb;
+    --color-background-alt: #ffffff;
+
+    --color-surface: #ffffff;
+    --color-surface-alt: #f3f4f6;
+
+    --color-text: #1f2937;
+    --color-text-muted: #6b7280;
+
+    --color-border: #e5e7eb;
+    --color-border-light: #f3f4f6;
+  }
+
+  /* Default Dark Theme */
+  .dark {
+    --color-primary: #60a5fa;
+    --color-primary-light: #93c5fd;
+    --color-primary-dark: #3b82f6;
+
+    --color-secondary: #9ca3af;
+    --color-secondary-light: #d1d5db;
+    --color-secondary-dark: #6b7280;
+
+    --color-background: #111827;
+    --color-background-alt: #1f2937;
+
+    --color-surface: #1f2937;
+    --color-surface-alt: #374151;
+
+    --color-text: #f9fafb;
+    --color-text-muted: #9ca3af;
+
+    --color-border: #374151;
+    --color-border-light: #4b5563;
+  }
+
+  /* Catppuccin Latte */
+  .catppuccin-latte {
+    --color-primary: #8839ef;
+    --color-primary-light: #9c4dff;
+    --color-primary-dark: #7426d6;
+
+    --color-secondary: #7c7f93;
+    --color-secondary-light: #9ca0b0;
+    --color-secondary-dark: #6c6f82;
+
+    --color-background: #eff1f5;
+    --color-background-alt: #e6e9ef;
+
+    --color-surface: #ffffff;
+    --color-surface-alt: #ccd0da;
+
+    --color-text: #4c4f69;
+    --color-text-muted: #8c8fa1;
+
+    --color-border: #ccd0da;
+    --color-border-light: #bcc0cc;
+  }
+
+  /* Catppuccin Frappe */
+  .catppuccin-frappe {
+    --color-primary: #ca9ee6;
+    --color-primary-light: #e5c2ff;
+    --color-primary-dark: #b57edc;
+
+    --color-secondary: #a5adce;
+    --color-secondary-light: #b5bfe2;
+    --color-secondary-dark: #949cbb;
+
+    --color-background: #303446;
+    --color-background-alt: #292c3c;
+
+    --color-surface: #414559;
+    --color-surface-alt: #51576d;
+
+    --color-text: #c6d0f5;
+    --color-text-muted: #a5adce;
+
+    --color-border: #51576d;
+    --color-border-light: #626880;
+  }
+
+  /* Catppuccin Macchiato */
+  .catppuccin-macchiato {
+    --color-primary: #c6a0f6;
+    --color-primary-light: #ddb6ff;
+    --color-primary-dark: #b18cdc;
+
+    --color-secondary: #a5adcb;
+    --color-secondary-light: #b8c0dc;
+    --color-secondary-dark: #939ab7;
+
+    --color-background: #24273a;
+    --color-background-alt: #1e2030;
+
+    --color-surface: #363a4f;
+    --color-surface-alt: #494d64;
+
+    --color-text: #cad3f5;
+    --color-text-muted: #a5adcb;
+
+    --color-border: #494d64;
+    --color-border-light: #5b6078;
+  }
+
+  /* Catppuccin Mocha */
+  .catppuccin-mocha {
+    --color-primary: #cba6f7;
+    --color-primary-light: #e4bbff;
+    --color-primary-dark: #b591dd;
+
+    --color-secondary: #a6adc8;
+    --color-secondary-light: #bac2de;
+    --color-secondary-dark: #9399b2;
+
+    --color-background: #1e1e2e;
+    --color-background-alt: #181825;
+
+    --color-surface: #313244;
+    --color-surface-alt: #45475a;
+
+    --color-text: #cdd6f4;
+    --color-text-muted: #a6adc8;
+
+    --color-border: #45475a;
+    --color-border-light: #585b70;
+  }
+
+  /* Matcha Theme */
+  .matcha {
+    --color-primary: #7FA650;
+    --color-primary-light: #A6C977;
+    --color-primary-dark: #5F7F3C;
+
+    --color-secondary: #6F755F;
+    --color-secondary-light: #8A907A;
+    --color-secondary-dark: #545A44;
+
+    --color-background: #F7F4E9;
+    --color-background-alt: #ECE8D9;
+
+    --color-surface: #FFFFFF;
+    --color-surface-alt: #F2F0E5;
+
+    --color-text: #3A4032;
+    --color-text-muted: #6F755F;
+
+    --color-border: #D3D1C5;
+    --color-border-light: #E6E4D9;
+  }
+
+  /* Nord Theme */
+  .nord {
+    --color-primary: #88C0D0;
+    --color-primary-light: #A3BE8C;
+    --color-primary-dark: #5E81AC;
+
+    --color-secondary: #81A1C1;
+    --color-secondary-light: #88C0D0;
+    --color-secondary-dark: #5E81AC;
+
+    --color-background: #2E3440;
+    --color-background-alt: #3B4252;
+
+    --color-surface: #434C5E;
+    --color-surface-alt: #4C566A;
+
+    --color-text: #ECEFF4;
+    --color-text-muted: #D8DEE9;
+
+    --color-border: #434C5E;
+    --color-border-light: #4C566A;
+  }
+
+  /* Gruvbox Theme */
+  .gruvbox {
+    --color-primary: #8ec07c;
+    --color-primary-light: #b8bb26;
+    --color-primary-dark: #83a598;
+
+    --color-secondary: #928374;
+    --color-secondary-light: #a89984;
+    --color-secondary-dark: #7c6f64;
+
+    --color-background: #282828;
+    --color-background-alt: #3c3836;
+
+    --color-surface: #1d2021;
+    --color-surface-alt: #32302f;
+
+    --color-text: #ebdbb2;
+    --color-text-muted: #d5c4a1;
+
+    --color-border: #7c6f64;
+    --color-border-light: #928374;
+  }
+
+  /* Dracula Theme (Dark) */
+  .dracula {
+    --color-primary: #bd93f9;
+    --color-primary-light: #d6baff;
+    --color-primary-dark: #9e6cf0;
+
+    --color-secondary: #ff79c6;
+    --color-secondary-light: #ff9bdb;
+    --color-secondary-dark: #db5bb0;
+
+    --color-background: #282a36;
+    --color-background-alt: #343746;
+
+    --color-surface: #44475a;
+    --color-surface-alt: #4d5171;
+
+    --color-text: #f8f8f2;
+    --color-text-muted: #bfbfbf;
+
+    --color-border: #44475a;
+    --color-border-light: #565869;
+  }
+
+  /* Solarized Light */
+  .solarized-light {
+    --color-primary: #268bd2;
+    --color-primary-light: #4ca4e4;
+    --color-primary-dark: #0969a2;
+
+    --color-secondary: #2aa198;
+    --color-secondary-light: #44c3b9;
+    --color-secondary-dark: #1a817a;
+
+    --color-background: #fdf6e3;
+    --color-background-alt: #eee8d5;
+
+    --color-surface: #fefefe;
+    --color-surface-alt: #efefef;
+
+    --color-text: #073642;
+    --color-text-muted: #586e75;
+
+    --color-border: #e0e0e0;
+    --color-border-light: #eeeeee;
+  }
+
+  /* Solarized Dark */
+  .solarized-dark {
+    --color-primary: #268bd2;
+    --color-primary-light: #4ca4e4;
+    --color-primary-dark: #0969a2;
+
+    --color-secondary: #2aa198;
+    --color-secondary-light: #44c3b9;
+    --color-secondary-dark: #1a817a;
+
+    --color-background: #002b36;
+    --color-background-alt: #073642;
+
+    --color-surface: #073642;
+    --color-surface-alt: #114752;
+
+    --color-text: #fdf6e3;
+    --color-text-muted: #93a1a1;
+
+    --color-border: #586e75;
+    --color-border-light: #657b83;
+  }
+
+  /* Rose Pine (Dark) */
+  .rose-pine {
+    --color-primary: #ebbcba;
+    --color-primary-light: #f4cbc9;
+    --color-primary-dark: #e4a8a8;
+
+    --color-secondary: #f6c177;
+    --color-secondary-light: #fbcd8d;
+    --color-secondary-dark: #e0a755;
+
+    --color-background: #191724;
+    --color-background-alt: #1f1d2e;
+
+    --color-surface: #26233a;
+    --color-surface-alt: #2a273f;
+
+    --color-text: #e0def4;
+    --color-text-muted: #908caa;
+
+    --color-border: #403d58;
+    --color-border-light: #524f67;
+  }
+
+  /* Tokyo Night (Dark) */
+  .tokyo-night {
+    --color-primary: #7aa2f7;
+    --color-primary-light: #96b1fa;
+    --color-primary-dark: #5d87e6;
+
+    --color-secondary: #bb9af7;
+    --color-secondary-light: #c9affa;
+    --color-secondary-dark: #a577f3;
+
+    --color-background: #1a1b26;
+    --color-background-alt: #24283b;
+
+    --color-surface: #2f3549;
+    --color-surface-alt: #353b54;
+
+    --color-text: #c0caf5;
+    --color-text-muted: #a9b1d6;
+
+    --color-border: #414868;
+    --color-border-light: #545c7e;
+  }
+
+  /* Crimson Theme (Dark) */
+  .crimson {
+    --color-primary: #e53935;
+    --color-primary-light: #ff6659;
+    --color-primary-dark: #ab000d;
+
+    --color-secondary: #ff8a80;
+    --color-secondary-light: #ffbcaf;
+    --color-secondary-dark: #c85a54;
+
+    --color-background: #1a1a1a;
+    --color-background-alt: #252525;
+
+    --color-surface: #2d2d2d;
+    --color-surface-alt: #353535;
+
+    --color-text: #f5f5f5;
+    --color-text-muted: #b3b3b3;
+
+    --color-border: #444444;
+    --color-border-light: #555555;
+  }
+
+.kanagawa {
+  /* Primary accent (e.g., buttons, links) - crystalBlue */
+  --color-primary: #7e9cd8;
+  --color-primary-light: #a3c1f0;
+  /* Lightened variant */
+  --color-primary-dark: #5c7ab0;
+  /* Darkened variant */
+
+  /* Secondary accent (e.g., secondary elements) - sakuraPink */
+  --color-secondary: #d27e99;
+  --color-secondary-light: #e8a6ba;
+  /* Lightened variant */
+  --color-secondary-dark: #a85c75;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #1f1f28;
+  /* sumiInk1 - main background */
+  --color-background-alt: #2a2a37;
+  /* sumiInk2 - alternate background */
+
+  /* Surface colors (e.g., cards, panels) */
+  --color-surface: #54546d;
+  /* sumiInk4 */
+  --color-surface-alt: #696984;
+  /* Slightly lighter custom shade */
+
+  /* Text colors */
+  --color-text: #dcd7ba;
+  /* fujiWhite - main text */
+  --color-text-muted: #a3a3a3;
+  /* Custom muted gray for contrast */
+
+  /* Border colors */
+  --color-border: #54546d;
+  /* sumiInk4 */
+  --color-border-light: #727289;
+  /* katanaGray adjusted */
+}
+
+.one-dark {
+  /* Primary accent - blue used for functions */
+  --color-primary: #61afef;
+  --color-primary-light: #89c7ff;
+  /* Lightened variant */
+  --color-primary-dark: #4285b4;
+  /* Darkened variant */
+
+  /* Secondary accent - red used for keywords */
+  --color-secondary: #e06c75;
+  --color-secondary-light: #ff8f99;
+  /* Lightened variant */
+  --color-secondary-dark: #b94e56;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #282c34;
+  /* Main editor background */
+  --color-background-alt: #2e333d;
+  /* Slightly lighter alternate */
+
+  /* Surface colors */
+  --color-surface: #3e4451;
+  /* Editor group header shade */
+  --color-surface-alt: #4b5263;
+  /* Lighter surface variant */
+
+  /* Text colors */
+  --color-text: #abb2bf;
+  /* Foreground text */
+  --color-text-muted: #828997;
+  /* Muted text (comments adjusted) */
+
+  /* Border colors */
+  --color-border: #3e4451;
+  /* Matches surface */
+  --color-border-light: #545b6b;
+  /* Lighter border */
+}
+
+.one-light {
+  /* Primary accent - blue for functions */
+  --color-primary: #4078f2;
+  --color-primary-light: #699cff;
+  /* Lightened variant */
+  --color-primary-dark: #1a5ad7;
+  /* Darkened variant */
+
+  /* Secondary accent - green for strings */
+  --color-secondary: #50a14f;
+  --color-secondary-light: #7bc67a;
+  /* Lightened variant */
+  --color-secondary-dark: #388038;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #fafafa;
+  /* Main background */
+  --color-background-alt: #f0f0f0;
+  /* Slightly darker alternate */
+
+  /* Surface colors */
+  --color-surface: #e5e5e5;
+  /* Light gray surface */
+  --color-surface-alt: #eeeeee;
+  /* Even lighter surface */
+
+  /* Text colors */
+  --color-text: #383a42;
+  /* Foreground text */
+  --color-text-muted: #a0a1a7;
+  /* Comments/muted text */
+
+  /* Border colors */
+  --color-border: #e5e5e5;
+  /* Matches surface */
+  --color-border-light: #d0d0d0;
+  /* Darker border */
+}
+
+.everforest {
+  /* Primary accent - green for prominence */
+  --color-primary: #a7c080;
+  --color-primary-light: #c3d9a0;
+  /* Lightened variant */
+  --color-primary-dark: #829966;
+  /* Darkened variant */
+
+  /* Secondary accent - red for contrast */
+  --color-secondary: #e67e80;
+  --color-secondary-light: #f4a4a6;
+  /* Lightened variant */
+  --color-secondary-dark: #c15f61;
+  /* Darkened variant */
+
+  /* Background colors */
+  --color-background: #2f383e;
+  /* Main background */
+  --color-background-alt: #374247;
+  /* Slightly lighter alternate */
+
+  /* Surface colors */
+  --color-surface: #3c464d;
+  /* Dark surface */
+  --color-surface-alt: #4b565c;
+  /* Lighter surface */
+
+  /* Text colors */
+  --color-text: #d3c6aa;
+  /* Foreground text */
+  --color-text-muted: #4c514a;
+  /* Comments/muted text */
+
+  /* Border colors */
+  --color-border: #4b565c;
+  /* Matches surface-alt */
+  --color-border-light: #626e73;
+  /* Lighter border */
+}
+
+  /* Base HTML */
+  html {
+    @apply antialiased;
+  }
+
+  /* Smooth transitions */
+  html.transitioning * {
+    transition: background-color 200ms ease-in-out,
+                border-color 200ms ease-in-out,
+                color 200ms ease-in-out;
+  }
+}
+
+/* Theme transition animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Search animations */
+@keyframes searchFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: searchFadeIn 0.6s ease-out 0.3s forwards;
+}
+
+.theme-fade-in {
+  animation: fadeIn 200ms ease-in-out;
+}
+
+.theme-fade-out {
+  animation: fadeOut 200ms ease-in-out;
+}
+
+
+/* Fix for mobile inputs */
+input,
+textarea,
+button,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  touch-action: manipulation; /* Enable pinch-to-zoom */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure body has proper touch behavior */
+body {
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent pointer event issues on iOS */
+@supports (-webkit-touch-callout: none) {
+  input[type="search"],
+  input[type="text"] {
+    font-size: 16px; /* Prevent iOS zoom when focusing inputs */
+  }
+}
