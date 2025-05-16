@@ -321,124 +321,152 @@ export default function SubjectPage() {
                         </div>
                       </div>
                     ) : unitPapers.length > 0 ? (
-                      unitPapers.map((paper) => (
-                        <div
-                          key={paper.id}
-                          className="p-4 hover:bg-surface-alt transition-colors"
-                        >
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <h3 className="font-medium text-text flex items-center gap-2">
-                                {paper.session} {paper.year}
-                                <span className="text-sm px-2 py-0.5 bg-surface-alt rounded font-mono">
-                                  {paper.unit_code}
+                      <>
+                        {/* Group papers by year and render with year headers */}
+                        {(() => {
+                          // Group papers by year
+                          const papersByYear = unitPapers.reduce((acc, paper) => {
+                            if (!acc[paper.year]) {
+                              acc[paper.year] = [];
+                            }
+                            acc[paper.year].push(paper);
+                            return acc;
+                          }, {} as Record<number, Paper[]>);
+                          
+                          // Sort years in descending order
+                          const sortedYears = Object.keys(papersByYear)
+                            .map(Number)
+                            .sort((a, b) => b - a);
+                          
+                          return sortedYears.map((year) => (
+                            <div key={year}>
+                              <div className="sticky top-0 bg-surface-alt/50 backdrop-blur-sm px-4 py-2 border-y border-border">
+                                <span className="text-sm font-semibold text-primary">
+                                  {year}
                                 </span>
-                              </h3>
+                              </div>
+                              {papersByYear[year].map((paper) => (
+                                <div
+                                  key={paper.id}
+                                  className="p-4 hover:bg-surface-alt transition-colors"
+                                >
+                                  <div className="flex justify-between items-start mb-3">
+                                    <div>
+                                      <h3 className="font-medium text-text flex items-center gap-2">
+                                        {paper.session} {paper.year}
+                                        <span className="text-sm px-2 py-0.5 bg-surface-alt rounded font-mono">
+                                          {paper.unit_code}
+                                        </span>
+                                      </h3>
+                                    </div>
+                                  </div>
+
+                                  {/* Paper and Marking Scheme */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {/* Question Paper Button */}
+                                    {paper.pdf_url !== "/nopaper" ? (
+                                      <a
+                                        href={paper.pdf_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-2 p-3
+                                          bg-primary text-white rounded-lg hover:opacity-90
+                                          transition-colors shadow-sm hover:shadow"
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                          />
+                                        </svg>
+                                        Question Paper
+                                      </a>
+                                    ) : (
+                                      <button
+                                        disabled
+                                        className="flex items-center justify-center gap-2 p-3
+                                          bg-surface-alt text-text-muted rounded-lg cursor-not-allowed
+                                          transition-colors border border-border"
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                          />
+                                        </svg>
+                                        Paper Unavailable
+                                      </button>
+                                    )}
+
+                                    {/* Marking Scheme Button */}
+                                    {paper.marking_scheme_url !== "/nopaper" ? (
+                                      <a
+                                        href={paper.marking_scheme_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-2 p-3
+                                          bg-secondary text-white rounded-lg hover:opacity-90
+                                          transition-colors shadow-sm hover:shadow"
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                                          />
+                                        </svg>
+                                        Marking Scheme
+                                      </a>
+                                    ) : (
+                                      <button
+                                        disabled
+                                        className="flex items-center justify-center gap-2 p-3
+                                          bg-surface-alt text-text-muted rounded-lg cursor-not-allowed
+                                          transition-colors border border-border"
+                                      >
+                                        <svg
+                                          className="w-4 h-4"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                          />
+                                        </svg>
+                                        MS Unavailable
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          </div>
-
-                          {/* Paper and Marking Scheme */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {/* Question Paper Button */}
-                            {paper.pdf_url !== "/nopaper" ? (
-                              <a
-                                href={paper.pdf_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 p-3
-                                  bg-primary text-white rounded-lg hover:opacity-90
-                                  transition-colors shadow-sm hover:shadow"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                  />
-                                </svg>
-                                Question Paper
-                              </a>
-                            ) : (
-                              <button
-                                disabled
-                                className="flex items-center justify-center gap-2 p-3
-                                  bg-surface-alt text-text-muted rounded-lg cursor-not-allowed
-                                  transition-colors border border-border"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-                                Paper Unavailable
-                              </button>
-                            )}
-
-                            {/* Marking Scheme Button */}
-                            {paper.marking_scheme_url !== "/nopaper" ? (
-                              <a
-                                href={paper.marking_scheme_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 p-3
-                                  bg-secondary text-white rounded-lg hover:opacity-90
-                                  transition-colors shadow-sm hover:shadow"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                                  />
-                                </svg>
-                                Marking Scheme
-                              </a>
-                            ) : (
-                              <button
-                                disabled
-                                className="flex items-center justify-center gap-2 p-3
-                                  bg-surface-alt text-text-muted rounded-lg cursor-not-allowed
-                                  transition-colors border border-border"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-                                MS Unavailable
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ))
+                          ));
+                        })()}
+                      </>
                     ) : (
                       <div className="p-4 text-center text-text-muted">
                         No papers available for this unit with selected filters

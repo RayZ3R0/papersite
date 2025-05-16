@@ -25,12 +25,13 @@ export function AuthLoadingProvider({
     "/papers",
     "/search",
     "/exams",
+    "/annotate",
     // API endpoints
     "/api/health",
     "/api/subjects",
     "/api/books",
     "/api/papers"
-  ],
+  ].map(p => p.toLowerCase()),
   loginPath = "/auth/login",
 }: AuthLoadingProviderProps) {
   const { user, isLoading, refreshSession } = useAuth();
@@ -66,56 +67,43 @@ export function AuthLoadingProvider({
   const checkPublicPath = (currentPath: string | null) => {
     if (!currentPath) return false;
 
+    const path = currentPath.toLowerCase();
+
     if (process.env.NODE_ENV === 'development') {
       console.log('\n==== Auth Path Check ====');
-      console.log('Checking path:', currentPath);
+      console.log('Checking path:', path);
     }
 
-    // Handle nested paths (e.g., /papers/chemistry)
-    const segments = currentPath.split('/').filter(Boolean);
-    if (segments.length > 0) {
-      const basePath = `/${segments[0]}`;
-      const baseMatches = publicPaths.includes(basePath);
-      
-      if (process.env.NODE_ENV === 'development' && baseMatches) {
-        console.log(`✅ Base path ${basePath} is public`);
-      }
-      
-      if (baseMatches) return true;
-    }
-
-    // Check exact matches and path starts
-    const matches = publicPaths.some(path => {
-      const isMatch = currentPath === path ||
-        currentPath.startsWith(path + '/') ||
-        (path === '/' && currentPath === '');
-
-      if (process.env.NODE_ENV === 'development' && isMatch) {
-        console.log(`✅ Path matches rule: ${path}`);
-      }
-
-      return isMatch;
-    });
+    // Check if path starts with any public path
+    const isPublic = publicPaths.some(publicPath =>
+      path === publicPath || path.startsWith(publicPath + '/')
+    );
 
     if (process.env.NODE_ENV === 'development') {
-      if (!matches) {
+      if (isPublic) {
+        console.log(`✅ Path ${path} is public`);
+      } else {
         console.log('❌ No public path match found');
         console.log('Available public paths:', publicPaths);
       }
       console.log('=======================\n');
     }
 
-    return matches;
+    return isPublic;
   };
 
   // Check if a path should be treated as private
   const isPrivatePath = (currentPath: string | null) => {
     if (!currentPath) return false;
 
+    // Explicitly handle annotator paths
+    if (currentPath.startsWith('/annotate')) {
+      return false;
+    }
+
     const privatePaths = [
       '/profile',
       '/forum/new',
-      '/annotate',
       '/admin'
     ];
 

@@ -262,7 +262,6 @@ export const config = {
     // Protected pages that require login
     '/profile/:path*',
     '/forum/new/:path*',
-    '/annotate/:path*',
 
     // Auth routes that need protection
     '/api/auth/((?!login|register|password/reset).)*',
