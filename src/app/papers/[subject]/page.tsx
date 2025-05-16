@@ -139,12 +139,12 @@ export default function SubjectPage() {
       .sort((a, b) => {
         // Sort by year first (descending)
         if (a.year !== b.year) return b.year - a.year;
-        // Then by session order (Jan, May/June, Oct)
+        // Then by month in chronological order (October, June, January)
         const sessionOrder: Record<string, number> = {
-          January: 0,
-          May: 1,
-          June: 1,
-          October: 2,
+          October: 0,   // End of year
+          June: 1,      // Mid-year
+          May: 1,       // Same as June (May/June)
+          January: 2,   // Start of year
         };
         return (sessionOrder[a.session] || 0) - (sessionOrder[b.session] || 0);
       });

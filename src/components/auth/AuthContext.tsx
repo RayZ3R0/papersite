@@ -103,15 +103,24 @@ let SECURITY_CONFIG = {
 
 // Request deduplication
 let refreshPromise: Promise<UserWithoutPassword | null> | null = null;
-let lastRefreshTime = 0;
 let refreshRetries = 0;
-let sessionInitialized = false;
+
+interface SessionState {
+  initialized: boolean;
+  lastCheck: number;
+  lastRefresh: number;
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserWithoutPassword | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [sessionState, setSessionState] = useState<SessionState>({
+    initialized: false,
+    lastCheck: 0,
+    lastRefresh: 0
+  });
   const pathname = usePathname();
   const router = useRouter();
 
@@ -152,12 +161,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const deduplicationWindow = getConnectionType() === "slow" ? 5000 : 1000;
 
     // Enhanced deduplication logic with longer window for slow connections
-    if (now - lastRefreshTime < deduplicationWindow && refreshPromise) {
+    if (now - sessionState.lastRefresh < deduplicationWindow && refreshPromise) {
       return refreshPromise;
     }
 
     // Reset retries if it's been more than 2 minutes since last attempt
-    if (now - lastRefreshTime > 120000) {
+    if (now - sessionState.lastRefresh > 120000) {
       refreshRetries = 0;
     }
 
@@ -213,7 +222,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Max refresh retries exceeded");
       })();
 
-      lastRefreshTime = now;
+      setSessionState(prev => ({
+        ...prev,
+        lastRefresh: now
+      }));
       return await refreshPromise;
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
@@ -233,7 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true;
 
     async function initializeSession() {
-      if (!mounted || sessionInitialized) return;
+      if (!mounted || sessionState.initialized) return;
 
       setIsLoading(true);
       try {
@@ -241,7 +253,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await refreshSession();
 
         if (userData && mounted) {
-          sessionInitialized = true;
+          setSessionState(prev => ({
+            ...prev,
+            initialized: true,
+            lastRefresh: Date.now()
+          }));
 
           // Use requestIdleCallback for non-critical operations if available
           const scheduleTokenCheck =
@@ -304,10 +320,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       initializeSession();
     }
 
+    // Check if token is near expiry
+    const checkTokenNearExpiry = (tokenData?: string) => {
+      if (!tokenData) return true;
+      
+      try {
+        const token = tokenData.split("=")[1];
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const expiryTime = payload.exp * 1000;
+        const timeUntilExpiry = expiryTime - Date.now();
+        
+        return timeUntilExpiry <= SECURITY_CONFIG.session.renewalThreshold;
+      } catch {
+        return true;
+      }
+    };
+
     // Add visibility change listener to initialize session when tab becomes visible
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && !sessionInitialized) {
-        initializeSession();
+      if (document.visibilityState === "visible") {
+        const now = Date.now();
+        const tokenData = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("auth-token="));
+
+        // Only refresh if:
+        // 1. Session not initialized OR
+        // 2. Token is near expiry OR
+        // 3. Last refresh was more than 30 minutes ago
+        if (!sessionState.initialized ||
+            checkTokenNearExpiry(tokenData) ||
+            now - sessionState.lastRefresh > 30 * 60 * 1000) {
+          refreshSession();
+        }
+        
+        setSessionState(prev => ({
+          ...prev,
+          lastCheck: now
+        }));
       }
     };
 
@@ -342,7 +392,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setUser(data.user);
     setLastRefresh(new Date());
-    sessionInitialized = true;
+    setSessionState(prev => ({
+      ...prev,
+      initialized: true,
+      lastRefresh: Date.now()
+    }));
     return data.user;
   };
 
@@ -410,7 +464,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(null);
       setLastRefresh(null);
-      sessionInitialized = false;
+      setSessionState(prev => ({
+        ...prev,
+        initialized: false,
+        lastRefresh: 0
+      }));
 
       if (pathname !== "/auth/login") {
         router.push("/auth/login");
