@@ -29,8 +29,8 @@ export default function AnnotateSubjectList({
   const getUnitPapers = (papers: Paper[], unitId: string) => {
     return papers
       .filter(paper => 
-        paper.pdfUrl.toLowerCase().endsWith('.pdf') && 
-        paper.unitId === unitId
+        paper.pdf_url.toLowerCase().endsWith('.pdf') && 
+        paper.unit_id === unitId
       )
       .sort((a, b) => {
         // First sort by year (descending)
@@ -122,9 +122,14 @@ export default function AnnotateSubjectList({
                         >
                           <span className="text-sm text-text">
                             {paper.session} {paper.year}
+                            {paper.unit_code && (
+                              <span className="ml-2 text-sm text-text-muted">
+                                {paper.unit_code}
+                              </span>
+                            )}
                           </span>
                           <a
-                            href={`/annotate/view/${paper.id}`}
+                            href={`/annotate/view/paper?pdf=${encodeURIComponent(paper.pdf_url)}&title=${encodeURIComponent(`${paper.session} ${paper.year}${paper.unit_code ? ` ${paper.unit_code}` : ''}`)}`}
                             className="px-4 py-1 text-sm font-medium rounded-full
                               bg-primary text-white hover:opacity-90 
                               transition-colors shadow-sm hover:shadow"
@@ -150,7 +155,7 @@ export default function AnnotateSubjectList({
           }
 
           const validPapers = subject.papers.filter(p => 
-            p.pdfUrl.toLowerCase().endsWith('.pdf')
+            p.pdf_url.toLowerCase().endsWith('.pdf')
           );
 
           return (

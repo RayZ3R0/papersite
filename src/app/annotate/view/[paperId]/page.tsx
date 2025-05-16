@@ -1,14 +1,14 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import subjectsData from '@/lib/data/subjects.json';
 import PDFViewer from '@/components/annotator/PDFViewer';
-import type { SubjectsData, Paper } from '@/types/subject';
 
 export default function AnnotateViewPage() {
-  const params = useParams();
-  const paperId = params.paperId as string;
+  const searchParams = useSearchParams();
+  const pdfUrl = searchParams.get('pdf');
+  const title = searchParams.get('title') || 'paper';
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -19,25 +19,23 @@ export default function AnnotateViewPage() {
         setLoading(true);
         setError(null);
 
-        // Find paper in subjects data
-        const paper = findPaperById(paperId);
-        if (!paper) {
-          throw new Error('Paper not found');
+        if (!pdfUrl) {
+          throw new Error('PDF URL not provided');
         }
 
         // Check if URL ends with .pdf
-        if (!paper.pdfUrl.toLowerCase().endsWith('.pdf')) {
+        if (!pdfUrl.toLowerCase().endsWith('.pdf')) {
           throw new Error('Invalid PDF URL');
         }
 
         // Fetch the PDF file
-        const response = await fetch(paper.pdfUrl);
+        const response = await fetch(pdfUrl);
         if (!response.ok) {
           throw new Error('Failed to load PDF');
         }
 
         const blob = await response.blob();
-        const file = new File([blob], `${paper.title}.pdf`, { type: 'application/pdf' });
+        const file = new File([blob], `${title}.pdf`, { type: 'application/pdf' });
         setPdfFile(file);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load PDF');
@@ -47,19 +45,7 @@ export default function AnnotateViewPage() {
     }
 
     loadPDF();
-  }, [paperId]);
-
-  // Helper function to find paper by ID
-  function findPaperById(id: string): Paper | null {
-    const subjects = (subjectsData as unknown as SubjectsData).subjects;
-    
-    for (const subject of Object.values(subjects)) {
-      const paper = subject.papers.find(p => p.id === id);
-      if (paper) return paper;
-    }
-    
-    return null;
-  }
+  }, [pdfUrl, title]);
 
   // Loading state
   if (loading) {
