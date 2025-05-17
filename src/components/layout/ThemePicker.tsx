@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { useTheme, themeNames, Theme } from "@/hooks/useTheme";
+import { useRouter, usePathname } from "next/navigation";
 
 // Get theme-specific colors without CSS variables
 const themePreviewColors: Record<Theme, string[]> = {
@@ -44,6 +45,9 @@ export default function ThemePicker() {
   const [recentThemes, setRecentThemes] = useState<Theme[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isNyanCatActive, setIsNyanCatActive] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Load recent themes from localStorage
   useEffect(() => {
@@ -122,6 +126,36 @@ export default function ThemePicker() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
+
+  // Check if NyanCat is active on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setIsNyanCatActive(params.get('cat') === 'true');
+    }
+  }, []);
+
+  // Toggle the NyanCat Easter egg
+  const toggleNyanCat = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get current query params
+    const searchParams = new URLSearchParams(window.location.search);
+    
+    // Toggle the cat parameter
+    if (searchParams.get('cat') === 'true') {
+      searchParams.delete('cat');
+      setIsNyanCatActive(false);
+    } else {
+      searchParams.set('cat', 'true');
+      setIsNyanCatActive(true);
+    }
+    
+    // Update URL without refreshing the page
+    const newUrl = `${pathname}?${searchParams.toString()}`;
+    router.push(newUrl, { scroll: false });
+  };
 
   // Filter themes based on search query
   const filteredThemes = Object.entries(themeNames).filter(([themeKey, themeName]) => 
@@ -360,7 +394,7 @@ export default function ThemePicker() {
           {/* Footer with additional features */}
           <div className="px-4 pt-2 mt-1 border-t border-border">
             <div className="flex items-center justify-between text-xs">
-              <p className="text-text-muted">
+              <p className="text-text-muted flex items-center gap-1.5">
                 <a
                   href="https://github.com/catppuccin/catppuccin"
                   target="_blank"
@@ -370,6 +404,29 @@ export default function ThemePicker() {
                   Catppuccin
                 </a>
                 {" "}& more
+
+                {/* Cat icon for NyanCat Easter egg */}
+                <button 
+                  onClick={toggleNyanCat}
+                  className={`group relative w-5 h-5 flex items-center justify-center rounded-full 
+                    transition-colors duration-300 ${isNyanCatActive ? 'text-pink-500' : 'text-text-muted hover:text-primary'}`}
+                  aria-label={isNyanCatActive ? "Disable NyanCat mode" : "Enable NyanCat mode"}
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24" 
+                    fill="currentColor" 
+                    className={`w-4 h-4 transition-transform duration-300 ${isNyanCatActive ? 'animate-bounce' : 'group-hover:scale-110'}`}
+                  >
+                    <path d="M12 2c2 0 4 1 4 2.5V5c.5 0 1 .21 1 1s-.5 1-1 1v1c0 .18-.37.38-1 .59V11c.63.21 1 .41 1 .59v1.9c2.07.84 4 2 4 5.01 0 .43-.74.76-.95.76l-.89-1.33a.5.5 0 0 0-.83.12c-.27.67-.67 1.14-1.11 1.5-.83.68-1.92 1.11-2.72 1.3-.27.18-.49.24-.5.24.05.32-.15.62-.47.74-.31.12-.66.01-.86-.25-1.12.06-2.2-.14-3.23-.76-.83-.5-1.62-1.25-2.37-2.23a.75.75 0 0 0-1.21.08c-.2.36-.93 1.61-.93 1.61S4 19.5 4 18.5c0-2.42 1.35-3.54 3-4.39V12.6c-.63-.21-1-.41-1-.59V10h-.5C4.67 10 4 9.5 4 8V7c0-1 1-1 1-1V5.5C5 3.75 8 2 12 2m0 1c-2.96 0-5 1.11-5 2.5V8c0 .55.55 1 1 1h8c.55 0 1-.55 1-1V5.5c0-1.39-1.94-2.5-5-2.5m-3 7c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1m6 0c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1Z"/>
+                  </svg>
+                  {/* Tooltip for NyanCat */}
+                  <span className="absolute left-1/2 -bottom-1 transform -translate-x-1/2 translate-y-full 
+                    w-28 px-2 py-1 bg-surface border border-border rounded text-xxs text-center
+                    opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                    {isNyanCatActive ? "Disable Nyan Mode" : "Enable Nyan Mode"}
+                  </span>
+                </button>
               </p>
               <span className="text-text-muted">{Object.keys(themePreviewColors).length} themes</span>
             </div>
@@ -395,6 +452,9 @@ export default function ThemePicker() {
         @keyframes themeDropdownFadeIn {
           from { opacity: 0; transform: translateY(-8px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        .text-xxs {
+          font-size: 0.65rem;
         }
       `}</style>
     </div>
