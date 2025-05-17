@@ -3,6 +3,7 @@
 import React from "react";
 import { useMusicPlayer } from "./MusicPlayerProvider";
 import PlayerControls from "./PlayerControls";
+import SeekingBar from "./SeekingBar";
 
 export default function ExpandedPlayer() {
   const { currentTrack, isPlaying, toggleMinimize } = useMusicPlayer();
@@ -93,6 +94,11 @@ export default function ExpandedPlayer() {
             <p>No track selected</p>
           </div>
         )}
+      </div>
+
+      {/* Seeking Bar */}
+      <div className="border-t border-border">
+        <SeekingBar />
       </div>
 
       {/* Player Controls */}

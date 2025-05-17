@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Track, PlayerState, PlayerContext } from "./types";
 import { getNextTrack, tracks } from "./trackList";
+import { saveTrackPosition, getTrackPosition, clearTrackPosition } from "./store";
 
 const VOLUME_KEY = "music-player-volume";
 const IS_MINIMIZED_KEY = "music-player-minimized";
@@ -45,14 +46,19 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   }, [state.volume, state.isMinimized]);
 
   const playTrack = (track: Track) => {
+    const savedPosition = getTrackPosition(track.id);
     setState(prev => ({
       ...prev,
       currentTrack: track,
-      isPlaying: true
+      isPlaying: true,
+      currentTime: savedPosition
     }));
   };
 
   const pauseTrack = () => {
+    if (state.currentTrack) {
+      saveTrackPosition(state.currentTrack.id, state.currentTime);
+    }
     setState(prev => ({
       ...prev,
       isPlaying: false
@@ -62,11 +68,17 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const nextTrack = () => {
     if (!state.currentTrack) return;
 
+    // Save position of current track before changing
+    saveTrackPosition(state.currentTrack.id, state.currentTime);
+    
     const nextTrack = getNextTrack(state.currentTrack);
-    // Consolidate state updates to prevent multiple triggers
+    // Load saved position for next track
+    const nextPosition = getTrackPosition(nextTrack.id);
+    
     setState(prev => ({
       ...prev,
       currentTrack: nextTrack,
+      currentTime: nextPosition,
       isPlaying: true // Ensure playback continues on track change
     }));
   };
@@ -104,17 +116,28 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   };
 
   const updateCurrentTime = (time: number) => {
-    setState(prev => ({
-      ...prev,
-      currentTime: Math.max(0, time)
-    }));
+    if (state.currentTrack) {
+      const newTime = Math.max(0, time);
+      setState(prev => ({
+        ...prev,
+        currentTime: newTime
+      }));
+      // Save position periodically during playback
+      if (state.isPlaying) {
+        saveTrackPosition(state.currentTrack.id, newTime);
+      }
+    }
   };
 
   const seekTo = (time: number) => {
-    setState(prev => ({
-      ...prev,
-      currentTime: Math.max(0, time)
-    }));
+    if (state.currentTrack) {
+      const newTime = Math.max(0, Math.min(time, state.currentTrack.duration));
+      saveTrackPosition(state.currentTrack.id, newTime);
+      setState(prev => ({
+        ...prev,
+        currentTime: newTime
+      }));
+    }
   };
 
   const value: PlayerContext = {
