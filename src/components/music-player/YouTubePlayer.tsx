@@ -76,83 +76,131 @@ export default function YouTubePlayer() {
     };
   }, []);
 
-  // Initialize or update player when API is ready and track changes
+  // Initialize or update player when API is ready and track/play state changes
   useEffect(() => {
     if (!isAPIReady || !currentTrack || !document.getElementById(PLAYER_ID)) return;
 
-    if (playerRef.current) {
-      try {
-        // Always start playing when loading a new video
-        playerRef.current.loadVideoById({
-          videoId: currentTrack.id,
-          startSeconds: 0
-        });
-        playerRef.current.playVideo();
-      } catch (e) {
-        console.error('Failed to update YouTube player:', e);
-        handleError();
-      }
-    } else {
-      try {
-        playerRef.current = new window.YT.Player(PLAYER_ID, {
-          videoId: currentTrack.id,
-          playerVars: {
-            autoplay: 1, // Always autoplay on initialization
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            modestbranding: 1,
-            playsinline: 1,
-            rel: 0
-          },
-          events: {
-            onReady: (event: { target: any }) => {
+    const initializePlayer = () => {
+      // Mark that we're initializing to prevent unwanted state changes
+      let isInitializing = true;
+
+      playerRef.current = new window.YT.Player(PLAYER_ID, {
+        videoId: currentTrack.id,
+        playerVars: {
+          autoplay: 0, // Start paused and control playback after initialization
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          rel: 0
+        },
+        events: {
+          onReady: async (event: { target: any }) => {
+            try {
+              // Set initial volume
               event.target.setVolume(volume * 100);
-              event.target.playVideo(); // Always start playing when ready
-            },
-            onStateChange: (event: { data: number }) => {
-              // YT.PlayerState.ENDED = 0
-              if (event.data === 0) {
-                // Use setTimeout to prevent potential race conditions
-                // during track transitions
-                setTimeout(() => {
-                  nextTrack();
-                }, 0);
+              
+              // Wait for video to be cued
+              await new Promise<void>((resolve) => {
+                const checkState = (e: { data: number }) => {
+                  // YT.PlayerState.CUED = 5
+                  if (e.data === 5) {
+                    event.target.removeEventListener('onStateChange', checkState);
+                    resolve();
+                  }
+                };
+                event.target.addEventListener('onStateChange', checkState);
+                // Force cue the video
+                event.target.cueVideoById(currentTrack.id);
+              });
+
+              // Apply play state once video is ready
+              if (isPlaying) {
+                await event.target.playVideo();
               }
-              // YT.PlayerState.PLAYING = 1
-              else if (event.data === 1) {
-                // Video started playing
-              }
-              // YT.PlayerState.PAUSED = 2
-              else if (event.data === 2) {
-                pauseTrack();
-              }
-            },
-            onError: () => {
+              
+              isInitializing = false;
+            } catch (error) {
+              console.error('Failed to initialize player:', error);
               handleError();
             }
+          },
+          onStateChange: (event: { data: number }) => {
+            if (isInitializing) return; // Ignore state changes during initialization
+            
+            // YT.PlayerState.ENDED = 0
+            if (event.data === 0) {
+              nextTrack();
+            }
+            // YT.PlayerState.PAUSED = 2
+            else if (event.data === 2) {
+              // Only pause if we're not in the middle of a track change
+              if (!playerRef.current?.isChangingTrack) {
+                pauseTrack();
+              }
+            }
+          },
+          onError: () => {
+            handleError();
           }
-        });
+        }
+      });
+    };
+
+    const updatePlayer = async () => {
+      try {
+        if (playerRef.current) {
+          // Mark that we're changing tracks to prevent unwanted pause triggers
+          playerRef.current.isChangingTrack = true;
+          
+          // Load the new video and wait for it to be ready
+          await new Promise((resolve, reject) => {
+            try {
+              playerRef.current.loadVideoById({
+                videoId: currentTrack.id,
+                startSeconds: 0
+              });
+              
+              // Use onStateChange to detect when video is ready
+              const stateChangeHandler = (event: { data: number }) => {
+                // YT.PlayerState.CUED = 5
+                if (event.data === 5) {
+                  playerRef.current.removeEventListener('onStateChange', stateChangeHandler);
+                  resolve(true);
+                }
+              };
+              
+              playerRef.current.addEventListener('onStateChange', stateChangeHandler);
+            } catch (error) {
+              reject(error);
+            }
+          });
+
+          // Now that video is ready, apply the play state
+          if (isPlaying) {
+            await playerRef.current.playVideo();
+          } else {
+            await playerRef.current.pauseVideo();
+          }
+
+          // Clear track change flag after state is fully applied
+          playerRef.current.isChangingTrack = false;
+        } else {
+          initializePlayer();
+        }
       } catch (e) {
-        console.error('Failed to initialize YouTube player:', e);
+        console.error('Failed to update YouTube player:', e);
+        // Clear flag in case of error
+        if (playerRef.current?.isChangingTrack) {
+          playerRef.current.isChangingTrack = false;
+        }
+        handleError();
       }
-    }
-  }, [isAPIReady, currentTrack]);
+    };
 
-  // Update player state
-  useEffect(() => {
-    if (!playerRef.current) return;
-
-    try {
-      if (isPlaying) {
-        playerRef.current.playVideo();
-      } else {
-        playerRef.current.pauseVideo();
-      }
-    } catch (e) {
-      console.error('Failed to update player state:', e);
-    }
-  }, [isPlaying]);
+    updatePlayer();
+  }, [isAPIReady, currentTrack, isPlaying, volume]);
 
   // Update volume
   useEffect(() => {
@@ -170,10 +218,13 @@ export default function YouTubePlayer() {
     }
   }, [volume, isMuted]);
 
-  // Debounced error handler to prevent rapid track skipping
+  // Enhanced error handler with state cleanup
   const handleError = useCallback(
     debounce(() => {
       console.log('Handling player error, switching to next track...');
+      if (playerRef.current?.isChangingTrack) {
+        playerRef.current.isChangingTrack = false;
+      }
       nextTrack();
     }, 1000, { leading: true, trailing: false }),
     [nextTrack]
