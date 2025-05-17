@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Track, PlayerState, PlayerContext } from "./types";
-import { getRandomTrack, getNextTrack, tracks } from "./trackList";
+import { getNextTrack, tracks } from "./trackList";
 
 const VOLUME_KEY = "music-player-volume";
 const IS_MINIMIZED_KEY = "music-player-minimized";
 
 const defaultState: PlayerState = {
-  currentTrack: null,
+  currentTrack: tracks[0],
   isPlaying: false,
   isMinimized: true,
   isClosed: false,
@@ -59,29 +59,15 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   };
 
   const nextTrack = () => {
-    if (!state.currentTrack) {
-      playTrack(tracks[0]);
-      return;
-    }
-    const nextTrack = getNextTrack(state.currentTrack);
-    playTrack(nextTrack);
-  };
+    if (!state.currentTrack) return;
 
-  const previousTrack = () => {
-    // If no current track, just play the first track
-    if (!state.currentTrack) {
-      playTrack(tracks[0]);
-      return;
-    }
-    
-    // Get current track index
-    const currentIndex = tracks.findIndex(track => track.id === state.currentTrack?.id);
-    
-    // Calculate previous track index (with loop)
-    const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
-    
-    // Play the previous track
-    playTrack(tracks[prevIndex]);
+    const nextTrack = getNextTrack(state.currentTrack);
+    // Consolidate state updates to prevent multiple triggers
+    setState(prev => ({
+      ...prev,
+      currentTrack: nextTrack,
+      isPlaying: true // Ensure playback continues on track change
+    }));
   };
 
   const setVolume = (volume: number) => {
@@ -121,7 +107,6 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     playTrack,
     pauseTrack,
     nextTrack,
-    previousTrack,
     setVolume,
     toggleMute,
     toggleMinimize,

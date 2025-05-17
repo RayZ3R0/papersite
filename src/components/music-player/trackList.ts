@@ -5,6 +5,12 @@ import { Track } from "./types";
 // A curated list of study-friendly music tracks
 export const tracks: Track[] = [
   {
+    id: "MLd3E6_f5Rg",
+    title: "Une vie à peindre",
+    artist: "Lorien Testard, Alice Duport-Percier, Victor Borba",
+    duration: 660
+  },
+  {
     id: "2SUwOgmvzK4", // Tame Impala - Let It Happen
     title: "Let It Happen",
     artist: "Tame Impala",
@@ -16,19 +22,7 @@ export const tracks: Track[] = [
     artist: "Lofi Girl",
     duration: 0 // Live stream
   },
-  {
-    id: "lTRiuFIWV54", // Ambient Study Music
-    title: "Ambient Study Music",
-    artist: "YourChill",
-    duration: 10800
-  },
-  {
-    id: "9UMxZofMNbA", // Jazz Study Music
-    title: "Jazz for Studying",
-    artist: "StudyBeats",
-    duration: 9000
-  }
-];
+  ];
 
 // Get a random track excluding the current one
 export const getRandomTrack = (currentTrack: Track | null): Track => {

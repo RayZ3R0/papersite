@@ -1,70 +1,62 @@
-# Music Player Navigation Fixes
+# Music Player Fixes
 
 ## Current Issues
 
-1. **Random vs Sequential Playback**
+1. **Random Track Selection**
 
-   - Currently using `getRandomTrack` for next track selection
-   - User wants sequential playback
-   - `getNextTrack` function exists but isn't being used
+   - `nextTrack` function uses `getRandomTrack` instead of sequential playback
+   - Creates unpredictable playback experience
 
-2. **Track Skipping Visual Issue**
-   - Track history management causing rapid visual updates
-   - State updates not properly batched
-   - Track changes appear jumpy
+2. **Multiple State Updates**
 
-## Proposed Solution
+   - `nextTrack` calls `playTrack`, causing multiple state updates
+   - Can lead to visual glitches and track skipping
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant P as Player Controls
-    participant S as State Management
-    participant T as Track List
+3. **Track Change Triggers**
 
-    Note over U,T: Current Flow (Problems)
-    U->>P: Clicks Next
-    P->>S: Triggers nextTrack()
-    S->>T: Calls getRandomTrack()
-    T-->>S: Returns random track
-    S->>P: Updates state (causes visual jump)
+   - Multiple sources trigger track changes:
+     - Direct UI calls
+     - YouTube player errors
+     - Track completion
+   - Lack of coordination between these sources
 
-    Note over U,T: Proposed Flow (Fixed)
-    U->>P: Clicks Next
-    P->>S: Triggers nextTrack()
-    S->>T: Calls getNextTrack()
-    T-->>S: Returns next sequential track
-    S->>P: Updates state (single update)
-```
+4. **Playback State**
+   - `nextTrack` doesn't properly maintain playing state
+   - Track changes can pause playback unexpectedly
 
 ## Implementation Plan
 
-1. **Update MusicPlayerProvider.tsx**
+```mermaid
+flowchart TB
+    A[Current Implementation] --> B[Problems]
+    B --> C1[Random Playback]
+    B --> C2[Multiple State Updates]
+    B --> C3[Inconsistent Play State]
 
-   - Replace `getRandomTrack` with `getNextTrack` in the `nextTrack` function
+    D[Proposed Solution] --> E1[Use Sequential Playback]
+    D --> E2[Consolidate State Updates]
+    D --> E3[Maintain Play State]
 
-   ```typescript
-   const nextTrack = () => {
-     if (state.currentTrack) {
-       const nextTrack = getNextTrack(state.currentTrack);
-       playTrack(nextTrack);
-     }
-   };
-   ```
+    E1 --> F1[Replace getRandomTrack with getNextTrack]
+    E2 --> F2[Combine track and play state updates]
+    E3 --> F3[Ensure playback continues on track change]
+```
 
-2. **Optimize Track Management**
+### 1. Update MusicPlayerProvider
 
-   - Use existing `getNextTrack` function from trackList.ts
-   - Refactor track history management to prevent unnecessary state updates
-   - Consider removing track history for simpler state management
+- Replace `getRandomTrack` with `getNextTrack` for sequential playback
+- Consolidate state updates in the `nextTrack` function
+- Ensure play state is maintained during track changes
 
-3. **Potential Future Improvements**
-   - Add playback mode toggle (random/sequential)
-   - Add transition animations for smoother track changes
-   - Implement loading state during track transitions
+### 2. Update YouTubePlayer
 
-## Benefits
+- Improve error handling to prevent rapid track skipping
+- Add debouncing for error-triggered track changes
+- Ensure consistent state updates when track ends naturally
 
-- Predictable sequential playback
-- Smoother visual transitions
-- Better user experience with clear track progression
+## Expected Outcomes
+
+1. Sequential track playback instead of random
+2. Smoother track transitions without visual glitches
+3. Consistent playback state during track changes
+4. More reliable error handling with fewer skips

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useMusicPlayer } from "./MusicPlayerProvider";
-import { Track } from "./types";
+import { debounce } from "@/lib/utils/debounce";
 
 declare global {
   interface Window {
@@ -38,9 +38,6 @@ export default function YouTubePlayer() {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isAPIReady, setIsAPIReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const loadingTimeoutRef = useRef<NodeJS.Timeout>();
-  const currentTrackRef = useRef<Track | null>(null);
   
   const {
     currentTrack,
@@ -82,42 +79,26 @@ export default function YouTubePlayer() {
   // Initialize or update player when API is ready and track changes
   useEffect(() => {
     if (!isAPIReady || !currentTrack || !document.getElementById(PLAYER_ID)) return;
-    if (isLoading) return; // Prevent changes while loading
-    if (currentTrackRef.current?.id === currentTrack.id) return; // Prevent duplicate loads
-
-    setIsLoading(true);
-    currentTrackRef.current = currentTrack;
-
-    // Clear any existing loading timeout
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current);
-    }
-
-    // Set a loading timeout to prevent rapid changes
-    loadingTimeoutRef.current = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
 
     if (playerRef.current) {
       try {
-        // Always use loadVideoById, but configure it properly for live streams
+        // Always start playing when loading a new video
         playerRef.current.loadVideoById({
           videoId: currentTrack.id,
-          startSeconds: undefined,
-          endSeconds: undefined,
-          suggestedQuality: currentTrack.duration === 0 ? 'medium' : 'default'
+          startSeconds: 0
         });
+        playerRef.current.playVideo();
       } catch (e) {
         console.error('Failed to update YouTube player:', e);
-        setIsLoading(false);
+        handleError();
       }
     } else {
       try {
         playerRef.current = new window.YT.Player(PLAYER_ID, {
           videoId: currentTrack.id,
           playerVars: {
-            autoplay: isPlaying ? 1 : 0,
-            controls: currentTrack.duration === 0 ? 1 : 0, // Enable controls for live streams
+            autoplay: 1, // Always autoplay on initialization
+            controls: 0,
             disablekb: 1,
             fs: 0,
             modestbranding: 1,
@@ -127,57 +108,28 @@ export default function YouTubePlayer() {
           events: {
             onReady: (event: { target: any }) => {
               event.target.setVolume(volume * 100);
-              if (isPlaying) {
-                event.target.playVideo();
-              }
+              event.target.playVideo(); // Always start playing when ready
             },
             onStateChange: (event: { data: number }) => {
-              // YT.PlayerState
-              // UNSTARTED = -1
-              // ENDED = 0
-              // PLAYING = 1
-              // PAUSED = 2
-              // BUFFERING = 3
-              // CUED = 5
-              
-              switch (event.data) {
-                case -1: // UNSTARTED
-                  if (currentTrack?.duration === 0 && isPlaying) {
-                    // For live streams, try to play when ready
-                    playerRef.current?.playVideo();
-                  }
-                  break;
-                case 0: // ENDED
-                  if (currentTrack?.duration !== 0) {
-                    // Only auto-advance for non-live videos
-                    nextTrack();
-                  }
-                  break;
-                case 1: // PLAYING
-                  setIsLoading(false);
-                  break;
-                case 2: // PAUSED
-                  pauseTrack();
-                  break;
-                case 3: // BUFFERING
-                  // Keep loading state while buffering
-                  setIsLoading(true);
-                  break;
-                case 5: // CUED
-                  if (currentTrack?.duration === 0 && isPlaying) {
-                    // For live streams, try to play when cued
-                    playerRef.current?.playVideo();
-                  }
-                  break;
+              // YT.PlayerState.ENDED = 0
+              if (event.data === 0) {
+                // Use setTimeout to prevent potential race conditions
+                // during track transitions
+                setTimeout(() => {
+                  nextTrack();
+                }, 0);
+              }
+              // YT.PlayerState.PLAYING = 1
+              else if (event.data === 1) {
+                // Video started playing
+              }
+              // YT.PlayerState.PAUSED = 2
+              else if (event.data === 2) {
+                pauseTrack();
               }
             },
-            onError: (error: { data: number }) => {
-              console.error('YouTube player error:', error);
-              setIsLoading(false);
-              // Only skip to next track for fatal errors
-              if (error.data === 5 || error.data === 100 || error.data === 101 || error.data === 150) {
-                nextTrack();
-              }
+            onError: () => {
+              handleError();
             }
           }
         });
@@ -187,27 +139,20 @@ export default function YouTubePlayer() {
     }
   }, [isAPIReady, currentTrack]);
 
-  // Update player state - only handle pause since we always play on track change
+  // Update player state
   useEffect(() => {
-    if (!playerRef.current || isLoading) return;
+    if (!playerRef.current) return;
 
     try {
-      if (!isPlaying) {
+      if (isPlaying) {
+        playerRef.current.playVideo();
+      } else {
         playerRef.current.pauseVideo();
       }
     } catch (e) {
       console.error('Failed to update player state:', e);
     }
-  }, [isPlaying, isLoading]);
-
-  // Cleanup loading timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [isPlaying]);
 
   // Update volume
   useEffect(() => {
@@ -224,6 +169,15 @@ export default function YouTubePlayer() {
       console.error('Failed to update volume:', e);
     }
   }, [volume, isMuted]);
+
+  // Debounced error handler to prevent rapid track skipping
+  const handleError = useCallback(
+    debounce(() => {
+      console.log('Handling player error, switching to next track...');
+      nextTrack();
+    }, 1000, { leading: true, trailing: false }),
+    [nextTrack]
+  );
 
   return (
     <div ref={containerRef} className="w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">

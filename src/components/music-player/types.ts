@@ -20,7 +20,6 @@ export interface PlayerContext extends PlayerState {
   playTrack: (track: Track) => void;
   pauseTrack: () => void;
   nextTrack: () => void;
-  previousTrack: () => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   toggleMinimize: () => void;
