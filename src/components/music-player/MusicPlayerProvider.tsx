@@ -6,6 +6,7 @@ import { getRandomTrack, tracks } from "./trackList";
 
 const VOLUME_KEY = "music-player-volume";
 const IS_MINIMIZED_KEY = "music-player-minimized";
+const MAX_HISTORY = 50; // Maximum number of tracks to keep in history
 
 const defaultState: PlayerState = {
   currentTrack: tracks[0],
@@ -13,7 +14,8 @@ const defaultState: PlayerState = {
   isMinimized: true,
   isClosed: false,
   volume: 0.5,
-  isMuted: false
+  isMuted: false,
+  previousTracks: []
 };
 
 const MusicPlayerContext = createContext<PlayerContext | null>(null);
@@ -47,7 +49,10 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     setState(prev => ({
       ...prev,
       currentTrack: track,
-      isPlaying: true
+      isPlaying: true,
+      previousTracks: prev.currentTrack 
+        ? [prev.currentTrack, ...prev.previousTracks].slice(0, MAX_HISTORY)
+        : prev.previousTracks
     }));
   };
 
@@ -62,6 +67,23 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     if (state.currentTrack) {
       const nextTrack = getRandomTrack(state.currentTrack);
       playTrack(nextTrack);
+    }
+  };
+
+  const previousTrack = () => {
+    if (state.previousTracks.length > 0) {
+      const [prevTrack, ...remainingTracks] = state.previousTracks;
+      setState(prev => ({
+        ...prev,
+        currentTrack: prevTrack,
+        isPlaying: true,
+        previousTracks: remainingTracks
+      }));
+    } else {
+      // If no previous tracks, just restart current track
+      if (state.currentTrack) {
+        playTrack(state.currentTrack);
+      }
     }
   };
 
@@ -102,6 +124,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     playTrack,
     pauseTrack,
     nextTrack,
+    previousTrack,
     setVolume,
     toggleMute,
     toggleMinimize,
