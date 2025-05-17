@@ -2,20 +2,18 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Track, PlayerState, PlayerContext } from "./types";
-import { getRandomTrack, tracks } from "./trackList";
+import { getRandomTrack, getNextTrack, tracks } from "./trackList";
 
 const VOLUME_KEY = "music-player-volume";
 const IS_MINIMIZED_KEY = "music-player-minimized";
-const MAX_HISTORY = 50; // Maximum number of tracks to keep in history
 
 const defaultState: PlayerState = {
-  currentTrack: tracks[0],
+  currentTrack: null,
   isPlaying: false,
   isMinimized: true,
   isClosed: false,
   volume: 0.5,
-  isMuted: false,
-  previousTracks: []
+  isMuted: false
 };
 
 const MusicPlayerContext = createContext<PlayerContext | null>(null);
@@ -49,10 +47,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     setState(prev => ({
       ...prev,
       currentTrack: track,
-      isPlaying: true,
-      previousTracks: prev.currentTrack 
-        ? [prev.currentTrack, ...prev.previousTracks].slice(0, MAX_HISTORY)
-        : prev.previousTracks
+      isPlaying: true
     }));
   };
 
@@ -64,27 +59,29 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   };
 
   const nextTrack = () => {
-    if (state.currentTrack) {
-      const nextTrack = getRandomTrack(state.currentTrack);
-      playTrack(nextTrack);
+    if (!state.currentTrack) {
+      playTrack(tracks[0]);
+      return;
     }
+    const nextTrack = getNextTrack(state.currentTrack);
+    playTrack(nextTrack);
   };
 
   const previousTrack = () => {
-    if (state.previousTracks.length > 0) {
-      const [prevTrack, ...remainingTracks] = state.previousTracks;
-      setState(prev => ({
-        ...prev,
-        currentTrack: prevTrack,
-        isPlaying: true,
-        previousTracks: remainingTracks
-      }));
-    } else {
-      // If no previous tracks, just restart current track
-      if (state.currentTrack) {
-        playTrack(state.currentTrack);
-      }
+    // If no current track, just play the first track
+    if (!state.currentTrack) {
+      playTrack(tracks[0]);
+      return;
     }
+    
+    // Get current track index
+    const currentIndex = tracks.findIndex(track => track.id === state.currentTrack?.id);
+    
+    // Calculate previous track index (with loop)
+    const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
+    
+    // Play the previous track
+    playTrack(tracks[prevIndex]);
   };
 
   const setVolume = (volume: number) => {

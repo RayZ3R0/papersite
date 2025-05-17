@@ -14,14 +14,13 @@ export interface PlayerState {
   volume: number;
   isMuted: boolean;
   isClosed: boolean;
-  previousTracks: Track[]; // Add history tracking
 }
 
 export interface PlayerContext extends PlayerState {
   playTrack: (track: Track) => void;
   pauseTrack: () => void;
   nextTrack: () => void;
-  previousTrack: () => void; // Add previous track functionality
+  previousTrack: () => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   toggleMinimize: () => void;

@@ -6,7 +6,7 @@ import { MusicPlayerProvider } from "./MusicPlayerProvider";
 import MinimizedPlayer from "./MinimizedPlayer";
 import ExpandedPlayer from "./ExpandedPlayer";
 import YouTubePlayer from "./YouTubePlayer";
-import { tracks, getRandomTrack } from "./trackList";
+import { tracks } from "./trackList";
 
 // Check if the client is using a mobile browser
 const isMobileDevice = () => {
@@ -17,14 +17,14 @@ const isMobileDevice = () => {
 };
 
 function MusicPlayer() {
-  const { isMinimized, playTrack } = useMusicPlayer();
+  const { isMinimized, playTrack, pauseTrack } = useMusicPlayer();
 
-  // Start with a random track on mount
+  // Start with the first track on mount (but don't autoplay)
   useEffect(() => {
     try {
-      const randomTrack = getRandomTrack(null);
-      // We don't auto-play to avoid unexpected music
-      // playTrack(randomTrack);
+      // Initialize with first track but don't autoplay
+      playTrack(tracks[0]);
+      pauseTrack();
     } catch (e) {
       console.error('Failed to set initial track:', e);
     }

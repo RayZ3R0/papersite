@@ -11,12 +11,6 @@ export const tracks: Track[] = [
     duration: 467
   },
   {
-    id: "5qap5aO4i9A", // lofi hip hop radio - beats to relax/study to
-    title: "lofi beats",
-    artist: "Lofi Girl",
-    duration: 0 // Live stream
-  },
-  {
     id: "jfKfPfyJRdk", // lofi hip hop radio - beats to sleep/chill to
     title: "chill beats",
     artist: "Lofi Girl",
@@ -27,12 +21,6 @@ export const tracks: Track[] = [
     title: "Ambient Study Music",
     artist: "YourChill",
     duration: 10800
-  },
-  {
-    id: "rHhQGqHikZM", // Classical Study Music
-    title: "Classical Focus",
-    artist: "StudyMD",
-    duration: 7200
   },
   {
     id: "9UMxZofMNbA", // Jazz Study Music
