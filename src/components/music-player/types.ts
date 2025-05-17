@@ -14,6 +14,7 @@ export interface PlayerState {
   volume: number;
   isMuted: boolean;
   isClosed: boolean;
+  currentTime: number; // Current playback position in seconds
 }
 
 export interface PlayerContext extends PlayerState {
@@ -24,4 +25,6 @@ export interface PlayerContext extends PlayerState {
   toggleMute: () => void;
   toggleMinimize: () => void;
   closePlayer: () => void;
+  updateCurrentTime: (time: number) => void; // Update current playback position
+  seekTo: (time: number) => void; // Seek to specific position
 }

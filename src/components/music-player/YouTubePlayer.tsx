@@ -44,8 +44,11 @@ export default function YouTubePlayer() {
     isPlaying,
     volume,
     isMuted,
+    currentTime,
     pauseTrack,
-    nextTrack
+    nextTrack,
+    updateCurrentTime,
+    seekTo
   } = useMusicPlayer();
 
   // Load YouTube IFrame API
@@ -76,9 +79,25 @@ export default function YouTubePlayer() {
     };
   }, []);
 
-  // Initialize or update player when API is ready and track/play state changes
+  // Save current position periodically
   useEffect(() => {
-    if (!isAPIReady || !currentTrack || !document.getElementById(PLAYER_ID)) return;
+    if (!playerRef.current || !isPlaying) return;
+
+    const interval = setInterval(() => {
+      try {
+        const currentTime = playerRef.current.getCurrentTime();
+        updateCurrentTime(currentTime);
+      } catch (e) {
+        console.error('Failed to update current time:', e);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, updateCurrentTime]);
+
+  // Initialize or update player when API is ready and track changes
+  useEffect(() => {
+    if (!isAPIReady || !currentTrack?.id || !document.getElementById(PLAYER_ID)) return;
 
     const initializePlayer = () => {
       // Mark that we're initializing to prevent unwanted state changes
@@ -87,7 +106,7 @@ export default function YouTubePlayer() {
       playerRef.current = new window.YT.Player(PLAYER_ID, {
         videoId: currentTrack.id,
         playerVars: {
-          autoplay: 0, // Start paused and control playback after initialization
+          autoplay: 0,
           controls: 0,
           disablekb: 1,
           fs: 0,
@@ -98,24 +117,19 @@ export default function YouTubePlayer() {
         events: {
           onReady: async (event: { target: any }) => {
             try {
-              // Set initial volume
               event.target.setVolume(volume * 100);
               
-              // Wait for video to be cued
               await new Promise<void>((resolve) => {
                 const checkState = (e: { data: number }) => {
-                  // YT.PlayerState.CUED = 5
                   if (e.data === 5) {
                     event.target.removeEventListener('onStateChange', checkState);
                     resolve();
                   }
                 };
                 event.target.addEventListener('onStateChange', checkState);
-                // Force cue the video
                 event.target.cueVideoById(currentTrack.id);
               });
 
-              // Apply play state once video is ready
               if (isPlaying) {
                 await event.target.playVideo();
               }
@@ -127,18 +141,12 @@ export default function YouTubePlayer() {
             }
           },
           onStateChange: (event: { data: number }) => {
-            if (isInitializing) return; // Ignore state changes during initialization
+            if (isInitializing) return;
             
-            // YT.PlayerState.ENDED = 0
             if (event.data === 0) {
               nextTrack();
-            }
-            // YT.PlayerState.PAUSED = 2
-            else if (event.data === 2) {
-              // Only pause if we're not in the middle of a track change
-              if (!playerRef.current?.isChangingTrack) {
-                pauseTrack();
-              }
+            } else if (event.data === 2 && !playerRef.current?.isChangingTrack) {
+              pauseTrack();
             }
           },
           onError: () => {
@@ -151,47 +159,44 @@ export default function YouTubePlayer() {
     const updatePlayer = async () => {
       try {
         if (playerRef.current) {
-          // Mark that we're changing tracks to prevent unwanted pause triggers
-          playerRef.current.isChangingTrack = true;
+          const currentVideoId = playerRef.current.getVideoData()?.video_id;
           
-          // Load the new video and wait for it to be ready
-          await new Promise((resolve, reject) => {
-            try {
-              playerRef.current.loadVideoById({
-                videoId: currentTrack.id,
-                startSeconds: 0
-              });
-              
-              // Use onStateChange to detect when video is ready
-              const stateChangeHandler = (event: { data: number }) => {
-                // YT.PlayerState.CUED = 5
-                if (event.data === 5) {
-                  playerRef.current.removeEventListener('onStateChange', stateChangeHandler);
-                  resolve(true);
-                }
-              };
-              
-              playerRef.current.addEventListener('onStateChange', stateChangeHandler);
-            } catch (error) {
-              reject(error);
+          if (currentVideoId !== currentTrack.id) {
+            playerRef.current.isChangingTrack = true;
+            
+            await new Promise((resolve, reject) => {
+              try {
+                playerRef.current.loadVideoById({
+                  videoId: currentTrack.id,
+                  startSeconds: currentTime || 0
+                });
+
+                const stateChangeHandler = (event: { data: number }) => {
+                  if (event.data === 5) {
+                    playerRef.current.removeEventListener('onStateChange', stateChangeHandler);
+                    resolve(true);
+                  }
+                };
+                
+                playerRef.current.addEventListener('onStateChange', stateChangeHandler);
+              } catch (error) {
+                reject(error);
+              }
+            });
+
+            if (isPlaying) {
+              await playerRef.current.playVideo();
+            } else {
+              await playerRef.current.pauseVideo();
             }
-          });
 
-          // Now that video is ready, apply the play state
-          if (isPlaying) {
-            await playerRef.current.playVideo();
-          } else {
-            await playerRef.current.pauseVideo();
+            playerRef.current.isChangingTrack = false;
           }
-
-          // Clear track change flag after state is fully applied
-          playerRef.current.isChangingTrack = false;
         } else {
           initializePlayer();
         }
-      } catch (e) {
-        console.error('Failed to update YouTube player:', e);
-        // Clear flag in case of error
+      } catch (error) {
+        console.error('Failed to update YouTube player:', error);
         if (playerRef.current?.isChangingTrack) {
           playerRef.current.isChangingTrack = false;
         }
@@ -199,12 +204,28 @@ export default function YouTubePlayer() {
       }
     };
 
-    updatePlayer();
-  }, [isAPIReady, currentTrack, isPlaying, volume]);
+    const init = async () => {
+      try {
+        const currentVideoId = playerRef.current?.getVideoData()?.video_id;
+        if (!playerRef.current || currentVideoId !== currentTrack.id) {
+          await updatePlayer();
+        } else if (isPlaying) {
+          await playerRef.current.playVideo();
+        } else {
+          await playerRef.current.pauseVideo();
+        }
+      } catch (error) {
+        console.error('Failed to initialize player:', error);
+        handleError();
+      }
+    };
 
-  // Update volume
+    init();
+  }, [isAPIReady, currentTrack?.id, isPlaying, currentTime, volume]);
+
+  // Handle volume changes separately
   useEffect(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || playerRef.current.isChangingTrack) return;
 
     try {
       if (isMuted) {
@@ -213,12 +234,25 @@ export default function YouTubePlayer() {
         playerRef.current.unMute();
         playerRef.current.setVolume(volume * 100);
       }
-    } catch (e) {
-      console.error('Failed to update volume:', e);
+    } catch (error) {
+      console.error('Failed to update volume:', error);
     }
   }, [volume, isMuted]);
 
-  // Enhanced error handler with state cleanup
+  // Handle seeking
+  useEffect(() => {
+    if (!playerRef.current || playerRef.current.isChangingTrack || !currentTime) return;
+
+    try {
+      const currentPosition = playerRef.current.getCurrentTime();
+      if (Math.abs(currentPosition - currentTime) > 1) {
+        playerRef.current.seekTo(currentTime, true);
+      }
+    } catch (error) {
+      console.error('Failed to seek:', error);
+    }
+  }, [currentTime]);
+
   const handleError = useCallback(
     debounce(() => {
       console.log('Handling player error, switching to next track...');

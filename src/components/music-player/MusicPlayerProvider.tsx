@@ -13,7 +13,8 @@ const defaultState: PlayerState = {
   isMinimized: true,
   isClosed: false,
   volume: 0.5,
-  isMuted: false
+  isMuted: false,
+  currentTime: 0
 };
 
 const MusicPlayerContext = createContext<PlayerContext | null>(null);
@@ -102,6 +103,20 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     }));
   };
 
+  const updateCurrentTime = (time: number) => {
+    setState(prev => ({
+      ...prev,
+      currentTime: Math.max(0, time)
+    }));
+  };
+
+  const seekTo = (time: number) => {
+    setState(prev => ({
+      ...prev,
+      currentTime: Math.max(0, time)
+    }));
+  };
+
   const value: PlayerContext = {
     ...state,
     playTrack,
@@ -110,7 +125,9 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     setVolume,
     toggleMute,
     toggleMinimize,
-    closePlayer
+    closePlayer,
+    updateCurrentTime,
+    seekTo
   };
 
   // Don't render children if player is closed
