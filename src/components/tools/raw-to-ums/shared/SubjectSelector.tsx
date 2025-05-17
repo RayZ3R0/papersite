@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { conversionApi } from "@/lib/api/conversion";
 import { extractUnitCode } from "@/utils/unitCodes";
+import CustomDropdown from "@/components/ui/CustomDropdown";
+import { BookOpenIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 
 interface SubjectSelectorProps {
   session: string | null;
@@ -29,6 +31,7 @@ export default function SubjectSelector({
   
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingUnits, setLoadingUnits] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Load subjects on component mount
@@ -41,12 +44,14 @@ export default function SubjectSelector({
       }
 
       try {
+        setLoading(true);
         const data = await conversionApi.getSubjectsForSession(session);
         setSubjects(data);
-        setLoading(false);
       } catch (err) {
         setError("Failed to load subjects");
         console.error("Error loading subjects:", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadSubjects();
@@ -61,6 +66,7 @@ export default function SubjectSelector({
       }
 
       try {
+        setLoadingUnits(true);
         const data = await conversionApi.getUnitsForSubjectAndSession(selectedSubject, session);
         const transformedUnits = data.map(unit => ({
           id: unit.id,
@@ -72,26 +78,25 @@ export default function SubjectSelector({
       } catch (err) {
         setError("Failed to load units");
         console.error("Error loading units:", err);
+      } finally {
+        setLoadingUnits(false);
       }
     }
     loadUnits();
   }, [selectedSubject, session]);
 
-  if (loading) {
-    return (
-      <div className="space-y-2">
-        <div className="animate-pulse h-10 bg-surface-alt rounded" />
-      </div>
-    );
-  }
+  // Format subject options
+  const subjectOptions = subjects.map(subject => ({
+    value: subject,
+    label: subject,
+  }));
 
-  if (error) {
-    return (
-      <div className="text-text-muted text-sm p-2 bg-surface-alt rounded">
-        {error}
-      </div>
-    );
-  }
+  // Format unit options
+  const unitOptions = units.map(unit => ({
+    value: unit.apiPath,
+    label: unit.displayCode,
+    description: unit.name.replace(/_/g, ' ')
+  }));
 
   return (
     <div className="space-y-4">
@@ -102,39 +107,27 @@ export default function SubjectSelector({
       ) : (
         <>
           {/* Subject Dropdown */}
-          <div>
-            <select
-              value={selectedSubject || ""}
-              onChange={(e) => onSubjectChange(e.target.value || null)}
-              className="w-full p-2 bg-surface border border-border rounded-md
-                text-text focus:ring-2 focus:ring-primary/20"
-            >
-              <option value="">Select Subject</option>
-              {subjects.map((subject) => (
-                <option key={subject} value={subject}>
-                  {subject}
-                </option>
-              ))}
-            </select>
-          </div>
+          <CustomDropdown
+            options={subjectOptions}
+            value={selectedSubject}
+            onChange={onSubjectChange}
+            placeholder="Select Subject"
+            emptyMessage="No subjects available for this session"
+            icon={<BookOpenIcon className="h-5 w-5" />}
+            isLoading={loading}
+          />
 
           {/* Unit Dropdown */}
           {selectedSubject && (
-            <div>
-              <select
-                value={selectedUnit || ""}
-                onChange={(e) => onUnitChange(e.target.value || null)}
-                className="w-full p-2 bg-surface border border-border rounded-md
-                  text-text focus:ring-2 focus:ring-primary/20"
-              >
-                <option value="">Select Unit</option>
-                {units.map((unit) => (
-                  <option key={unit.id} value={unit.apiPath} title={unit.name}>
-                    {unit.displayCode}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomDropdown
+              options={unitOptions}
+              value={selectedUnit}
+              onChange={onUnitChange}
+              placeholder="Select Unit"
+              emptyMessage="No units available for this subject"
+              icon={<DocumentTextIcon className="h-5 w-5" />}
+              isLoading={loadingUnits}
+            />
           )}
         </>
       )}

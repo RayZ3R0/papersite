@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { conversionApi } from "@/lib/api/conversion";
+import CustomDropdown from "@/components/ui/CustomDropdown";
+import { CalendarIcon } from "@heroicons/react/24/outline";
 
 interface SessionSelectorProps {
   selectedSession: string | null;
@@ -32,12 +34,6 @@ export default function SessionSelector({
     loadSessions();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="animate-pulse h-10 bg-surface-alt rounded" />
-    );
-  }
-
   if (error) {
     return (
       <div className="text-text-muted text-sm p-2 bg-surface-alt rounded">
@@ -51,34 +47,43 @@ export default function SessionSelector({
     const [monthA, yearA] = a.split(" ");
     const [monthB, yearB] = b.split(" ");
     
+    // First sort by year in descending order
     if (yearA !== yearB) {
       return parseInt(yearB) - parseInt(yearA);
     }
     
-    // Month order: January (0), May/June (1), October (2)
+    // For same year, sort by month in descending order (most recent first)
     const monthOrder: Record<string, number> = {
-      January: 0,
-      May: 1,
-      June: 1,
-      October: 2,
+      // January (0), June (1), October (2)
+      "January": 0,
+      "June": 1, 
+      "May": 1,  // Treat May same as June
+      "October": 2
     };
     
-    return (monthOrder[monthA] || 0) - (monthOrder[monthB] || 0);
+    // Compare month order values - higher value = earlier in year
+    return monthOrder[monthB] - monthOrder[monthA];
+  });
+
+  // Format options for the dropdown
+  const sessionOptions = sortedSessions.map(session => {
+    const [month, year] = session.split(" ");
+    return {
+      value: session,
+      label: session,
+      description: `${month} Examination Series`
+    };
   });
 
   return (
-    <select
-      value={selectedSession || ""}
-      onChange={(e) => onSessionChange(e.target.value || null)}
-      className="w-full p-2 bg-surface border border-border rounded-md
-        text-text focus:ring-2 focus:ring-primary/20"
-    >
-      <option value="">Select Session</option>
-      {sortedSessions.map((session) => (
-        <option key={session} value={session}>
-          {session}
-        </option>
-      ))}
-    </select>
+    <CustomDropdown
+      options={sessionOptions}
+      value={selectedSession}
+      onChange={onSessionChange}
+      placeholder="Select Session"
+      emptyMessage="No sessions available"
+      icon={<CalendarIcon className="h-5 w-5" />}
+      isLoading={loading}
+    />
   );
 }

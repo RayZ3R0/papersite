@@ -12,6 +12,7 @@
     "test:auth": "NODE_ENV=development node scripts/test-auth.js"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/node": "20.11.30",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "18.2.67",
@@ -41,6 +42,7 @@
     "next": "14.1.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.0",
+    "outline": "link:@heroicons/react/24/outline",
     "path": "^0.12.7",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.11.174",

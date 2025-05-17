@@ -13,9 +13,9 @@ interface UMSChartProps {
 }
 
 const VIEW_TYPES = {
-  GRADE_DIST: "grade-dist",
-  SESSION_COMP: "session-comp",
-  GRADE_BOUNDS: "grade-bounds",
+  GRADE_BOUNDS: "grade-bounds",   // Now first
+  GRADE_DIST: "grade-dist",       // Second
+  SESSION_COMP: "session-comp",   // Third
 } as const;
 
 type ViewType = (typeof VIEW_TYPES)[keyof typeof VIEW_TYPES];
@@ -287,7 +287,7 @@ export default function UMSChart({
   loading = false,
 }: UMSChartProps) {
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
-  const [viewType, setViewType] = useState<ViewType>(VIEW_TYPES.GRADE_DIST);
+  const [viewType, setViewType] = useState<ViewType>(VIEW_TYPES.GRADE_BOUNDS);
   const [focusedPoint, setFocusedPoint] = useState<null | {
     raw: number;
     session: string;
@@ -895,11 +895,22 @@ export default function UMSChart({
           {/* Unit Info */}
           <UnitSelector unit={unit} subject={subject} />
 
-          {/* View Type Selector */}
+          {/* View Type Selector - reorder the buttons */}
           <div
             role="tablist"
             className="flex gap-2 p-1.5 bg-background rounded-xl shadow-sm border border-border/50"
           >
+            <TabButton
+              active={viewType === VIEW_TYPES.GRADE_BOUNDS}
+              onClick={() => {
+                setViewType(VIEW_TYPES.GRADE_BOUNDS);
+                window.history.replaceState(null, "", `?view=grade-bounds`);
+              }}
+              role="tab"
+              aria-selected={viewType === VIEW_TYPES.GRADE_BOUNDS}
+            >
+              Grade Boundaries
+            </TabButton>
             <TabButton
               active={viewType === VIEW_TYPES.GRADE_DIST}
               onClick={() => {
@@ -921,17 +932,6 @@ export default function UMSChart({
               aria-selected={viewType === VIEW_TYPES.SESSION_COMP}
             >
               Session Comparison
-            </TabButton>
-            <TabButton
-              active={viewType === VIEW_TYPES.GRADE_BOUNDS}
-              onClick={() => {
-                setViewType(VIEW_TYPES.GRADE_BOUNDS);
-                window.history.replaceState(null, "", `?view=grade-bounds`);
-              }}
-              role="tab"
-              aria-selected={viewType === VIEW_TYPES.GRADE_BOUNDS}
-            >
-              Grade Boundaries
             </TabButton>
           </div>
         </CardHeader>

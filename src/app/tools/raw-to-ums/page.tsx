@@ -203,13 +203,109 @@ export default function RawToUmsPage() {
     updateUrlParams({ tab });
   };
 
-  // Handle session change - this comes first in the flow
-  const handleSessionChange = (session: string | null) => {
+  // Enhanced session change handler
+  const handleSessionChange = async (session: string | null) => {
+    setLoading(true);
+    setError(null);
+
+    // Always update the session
     setSelectedSession(session);
-    setSelectedSubject(null);
-    setSelectedUnit(null);
-    setConversionData(null);
-    updateUrlParams({ session, subject: null, unit: null });
+
+    if (!session) {
+      // If session is cleared, clear everything
+      setSelectedSubject(null);
+      setSelectedUnit(null);
+      setConversionData(null);
+      updateUrlParams({ session: null, subject: null, unit: null });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // First, check if current subject is available in the new session
+      let subjectValid = false;
+      let unitValid = false;
+
+      if (selectedSubject) {
+        const availableSubjects = await conversionApi.getSubjectsForSession(
+          session,
+        );
+        subjectValid = availableSubjects.includes(selectedSubject);
+
+        // If subject is valid, try to maintain the unit selection
+        if (subjectValid && selectedUnit) {
+          const availableUnits =
+            await conversionApi.getUnitsForSubjectAndSession(
+              selectedSubject,
+              session,
+            );
+
+          // Extract unit ID from the API path
+          const currentUnitId = selectedUnit.split("_-_")[0];
+
+          // Check if any available unit has the same ID
+          unitValid = availableUnits.some((unit) => unit.id === currentUnitId);
+
+          if (unitValid) {
+            // If both subject and unit are valid, fetch the conversion data
+            const matchingUnit = availableUnits.find(
+              (unit) => unit.id === currentUnitId,
+            );
+            if (matchingUnit) {
+              const newApiPath = `${matchingUnit.id}_-_${matchingUnit.name}`;
+
+              try {
+                const data = await conversionApi.getConversionData(
+                  selectedSubject,
+                  newApiPath,
+                  session,
+                );
+
+                // If we got here, everything worked! Update the unit (as format might differ) and data
+                setSelectedUnit(newApiPath);
+                setConversionData(data);
+                updateUrlParams({
+                  session,
+                  subject: selectedSubject,
+                  unit: newApiPath,
+                });
+                setLoading(false);
+                return;
+              } catch (error) {
+                console.error(
+                  "Failed to load conversion data for maintained selections:",
+                  error,
+                );
+                // Continue to fallback logic
+                unitValid = false;
+              }
+            }
+          }
+        }
+      }
+
+      // If subject is valid but unit isn't, clear unit but keep subject
+      if (subjectValid) {
+        setSelectedUnit(null);
+        setConversionData(null);
+        updateUrlParams({ session, subject: selectedSubject, unit: null });
+      } else {
+        // If neither is valid, clear both
+        setSelectedSubject(null);
+        setSelectedUnit(null);
+        setConversionData(null);
+        updateUrlParams({ session, subject: null, unit: null });
+      }
+    } catch (error) {
+      console.error("Error maintaining selections after session change:", error);
+      // Fall back to clearing both subject and unit
+      setSelectedSubject(null);
+      setSelectedUnit(null);
+      setConversionData(null);
+      updateUrlParams({ session, subject: null, unit: null });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle subject change - depends on session
@@ -310,10 +406,23 @@ export default function RawToUmsPage() {
 
       {/* Subject Selection */}
       <div className="mb-6 p-4 bg-surface rounded-lg border border-border">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Session Selection */}
+          <div className="space-y-2 order-first">
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Examination Session
+            </label>
+            <div className="transition-all duration-200">
+              <SessionSelector
+                selectedSession={selectedSession}
+                onSessionChange={handleSessionChange}
+              />
+            </div>
+          </div>
+
           {/* Subject & Unit Selection */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-text-muted">
+            <label className="block text-sm font-medium text-text mb-1.5">
               Subject & Unit
             </label>
             <div className="transition-all duration-200">
@@ -323,19 +432,6 @@ export default function RawToUmsPage() {
                 selectedUnit={selectedUnit}
                 onSubjectChange={handleSubjectChange}
                 onUnitChange={handleUnitChange}
-              />
-            </div>
-          </div>
-
-          {/* Session Selection */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-text-muted">
-              Session
-            </label>
-            <div className="transition-all duration-200">
-              <SessionSelector
-                selectedSession={selectedSession}
-                onSessionChange={handleSessionChange}
               />
             </div>
           </div>

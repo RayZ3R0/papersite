@@ -2,6 +2,8 @@
 
 import UMSChart from "@/components/tools/ums-chart";
 import GradePredictions from "@/components/tools/ums-chart/GradePredictions";
+import SubjectSelector from "@/components/tools/ums-chart/SubjectSelector";
+import UnitSelector from "@/components/tools/ums-chart/UnitSelector";
 import { Subject, Unit, UMSData } from "@/types/ums";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GradeBoundary } from "@/lib/gradePredictor";
@@ -223,30 +225,13 @@ export default function UMSChartPage() {
               <label className="text-sm font-semibold text-text/90">
                 Subject
               </label>
-              <select
-                className="w-full px-4 py-2.5 rounded-lg bg-surface border border-border hover:bg-surface-hover focus:ring-2 focus:ring-primary/20 transition-colors"
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    setSelectedSubject(undefined);
-                    setAvailableUnits([]);
-                    return;
-                  }
-                  
-                  const subject = JSON.parse(e.target.value) as Subject;
-                  handleSubjectSelect(subject);
-                }}
-                value={selectedSubject ? JSON.stringify(selectedSubject) : ""}
-              >
-                <option value="">Select a subject</option>
-                {subjects.map((subject) => (
-                  <option key={subject.id} value={JSON.stringify(subject)}>
-                    {subject.name}
-                  </option>
-                ))}
-              </select>
-              {loading && !selectedSubject && (
-                <p className="text-xs text-text-muted animate-pulse">Loading subjects...</p>
-              )}
+              <SubjectSelector
+                subjects={subjects}
+                selectedSubject={selectedSubject}
+                onSubjectChange={handleSubjectSelect}
+                loading={loading && !selectedSubject}
+                disabled={loading && !subjects.length}
+              />
             </div>
 
             {/* Unit Selection */}
@@ -254,37 +239,13 @@ export default function UMSChartPage() {
               <label className="text-sm font-semibold text-text/90">
                 Unit
               </label>
-              <select
-                className="w-full px-4 py-2.5 rounded-lg bg-surface border border-border hover:bg-surface-hover focus:ring-2 focus:ring-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    setSelectedUnit(undefined);
-                    setUMSData(undefined);
-                    return;
-                  }
-                  
-                  const unit = JSON.parse(e.target.value) as Unit;
-                  handleUnitSelect(unit);
-                }}
-                value={selectedUnit ? JSON.stringify(selectedUnit) : ""}
+              <UnitSelector
+                units={availableUnits}
+                selectedUnit={selectedUnit}
+                onUnitChange={handleUnitSelect}
+                loading={loading && !!selectedSubject && !selectedUnit}
                 disabled={!selectedSubject || availableUnits.length === 0}
-              >
-                <option value="">
-                  {selectedSubject
-                    ? availableUnits.length > 0
-                      ? "Select a unit"
-                      : "Loading units..."
-                    : "Please select a subject first"}
-                </option>
-                {availableUnits.map((unit) => (
-                  <option key={`${unit.id}-${unit.name}`} value={JSON.stringify(unit)}>
-                    {unit.id}
-                  </option>
-                ))}
-              </select>
-              {loading && selectedSubject && !selectedUnit && (
-                <p className="text-xs text-text-muted animate-pulse">Loading units...</p>
-              )}
+              />
             </div>
           </div>
 
