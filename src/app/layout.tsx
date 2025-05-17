@@ -8,28 +8,32 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { SearchParamsProvider } from "@/components/providers/SearchParamsProvider";
 import { Suspense } from "react";
 import { Metadata } from "next";
-// Change the import name to avoid conflict
-import dynamicImport from "next/dynamic";
+import { default as dynamicImport } from "next/dynamic";
 
 // Lazy load non-essential components
 const NyanCatEasterEgg = dynamicImport(
   () => import("@/components/easter-eggs/NyanCat"),
-  { ssr: false, loading: () => null },
+  { ssr: false, loading: () => null }
 );
 
-// Lazy load analytics to not impact core page loading
 const Analytics = dynamicImport(
   () =>
     import("@vercel/analytics/next").then((mod) => ({
       default: mod.Analytics,
     })),
-  { ssr: false },
+  { ssr: false }
+);
+
+// Lazy load with no SSR to avoid hydration issues
+const MusicPlayer = dynamicImport(
+  () => import("@/components/music-player").then(mod => ({ default: mod.MusicPlayer })),
+  { ssr: false }
 );
 
 // Create a connection-aware component that will be used to optimize performance
 const ConnectionAwareOptimizer = dynamicImport(
   () => import("@/components/providers/ConnectionAwareOptimizer"),
-  { ssr: false },
+  { ssr: false }
 );
 
 export const metadata: Metadata = {
@@ -120,6 +124,11 @@ export default function RootLayout({
                     </Suspense>
                   </main>
                 </AuthLoadingProvider>
+
+                {/* Music Player - Dynamically loaded, no SSR */}
+                <Suspense fallback={null}>
+                  <MusicPlayer />
+                </Suspense>
               </div>
             </AuthProvider>
           </ThemeProvider>
