@@ -9,7 +9,7 @@ export default function ExpandedPlayer() {
   const { currentTrack, isPlaying, toggleMinimize } = useMusicPlayer();
 
   return (
-    <div className="w-80 bg-surface border border-border rounded-lg 
+    <div className="w-80 bg-surface border border-border rounded-lg
       shadow-lg overflow-hidden music-player-fade-in hover:shadow-xl
       transition-all duration-300 ease-spring">
       {/* Header */}
@@ -46,10 +46,10 @@ export default function ExpandedPlayer() {
       <div className="p-6 text-center">
         {currentTrack ? (
           <>
-            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-surface-alt 
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-surface-alt
               flex items-center justify-center relative overflow-hidden
-              border-4 border-border hover:scale-105 transition-transform duration-300
-              hover:border-primary/30 group">
+              border-2 border-primary hover:scale-105 transition-transform duration-300
+              hover:border-primary group">
               {/* Spinning Animation for Active Playback */}
               <div className={`absolute inset-0 transition-all duration-500
                 ${isPlaying ? 'animate-spin-slow opacity-100' : 'opacity-0'}`}>
@@ -79,7 +79,7 @@ export default function ExpandedPlayer() {
             <h2 className="text-lg font-semibold mb-1 hover:text-primary transition-colors duration-300">
               {currentTrack.title}
             </h2>
-            <p className="text-text-muted text-sm transition-colors duration-300
+            <p className="text-text-muted text-sm font-medium transition-colors duration-300
               hover:text-text">
               {currentTrack.artist}
             </p>

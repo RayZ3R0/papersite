@@ -15,7 +15,8 @@ const defaultState: PlayerState = {
   isClosed: false,
   volume: 0.5,
   isMuted: false,
-  currentTime: 0
+  currentTime: 0,
+  isBuffering: false
 };
 
 const MusicPlayerContext = createContext<PlayerContext | null>(null);
@@ -46,12 +47,17 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   }, [state.volume, state.isMinimized]);
 
   const playTrack = (track: Track) => {
+    setState(prev => ({
+      ...prev,
+      isBuffering: true
+    }));
     const savedPosition = getTrackPosition(track.id);
     setState(prev => ({
       ...prev,
       currentTrack: track,
       isPlaying: true,
-      currentTime: savedPosition
+      currentTime: savedPosition,
+      isBuffering: true // Keep buffering true until first updateCurrentTime
     }));
   };
 
@@ -120,7 +126,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       const newTime = Math.max(0, time);
       setState(prev => ({
         ...prev,
-        currentTime: newTime
+        currentTime: newTime,
+        isBuffering: false // Track is playing if we're getting time updates
       }));
       // Save position periodically during playback
       if (state.isPlaying) {

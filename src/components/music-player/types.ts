@@ -15,6 +15,7 @@ export interface PlayerState {
   isMuted: boolean;
   isClosed: boolean;
   currentTime: number; // Current playback position in seconds
+  isBuffering: boolean; // Indicates if the track is currently buffering
 }
 
 export interface PlayerContext extends PlayerState {
