@@ -14,6 +14,7 @@ interface ViewerControlsProps {
   showSplitOption?: boolean;
   onToggleFullscreen: () => void;
   isFullscreen: boolean;
+  onDownload: () => void;
 }
 
 const ViewerControls = ({ 
@@ -23,67 +24,54 @@ const ViewerControls = ({
   msUrl, 
   showSplitOption = true,
   onToggleFullscreen,
-  isFullscreen 
+  isFullscreen,
+  onDownload
 }: ViewerControlsProps) => {
   return (
-    <div className="fixed top-16 left-0 right-0 bg-surface border-b border-border z-50 px-4 py-2">
-      <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
-        <div className="flex flex-wrap md:flex-nowrap items-center gap-2">
-          <button
-            onClick={() => onViewChange("qp")}
-            className={`px-4 py-2 rounded-lg ${
-              currentView === "qp"
-                ? "bg-primary text-white"
-                : "bg-surface-alt text-text hover:opacity-90"
-            }`}
-          >
-            Question Paper
-          </button>
-          <button
-            onClick={() => onViewChange("ms")}
-            className={`px-4 py-2 rounded-lg ${
-              currentView === "ms"
-                ? "bg-secondary text-white"
-                : "bg-surface-alt text-text hover:opacity-90"
-            }`}
-          >
-            Mark Scheme
-          </button>
-          {showSplitOption && (
+    <div className="fixed top-[56px] md:top-16 left-0 right-0 bg-surface/95 backdrop-blur-sm border-b border-border z-40 px-4 py-1 shadow-sm">
+      <div className="max-w-7xl mx-auto flex items-center h-10">
+        <div className="flex items-center space-x-1 flex-1">
+          <div className="bg-surface-alt rounded-lg p-0.5 flex">
             <button
-              onClick={() => onViewChange("split")}
-              className={`px-4 py-2 rounded-lg ${
-                currentView === "split"
-                  ? "bg-primary text-white"
-                  : "bg-surface-alt text-text hover:opacity-90"
+              onClick={() => onViewChange("qp")}
+              className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
+                currentView === "qp"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-text hover:bg-surface-alt/80"
               }`}
             >
-              Split View
+              Question Paper
             </button>
-          )}
-          <button
-            onClick={onToggleFullscreen}
-            className="px-4 py-2 rounded-lg bg-surface-alt text-text hover:opacity-90 flex items-center justify-center gap-2"
-            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-          >
-            {isFullscreen ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-              </svg>
+            <button
+              onClick={() => onViewChange("ms")}
+              className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
+                currentView === "ms"
+                  ? "bg-secondary text-white shadow-sm"
+                  : "text-text hover:bg-surface-alt/80"
+              }`}
+            >
+              Mark Scheme
+            </button>
+            {showSplitOption && (
+              <button
+                onClick={() => onViewChange("split")}
+                className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
+                  currentView === "split"
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-text hover:bg-surface-alt/80"
+                }`}
+              >
+                Split View
+              </button>
             )}
-            {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-          </button>
-          <a 
-            href={currentView === "ms" ? msUrl : qpUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download={currentView === "ms" ? "marking_scheme.pdf" : "question_paper.pdf"}
-            className="w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-surface-alt text-text hover:opacity-90 rounded-lg flex items-center justify-center gap-2"
-            id="primary-download-btn"
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={onDownload}
+            className="px-2 md:px-3 py-1 bg-surface-alt hover:bg-surface-alt/80 text-text rounded-md text-xs md:text-sm font-medium transition-all flex items-center gap-1.5"
+            title="Download PDF (Ctrl+S)"
           >
             <svg
               className="w-4 h-4"
@@ -98,33 +86,26 @@ const ViewerControls = ({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               />
             </svg>
-            Download {currentView === "split" ? "QP" : currentView === "ms" ? "MS" : "QP"}
-          </a>
-          {currentView === "split" && (
-            <a 
-              href={msUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              download="marking_scheme.pdf"
-              className="w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-surface-alt text-text hover:opacity-90 rounded-lg flex items-center justify-center gap-2"
-              id="secondary-download-btn"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
+            <span className="hidden md:inline">{currentView === "split" ? "Download PDFs" : currentView === "ms" ? "Download MS" : "Download QP"}</span>
+            <span className="md:hidden">Download</span>
+          </button>
+          
+          <button
+            onClick={onToggleFullscreen}
+            className="hidden md:flex p-1 rounded-md bg-surface-alt hover:bg-surface-alt/80 text-text transition-all"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen (Esc)" : "Enter fullscreen (Ctrl+F)"}
+          >
+            {isFullscreen ? (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-              Download MS
-            </a>
-          )}
+            ) : (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
     </div>
@@ -135,7 +116,7 @@ const FloatingExitButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       onClick={onClick}
-      className="fixed top-4 right-4 z-[10000] bg-surface p-3 rounded-full shadow-lg hover:bg-surface-alt transition-colors"
+      className="fixed top-4 right-4 z-[10000] bg-black/80 p-3 rounded-full shadow-lg hover:bg-black/90 transition-colors text-white border-2 border-white/80"
       aria-label="Exit fullscreen"
     >
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -180,9 +161,9 @@ export default function PDFViewerPage() {
   const msUrl = atob(searchParams.get("msUrl") || "");
   const initialView = (searchParams.get("type") || "qp") as "qp" | "ms" | "split";
   
-  // Create refs for the download buttons
-  const primaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
-  const secondaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
+  // Create hidden download links
+  const qpDownloadLinkRef = useRef<HTMLAnchorElement>(null);
+  const msDownloadLinkRef = useRef<HTMLAnchorElement>(null);
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   
   // State for fullscreen mode
@@ -202,34 +183,61 @@ export default function PDFViewerPage() {
     }
   }, [isWideScreen, currentView]);
 
+  // Download function that works across all browsers
+  const handleDownload = () => {
+    // Create temporary blob URLs to force download instead of navigation
+    const downloadFile = (url: string, filename: string) => {
+      // Fetch the file and create a blob URL
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const tempLink = document.createElement('a');
+          tempLink.href = blobUrl;
+          tempLink.download = filename;
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(tempLink);
+            window.URL.revokeObjectURL(blobUrl);
+          }, 200);
+        })
+        .catch(err => {
+          console.error("Download failed:", err);
+        });
+    };
+
+    if (currentView === "qp" || currentView === "split") {
+      downloadFile(pdfUrl, "question_paper.pdf");
+    }
+    
+    if (currentView === "ms" || currentView === "split") {
+      // Add slight delay when downloading both to prevent browser blocking
+      if (currentView === "split") {
+        setTimeout(() => {
+          downloadFile(msUrl, "marking_scheme.pdf");
+        }, 300);
+      } else {
+        downloadFile(msUrl, "marking_scheme.pdf");
+      }
+    }
+  };
+
   // Handle keyboard shortcuts for downloading
   useEffect(() => {
-    // Update the refs to the current buttons after render
-    const primaryBtn = document.getElementById("primary-download-btn") as HTMLAnchorElement;
-    const secondaryBtn = document.getElementById("secondary-download-btn") as HTMLAnchorElement;
-    
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Ctrl+S (or Command+S on Mac)
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault(); // Prevent browser's save dialog
-        
-        // Click the appropriate download button(s)
-        if (currentView === "split" && primaryBtn && secondaryBtn) {
-          // For split view, trigger both download buttons
-          primaryBtn.click();
-          
-          // Use setTimeout to make sure the first download starts before triggering the second
-          setTimeout(() => {
-            secondaryBtn.click();
-          }, 300);
-        } else if (primaryBtn) {
-          // For single view, just click the primary download button
-          primaryBtn.click();
-        }
+        handleDownload();
       } else if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
         // Add fullscreen shortcut (Ctrl+F or Command+F)
         e.preventDefault();
-        handleToggleFullscreen();
+        if (isWideScreen) {
+          handleToggleFullscreen();
+        }
       } else if (e.key === 'Escape' && isFullscreen) {
         // Exit fullscreen with Escape key
         setIsFullscreen(false);
@@ -240,7 +248,7 @@ export default function PDFViewerPage() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentView, isFullscreen]);
+  }, [currentView, isFullscreen, isWideScreen]);
 
   // Listen for fullscreenchange event
   useEffect(() => {
@@ -280,7 +288,7 @@ export default function PDFViewerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-28">
+    <div className="min-h-screen bg-background">
       <Script 
         src="/pdfjs/build/pdf.worker.js"
         strategy="beforeInteractive"
@@ -289,6 +297,29 @@ export default function PDFViewerPage() {
         src="/pdfjs/build/pdf.js"
         strategy="beforeInteractive"
       />
+      <Script 
+        src="/pdfViewerController.js"
+        strategy="beforeInteractive"
+      />
+      
+      {/* Hidden download links to ensure cross-browser compatibility */}
+      <a 
+        ref={qpDownloadLinkRef}
+        href={pdfUrl}
+        download="question_paper.pdf"
+        className="hidden"
+        aria-hidden="true"
+        data-testid="qp-download-link"
+      />
+      <a 
+        ref={msDownloadLinkRef}
+        href={msUrl}
+        download="marking_scheme.pdf"
+        className="hidden"
+        aria-hidden="true"
+        data-testid="ms-download-link"
+      />
+      
       <ViewerControls
         currentView={currentView}
         onViewChange={setCurrentView}
@@ -297,29 +328,30 @@ export default function PDFViewerPage() {
         showSplitOption={isWideScreen}
         onToggleFullscreen={handleToggleFullscreen}
         isFullscreen={isFullscreen}
+        onDownload={handleDownload}
       />
 
       <div 
         ref={fullscreenContainerRef}
-        className={`max-w-7xl mx-auto px-4 ${
-          currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-4" : ""
-        } ${isFullscreen ? "fullscreen-container" : ""}`}
+        className={`w-full mx-auto px-2 ${
+          currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-2" : "max-w-[95%]"
+        } ${isFullscreen ? "fullscreen-container" : ""} pt-[68px] md:pt-[78px]`}
       >
         {(currentView === "qp" || currentView === "split") && (
-          <div className={`w-full bg-surface rounded-lg p-1 md:p-2 shadow-sm mb-4 lg:mb-0 ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
+          <div className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm mb-2 lg:mb-0 ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
             <PDFWrapper 
               url={pdfUrl}
-              width={currentView === "split" ? 400 : 800}
+              width="100%"
               className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
             />
           </div>
         )}
 
         {(currentView === "ms" || currentView === "split") && (
-          <div className={`w-full bg-surface rounded-lg p-1 md:p-2 shadow-sm ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
+          <div className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
             <PDFWrapper 
               url={msUrl}
-              width={currentView === "split" ? 400 : 800}
+              width="100%"
               className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
             />
           </div>
@@ -329,7 +361,6 @@ export default function PDFViewerPage() {
         {isFullscreen && showFullscreenToast && <FullscreenToast />}
       </div>
 
-      {/* Add some CSS for fullscreen mode */}
       <style jsx global>{`
         .fullscreen-container {
           position: fixed;
@@ -346,6 +377,12 @@ export default function PDFViewerPage() {
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
+          padding-top: 0 !important;
+        }
+        
+        /* Make sure the floating exit button has higher z-index and stands out */
+        button[aria-label="Exit fullscreen"] {
+          z-index: 99999;
         }
         
         /* Hide controls in fullscreen mode */

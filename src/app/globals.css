@@ -952,3 +952,69 @@ body {
         scroll-behavior: auto !important;
     }
 }
+
+/* Add this to your global CSS */
+/* Hide browser PDF controls */
+:root .pdf-viewer-container iframe {
+    border: none !important;
+    overflow: hidden !important;
+}
+
+/* Hide Chrome's PDF viewer toolbar */
+:root .pdf-viewer-container iframe::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+}
+
+/* Firefox-specific styles for PDF viewer */
+@-moz-document url-prefix() {
+    .pdf-viewer-container iframe {
+        background: transparent !important;
+    }
+
+    /* Create a mask to prevent toolbar interactions */
+    .firefox-toolbar-mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        z-index: 10;
+        background-color: transparent;
+        pointer-events: auto;
+    }
+
+    /* Force iframe to show PDFs without UI */
+    .pdf-viewer-container iframe {
+        border: none !important;
+        overflow: hidden !important;
+    }
+
+    /* Override Firefox PDF viewer styles */
+    iframe[src*=".pdf"] {
+        background: white !important;
+    }
+
+    /* Give the toolbar mask a background matching your app */
+    .firefox-toolbar-mask {
+        background-color: var(--color-surface-alt);
+    }
+}
+
+/* Add this to ensure the iframe can't be interacted with in the toolbar area */
+.pdf-content {
+    position: relative;
+}
+
+/* Add stronger CSS to hide UI elements in Firefox PDF viewer */
+iframe.firefox-pdf-iframe {
+    min-height: calc(100vh - 12rem - 48px);
+}
+
+/* Firefox-specific styles for PDF viewer */
+@-moz-document url-prefix() {
+    .pdf-viewer-container iframe {
+        background: transparent !important;
+    }
+}
