@@ -27,7 +27,6 @@ const ViewerControls = ({
   isFullscreen,
   onDownload
 }: ViewerControlsProps) => {
-  // ...existing code...
   return (
     <div className="fixed top-[56px] md:top-16 left-0 right-0 bg-surface/95 backdrop-blur-sm border-b border-border z-40 px-4 py-1 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center h-10">
@@ -288,13 +287,6 @@ export default function PDFViewerPage() {
     }
   };
 
-  // Helper function to determine visibility class based on current view
-  const getVisibilityClass = (type: "qp" | "ms") => {
-    if (currentView === "split") return "block";
-    if (currentView === type) return "block";
-    return "hidden";
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Script 
@@ -341,34 +333,44 @@ export default function PDFViewerPage() {
 
       <div 
         ref={fullscreenContainerRef}
-        className={`w-full mx-auto px-2 ${
-          currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-2" : "max-w-[95%]"
-        } ${isFullscreen ? "fullscreen-container" : ""} pt-[68px] md:pt-[78px]`}
+        className={`w-full mx-auto px-2 
+          ${currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-2" : "max-w-[95%]"}
+          ${isFullscreen ? "fullscreen-container" : ""} 
+          pt-[68px] md:pt-[78px]`
+        }
       >
-        {/* Question Paper - always rendered but conditionally hidden */}
+        {/* Question Paper container */}
         <div 
-          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm mb-2 lg:mb-0 ${
-            isFullscreen ? "h-full flex items-center justify-center" : ""
-          } ${getVisibilityClass("qp")}`}
+          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm mb-2 lg:mb-0 
+            ${isFullscreen ? "h-full flex items-center justify-center" : ""}
+            ${currentView === "qp" || currentView === "split" ? "block" : "hidden"}`
+          }
+          style={{ position: 'relative', overflow: 'hidden' }}
         >
-          <PDFWrapper 
-            url={pdfUrl}
-            width="100%"
-            className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
-          />
+          <div className={`w-full h-full ${currentView === "qp" || currentView === "split" ? "" : "invisible"}`}>
+            <PDFWrapper 
+              url={pdfUrl}
+              width="100%"
+              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
+            />
+          </div>
         </div>
 
-        {/* Mark Scheme - always rendered but conditionally hidden */}
+        {/* Mark Scheme container */}
         <div 
-          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm ${
-            isFullscreen ? "h-full flex items-center justify-center" : ""
-          } ${getVisibilityClass("ms")}`}
+          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm 
+            ${isFullscreen ? "h-full flex items-center justify-center" : ""}
+            ${currentView === "ms" || currentView === "split" ? "block" : "hidden"}`
+          }
+          style={{ position: 'relative', overflow: 'hidden' }}
         >
-          <PDFWrapper 
-            url={msUrl}
-            width="100%"
-            className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
-          />
+          <div className={`w-full h-full ${currentView === "ms" || currentView === "split" ? "" : "invisible"}`}>
+            <PDFWrapper 
+              url={msUrl}
+              width="100%"
+              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
+            />
+          </div>
         </div>
 
         {isFullscreen && <FloatingExitButton onClick={handleToggleFullscreen} />}
@@ -448,11 +450,6 @@ export default function PDFViewerPage() {
           margin: 0 4px;
           font-family: monospace;
           font-size: 12px;
-        }
-        
-        /* Fix for hidden elements in fullscreen split view */
-        .fullscreen-container .hidden {
-          display: ${currentView === "split" ? "block" : "none"};
         }
         
         @keyframes fadeInOut {
