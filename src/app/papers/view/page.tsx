@@ -57,6 +57,7 @@ const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOpti
             rel="noopener noreferrer"
             download={currentView === "ms" ? "marking_scheme.pdf" : "question_paper.pdf"}
             className="w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-surface-alt text-text hover:opacity-90 rounded-lg flex items-center justify-center gap-2"
+            id="primary-download-btn"
           >
             <svg
               className="w-4 h-4"
@@ -80,6 +81,7 @@ const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOpti
               rel="noopener noreferrer"
               download="marking_scheme.pdf"
               className="w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-surface-alt text-text hover:opacity-90 rounded-lg flex items-center justify-center gap-2"
+              id="secondary-download-btn"
             >
               <svg
                 className="w-4 h-4"
@@ -123,6 +125,45 @@ export default function PDFViewerPage() {
       setCurrentView("qp");
     }
   }, [isWideScreen, currentView]);
+
+  // Handle keyboard shortcuts for downloading
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Ctrl+S (or Command+S on Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Prevent browser's save dialog
+        
+        if (currentView === "split") {
+          // For split view, download both files
+          // We need to download them one by one using a slight delay
+          downloadFile(pdfUrl, "question_paper.pdf");
+          setTimeout(() => {
+            downloadFile(msUrl, "marking_scheme.pdf");
+          }, 100);
+        } else if (currentView === "qp") {
+          downloadFile(pdfUrl, "question_paper.pdf");
+        } else {
+          downloadFile(msUrl, "marking_scheme.pdf");
+        }
+      }
+    };
+
+    // Function to trigger file download
+    const downloadFile = (url: string, filename: string) => {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentView, pdfUrl, msUrl]);
 
   return (
     <div className="min-h-screen bg-background pt-28">
