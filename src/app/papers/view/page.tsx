@@ -12,9 +12,19 @@ interface ViewerControlsProps {
   qpUrl: string;
   msUrl: string;
   showSplitOption?: boolean;
+  onToggleFullscreen: () => void;
+  isFullscreen: boolean;
 }
 
-const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOption = true }: ViewerControlsProps) => {
+const ViewerControls = ({ 
+  currentView, 
+  onViewChange, 
+  qpUrl, 
+  msUrl, 
+  showSplitOption = true,
+  onToggleFullscreen,
+  isFullscreen 
+}: ViewerControlsProps) => {
   return (
     <div className="fixed top-16 left-0 right-0 bg-surface border-b border-border z-50 px-4 py-2">
       <div className="max-w-7xl mx-auto flex flex-wrap md:flex-nowrap items-center justify-between gap-2">
@@ -51,6 +61,22 @@ const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOpti
               Split View
             </button>
           )}
+          <button
+            onClick={onToggleFullscreen}
+            className="px-4 py-2 rounded-lg bg-surface-alt text-text hover:opacity-90 flex items-center justify-center gap-2"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+              </svg>
+            )}
+            {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          </button>
           <a 
             href={currentView === "ms" ? msUrl : qpUrl}
             target="_blank"
@@ -105,6 +131,46 @@ const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOpti
   );
 };
 
+const FloatingExitButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="fixed top-4 right-4 z-[10000] bg-surface p-3 rounded-full shadow-lg hover:bg-surface-alt transition-colors"
+      aria-label="Exit fullscreen"
+    >
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  );
+};
+
+// Toast notification component for fullscreen mode
+const FullscreenToast = () => {
+  const [visible, setVisible] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (!visible) return null;
+  
+  return (
+    <div className="fullscreen-toast">
+      <div className="toast-content">
+        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Press <kbd>ESC</kbd> to exit fullscreen
+      </div>
+    </div>
+  );
+};
+
 export default function PDFViewerPage() {
   const searchParams = useSearchParams();
   const isWideScreen = useMediaQuery("(min-width: 1024px)");
@@ -117,6 +183,12 @@ export default function PDFViewerPage() {
   // Create refs for the download buttons
   const primaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
   const secondaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
+  const fullscreenContainerRef = useRef<HTMLDivElement>(null);
+  
+  // State for fullscreen mode
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  // State to show toast when entering fullscreen
+  const [showFullscreenToast, setShowFullscreenToast] = useState(false);
   
   // Don't allow split view on narrow screens
   const [currentView, setCurrentView] = useState<"qp" | "ms" | "split">(
@@ -154,6 +226,13 @@ export default function PDFViewerPage() {
           // For single view, just click the primary download button
           primaryBtn.click();
         }
+      } else if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
+        // Add fullscreen shortcut (Ctrl+F or Command+F)
+        e.preventDefault();
+        handleToggleFullscreen();
+      } else if (e.key === 'Escape' && isFullscreen) {
+        // Exit fullscreen with Escape key
+        setIsFullscreen(false);
       }
     };
 
@@ -161,7 +240,44 @@ export default function PDFViewerPage() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentView]);
+  }, [currentView, isFullscreen]);
+
+  // Listen for fullscreenchange event
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement === null) {
+        setIsFullscreen(false);
+        setShowFullscreenToast(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const handleToggleFullscreen = async () => {
+    if (!fullscreenContainerRef.current) return;
+
+    if (!isFullscreen) {
+      try {
+        if (fullscreenContainerRef.current.requestFullscreen) {
+          await fullscreenContainerRef.current.requestFullscreen();
+          setIsFullscreen(true);
+          setShowFullscreenToast(true);
+        }
+      } catch (err) {
+        console.error("Error attempting to enable fullscreen:", err);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+        setShowFullscreenToast(false);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pt-28">
@@ -179,31 +295,117 @@ export default function PDFViewerPage() {
         qpUrl={pdfUrl}
         msUrl={msUrl}
         showSplitOption={isWideScreen}
+        onToggleFullscreen={handleToggleFullscreen}
+        isFullscreen={isFullscreen}
       />
 
-      <div className={`max-w-7xl mx-auto px-4 ${
-        currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-4" : ""
-      }`}>
+      <div 
+        ref={fullscreenContainerRef}
+        className={`max-w-7xl mx-auto px-4 ${
+          currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-4" : ""
+        } ${isFullscreen ? "fullscreen-container" : ""}`}
+      >
         {(currentView === "qp" || currentView === "split") && (
-          <div className="w-full bg-surface rounded-lg p-2 md:p-4 shadow-sm mb-4 lg:mb-0">
+          <div className={`w-full bg-surface rounded-lg p-1 md:p-2 shadow-sm mb-4 lg:mb-0 ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
             <PDFWrapper 
               url={pdfUrl}
               width={currentView === "split" ? 400 : 800}
-              className="mx-auto"
+              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
             />
           </div>
         )}
 
         {(currentView === "ms" || currentView === "split") && (
-          <div className="w-full bg-surface rounded-lg p-2 md:p-4 shadow-sm">
+          <div className={`w-full bg-surface rounded-lg p-1 md:p-2 shadow-sm ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
             <PDFWrapper 
               url={msUrl}
               width={currentView === "split" ? 400 : 800}
-              className="mx-auto"
+              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
             />
           </div>
         )}
+
+        {isFullscreen && <FloatingExitButton onClick={handleToggleFullscreen} />}
+        {isFullscreen && showFullscreenToast && <FullscreenToast />}
       </div>
+
+      {/* Add some CSS for fullscreen mode */}
+      <style jsx global>{`
+        .fullscreen-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: 100% !important;
+          padding: 0.25rem !important;
+          background-color: var(--background);
+          z-index: 9999;
+          display: flex;
+          flex-direction: ${currentView === "split" ? "row" : "column"};
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+        
+        /* Hide controls in fullscreen mode */
+        .fullscreen-container:fullscreen .fixed {
+          display: none;
+        }
+        
+        /* PDF viewer styling for fullscreen */
+        .fullscreen-container .bg-surface {
+          height: ${currentView === "split" ? "98vh" : "98vh"};
+          overflow: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        /* Adjust max width of PDF in fullscreen mode */
+        .fullscreen-container .mx-auto {
+          max-width: 100%;
+          height: 100%;
+        }
+        
+        /* Toast notification styling */
+        .fullscreen-toast {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10001;
+          animation: fadeInOut 3s ease-in-out;
+        }
+        
+        .toast-content {
+          display: flex;
+          align-items: center;
+          background-color: rgba(0, 0, 0, 0.75);
+          color: white;
+          padding: 10px 16px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          font-size: 14px;
+        }
+        
+        .toast-content kbd {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 3px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          padding: 2px 5px;
+          margin: 0 4px;
+          font-family: monospace;
+          font-size: 12px;
+        }
+        
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translate(-50%, 20px); }
+          10% { opacity: 1; transform: translate(-50%, 0); }
+          90% { opacity: 1; transform: translate(-50%, 0); }
+          100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+      `}</style>
     </div>
   );
 }
