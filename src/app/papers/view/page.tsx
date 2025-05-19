@@ -71,7 +71,7 @@ const ViewerControls = ({ currentView, onViewChange, qpUrl, msUrl, showSplitOpti
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               />
             </svg>
-            Download {currentView === "split" ? "Both" : currentView === "ms" ? "MS" : "QP"}
+            Download {currentView === "split" ? "QP" : currentView === "ms" ? "MS" : "QP"}
           </a>
           {currentView === "split" && (
             <a 
