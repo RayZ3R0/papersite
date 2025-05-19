@@ -23,6 +23,7 @@ const MusicPlayerContext = createContext<PlayerContext | null>(null);
 
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<PlayerState>(defaultState);
+  const [lastSeekAction, setLastSeekAction] = useState<number | null>(null);
 
   // Load saved preferences
   useEffect(() => {
@@ -74,6 +75,9 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const nextTrack = () => {
     if (!state.currentTrack) return;
 
+    // Clear any pending seek actions when changing tracks
+    setLastSeekAction(null);
+    
     // Save position of current track before changing
     saveTrackPosition(state.currentTrack.id, state.currentTime);
     
@@ -139,6 +143,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const seekTo = (time: number) => {
     if (state.currentTrack) {
       const newTime = Math.max(0, Math.min(time, state.currentTrack.duration));
+      setLastSeekAction(newTime); // Track this as an explicit seek action
       saveTrackPosition(state.currentTrack.id, newTime);
       setState(prev => ({
         ...prev,
@@ -157,7 +162,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     toggleMinimize,
     closePlayer,
     updateCurrentTime,
-    seekTo
+    seekTo: Object.assign(seekTo, { lastSeekAction })
   };
 
   // Don't render children if player is closed

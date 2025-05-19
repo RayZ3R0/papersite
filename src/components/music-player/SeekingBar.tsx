@@ -59,9 +59,21 @@ export default function SeekingBar() {
   const handleSeek = useCallback((clientX: number) => {
     const seekTime = calculateSeekTime(clientX);
     if (seekTime !== null) {
-      throttledSeek(seekTime);
+      // Use direct seek without throttling for click events
+      seekTo(seekTime);
     }
-  }, [calculateSeekTime, throttledSeek]);
+  }, [calculateSeekTime, seekTo]);
+
+  // For drag operations, still use throttled seeks
+  const throttledDragSeek = useCallback(
+    throttle((clientX: number) => {
+      const seekTime = calculateSeekTime(clientX);
+      if (seekTime !== null) {
+        seekTo(seekTime);
+      }
+    }, 100),
+    [calculateSeekTime, seekTo]
+  );
 
   const updateHoverPosition = useCallback((clientX: number) => {
     const rect = progressRef.current?.getBoundingClientRect();
@@ -76,7 +88,7 @@ export default function SeekingBar() {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) {
-      handleSeek(e.clientX);
+      throttledDragSeek(e.clientX);
     }
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -84,7 +96,7 @@ export default function SeekingBar() {
     rafRef.current = requestAnimationFrame(() => {
       updateHoverPosition(e.clientX);
     });
-  }, [isDragging, handleSeek, updateHoverPosition]);
+  }, [isDragging, throttledDragSeek, updateHoverPosition]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -169,7 +181,7 @@ export default function SeekingBar() {
         onTouchMove={(e) => {
           if (isDragging) {
             const touch = e.touches[0];
-            handleSeek(touch.clientX);
+            throttledDragSeek(touch.clientX);
           }
         }}
         onTouchEnd={() => {

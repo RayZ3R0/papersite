@@ -27,5 +27,5 @@ export interface PlayerContext extends PlayerState {
   toggleMinimize: () => void;
   closePlayer: () => void;
   updateCurrentTime: (time: number) => void; // Update current playback position
-  seekTo: (time: number) => void; // Seek to specific position
+  seekTo: ((time: number) => void) & { lastSeekAction: number | null }; // Enhanced seekTo with last action
 }

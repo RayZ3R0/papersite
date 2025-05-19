@@ -239,19 +239,61 @@ export default function YouTubePlayer() {
     }
   }, [volume, isMuted]);
 
-  // Handle seeking
+  // Completely replace seeking implementation with a more robust approach
+  const userInitiatedSeekRef = useRef<number | null>(null);
+  const lastProcessedSeekRef = useRef<number | null>(null);
+  
   useEffect(() => {
-    if (!playerRef.current || playerRef.current.isChangingTrack || !currentTime) return;
-
+    // Only process seek requests, not regular time updates
+    if (!playerRef.current || !seekTo.lastSeekAction) return;
+    
+    // Only process new seek requests
+    if (seekTo.lastSeekAction === lastProcessedSeekRef.current) return;
+    
+    lastProcessedSeekRef.current = seekTo.lastSeekAction;
+    userInitiatedSeekRef.current = seekTo.lastSeekAction;
+    
     try {
-      const currentPosition = playerRef.current.getCurrentTime();
-      if (Math.abs(currentPosition - currentTime) > 1) {
-        playerRef.current.seekTo(currentTime, true);
-      }
+      console.log('Seeking to:', seekTo.lastSeekAction);
+      playerRef.current.seekTo(seekTo.lastSeekAction, true);
+      
+      // Immediately update the time to avoid visual reverting
+      updateCurrentTime(seekTo.lastSeekAction);
+      
+      // Prevent time tracking from overriding for a short duration
+      const preventTimeTrackingUntil = Date.now() + 500;
+      playerRef.current.preventTimeTrackingUntil = preventTimeTrackingUntil;
     } catch (error) {
       console.error('Failed to seek:', error);
     }
-  }, [currentTime]);
+  }, [seekTo.lastSeekAction, updateCurrentTime]);
+
+  // Save current position periodically - modified to respect seek operations
+  useEffect(() => {
+    if (!playerRef.current || !isPlaying) return;
+
+    const interval = setInterval(() => {
+      try {
+        // Don't update if we're in the protection period after a seek
+        if (playerRef.current.preventTimeTrackingUntil && 
+            Date.now() < playerRef.current.preventTimeTrackingUntil) {
+          return;
+        }
+        
+        const currentTime = playerRef.current.getCurrentTime();
+        // Only update if value has actually changed to avoid reverting seeks
+        if (Math.abs(currentTime - (userInitiatedSeekRef.current || 0)) > 0.5) {
+          userInitiatedSeekRef.current = null;
+        }
+        
+        updateCurrentTime(currentTime);
+      } catch (e) {
+        console.error('Failed to update current time:', e);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, updateCurrentTime]);
 
   const handleError = useCallback(
     debounce(() => {
