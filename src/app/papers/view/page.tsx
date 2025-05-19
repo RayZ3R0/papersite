@@ -27,6 +27,7 @@ const ViewerControls = ({
   isFullscreen,
   onDownload
 }: ViewerControlsProps) => {
+  // ...existing code...
   return (
     <div className="fixed top-[56px] md:top-16 left-0 right-0 bg-surface/95 backdrop-blur-sm border-b border-border z-40 px-4 py-1 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center h-10">
@@ -287,6 +288,13 @@ export default function PDFViewerPage() {
     }
   };
 
+  // Helper function to determine visibility class based on current view
+  const getVisibilityClass = (type: "qp" | "ms") => {
+    if (currentView === "split") return "block";
+    if (currentView === type) return "block";
+    return "hidden";
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Script 
@@ -337,25 +345,31 @@ export default function PDFViewerPage() {
           currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-2" : "max-w-[95%]"
         } ${isFullscreen ? "fullscreen-container" : ""} pt-[68px] md:pt-[78px]`}
       >
-        {(currentView === "qp" || currentView === "split") && (
-          <div className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm mb-2 lg:mb-0 ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
-            <PDFWrapper 
-              url={pdfUrl}
-              width="100%"
-              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
-            />
-          </div>
-        )}
+        {/* Question Paper - always rendered but conditionally hidden */}
+        <div 
+          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm mb-2 lg:mb-0 ${
+            isFullscreen ? "h-full flex items-center justify-center" : ""
+          } ${getVisibilityClass("qp")}`}
+        >
+          <PDFWrapper 
+            url={pdfUrl}
+            width="100%"
+            className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
+          />
+        </div>
 
-        {(currentView === "ms" || currentView === "split") && (
-          <div className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm ${isFullscreen ? "h-full flex items-center justify-center" : ""}`}>
-            <PDFWrapper 
-              url={msUrl}
-              width="100%"
-              className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
-            />
-          </div>
-        )}
+        {/* Mark Scheme - always rendered but conditionally hidden */}
+        <div 
+          className={`w-full bg-surface rounded-lg p-0.5 md:p-1 shadow-sm ${
+            isFullscreen ? "h-full flex items-center justify-center" : ""
+          } ${getVisibilityClass("ms")}`}
+        >
+          <PDFWrapper 
+            url={msUrl}
+            width="100%"
+            className={`mx-auto ${isFullscreen ? "max-h-full" : ""}`}
+          />
+        </div>
 
         {isFullscreen && <FloatingExitButton onClick={handleToggleFullscreen} />}
         {isFullscreen && showFullscreenToast && <FullscreenToast />}
@@ -434,6 +448,11 @@ export default function PDFViewerPage() {
           margin: 0 4px;
           font-family: monospace;
           font-size: 12px;
+        }
+        
+        /* Fix for hidden elements in fullscreen split view */
+        .fullscreen-container .hidden {
+          display: ${currentView === "split" ? "block" : "none"};
         }
         
         @keyframes fadeInOut {
