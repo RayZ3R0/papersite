@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import {
@@ -12,12 +12,59 @@ import {
 
 export default function SubjectPage() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const subjectId = params.subject as string;
 
-  const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedSession, setSelectedSession] = useState<string | null>(null);
-  const [selectedYears, setSelectedYears] = useState<Set<number>>(new Set());
+  // Initialize state from URL params
+  const [selectedUnit, setSelectedUnit] = useState<string | null>(
+    searchParams.get('unit')
+  );
+  const [selectedSession, setSelectedSession] = useState<string | null>(
+    searchParams.get('session')
+  );
+  const [selectedYears, setSelectedYears] = useState<Set<number>>(
+    new Set(searchParams.get('years')?.split(',').map(Number).filter(Boolean) || [])
+  );
+  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(
+    new Set(searchParams.get('expanded')?.split(',').filter(Boolean) || [])
+  );
+
+  // Add scroll position tracking
+  useEffect(() => {
+    // Restore scroll position on mount
+    const savedPosition = searchParams.get('scroll');
+    if (savedPosition) {
+      window.scrollTo(0, parseInt(savedPosition));
+    }
+
+    // Save scroll position before unload
+    const handleBeforeUnload = () => {
+      const currentPosition = window.scrollY;
+      const params = new URLSearchParams(window.location.search);
+      params.set('scroll', currentPosition.toString());
+      router.replace(`/papers/${subjectId}?${params.toString()}`, {
+        scroll: false
+      });
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [searchParams, router, subjectId]);
+
+  // Update URL when state changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedUnit) params.set('unit', selectedUnit);
+    if (selectedYears.size > 0) params.set('years', Array.from(selectedYears).join(','));
+    if (selectedSession) params.set('session', selectedSession);
+    if (expandedUnits.size > 0) params.set('expanded', Array.from(expandedUnits).join(','));
+    params.set('scroll', window.scrollY.toString());
+    
+    router.replace(`/papers/${subjectId}?${params.toString()}`, {
+      scroll: false
+    });
+  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, router, subjectId]);
 
   const [units, setUnits] = useState<Unit[]>([]);
   const [papersByUnit, setPapersByUnit] = useState<Record<string, Paper[]>>({});
@@ -348,7 +395,17 @@ export default function SubjectPage() {
                 {/* Unit Header */}
                 <button
                   onClick={() => {
-                    setSelectedUnit(isSelected ? null : unit.id);
+                    const newUnit = isSelected ? null : unit.id;
+                    setSelectedUnit(newUnit);
+                    setExpandedUnits(prev => {
+                      const newSet = new Set(prev);
+                      if (newUnit) {
+                        newSet.add(newUnit);
+                      } else {
+                        newSet.delete(unit.id);
+                      }
+                      return newSet;
+                    });
                   }}
                   className="w-full p-4 text-left bg-surface hover:bg-surface-alt
                     transition-colors"
@@ -371,7 +428,7 @@ export default function SubjectPage() {
                 </button>
 
                 {/* Papers List */}
-                {isSelected && (
+                {(isSelected || expandedUnits.has(unit.id)) && (
                   <div className="divide-y divide-border">
                     {!hasLoadedPapers ? (
                       <div className="p-4">
@@ -427,13 +484,15 @@ export default function SubjectPage() {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {/* Question Paper Button */}
                                     {paper.pdf_url !== "/nopaper" ? (
-                                      <a
-                                        href={paper.pdf_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                      <button
+                                        onClick={() => {
+                                          const encodedPDF = btoa(paper.pdf_url);
+                                          const encodedMS = btoa(paper.marking_scheme_url);
+                                          router.push(`/papers/view?type=qp&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
+                                        }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-primary text-white rounded-lg hover:opacity-90
-                                          transition-colors shadow-sm hover:shadow"
+                                          transition-colors shadow-sm hover:shadow w-full cursor-pointer"
                                       >
                                         <svg
                                           className="w-4 h-4"
@@ -449,7 +508,7 @@ export default function SubjectPage() {
                                           />
                                         </svg>
                                         Question Paper
-                                      </a>
+                                      </button>
                                     ) : (
                                       <button
                                         disabled
@@ -476,13 +535,15 @@ export default function SubjectPage() {
 
                                     {/* Marking Scheme Button */}
                                     {paper.marking_scheme_url !== "/nopaper" ? (
-                                      <a
-                                        href={paper.marking_scheme_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                      <button
+                                        onClick={() => {
+                                          const encodedPDF = btoa(paper.pdf_url);
+                                          const encodedMS = btoa(paper.marking_scheme_url);
+                                          router.push(`/papers/view?type=ms&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
+                                        }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-secondary text-white rounded-lg hover:opacity-90
-                                          transition-colors shadow-sm hover:shadow"
+                                          transition-colors shadow-sm hover:shadow w-full cursor-pointer"
                                       >
                                         <svg
                                           className="w-4 h-4"
@@ -498,7 +559,7 @@ export default function SubjectPage() {
                                           />
                                         </svg>
                                         Marking Scheme
-                                      </a>
+                                      </button>
                                     ) : (
                                       <button
                                         disabled
