@@ -185,8 +185,29 @@ export default function PDFViewerPage() {
 
   // Download function that works across all browsers
   const handleDownload = () => {
+    // Extract filename from URL
+    const getFilenameFromUrl = (url: string): string => {
+      try {
+        // Try to get the filename from the URL path
+        const urlPath = new URL(url).pathname;
+        const fileName = urlPath.split('/').pop();
+        
+        // If we got a valid filename, return it, otherwise use a fallback
+        if (fileName && fileName.endsWith('.pdf')) {
+          return decodeURIComponent(fileName);
+        }
+        // Fallback if filename can't be extracted
+        return urlPath.includes('ms') ? "marking_scheme.pdf" : "question_paper.pdf";
+      } catch (e) {
+        // Fallback if URL parsing fails
+        return url.includes('ms') ? "marking_scheme.pdf" : "question_paper.pdf";
+      }
+    };
+
     // Create temporary blob URLs to force download instead of navigation
-    const downloadFile = (url: string, filename: string) => {
+    const downloadFile = (url: string) => {
+      const filename = getFilenameFromUrl(url);
+      
       // Fetch the file and create a blob URL
       fetch(url)
         .then(response => response.blob())
@@ -210,17 +231,17 @@ export default function PDFViewerPage() {
     };
 
     if (currentView === "qp" || currentView === "split") {
-      downloadFile(pdfUrl, "question_paper.pdf");
+      downloadFile(pdfUrl);
     }
     
     if (currentView === "ms" || currentView === "split") {
       // Add slight delay when downloading both to prevent browser blocking
       if (currentView === "split") {
         setTimeout(() => {
-          downloadFile(msUrl, "marking_scheme.pdf");
+          downloadFile(msUrl);
         }, 300);
       } else {
-        downloadFile(msUrl, "marking_scheme.pdf");
+        downloadFile(msUrl);
       }
     }
   };
@@ -306,7 +327,7 @@ export default function PDFViewerPage() {
       <a 
         ref={qpDownloadLinkRef}
         href={pdfUrl}
-        download="question_paper.pdf"
+        download={pdfUrl.split('/').pop() || "question_paper.pdf"}
         className="hidden"
         aria-hidden="true"
         data-testid="qp-download-link"
@@ -314,7 +335,7 @@ export default function PDFViewerPage() {
       <a 
         ref={msDownloadLinkRef}
         href={msUrl}
-        download="marking_scheme.pdf"
+        download={msUrl.split('/').pop() || "marking_scheme.pdf"}
         className="hidden"
         aria-hidden="true"
         data-testid="ms-download-link"
