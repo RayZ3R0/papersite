@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PDFWrapper from "@/components/pdf/PDFWrapper";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Script from "next/script";
@@ -114,6 +114,10 @@ export default function PDFViewerPage() {
   const msUrl = atob(searchParams.get("msUrl") || "");
   const initialView = (searchParams.get("type") || "qp") as "qp" | "ms" | "split";
   
+  // Create refs for the download buttons
+  const primaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
+  const secondaryDownloadBtnRef = useRef<HTMLAnchorElement>(null);
+  
   // Don't allow split view on narrow screens
   const [currentView, setCurrentView] = useState<"qp" | "ms" | "split">(
     !isWideScreen && initialView === "split" ? "qp" : initialView
@@ -128,42 +132,36 @@ export default function PDFViewerPage() {
 
   // Handle keyboard shortcuts for downloading
   useEffect(() => {
+    // Update the refs to the current buttons after render
+    const primaryBtn = document.getElementById("primary-download-btn") as HTMLAnchorElement;
+    const secondaryBtn = document.getElementById("secondary-download-btn") as HTMLAnchorElement;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Ctrl+S (or Command+S on Mac)
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault(); // Prevent browser's save dialog
         
-        if (currentView === "split") {
-          // For split view, download both files
-          // We need to download them one by one using a slight delay
-          downloadFile(pdfUrl, "question_paper.pdf");
+        // Click the appropriate download button(s)
+        if (currentView === "split" && primaryBtn && secondaryBtn) {
+          // For split view, trigger both download buttons
+          primaryBtn.click();
+          
+          // Use setTimeout to make sure the first download starts before triggering the second
           setTimeout(() => {
-            downloadFile(msUrl, "marking_scheme.pdf");
-          }, 100);
-        } else if (currentView === "qp") {
-          downloadFile(pdfUrl, "question_paper.pdf");
-        } else {
-          downloadFile(msUrl, "marking_scheme.pdf");
+            secondaryBtn.click();
+          }, 300);
+        } else if (primaryBtn) {
+          // For single view, just click the primary download button
+          primaryBtn.click();
         }
       }
-    };
-
-    // Function to trigger file download
-    const downloadFile = (url: string, filename: string) => {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentView, pdfUrl, msUrl]);
+  }, [currentView]);
 
   return (
     <div className="min-h-screen bg-background pt-28">
