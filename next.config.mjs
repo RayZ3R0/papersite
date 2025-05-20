@@ -1,12 +1,28 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  // Use standalone output mode for smaller deployments
+  output: "standalone",
+
   experimental: {
     optimizeCss: true,
     forceSwcTransforms: true,
+    // Add output file tracing exclusions to reduce size
+    outputFileTracingExcludes: {
+      "*": [
+        "node_modules/canvas/**/*",
+        "node_modules/pdfjs-dist/**/*",
+        "**/*.{png,jpg,jpeg,gif,pdf}",
+        "**/test/**",
+        "**/*.test.*",
+        "**/tests/**",
+      ],
+    },
+    // Disable development-specific features in production
+    excludeDefaultMomentLocales: true,
   },
 
-  // Optimize production build
+  // Keep existing optimization settings
   swcMinify: true,
 
   // Remove console logs in production
@@ -29,7 +45,7 @@ const nextConfig = {
     NEXT_PUBLIC_COOKIE_DOMAIN: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
   },
 
-  // Static files and public assets
+  // Optimize image settings for smaller builds
   images: {
     domains: ["localhost"],
     remotePatterns: [
@@ -38,14 +54,14 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-    // Optimized sizes for responsive images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    // Support modern formats for better compression
-    formats: ["image/webp", "image/avif"],
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 1 week
+    formats: ["image/webp"], // Remove avif to reduce processing overhead
+    minimumCacheTTL: 60 * 60 * 24 * 7,
+    // Disable image optimization in development
+    unoptimized: process.env.NODE_ENV === "development",
   },
 
-  // Webpack configuration
+  // Enhanced webpack configuration for size optimization
   webpack: (config, { dev, isServer, webpack }) => {
     // Handle Node.js modules in Edge runtime
     if (!isServer) {
@@ -63,22 +79,68 @@ const nextConfig = {
       // Enable module concatenation
       config.optimization.concatenateModules = true;
 
+      // Use external CDN for PDF.js instead of bundling
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "pdfjs-dist": "pdfjs-dist/build/pdf.min.js",
+      };
+
       // Ignore moment.js locales to reduce bundle size
       if (webpack && webpack.IgnorePlugin) {
         config.plugins.push(
           new webpack.IgnorePlugin({
             resourceRegExp: /^\.\/locale$/,
             contextRegExp: /moment$/,
-          }),
+          })
         );
       }
+
+      // Add code splitting optimizations
+      config.optimization.splitChunks = {
+        chunks: "all",
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          framework: {
+            name: "framework",
+            chunks: "all",
+            test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types)[\\/]/,
+            priority: 40,
+          },
+          lib: {
+            test(module) {
+              return (
+                module.size() > 80000 &&
+                /node_modules[/\\]/.test(module.identifier())
+              );
+            },
+            name(module) {
+              const hash = crypto.createHash("sha1");
+              hash.update(module.identifier());
+
+              return `lib-${hash.digest("hex").substring(0, 8)}`;
+            },
+            priority: 30,
+            minChunks: 1,
+            reuseExistingChunk: true,
+          },
+          commons: {
+            name: "commons",
+            minChunks: 2,
+            priority: 20,
+          },
+        },
+        maxInitialRequests: 25,
+        minSize: 20000,
+      };
     }
 
     return config;
   },
 
-  // Security headers
+  // Keep existing security headers
   async headers() {
+    // ...existing headers configuration...
     return [
       {
         source: "/:path*",
@@ -132,8 +194,9 @@ const nextConfig = {
     ];
   },
 
-  // Route segment config
+  // Keep existing rewrites and redirects
   async rewrites() {
+    // ...existing rewrites configuration...
     return {
       beforeFiles: [
         // Handle Node.js routes
@@ -164,12 +227,10 @@ const nextConfig = {
     };
   },
 
-  // Sitemap and robots.txt configuration
   async redirects() {
     return [];
   },
 
-  // Improve performance with modern features
   poweredByHeader: false,
   reactStrictMode: true,
 };
