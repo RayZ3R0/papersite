@@ -105,7 +105,11 @@ const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(({
                     bg-transparent
                     text-text placeholder:text-text-muted
                     focus:outline-none focus:ring-0
-                    transition-colors duration-200"
+                    transition-colors duration-200
+                    [&::-webkit-search-cancel-button]:appearance-none
+                    [&::-webkit-search-decoration]:appearance-none
+                    [&::-webkit-search-results-button]:appearance-none
+                    [&::-webkit-search-results-decoration]:appearance-none"
           style={{
             WebkitAppearance: 'none',
             MozAppearance: 'none',
