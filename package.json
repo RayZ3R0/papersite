@@ -10,7 +10,7 @@
     "lint": "next lint",
     "test": "jest",
     "test:auth": "NODE_ENV=development node scripts/test-auth.js",
-    "heroku-postbuild": "next build --no-lint && node scripts/cleanup-build.js"
+    "heroku-postbuild": "NEXT_TELEMETRY_DISABLED=1 next build --no-lint && node scripts/heroku-cleanup.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
