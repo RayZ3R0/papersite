@@ -16,6 +16,12 @@ const NyanCatEasterEgg = dynamicImport(
   { ssr: false, loading: () => null }
 );
 
+// Lazy load domain notification with no SSR to avoid hydration issues
+const DomainNotification = dynamicImport(
+  () => import("@/components/notifications/DomainNotification"),
+  { ssr: false, loading: () => null }
+);
+
 const Analytics = dynamicImport(
   () =>
     import("@vercel/analytics/next").then((mod) => ({
@@ -100,6 +106,9 @@ export default function RootLayout({
               <div className="min-h-screen bg-background text-text">
                 {/* Easter Egg 🐱 - now lazy loaded */}
                 <NyanCatEasterEgg />
+                
+                {/* Domain Notification */}
+                <DomainNotification />
 
                 {/* Static navigation components */}
                 <MainNav />
