@@ -11,17 +11,18 @@ jest.resolver.js
 validation-reports/
 tsconfig.test.json
 TESTING.md
-scripts/
+scripts/test-auth.js
 
-# Next.js build optimization - target the largest parts
+# Next.js build optimization
 
 .next/cache/
 .next/server/chunks/
 .next/static/development/
-.next/trace
+.next/trace/
 
-# Node modules we can exclude (be careful with this)
+# Node modules we can exclude
 
+node_modules/.pnpm/_/node_modules/_/{README,LICENSE,CHANGELOG,AUTHORS,CONTRIBUTING,HISTORY}.md
 node_modules/.cache/
 node_modules/canvas/build/Release/obj/
 node_modules/pdfjs-dist/legacy/

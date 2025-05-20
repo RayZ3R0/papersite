@@ -18,8 +18,7 @@ const nextConfig = {
         "**/tests/**",
       ],
     },
-    // Disable development-specific features in production
-    excludeDefaultMomentLocales: true,
+    // Removed excludeDefaultMomentLocales - it's not a valid option
   },
 
   // Keep existing optimization settings
@@ -95,7 +94,7 @@ const nextConfig = {
         );
       }
 
-      // Add code splitting optimizations
+      // Fixed code splitting optimizations - removed crypto dependency
       config.optimization.splitChunks = {
         chunks: "all",
         cacheGroups: {
@@ -114,12 +113,7 @@ const nextConfig = {
                 /node_modules[/\\]/.test(module.identifier())
               );
             },
-            name(module) {
-              const hash = crypto.createHash("sha1");
-              hash.update(module.identifier());
-
-              return `lib-${hash.digest("hex").substring(0, 8)}`;
-            },
+            name: "lib", // Fixed: Use a simple string instead of function that depends on crypto
             priority: 30,
             minChunks: 1,
             reuseExistingChunk: true,
@@ -138,9 +132,9 @@ const nextConfig = {
     return config;
   },
 
-  // Keep existing security headers
+  // Keep existing security headers and other configuration
+  // ...rest of your config remains unchanged
   async headers() {
-    // ...existing headers configuration...
     return [
       {
         source: "/:path*",
@@ -194,9 +188,7 @@ const nextConfig = {
     ];
   },
 
-  // Keep existing rewrites and redirects
   async rewrites() {
-    // ...existing rewrites configuration...
     return {
       beforeFiles: [
         // Handle Node.js routes
