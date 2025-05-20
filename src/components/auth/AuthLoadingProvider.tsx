@@ -2,7 +2,7 @@
 
 import { useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 
 interface AuthLoadingProviderProps {
   children: React.ReactNode;
@@ -38,6 +38,27 @@ export function AuthLoadingProvider({
   const [isInitialized, setIsInitialized] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [prevPathname, setPrevPathname] = useState<string | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Track page transitions
+  useEffect(() => {
+    if (prevPathname !== pathname) {
+      // Start transition animation
+      setIsTransitioning(true);
+      
+      // Save current pathname
+      setPrevPathname(pathname);
+      
+      // End transition after a short delay
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300); // Match this to your CSS transition duration
+      
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, prevPathname]);
 
   useEffect(() => {
     let mounted = true;
@@ -139,16 +160,20 @@ export function AuthLoadingProvider({
 
     // Only redirect if path is private
     if (!user && isPrivate) {
-      const returnPath = encodeURIComponent(pathname || "/");
-      router.push(`${loginPath}?returnTo=${returnPath}`);
+      startTransition(() => {
+        const returnPath = encodeURIComponent(pathname || "/");
+        router.push(`${loginPath}?returnTo=${returnPath}`);
+      });
       return;
     }
 
     // Handle post-login redirects
     if (user && pathname === loginPath) {
-      const params = new URLSearchParams(window.location.search);
-      const returnTo = params.get("returnTo");
-      router.push(decodeURIComponent(returnTo || "/"));
+      startTransition(() => {
+        const params = new URLSearchParams(window.location.search);
+        const returnTo = params.get("returnTo");
+        router.push(decodeURIComponent(returnTo || "/"));
+      });
     }
   }, [
     user,
@@ -160,29 +185,45 @@ export function AuthLoadingProvider({
     loginPath,
   ]);
 
-  // Show loading state while initializing auth
-  if (!isInitialized || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        {fallback || (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading...</p>
-          </div>
-        )}
-      </div>
-    );
-  }
+  // Create wrapper with page transition effect
+  const renderPageContent = () => {
+    const isPublicPath = checkPublicPath(pathname);
 
-  // Check if path requires authentication
-  const requiresAuth = isPrivatePath(pathname);
+    // Check if current path is public before showing loading state
+    if (!isInitialized || isLoading) {
+      if (isPublicPath) {
+        return children;
+      }
+      
+      // Only show loading for private paths
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          {fallback || (
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-2 text-sm text-gray-600">Loading...</p>
+            </div>
+          )}
+        </div>
+      );
+    }
 
-  // Only block access to private paths
-  if (!user && requiresAuth) {
-    return null; // Will be redirected by the routing effect
-  }
+    // Check if path requires authentication
+    const requiresAuth = isPrivatePath(pathname);
 
-  return <>{children}</>;
+    // Only block access to private paths
+    if (!user && requiresAuth) {
+      return null; // Will be redirected by the routing effect
+    }
+
+    return children;
+  };
+
+  return (
+    <div className={`page-transition ${isTransitioning ? 'page-transitioning' : ''} ${isPending ? 'page-pending' : ''}`}>
+      {renderPageContent()}
+    </div>
+  );
 }
 
 export default AuthLoadingProvider;

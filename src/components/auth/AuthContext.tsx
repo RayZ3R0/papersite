@@ -153,7 +153,102 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return new Promise((resolve) => setTimeout(resolve, delay));
   };
 
+  // Don't block initial render with auth checks
   const refreshSession = async () => {
+    // Add a flag to track if this is the first page load
+    const isFirstLoad = !sessionState.initialized;
+
+    if (isFirstLoad) {
+      // Allow component to render while auth happens in background
+      setTimeout(() => {
+        // Original auth logic here - but don't await inside the setTimeout
+        (async () => {
+          const now = Date.now();
+          const sessionId = Math.random().toString(36).slice(2);
+
+          // Extended deduplication window for slow connections
+          const deduplicationWindow = getConnectionType() === "slow" ? 5000 : 1000;
+
+          if (now - sessionState.lastRefresh < deduplicationWindow && refreshPromise) {
+            return;  // Just return, don't await
+          }
+
+          // Reset retries if it's been more than 2 minutes since last attempt
+          if (now - sessionState.lastRefresh > 120000) {
+            refreshRetries = 0;
+          }
+
+          try {
+            // Create new refresh promise with optimized logic
+            refreshPromise = (async () => {
+              for (let attempt = 0; attempt <= refreshRetries; attempt++) {
+                try {
+                  // Only log in development to reduce client-side processing
+                  if (process.env.NODE_ENV === "development") {
+                    console.debug(`[Auth ${sessionId}] Making refresh request:`, {
+                      attempt: attempt + 1,
+                    });
+                  }
+
+                  const response = await fetch("/api/auth/refresh", {
+                    method: "POST",
+                    credentials: "include",
+                    // Add priority hint for background requests
+                    headers: {
+                      Priority: "low",
+                    },
+                  });
+
+                  if (!response.ok) {
+                    const data = await response.json();
+                    if (response.status === 401) {
+                      setUser(null);
+                      return null;
+                    }
+                    throw new Error(data.error || "Failed to refresh session");
+                  }
+
+                  const data = await response.json();
+
+                  if (data.user) {
+                    setUser(data.user);
+                    setLastRefresh(new Date());
+                    refreshRetries = 0; // Reset retries on success
+                    return data.user;
+                  }
+
+                  setUser(null);
+                  return null;
+                } catch (error) {
+                  if (attempt < SECURITY_CONFIG.session.maxRetries) {
+                    await backoff(attempt);
+                    continue;
+                  }
+                  throw error;
+                }
+              }
+              throw new Error("Max refresh retries exceeded");
+            })();
+
+            setSessionState(prev => ({
+              ...prev,
+              lastRefresh: now
+            }));
+            // Don't await here, just run the async function
+          } catch (error) {
+            if (process.env.NODE_ENV === "development") {
+              console.error("Session refresh error:", error);
+            }
+            refreshRetries++;
+            setUser(null);
+          } finally {
+            refreshPromise = null;
+          }
+        })();
+      }, 0);
+      return null;
+    }
+
     const now = Date.now();
     const sessionId = Math.random().toString(36).slice(2);
 

@@ -46,6 +46,21 @@ function createLoginUrl(request: NextRequest, returnTo: string) {
 
 // Helper function to verify token with caching
 async function verifyToken(token: string, baseUrl: string, correlationId: string) {
+  // Add a fast path for initial page load
+  if (typeof sessionStorage !== 'undefined') {
+    const cachedPayload = sessionStorage.getItem(`token-payload-${token.slice(0,10)}`);
+    if (cachedPayload) {
+      try {
+        const payload = JSON.parse(cachedPayload);
+        if (payload.exp * 1000 > Date.now()) {
+          return payload;
+        }
+      } catch (e) {
+        // Ignore parse errors, continue with normal flow
+      }
+    }
+  }
+
   // Log cache stats periodically
   if (Math.random() < 0.01) { // 1% sampling
     console.debug(`Token cache stats (${correlationId}):`, {
