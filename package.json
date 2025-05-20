@@ -6,10 +6,11 @@
     "dev": "next dev",
     "build": "next build --no-lint",
     "bu": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint",
     "test": "jest",
-    "test:auth": "NODE_ENV=development node scripts/test-auth.js"
+    "test:auth": "NODE_ENV=development node scripts/test-auth.js",
+    "heroku-postbuild": "next build"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
