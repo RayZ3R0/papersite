@@ -322,12 +322,6 @@ export default function PDFViewerPage() {
         src="/pdfViewerController.js"
         strategy="beforeInteractive"
       />
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5724511760656784"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
       
       {/* Hidden download links to ensure cross-browser compatibility */}
       <a 

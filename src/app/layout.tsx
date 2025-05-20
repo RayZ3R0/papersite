@@ -49,10 +49,7 @@ export const metadata: Metadata = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#121212" },
-  ],
-  verification: {
-    google: "vzFYE9pfsXvKB92BiPTTpyCbB5fldL7SwuGVv9mZRQI",
-  },
+  ]
 };
 
 // Prevent static generation for auth-dependent pages
@@ -72,8 +69,6 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/banner.jpg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        {/* Google AdSense meta tag */}
-        <meta name="google-adsense-account" content="ca-pub-5724511760656784" />
         {/* Register service worker */}
         <script
           dangerouslySetInnerHTML={{
