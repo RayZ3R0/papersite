@@ -1,22 +1,30 @@
 # Development files
 
-.git
-.github
+.git/
+.github/
 docs/
 \*.md
 **tests**/
-tests/
 jest.config.js
 jest.setup.js
 jest.resolver.js
 validation-reports/
+tsconfig.test.json
+TESTING.md
+scripts/
 
-# Cache directories
+# Next.js build optimization - target the largest parts
 
 .next/cache/
-.cache/
+.next/server/chunks/
+.next/static/development/
+.next/trace
+
+# Node modules we can exclude (be careful with this)
+
 node_modules/.cache/
-
-# Large assets that could be served from CDN instead
-
-public/pdfjs/web/cmaps/
+node_modules/canvas/build/Release/obj/
+node_modules/pdfjs-dist/legacy/
+node_modules/pdfjs-dist/es5/
+node_modules/pdfjs-dist/lib/
+node_modules/pdfjs-dist/cmaps/
