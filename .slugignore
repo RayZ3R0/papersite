@@ -1,0 +1,22 @@
+# Development files
+
+.git
+.github
+docs/
+\*.md
+**tests**/
+tests/
+jest.config.js
+jest.setup.js
+jest.resolver.js
+validation-reports/
+
+# Cache directories
+
+.next/cache/
+.cache/
+node_modules/.cache/
+
+# Large assets that could be served from CDN instead
+
+public/pdfjs/web/cmaps/

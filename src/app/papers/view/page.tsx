@@ -311,11 +311,11 @@ export default function PDFViewerPage() {
   return (
     <div className="min-h-screen bg-background">
       <Script 
-        src="/pdfjs/build/pdf.worker.js"
+        src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"
         strategy="beforeInteractive"
       />
       <Script 
-        src="/pdfjs/build/pdf.js"
+        src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"
         strategy="beforeInteractive"
       />
       <Script 
