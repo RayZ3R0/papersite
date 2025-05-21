@@ -8,28 +8,20 @@ export const DomainNotification = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user is already on the new domain
     const currentDomain = window.location.hostname;
-    if (currentDomain === 'papernexus.xyz') {
-      return;
-    }
+    if (currentDomain === 'papernexus.xyz') return;
 
-    // Check if the user has seen this notification before
     const hasSeenNotification = localStorage.getItem('domain-notification-seen');
-    
     if (!hasSeenNotification) {
-      // Show notification after a slight delay
       const timer = setTimeout(() => {
         setIsVisible(true);
       }, 1000);
-      
       return () => clearTimeout(timer);
     }
   }, []);
 
   const dismissNotification = () => {
     setIsVisible(false);
-    // Mark notification as seen
     localStorage.setItem('domain-notification-seen', 'true');
   };
 
@@ -41,24 +33,33 @@ export const DomainNotification = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 max-w-md"
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95vw] max-w-md sm:max-w-lg md:max-w-xl bg-primary text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3"
+          style={{
+            boxSizing: 'border-box',
+            width: '95vw',
+            maxWidth: 400,
+            minWidth: 0,
+            wordBreak: 'break-word',
+          }}
         >
-          <p className="text-sm">
-            We've moved! Please use our new domain: 
-            <a 
-              href="https://papernexus.xyz" 
-              className="font-bold underline ml-1 hover:text-white/80"
+          <p className="text-sm flex-1">
+            We've moved! Please use our new domain:
+            <a
+              href="https://papernexus.xyz"
+              className="font-bold underline ml-1 hover:text-white/80 break-all"
               onClick={dismissNotification}
+              tabIndex={0}
             >
               papernexus.xyz
             </a>
           </p>
-          <button 
-            onClick={dismissNotification} 
-            className="p-1 hover:bg-white/20 rounded-full"
+          <button
+            onClick={dismissNotification}
+            className="ml-2 p-2 hover:bg-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-white"
             aria-label="Dismiss notification"
+            style={{ flexShrink: 0 }}
           >
-            <X size={16} />
+            <X size={20} />
           </button>
         </motion.div>
       )}
