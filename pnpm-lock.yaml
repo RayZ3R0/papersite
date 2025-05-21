@@ -764,6 +764,43 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  '@react-aria/focus@3.20.3':
+    resolution: {integrity: sha512-rR5uZUMSY4xLHmpK/I8bP1V6vUNHFo33gTvrvNUsAKKqvMfa7R2nu5A6v97dr5g6tVH6xzpdkPsOJCWh90H2cw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-aria/interactions@3.25.1':
+    resolution: {integrity: sha512-ntLrlgqkmZupbbjekz3fE/n3eQH2vhncx8gUp0+N+GttKWevx7jos11JUBjnJwb1RSOPgRUFcrluOqBp0VgcfQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-aria/ssr@3.9.8':
+    resolution: {integrity: sha512-lQDE/c9uTfBSDOjaZUJS8xP2jCKVk4zjQeIlCH90xaLhHDgbpCdns3xvFpJJujfj3nI4Ll9K7A+ONUBDCASOuw==}
+    engines: {node: '>= 12'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-aria/utils@3.29.0':
+    resolution: {integrity: sha512-jSOrZimCuT1iKNVlhjIxDkAhgF7HSp3pqyT6qjg/ZoA0wfqCi/okmrMPiWSAKBnkgX93N8GYTLT3CIEO6WZe9Q==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-stately/flags@3.1.1':
+    resolution: {integrity: sha512-XPR5gi5LfrPdhxZzdIlJDz/B5cBf63l4q6/AzNqVWFKgd0QqY5LvWJftXkklaIUpKSJkIKQb8dphuZXDtkWNqg==}
+
+  '@react-stately/utils@3.10.6':
+    resolution: {integrity: sha512-O76ip4InfTTzAJrg8OaZxKU4vvjMDOpfA/PGNOytiXwBbkct2ZeZwaimJ8Bt9W1bj5VsZ81/o/tW4BacbdDOMA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-types/shared@3.29.1':
+    resolution: {integrity: sha512-KtM+cDf2CXoUX439rfEhbnEdAgFZX20UP2A35ypNIawR7/PFFPjQDWyA2EnClCcW/dLWJDEPX2U8+EJff8xqmQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
   '@resvg/resvg-wasm@2.4.0':
     resolution: {integrity: sha512-C7c51Nn4yTxXFKvgh2txJFNweaVcfUPQxwEUFw4aWsCmfiBDJsTSwviIF8EcwjQ6k8bPyMWCl1vw4BdxE569Cg==}
     engines: {node: '>= 10'}
@@ -5050,6 +5087,55 @@ snapshots:
       - bare-buffer
       - supports-color
 
+  '@react-aria/focus@3.20.3(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      '@react-aria/interactions': 3.25.1(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-aria/utils': 3.29.0(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-types/shared': 3.29.1(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@swc/helpers': 0.5.2
+      clsx: 2.1.1
+      react: 19.1.0-canary-ef4bc8b4-20250328
+      react-dom: 19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328)
+
+  '@react-aria/interactions@3.25.1(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      '@react-aria/ssr': 3.9.8(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-aria/utils': 3.29.0(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-stately/flags': 3.1.1
+      '@react-types/shared': 3.29.1(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@swc/helpers': 0.5.2
+      react: 19.1.0-canary-ef4bc8b4-20250328
+      react-dom: 19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328)
+
+  '@react-aria/ssr@3.9.8(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      '@swc/helpers': 0.5.2
+      react: 19.1.0-canary-ef4bc8b4-20250328
+
+  '@react-aria/utils@3.29.0(react-dom@19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328))(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      '@react-aria/ssr': 3.9.8(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-stately/flags': 3.1.1
+      '@react-stately/utils': 3.10.6(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@react-types/shared': 3.29.1(react@19.1.0-canary-ef4bc8b4-20250328)
+      '@swc/helpers': 0.5.2
+      clsx: 2.1.1
+      react: 19.1.0-canary-ef4bc8b4-20250328
+      react-dom: 19.1.0-canary-ef4bc8b4-20250328(react@19.1.0-canary-ef4bc8b4-20250328)
+
+  '@react-stately/flags@3.1.1':
+    dependencies:
+      '@swc/helpers': 0.5.2
+
+  '@react-stately/utils@3.10.6(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      '@swc/helpers': 0.5.2
+      react: 19.1.0-canary-ef4bc8b4-20250328
+
+  '@react-types/shared@3.29.1(react@19.1.0-canary-ef4bc8b4-20250328)':
+    dependencies:
+      react: 19.1.0-canary-ef4bc8b4-20250328
+
   '@resvg/resvg-wasm@2.4.0': {}
 
   '@rtsao/scc@1.1.0': {}
@@ -8817,6 +8903,8 @@ snapshots:
       sax: 1.4.1
 
   symbol-tree@3.2.4: {}
+
+  tabbable@6.2.0: {}
 
   tailwindcss@3.4.1(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.2)):
     dependencies:
