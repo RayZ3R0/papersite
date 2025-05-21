@@ -27,11 +27,13 @@ function getStaticPages(baseUrl: string, lastModified: string): MetadataRoute.Si
     { url: `${baseUrl}/forum`, lastModified, changeFrequency: "daily", priority: 0.8 },
     { url: `${baseUrl}/books`, lastModified, changeFrequency: "monthly", priority: 0.7 },
     { url: `${baseUrl}/exams`, lastModified, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${baseUrl}/latest`, lastModified, changeFrequency: "daily", priority: 0.9 },
-    { url: `${baseUrl}/search`, lastModified, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${baseUrl}/latest`, lastModified, changeFrequency: "daily", priority: 0.6 },
+    { url: `${baseUrl}/search`, lastModified, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/profile`, lastModified, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/auth/login`, lastModified, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${baseUrl}/auth/register`, lastModified, changeFrequency: "monthly", priority: 0.5 }
+    { url: `${baseUrl}/auth/register`, lastModified, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/tools/ums-chart`, lastModified, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/tools/raw-to-ums`, lastModified, changeFrequency: "monthly", priority: 0.7 }
   ];
 }
 
