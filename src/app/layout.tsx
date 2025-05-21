@@ -16,7 +16,6 @@ const NyanCatEasterEgg = dynamicImport(
   { ssr: false, loading: () => null }
 );
 
-// Lazy load domain notification with no SSR to avoid hydration issues
 const DomainNotification = dynamicImport(
   () => import("@/components/notifications/DomainNotification"),
   { ssr: false, loading: () => null }
@@ -30,32 +29,102 @@ const Analytics = dynamicImport(
   { ssr: false }
 );
 
-// Lazy load with no SSR to avoid hydration issues
 const MusicPlayer = dynamicImport(
   () => import("@/components/music-player").then(mod => ({ default: mod.MusicPlayer })),
   { ssr: false }
 );
 
-// Create a connection-aware component that will be used to optimize performance
 const ConnectionAwareOptimizer = dynamicImport(
   () => import("@/components/providers/ConnectionAwareOptimizer"),
   { ssr: false }
 );
 
 export const metadata: Metadata = {
-  title: "PaperNexus",
-  description: "Access A-Level past papers and study materials",
+  metadataBase: new URL('https://papernexus.xyz'),
+  title: {
+    template: '%s | PaperNexus',
+    default: 'PaperNexus - A-Level Past Papers & Study Resources'
+  },
+  description: 'Access A-Level past papers, mark schemes, notes, and study materials. Free comprehensive resources for Physics, Chemistry, Biology, Mathematics and more subjects.',
+  keywords: 'a level past papers, study materials, exam papers, mark schemes, revision notes, study guides, exam preparation',
+  authors: [{ name: 'PaperNexus' }],
+  creator: 'PaperNexus',
+  publisher: 'PaperNexus',
+  applicationName: 'PaperNexus',
+  generator: 'Next.js',
+  referrer: 'origin-when-cross-origin',
   viewport: {
-    width: "device-width",
+    width: 'device-width',
     initialScale: 1,
-    viewportFit: "cover", // Support for notched phones
+    viewportFit: 'cover',
     minimumScale: 1,
     maximumScale: 5,
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://papernexus.xyz',
+    siteName: 'PaperNexus',
+    title: 'PaperNexus - A-Level Past Papers & Study Resources',
+    description: 'Access A-Level past papers, mark schemes, notes, and study materials. Free comprehensive resources for all subjects.',
+    images: [{
+      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Past Papers & Study Resources')}`,
+      width: 1200,
+      height: 630,
+      alt: 'PaperNexus - Your A-Level Study Companion'
+    }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PaperNexus - A-Level Study Resources',
+    description: 'Access A-Level past papers and study materials',
+    images: [{
+      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Past Papers & Study Resources')}`,
+      width: 1200,
+      height: 630,
+      alt: 'PaperNexus - Your A-Level Study Companion'
+    }],
+    site: '@papernexus',
+    creator: '@papernexus'
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/apple-icon.png', type: 'image/png' }
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/safari-pinned-tab.svg',
+      }
+    ]
+  },
+  manifest: '/manifest.json',
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#121212" },
-  ]
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' }
+  ],
+  verification: {
+    google: 'google-site-verification-code-here',
+    other: {
+      me: ['@papernexus:twitter']
+    }
+  },
+  category: 'education'
 };
 
 // Prevent static generation for auth-dependent pages
@@ -71,11 +140,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preload critical resources */}
         <link rel="preload" as="image" href="/banner.jpg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        {/* Register service worker */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -83,11 +150,9 @@ export default function RootLayout({
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js').then(
                     function(registration) {
-                      // Registration was successful
                       console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     },
                     function(err) {
-                      // registration failed
                       console.log('ServiceWorker registration failed: ', err);
                     }
                   );
@@ -98,23 +163,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* Connection-aware optimizations */}
         <ConnectionAwareOptimizer>
-          {/* Providers that don't need to remount on navigation */}
           <ThemeProvider>
             <AuthProvider>
               <div className="min-h-screen bg-background text-text">
-                {/* Easter Egg 🐱 - now lazy loaded */}
                 <NyanCatEasterEgg />
-                
-                {/* Domain Notification */}
                 <DomainNotification />
-
-                {/* Static navigation components */}
                 <MainNav />
                 <MobileNav />
-
-                {/* Auth context that may update with navigation */}
                 <AuthLoadingProvider>
                   <main className="md:pt-16 overflow-x-hidden">
                     <Suspense
@@ -130,8 +186,6 @@ export default function RootLayout({
                     </Suspense>
                   </main>
                 </AuthLoadingProvider>
-
-                {/* Music Player - Dynamically loaded, no SSR */}
                 <Suspense fallback={null}>
                   <MusicPlayer />
                 </Suspense>
