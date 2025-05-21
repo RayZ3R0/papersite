@@ -6,36 +6,40 @@ import { X } from 'lucide-react';
 
 export const DomainNotification = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [viewportType, setViewportType] = useState<'mobile' | 'desktop'>('desktop');
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Skip notification if already on the correct domain
-    const currentDomain = window.location.hostname;
-    if (currentDomain === 'papernexus.xyz') {
+    // Check if we're on the primary domain - if so, don't show notification
+    const hostname = window.location.hostname;
+    if (hostname === 'papernexus.xyz' || hostname === 'www.papernexus.xyz') {
       return;
     }
 
-    // Check if user has already dismissed this notification
-    const hasSeenNotification = localStorage.getItem('domain-notification-seen');
-    if (hasSeenNotification === 'true') {
+    // Check if user has dismissed this notification before
+    const hasSeenNotification = localStorage.getItem('domain-notification-seen') === 'true';
+    if (hasSeenNotification) {
       return;
     }
 
-    // Handle viewport size detection
-    const handleResize = () => {
-      setViewportType(window.innerWidth < 768 ? 'mobile' : 'desktop');
+    // Detect mobile viewport
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
     };
     
     // Initial check
-    handleResize();
+    checkMobile();
     
-    // Set up listeners and show with delay
-    window.addEventListener('resize', handleResize);
-    const timer = setTimeout(() => setIsVisible(true), 750);
+    // Listen for resize events
+    window.addEventListener('resize', checkMobile);
+    
+    // Show notification with a delay
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 800);
     
     return () => {
       clearTimeout(timer);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 
@@ -48,31 +52,26 @@ export const DomainNotification = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -15 }}
-          transition={{ 
-            type: 'spring',
-            stiffness: 400,
-            damping: 30
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="fixed left-0 right-0 w-full z-[500] flex justify-center px-4"
+          style={{ 
+            top: isMobile ? '60px' : '70px'
           }}
-          className={`
-            fixed left-0 right-0 mx-auto z-[500]
-            flex items-center justify-center
-            px-4 ${viewportType === 'mobile' ? 'top-[60px]' : 'top-[70px]'}
-          `}
         >
           <div className="
             bg-primary text-white 
             px-4 py-3 rounded-lg shadow-lg 
-            flex items-center justify-between
+            flex items-center gap-3
             w-full max-w-md
           ">
-            <div className="text-sm mr-3 flex-1 min-w-0">
+            <div className="text-sm flex-1">
               We&apos;ve moved! Please use our new domain:{' '}
               <a
                 href="https://papernexus.xyz"
-                className="font-bold underline hover:text-white/80 inline-block"
+                className="font-bold underline hover:text-white/80"
                 onClick={dismissNotification}
               >
                 papernexus.xyz
@@ -80,8 +79,7 @@ export const DomainNotification = () => {
             </div>
             <button
               onClick={dismissNotification}
-              className="flex-shrink-0 p-1.5 hover:bg-white/20 rounded-full 
-                focus:outline-none focus:ring-2 focus:ring-white/60 transition-colors"
+              className="flex-shrink-0 p-1.5 hover:bg-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Dismiss notification"
             >
               <X size={18} />
