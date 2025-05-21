@@ -18,6 +18,7 @@ const subjectEnhancedNames: Record<string, string> = {
   economics: "Economics A-Level",
   accounting: "Accounting A-Level",
   psychology: "Psychology A-Level",
+  business: "Business A-Level"
   // Add more subjects with appropriate qualifications
 };
 

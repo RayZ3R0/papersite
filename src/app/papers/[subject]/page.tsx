@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Script from "next/script";
 import {
   papersApi,
@@ -10,12 +10,23 @@ import {
   type UnitSummary,
 } from "@/lib/api/papers";
 
+// Cache for storing loaded data across page visits
+const globalCache = {
+  units: {} as Record<string, Unit[]>,
+  unitSummaries: {} as Record<string, Record<string, UnitSummary>>,
+  papersByUnit: {} as Record<string, Record<string, Paper[]>>,
+};
+
 export default function SubjectPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const subjectId = params.subject as string;
-
+  
+  // Track if component is mounted
+  const isMounted = useRef(false);
+  const restoreScrollRef = useRef(false);
+  
   // Initialize state from URL params
   const [selectedUnit, setSelectedUnit] = useState<string | null>(
     searchParams.get('unit')
@@ -30,30 +41,19 @@ export default function SubjectPage() {
     new Set(searchParams.get('expanded')?.split(',').filter(Boolean) || [])
   );
 
-  // Add scroll position tracking
-  useEffect(() => {
-    // Restore scroll position on mount
-    const savedPosition = searchParams.get('scroll');
-    if (savedPosition) {
-      window.scrollTo(0, parseInt(savedPosition));
-    }
+  // Application state
+  const [units, setUnits] = useState<Unit[]>(globalCache.units[subjectId] || []);
+  const [papersByUnit, setPapersByUnit] = useState<Record<string, Paper[]>>(
+    globalCache.papersByUnit[subjectId] || {}
+  );
+  const [unitSummaries, setUnitSummaries] = useState<Record<string, UnitSummary>>(
+    globalCache.unitSummaries[subjectId] || {}
+  );
+  const [loading, setLoading] = useState(!globalCache.units[subjectId]);
+  const [error, setError] = useState<string | null>(null);
 
-    // Save scroll position before unload
-    const handleBeforeUnload = () => {
-      const currentPosition = window.scrollY;
-      const params = new URLSearchParams(window.location.search);
-      params.set('scroll', currentPosition.toString());
-      router.replace(`/papers/${subjectId}?${params.toString()}`, {
-        scroll: false
-      });
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [searchParams, router, subjectId]);
-
-  // Update URL when state changes
-  useEffect(() => {
+  // Debounced URL update to avoid excessive history entries
+  const debouncedUpdateUrl = useCallback(() => {
     const params = new URLSearchParams();
     if (selectedUnit) params.set('unit', selectedUnit);
     if (selectedYears.size > 0) params.set('years', Array.from(selectedYears).join(','));
@@ -66,20 +66,88 @@ export default function SubjectPage() {
     });
   }, [selectedUnit, selectedYears, selectedSession, expandedUnits, router, subjectId]);
 
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [papersByUnit, setPapersByUnit] = useState<Record<string, Paper[]>>({});
-  const [unitSummaries, setUnitSummaries] = useState<
-    Record<string, UnitSummary>
-  >({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Debounced scroll position update
+  const handleScroll = useCallback(() => {
+    // Don't track scroll position during initial load
+    if (!isMounted.current) return;
+    
+    // Use requestAnimationFrame for better performance
+    window.requestAnimationFrame(() => {
+      const currentPosition = window.scrollY;
+      const params = new URLSearchParams(window.location.search);
+      params.set('scroll', currentPosition.toString());
+      
+      router.replace(`/papers/${subjectId}?${params.toString()}`, {
+        scroll: false
+      });
+    });
+  }, [router, subjectId]);
 
-  // Load units and their summaries
+  // Add scroll position tracking - throttled with useEffect cleanup
+  useEffect(() => {
+    isMounted.current = true;
+    restoreScrollRef.current = true;
+
+    // Restore scroll position on mount (once)
+    const restoreScroll = () => {
+      if (restoreScrollRef.current) {
+        const savedPosition = searchParams.get('scroll');
+        if (savedPosition) {
+          window.scrollTo({
+            top: parseInt(savedPosition),
+            behavior: 'instant'
+          });
+        }
+        restoreScrollRef.current = false;
+      }
+    };
+
+    // Throttled scroll handler
+    let scrollTimeout: NodeJS.Timeout;
+    const throttledScrollHandler = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(handleScroll, 100);
+    };
+
+    // Set up event listeners
+    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
+    
+    // Restore scroll on first render with a slight delay
+    // to ensure content has loaded
+    setTimeout(restoreScroll, 100);
+    
+    return () => {
+      isMounted.current = false;
+      window.removeEventListener('scroll', throttledScrollHandler);
+      clearTimeout(scrollTimeout);
+    };
+  }, [searchParams, handleScroll]);
+
+  // Update URL when important state changes (debounced)
+  useEffect(() => {
+    if (!isMounted.current) return;
+    
+    const timeoutId = setTimeout(debouncedUpdateUrl, 300);
+    return () => clearTimeout(timeoutId);
+  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, debouncedUpdateUrl]);
+
+  // Load units and their summaries from API or cache
   useEffect(() => {
     async function loadUnits() {
+      if (globalCache.units[subjectId]) {
+        // Use cached data if available
+        setUnits(globalCache.units[subjectId]);
+        setUnitSummaries(globalCache.unitSummaries[subjectId]);
+        setPapersByUnit(globalCache.papersByUnit[subjectId] || {});
+        setLoading(false);
+        return;
+      }
+
       try {
         const data = await papersApi.getSubjectUnits(subjectId);
         setUnits(data);
+        // Cache units for this subject
+        globalCache.units[subjectId] = data;
 
         // Load summaries for all units
         const summaries = await Promise.all(
@@ -96,6 +164,29 @@ export default function SubjectPage() {
         );
 
         setUnitSummaries(summaryMap);
+        // Cache summaries
+        globalCache.unitSummaries[subjectId] = summaryMap;
+        
+        // Initialize papers cache for this subject if needed
+        if (!globalCache.papersByUnit[subjectId]) {
+          globalCache.papersByUnit[subjectId] = {};
+        }
+        
+        // If we have a selected unit or expanded units, load those papers immediately
+        if (selectedUnit || expandedUnits.size > 0) {
+          const unitsToLoad = new Set<string>();
+          if (selectedUnit) unitsToLoad.add(selectedUnit);
+          expandedUnits.forEach(unit => unitsToLoad.add(unit));
+          
+          for (const unitId of unitsToLoad) {
+            const unitPapers = await papersApi.getUnitPapers(subjectId, unitId);
+            setPapersByUnit(prev => ({
+              ...prev,
+              [unitId]: unitPapers
+            }));
+            globalCache.papersByUnit[subjectId][unitId] = unitPapers;
+          }
+        }
       } catch (err) {
         setError("Failed to load subject units. Please try again later.");
         console.error("Error loading units:", err);
@@ -103,31 +194,53 @@ export default function SubjectPage() {
         setLoading(false);
       }
     }
+    
     loadUnits();
-  }, [subjectId]);
+  }, [subjectId, selectedUnit, expandedUnits]);
 
-  // Load papers when a unit is selected
+  // Load papers when a unit is selected or expanded
   useEffect(() => {
-    if (!selectedUnit) return;
-
     async function loadPapers(unitId: string) {
       try {
+        // Check if cached first
+        if (globalCache.papersByUnit[subjectId]?.[unitId]) {
+          setPapersByUnit(prev => ({
+            ...prev,
+            [unitId]: globalCache.papersByUnit[subjectId][unitId],
+          }));
+          return;
+        }
+
         const papers = await papersApi.getUnitPapers(subjectId, unitId);
-        setPapersByUnit((prev) => ({
+        setPapersByUnit(prev => ({
           ...prev,
           [unitId]: papers,
         }));
+        
+        // Cache papers
+        if (!globalCache.papersByUnit[subjectId]) {
+          globalCache.papersByUnit[subjectId] = {};
+        }
+        globalCache.papersByUnit[subjectId][unitId] = papers;
       } catch (err) {
         console.error("Error loading papers:", err);
       }
     }
 
-    // Only load if we haven't loaded this unit's papers before
-    if (!papersByUnit[selectedUnit]) {
+    // Load papers for selected unit if not already loaded
+    if (selectedUnit && !papersByUnit[selectedUnit]) {
       loadPapers(selectedUnit);
     }
-  }, [selectedUnit, subjectId, papersByUnit]);
+    
+    // Also load papers for any expanded units
+    expandedUnits.forEach(unitId => {
+      if (!papersByUnit[unitId]) {
+        loadPapers(unitId);
+      }
+    });
+  }, [selectedUnit, expandedUnits, subjectId, papersByUnit]);
 
+  // Loading state UI
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
@@ -144,6 +257,7 @@ export default function SubjectPage() {
     );
   }
 
+  // Error state UI
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
@@ -320,7 +434,7 @@ export default function SubjectPage() {
                   })}
               </div>
               
-              {/* Quick Year Ranges - FIXED */}
+              {/* Quick Year Ranges */}
               <div className="flex gap-1.5 mt-2">
                 {[
                   { label: "Recent 3", years: 3 },
@@ -383,9 +497,11 @@ export default function SubjectPage() {
         <div className="space-y-6">
           {units.map((unit) => {
             const isSelected = selectedUnit === unit.id;
+            const isExpanded = isSelected || expandedUnits.has(unit.id);
             const unitPapers = getUnitPapers(unit.id);
             const hasLoadedPapers = Boolean(papersByUnit[unit.id]);
             const summary = unitSummaries[unit.id];
+            const isLoading = isExpanded && !hasLoadedPapers;
 
             return (
               <div
@@ -397,12 +513,14 @@ export default function SubjectPage() {
                   onClick={() => {
                     const newUnit = isSelected ? null : unit.id;
                     setSelectedUnit(newUnit);
+                    
+                    // Toggle expanded state
                     setExpandedUnits(prev => {
                       const newSet = new Set(prev);
-                      if (newUnit) {
-                        newSet.add(newUnit);
-                      } else {
+                      if (isExpanded) {
                         newSet.delete(unit.id);
+                      } else {
+                        newSet.add(unit.id);
                       }
                       return newSet;
                     });
@@ -415,6 +533,26 @@ export default function SubjectPage() {
                       <h2 className="text-lg font-semibold text-text">
                         {unit.name}
                       </h2>
+                      {isExpanded && (
+                        <svg 
+                          className="w-4 h-4 text-text-muted" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      )}
+                      {!isExpanded && (
+                        <svg 
+                          className="w-4 h-4 text-text-muted" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      )}
                     </div>
                     <span className="text-sm text-text-muted ml-4">
                       {summary?.total_papers ?? "..."} papers
@@ -428,14 +566,16 @@ export default function SubjectPage() {
                 </button>
 
                 {/* Papers List */}
-                {(isSelected || expandedUnits.has(unit.id)) && (
+                {isExpanded && (
                   <div className="divide-y divide-border">
-                    {!hasLoadedPapers ? (
+                    {isLoading ? (
                       <div className="p-4">
-                        <div className="animate-pulse flex space-x-4">
+                        <div className="animate-pulse space-y-4">
                           <div className="flex-1 space-y-4 py-1">
                             <div className="h-4 bg-surface-alt rounded w-3/4"></div>
                             <div className="h-4 bg-surface-alt rounded w-1/2"></div>
+                            <div className="h-20 bg-surface-alt rounded"></div>
+                            <div className="h-20 bg-surface-alt rounded"></div>
                           </div>
                         </div>
                       </div>
