@@ -129,8 +129,7 @@ function generateAnalyticsData(entries: MetadataRoute.Sitemap) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Make sure baseUrl doesn't end with a slash
-  const baseUrl = "https://papernexus.xyz/"
-  ).replace(/\/$/, "");
+  const baseUrl = ("https://papernexus.xyz/").replace(/\/$/, "");
 
   // Default lastModified date for static pages
   const defaultLastModified = new Date().toISOString();
