@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Student Discussion Forum | PaperNexus',
+  title: 'Student Discussion Forum',
   description: 'Join our academic community to discuss A-Level subjects, share study tips, ask questions, and connect with fellow students. Get help with past papers, exam techniques, and subject-specific topics.',
   keywords: 'a level forum, student discussion, exam help, study discussion, academic community, subject help, exam preparation, student support',
   metadataBase: new URL('https://papernexus.xyz'),
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://papernexus.xyz/forum',
-    title: 'Student Discussion Forum | PaperNexus',
+    title: 'Student Discussion Forum',
     description: 'Join our academic community to discuss A-Level subjects, share study tips, ask questions, and connect with fellow students.',
     siteName: 'PaperNexus',
     images: [{
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Student Discussion Forum | PaperNexus',
+    title: 'Student Discussion Forum',
     description: 'Join our academic community to discuss A-Level subjects and get help',
     images: [{
       url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('Student Discussion Forum')}&type=forum`,

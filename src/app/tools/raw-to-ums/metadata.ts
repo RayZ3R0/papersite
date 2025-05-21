@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Raw to UMS Grade Calculator | PaperNexus',
+  title: 'Raw to UMS Grade Calculator',
   description: 'Convert raw marks to UMS scores and predict your grades for A-Level exams. Free online calculator with grade boundaries and UMS conversion tables for all subjects.',
   keywords: 'ums calculator, raw marks converter, grade calculator, a level grades, ums conversion, grade boundaries, ums marks, exam grade prediction',
   metadataBase: new URL('https://papernexus.xyz'),
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://papernexus.xyz/tools/raw-to-ums',
-    title: 'Raw to UMS Grade Calculator | PaperNexus',
+    title: 'Raw to UMS Grade Calculator',
     description: 'Convert raw marks to UMS scores and predict your grades for A-Level exams. Free online calculator with grade boundaries.',
     siteName: 'PaperNexus',
     images: [{
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Raw to UMS Grade Calculator | PaperNexus',
+    title: 'Raw to UMS Grade Calculator',
     description: 'Convert raw marks to UMS scores and predict your A-Level grades',
     images: [{
       url: '/previews/ums-calculator-preview.jpg',
