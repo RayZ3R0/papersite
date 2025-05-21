@@ -19,7 +19,7 @@ interface Unit {
  */
 async function fetchSubjects(): Promise<Subject[]> {
   try {
-    const apiRoot = process.env.PAPERVOID_API_URL;
+    const apiRoot = "https://www.papernexus.xyz";
     const response = await fetch(`${apiRoot}/api/subjects`, {
       // Adding cache control to optimize API calls during builds
       next: { revalidate: 3600 } // Revalidate every hour
