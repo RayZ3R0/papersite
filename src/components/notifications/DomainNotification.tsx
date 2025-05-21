@@ -1,42 +1,41 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 
 export const DomainNotification = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewportType, setViewportType] = useState<'mobile' | 'desktop'>('desktop');
 
   useEffect(() => {
-    // Check if we're on the correct domain already - if so, don't show notification
+    // Skip notification if already on the correct domain
     const currentDomain = window.location.hostname;
     if (currentDomain === 'papernexus.xyz') {
       return;
     }
 
-    // Check if user has dismissed this notification before
+    // Check if user has already dismissed this notification
     const hasSeenNotification = localStorage.getItem('domain-notification-seen');
     if (hasSeenNotification === 'true') {
       return;
     }
-    
-    // Detect if we're on mobile
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+
+    // Handle viewport size detection
+    const handleResize = () => {
+      setViewportType(window.innerWidth < 768 ? 'mobile' : 'desktop');
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // Initial check
+    handleResize();
     
-    // Show notification with a slight delay
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 1000);
+    // Set up listeners and show with delay
+    window.addEventListener('resize', handleResize);
+    const timer = setTimeout(() => setIsVisible(true), 750);
     
     return () => {
       clearTimeout(timer);
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -49,34 +48,45 @@ export const DomainNotification = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ 
+            type: 'spring',
+            stiffness: 400,
+            damping: 30
+          }}
           className={`
-            fixed left-1/2 -translate-x-1/2 z-[9999] 
-            bg-primary text-white px-4 py-3 rounded-lg shadow-lg 
-            flex items-center gap-3 w-[95vw] max-w-md
-            ${isMobile ? 'top-[68px]' : 'top-[76px]'}
+            fixed left-0 right-0 mx-auto z-[500]
+            flex items-center justify-center
+            px-4 ${viewportType === 'mobile' ? 'top-[60px]' : 'top-[70px]'}
           `}
         >
-          <div className="text-sm flex-1">
-            We&apos;ve moved! Please use our new domain:{' '}
-            <a
-              href="https://papernexus.xyz"
-              className="font-bold underline hover:text-white/80"
+          <div className="
+            bg-primary text-white 
+            px-4 py-3 rounded-lg shadow-lg 
+            flex items-center justify-between
+            w-full max-w-md
+          ">
+            <div className="text-sm mr-3 flex-1 min-w-0">
+              We&apos;ve moved! Please use our new domain:{' '}
+              <a
+                href="https://papernexus.xyz"
+                className="font-bold underline hover:text-white/80 inline-block"
+                onClick={dismissNotification}
+              >
+                papernexus.xyz
+              </a>
+            </div>
+            <button
               onClick={dismissNotification}
+              className="flex-shrink-0 p-1.5 hover:bg-white/20 rounded-full 
+                focus:outline-none focus:ring-2 focus:ring-white/60 transition-colors"
+              aria-label="Dismiss notification"
             >
-              papernexus.xyz
-            </a>
+              <X size={18} />
+            </button>
           </div>
-          <button
-            onClick={dismissNotification}
-            className="flex-shrink-0 p-1.5 hover:bg-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-white"
-            aria-label="Dismiss notification"
-          >
-            <X size={18} />
-          </button>
         </motion.div>
       )}
     </AnimatePresence>
