@@ -36,6 +36,19 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     return subject.resources || [];
   };
 
+  // Sort resources: folders first, then files
+  const sortResources = (resources: Resource[]): Resource[] => {
+    return [...resources].sort((a, b) => {
+      // If types are different, sort folders first
+      if (a.type !== b.type) {
+        return a.type === 'folder' ? -1 : 1;
+      }
+      
+      // If same type, sort alphabetically by title
+      return a.title.localeCompare(b.title);
+    });
+  };
+
   // Effect to update resources when subject or unit changes
   useEffect(() => {
     let newResources: Resource[] = [];
@@ -51,7 +64,8 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
       ];
     }
     
-    setResources(newResources);
+    // Sort resources: folders first, then files
+    setResources(sortResources(newResources));
 
     // Cleanup function
     return () => {
@@ -68,9 +82,12 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     );
   }
 
-  // Split resources: unit PDF first, then remaining resources
+  // Split resources: unit PDF first, then folders, then remaining resources
   const unitPdf = selectedUnit?.unitPdf;
-  const otherResources = resources.filter(r => r !== unitPdf);
+  
+  // Create separate arrays for folders and non-folders
+  const folderResources = resources.filter(r => r !== unitPdf && r.type === 'folder');
+  const fileResources = resources.filter(r => r !== unitPdf && r.type === 'pdf');
 
   return (
     <div className="space-y-4">
@@ -78,7 +95,7 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
       <div className="hidden lg:block">
         {unitPdf && (
           <div className="grid grid-cols-3 gap-4 mb-4">
-            {/* Unit PDF on the left */}
+            {/* Unit PDF/Folder on the left */}
             <div className="col-span-2 h-full">
               <NoteCard
                 resource={unitPdf}
@@ -86,9 +103,12 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
               />
             </div>
 
-            {/* First two resources on the right */}
+            {/* First two resources on the right (prefer folders) */}
             <div className="space-y-4">
-              {otherResources.slice(0, 2).map(resource => {
+              {(folderResources.length > 0 ? 
+                folderResources.slice(0, 2) : 
+                fileResources.slice(0, 2)
+              ).map(resource => {
                 const unit = subject.units.find(u =>
                   u.unitPdf === resource || u.topics?.some(t =>
                     t.resources.includes(resource)
@@ -112,9 +132,32 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
           </div>
         )}
 
-        {/* Remaining resources in a grid */}
+        {/* Remaining resources in a grid - folders first, then files */}
         <div className="grid grid-cols-3 gap-4">
-          {otherResources.slice(unitPdf ? 2 : 0).map(resource => {
+          {/* First display folders */}
+          {folderResources.slice(unitPdf ? 2 : 0).map(resource => {
+            const unit = subject.units.find(u =>
+              u.unitPdf === resource || u.topics?.some(t =>
+                t.resources.includes(resource)
+              )
+            );
+            const topic = unit?.topics?.find(t =>
+              t.resources.includes(resource)
+            );
+
+            return (
+              <div key={resource.id}>
+                <NoteCard
+                  resource={resource}
+                  unitName={unit?.name}
+                  topicName={topic?.name}
+                />
+              </div>
+            );
+          })}
+
+          {/* Then display files */}
+          {fileResources.slice(unitPdf && folderResources.length < 2 ? 2 - folderResources.length : 0).map(resource => {
             const unit = subject.units.find(u =>
               u.unitPdf === resource || u.topics?.some(t =>
                 t.resources.includes(resource)
@@ -137,9 +180,42 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
         </div>
       </div>
 
-      {/* Mobile Layout - Simple grid */}
+      {/* Mobile Layout - Simple grid but sorted with folders first */}
       <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {resources.map(resource => {
+        {/* Display unitPdf first if available */}
+        {unitPdf && (
+          <div className="col-span-1 sm:col-span-2">
+            <NoteCard
+              resource={unitPdf}
+              unitName={selectedUnit.name}
+            />
+          </div>
+        )}
+        
+        {/* Display all folders */}
+        {folderResources.map(resource => {
+          const unit = subject.units.find(u =>
+            u.unitPdf === resource || u.topics?.some(t =>
+              t.resources.includes(resource)
+            )
+          );
+          const topic = unit?.topics?.find(t =>
+            t.resources.includes(resource)
+          );
+
+          return (
+            <div key={resource.id}>
+              <NoteCard
+                resource={resource}
+                unitName={unit?.name}
+                topicName={topic?.name}
+              />
+            </div>
+          );
+        })}
+        
+        {/* Display all files */}
+        {fileResources.map(resource => {
           const unit = subject.units.find(u =>
             u.unitPdf === resource || u.topics?.some(t =>
               t.resources.includes(resource)
