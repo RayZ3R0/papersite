@@ -19,7 +19,7 @@ interface Unit {
  */
 async function fetchSubjects(): Promise<Subject[]> {
   try {
-    const apiRoot = "https://www.papernexus.xyz";
+    const apiRoot = process.env.PAPERVOID_API_URL;
     const response = await fetch(`${apiRoot}/api/subjects`, {
       // Adding cache control to optimize API calls during builds
       next: { revalidate: 3600 } // Revalidate every hour
@@ -129,8 +129,7 @@ function generateAnalyticsData(entries: MetadataRoute.Sitemap) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Make sure baseUrl doesn't end with a slash
-  const baseUrl = (
-    process.env.NEXT_PUBLIC_APP_URL || "https://edexcel.vercel.app"
+  const baseUrl = "https://papernexus.xyz/"
   ).replace(/\/$/, "");
 
   // Default lastModified date for static pages
