@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import NotesFilter from '@/components/notes/NotesFilter';
 import NotesGrid from '@/components/notes/NotesGrid';
 import { NotesErrorBoundary } from '@/components/error/NotesErrorBoundary';
@@ -13,6 +14,77 @@ const notesData = rawNotesData as NotesData;
 export default function NotesPage() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isInitialMount = useRef(true);
+  const isUrlUpdate = useRef(false);
+
+  // Initialize state from URL parameters
+  useEffect(() => {
+    const subjectId = searchParams.get('subject');
+    const unitId = searchParams.get('unit');
+    
+    // Skip effect if we're already updating URL programmatically
+    if (isUrlUpdate.current) {
+      isUrlUpdate.current = false;
+      return;
+    }
+
+    // Only on initial mount or when URL changes externally
+    if (subjectId) {
+      const subject = notesData.subjects.find(s => s.id === subjectId);
+      if (subject) {
+        setSelectedSubject(subject);
+        
+        if (unitId) {
+          const unit = subject.units.find(u => u.id === unitId);
+          if (unit) {
+            setSelectedUnit(unit);
+          } else {
+            setSelectedUnit(null);
+          }
+        } else {
+          setSelectedUnit(null);
+        }
+      }
+    } else if (!isInitialMount.current) {
+      // If URL is cleared and not initial mount, clear selections
+      setSelectedSubject(null);
+      setSelectedUnit(null);
+    }
+    
+    isInitialMount.current = false;
+  }, [searchParams]);
+
+  // Update URL when selection changes
+  const updateSubject = (subject: Subject | null) => {
+    setSelectedSubject(subject);
+    setSelectedUnit(null);
+    
+    // Set flag to indicate we're updating URL programmatically
+    isUrlUpdate.current = true;
+    
+    // Update URL
+    if (subject) {
+      router.push(`/notes?subject=${subject.id}`);
+    } else {
+      router.push('/notes');
+    }
+  };
+
+  const updateUnit = (unit: Unit | null) => {
+    setSelectedUnit(unit);
+    
+    // Set flag to indicate we're updating URL programmatically
+    isUrlUpdate.current = true;
+    
+    // Update URL
+    if (selectedSubject && unit) {
+      router.push(`/notes?subject=${selectedSubject.id}&unit=${unit.id}`);
+    } else if (selectedSubject) {
+      router.push(`/notes?subject=${selectedSubject.id}`);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -31,11 +103,8 @@ export default function NotesPage() {
             subjects={notesData.subjects}
             selectedSubject={selectedSubject}
             selectedUnit={selectedUnit}
-            onSubjectChange={(subject) => {
-              setSelectedSubject(subject);
-              setSelectedUnit(null);
-            }}
-            onUnitChange={setSelectedUnit}
+            onSubjectChange={updateSubject}
+            onUnitChange={updateUnit}
           />
         </div>
 

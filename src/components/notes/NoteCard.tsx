@@ -1,8 +1,10 @@
 'use client';
 
-import { Resource } from '@/types/note';
+import { useState } from 'react';
 import Image from 'next/image';
-import { FileTextIcon } from '@/components/layout/icons';
+import { Resource } from '@/types/note';
+import { FolderIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import FolderModal from './FolderModal';
 
 interface NoteCardProps {
   resource: Resource;
@@ -11,70 +13,75 @@ interface NoteCardProps {
 }
 
 export default function NoteCard({ resource, unitName, topicName }: NoteCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const isFolder = resource.type === 'folder';
+  const itemCount = resource.items?.length || 0;
+
+  const handleCardClick = () => {
+    if (isFolder) {
+      setIsModalOpen(true);
+    } else {
+      window.open(resource.downloadUrl, '_blank');
+    }
+  };
+
   return (
-    <div className="h-full bg-surface rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
-      <a 
-        href={resource.downloadUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block h-full"
+    <>
+      <div
+        onClick={handleCardClick}
+        className="relative h-full bg-surface rounded-lg overflow-hidden shadow-sm border border-border hover:border-primary hover:shadow-md transition-all cursor-pointer group"
       >
-        {/* Preview Image or Default Icon */}
-        <div className="relative aspect-[4/3] w-full bg-surface-alt">
+        {/* Preview Image or Icon */}
+        <div className="aspect-[3/2] relative bg-surface-alt flex items-center justify-center">
           {resource.previewImage ? (
             <Image
               src={resource.previewImage}
               alt={resource.title}
               fill
+              sizes="(max-width: 768px) 100vw, 33vw"
               className="object-cover"
-              sizes="(max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <FileTextIcon className="w-12 h-12 text-text-muted" />
+            <div className="text-text-muted">
+              {isFolder ? (
+                <FolderIcon className="h-16 w-16" />
+              ) : (
+                <DocumentTextIcon className="h-16 w-16" />
+              )}
             </div>
           )}
-          
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <div className="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">
-                Download PDF
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="font-medium text-lg mb-1 line-clamp-2">
+        {/* Card Content */}
+        <div className="p-3">
+          <h3 className="font-medium text-text truncate group-hover:text-primary transition-colors">
             {resource.title}
           </h3>
           
-          {/* Unit and Topic info if provided */}
-          {(unitName || topicName) && (
-            <div className="text-sm text-text-muted">
-              {unitName && <span>{unitName}</span>}
-              {unitName && topicName && <span> • </span>}
-              {topicName && <span>{topicName}</span>}
-            </div>
-          )}
-          
-          {/* Tags */}
-          {resource.tags && resource.tags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {resource.tags.map((tag: string) => (
-                <span 
-                  key={tag}
-                  className="inline-block px-2 py-0.5 text-xs bg-surface-alt rounded-full text-text-muted"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="mt-1 text-xs text-text-muted">
+            {unitName && <span className="block truncate">Unit: {unitName}</span>}
+            {topicName && <span className="block truncate">Topic: {topicName}</span>}
+            {isFolder && <span className="block mt-1">{itemCount} item{itemCount !== 1 ? 's' : ''}</span>}
+          </div>
         </div>
-      </a>
-    </div>
+
+        {/* Type Badge */}
+        <div className="absolute top-2 right-2 bg-surface px-2 py-1 rounded text-xs font-medium text-text-muted">
+          {isFolder ? 'Folder' : 'PDF'}
+        </div>
+      </div>
+
+      {/* Folder Modal */}
+      {isFolder && (
+        <FolderModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          folder={resource}
+          unitName={unitName}
+          topicName={topicName}
+        />
+      )}
+    </>
   );
 }

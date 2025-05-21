@@ -1,11 +1,12 @@
 export interface Resource {
   id: string;
   title: string;
-  type: 'pdf';
-  downloadUrl: string;
+  type: 'pdf' | 'folder';
+  downloadUrl?: string;  // Optional for folders
   previewImage?: string;
   tags?: string[];
   dateAdded?: string;
+  items?: Resource[];    // For folders, contains nested resources
 }
 
 export interface Topic {
@@ -20,7 +21,7 @@ export interface Unit {
   name: string;
   number: number;
   description?: string;
-  unitPdf?: Resource;  // Optional complete unit PDF
+  unitPdf?: Resource;  // Optional complete unit PDF (can now be a folder)
   topics: Topic[];
 }
 
@@ -29,6 +30,7 @@ export interface Subject {
   name: string;
   description?: string;
   units: Unit[];
+  resources?: Resource[]; // Subject-level resources, not tied to any unit
 }
 
 export interface NotesData {

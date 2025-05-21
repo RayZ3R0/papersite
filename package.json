@@ -12,6 +12,7 @@
     "test:auth": "NODE_ENV=development node scripts/test-auth.js"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@types/node": "20.11.30",
     "@types/nodemailer": "^6.4.17",

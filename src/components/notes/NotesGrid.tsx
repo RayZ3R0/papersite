@@ -22,7 +22,7 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     }
     
     // Add all topic resources
-    unit.topics.forEach(topic => {
+    unit.topics?.forEach(topic => {
       topic.resources.forEach(resource => {
         resources.push(resource);
       });
@@ -31,11 +31,25 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     return resources;
   };
 
+  // Get non-unit resources (if any)
+  const getNonUnitResources = (): Resource[] => {
+    return subject.resources || [];
+  };
+
   // Effect to update resources when subject or unit changes
   useEffect(() => {
-    const newResources = selectedUnit
-      ? getUnitResources(selectedUnit)
-      : subject.units.flatMap(getUnitResources);
+    let newResources: Resource[] = [];
+    
+    if (selectedUnit) {
+      // If unit is selected, only show resources from that unit
+      newResources = getUnitResources(selectedUnit);
+    } else {
+      // If no unit selected, show all resources including non-unit ones
+      newResources = [
+        ...getNonUnitResources(),
+        ...subject.units.flatMap(getUnitResources)
+      ];
+    }
     
     setResources(newResources);
 
@@ -43,13 +57,10 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
     return () => {
       setResources([]);
     };
-  }, [subject.id, selectedUnit?.id]); // Only re-run when subject or unit changes
-
-  // Get resources to display based on selection
-  const resourcesToShow = resources;
+  }, [subject.id, selectedUnit?.id]); 
 
   // If no resources, show message
-  if (resourcesToShow.length === 0) {
+  if (resources.length === 0) {
     return (
       <div className="text-center text-text-muted py-8">
         No notes available
@@ -59,7 +70,7 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
 
   // Split resources: unit PDF first, then remaining resources
   const unitPdf = selectedUnit?.unitPdf;
-  const otherResources = resourcesToShow.filter(r => r !== unitPdf);
+  const otherResources = resources.filter(r => r !== unitPdf);
 
   return (
     <div className="space-y-4">
@@ -79,11 +90,11 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
             <div className="space-y-4">
               {otherResources.slice(0, 2).map(resource => {
                 const unit = subject.units.find(u =>
-                  u.unitPdf === resource || u.topics.some(t =>
+                  u.unitPdf === resource || u.topics?.some(t =>
                     t.resources.includes(resource)
                   )
                 );
-                const topic = unit?.topics.find(t =>
+                const topic = unit?.topics?.find(t =>
                   t.resources.includes(resource)
                 );
 
@@ -105,11 +116,11 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
         <div className="grid grid-cols-3 gap-4">
           {otherResources.slice(unitPdf ? 2 : 0).map(resource => {
             const unit = subject.units.find(u =>
-              u.unitPdf === resource || u.topics.some(t =>
+              u.unitPdf === resource || u.topics?.some(t =>
                 t.resources.includes(resource)
               )
             );
-            const topic = unit?.topics.find(t =>
+            const topic = unit?.topics?.find(t =>
               t.resources.includes(resource)
             );
 
@@ -128,13 +139,13 @@ export default function NotesGrid({ subject, selectedUnit }: NotesGridProps) {
 
       {/* Mobile Layout - Simple grid */}
       <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {resourcesToShow.map(resource => {
+        {resources.map(resource => {
           const unit = subject.units.find(u =>
-            u.unitPdf === resource || u.topics.some(t =>
+            u.unitPdf === resource || u.topics?.some(t =>
               t.resources.includes(resource)
             )
           );
-          const topic = unit?.topics.find(t =>
+          const topic = unit?.topics?.find(t =>
             t.resources.includes(resource)
           );
 

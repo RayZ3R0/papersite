@@ -1022,6 +1022,593 @@
           ]
         }
       ]
+    },
+    {
+      "id": "psychology",
+      "name": "Psychology",
+      "description": "IAL Edexcel Psychology study materials and notes organized by unit",
+      "units": [
+        {
+          "id": "unit1",
+          "name": "Unit 1 - Social Psychology",
+          "number": 1,
+          "description": "Social Psychology notes and assessment materials",
+          "topics": [
+            {
+              "id": "social-psychology-notes",
+              "name": "Social Psychology Notes",
+              "resources": [
+                {
+                  "id": "social-psychology-uzayer-1",
+                  "title": "Social Psychology Notes by uzayer",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_uzayer.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-uzayer-1.webp",
+                  "tags": ["unit 1", "social psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "social-psychology-uzayer-2",
+                  "title": "Social Psychology Notes by uzayer 2",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_uzayer_2.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-uzayer-2.webp",
+                  "tags": ["unit 1", "social psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "social-psychology-meowmeow666",
+                  "title": "Social Psychology Notes by meowmeow666",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_meowmeow666.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-meowmeow666.webp",
+                  "tags": ["unit 1", "social psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "social-psychology-meowmeow666-2",
+                  "title": "Social Psychology Notes by meowmeow666 2",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_meowmeow666_2.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-meowmeow666-2.webp",
+                  "tags": ["unit 1", "social psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit1-evaluations",
+              "name": "Unit 1 Evaluations",
+              "resources": [
+                {
+                  "id": "evaluations-unit1",
+                  "title": "EVALUATIONS for Unit 1",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/EVALUATIONS_for_Unit_1.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit1.webp",
+                  "tags": ["unit 1", "evaluations", "AO3"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit1-practice-questions",
+              "name": "Unit 1 Practice Questions",
+              "resources": [
+                {
+                  "id": "unit1-8-marker-folder",
+                  "title": "8 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-folder.webp",
+                  "tags": ["unit 1", "practice questions", "8 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit1-8-marker-questions",
+                      "title": "8 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/8%20marker/8%20marker%20questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-questions.webp",
+                      "tags": ["unit 1", "practice questions", "8 marker"]
+                    },
+                    {
+                      "id": "unit1-8-marker-answers",
+                      "title": "8 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/8%20marker/8%20marker%20answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-answers.webp",
+                      "tags": ["unit 1", "model answers", "8 marker"]
+                    }
+                  ]
+                },
+                {
+                  "id": "unit1-12-marker-folder",
+                  "title": "12 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-folder.webp",
+                  "tags": ["unit 1", "practice questions", "12 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit1-12-marker-questions",
+                      "title": "12 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/12%20marker/12%20marker%20questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-questions.webp",
+                      "tags": ["unit 1", "practice questions", "12 marker"]
+                    },
+                    {
+                      "id": "unit1-12-marker-answers",
+                      "title": "12 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/12%20marker/12%20marker%20answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-answers.webp",
+                      "tags": ["unit 1", "model answers", "12 marker"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "unit2",
+          "name": "Unit 2 - Biological Psychology",
+          "number": 2,
+          "description": "Biological Psychology including body rhythms and psychosexual stages",
+          "topics": [
+            {
+              "id": "unit2-notes",
+              "name": "Unit 2 Notes",
+              "resources": [
+                {
+                  "id": "unit2-dovahzul-notes",
+                  "title": "Unit 2 Psych Notes by Dovahzul",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Psych_notes_by_Dovahzul.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-dovahzul-notes.webp",
+                  "tags": ["unit 2", "biological psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "body-rhythms-topic",
+                  "title": "Body Rhythms Topic",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Body_Rhythms_Topic.pptx",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/body-rhythms-topic.webp",
+                  "tags": ["unit 2", "body rhythms", "circadian rhythms", "presentation"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "freuds-psychosexual-stages",
+                  "title": "Freud's Psychosexual Stages",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Freud_s_Psychosexual_Stages.pptx",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/freuds-psychosexual-stages.webp",
+                  "tags": ["unit 2", "freud", "psychosexual development", "presentation"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit2-evaluations",
+              "name": "Unit 2 Evaluations",
+              "resources": [
+                {
+                  "id": "evaluations-unit2",
+                  "title": "EVALUATIONS for Unit 2",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/EVALUATIONS_for_Unit_2.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit2.webp",
+                  "tags": ["unit 2", "evaluations", "AO3"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "evaluations-everything-unit2-pdf",
+                  "title": "EVALUATIONS Of Everything for Unit 2 (PDF)",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U2.docx.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit2-pdf.webp",
+                  "tags": ["unit 2", "evaluations", "comprehensive", "AO3"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit2-practice-questions",
+              "name": "Unit 2 Practice Questions",
+              "resources": [
+                {
+                  "id": "unit2-8-marker-folder",
+                  "title": "8 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-folder.webp",
+                  "tags": ["unit 2", "practice questions", "8 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit2-8-marker-questions",
+                      "title": "8 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/U2%208%20Markers/8%20Marker%20Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-questions.webp",
+                      "tags": ["unit 2", "practice questions", "8 marker"]
+                    },
+                    {
+                      "id": "unit2-8-marker-answers",
+                      "title": "8 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/U2%208%20Markers/8%20Marker%20Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-answers.webp",
+                      "tags": ["unit 2", "model answers", "8 marker"]
+                    }
+                  ]
+                },
+                {
+                  "id": "unit2-16-marker-folder",
+                  "title": "16 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-folder.webp",
+                  "tags": ["unit 2", "practice questions", "16 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit2-16-marker-questions",
+                      "title": "16 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/16%20Marker%20Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-questions.webp",
+                      "tags": ["unit 2", "practice questions", "16 marker"]
+                    },
+                    {
+                      "id": "unit2-16-marker-answers",
+                      "title": "16 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/16%20Marker%20Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-answers.webp",
+                      "tags": ["unit 2", "model answers", "16 marker"]
+                    }
+                  ]
+                },
+                {
+                  "id": "unit2-sample-responses",
+                  "title": "Sample Responses",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-sample-responses.webp",
+                  "tags": ["unit 2", "sample responses", "model answers"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "sample-8-marker-1",
+                      "title": "Sample 8 Marker (1)",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(1).pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-1.webp",
+                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                    },
+                    {
+                      "id": "sample-8-marker-2",
+                      "title": "Sample 8 Marker (2)",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(2).pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-2.webp",
+                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                    },
+                    {
+                      "id": "sample-8-marker-3",
+                      "title": "Sample 8 Marker (3)",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(3).pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-3.webp",
+                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                    },
+                    {
+                      "id": "sample-12-marker-1",
+                      "title": "Sample 12 Marker (1)",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%2012%20MARKER%20(1).pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-12-marker-1.webp",
+                      "tags": ["unit 2", "sample response", "model answer", "12 marker"]
+                    },
+                    {
+                      "id": "sample-16-marker-1",
+                      "title": "Sample 16 Marker (1)",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%2016%20MARKER%20(1).pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-16-marker-1.webp",
+                      "tags": ["unit 2", "sample response", "model answer", "16 marker"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "unit3",
+          "name": "Unit 3 - Developmental, Criminological, Clinical Psychology",
+          "number": 3,
+          "description": "Development, crime and clinical psychology topics",
+          "topics": [
+            {
+              "id": "developmental-psychology",
+              "name": "Developmental Psychology",
+              "resources": [
+                {
+                  "id": "topic-e-developmental",
+                  "title": "Topic E: Developmental Psychology",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_E_Developmental_Psychology_by_ehmpty.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-e-developmental.webp",
+                  "tags": ["unit 3", "developmental psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "criminological-psychology",
+              "name": "Criminological Psychology",
+              "resources": [
+                {
+                  "id": "topic-f-criminological",
+                  "title": "Topic F: Criminological Psychology",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_F_Criminological_Psychology_by_ehmpty.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-f-criminological.webp",
+                  "tags": ["unit 3", "criminological psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "clinical-psychology",
+              "name": "Clinical Psychology",
+              "resources": [
+                {
+                  "id": "topic-h-clinical",
+                  "title": "Topic H: Clinical Psychology",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_H_Clinical_Psychology_by_ehmpty.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-h-clinical.webp",
+                  "tags": ["unit 3", "clinical psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "clinical-psychology-kxuser",
+                  "title": "Clinical Psychology Notes by kxuser",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Clinical_Psychology_Notes_by_kxuser.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/clinical-psychology-kxuser.webp",
+                  "tags": ["unit 3", "clinical psychology", "notes"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit3-evaluations",
+              "name": "Unit 3 Evaluations",
+              "resources": [
+                {
+                  "id": "evaluations-unit3",
+                  "title": "EVALUATIONS for Unit 3",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/EVALUATIONS_for_Unit_3.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit3.webp",
+                  "tags": ["unit 3", "evaluations", "AO3"],
+                  "dateAdded": "2025-05-22"
+                },
+                {
+                  "id": "evaluations-everything-unit3",
+                  "title": "EVALUATIONS Of Everything for Unit 3",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U3.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit3.webp",
+                  "tags": ["unit 3", "evaluations", "comprehensive", "AO3"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit3-studies",
+              "name": "Unit 3 Key Studies",
+              "resources": [
+                {
+                  "id": "schmolk-study",
+                  "title": "Schmolk Et Al Study",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Schmolk_Et_Al_Study_by_Krilly.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/schmolk-study.webp",
+                  "tags": ["unit 3", "key study", "research"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit3-practice-questions",
+              "name": "Unit 3 Practice Questions",
+              "resources": [
+                {
+                  "id": "unit3-8-marker-folder",
+                  "title": "8 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-folder.webp",
+                  "tags": ["unit 3", "practice questions", "8 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit3-8-marker-questions",
+                      "title": "8 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/8%20Markers/8%20Marker%20Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-questions.webp",
+                      "tags": ["unit 3", "practice questions", "8 marker"]
+                    },
+                    {
+                      "id": "unit3-8-marker-answers",
+                      "title": "8 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/8%20Markers/8%20Marker%20Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-answers.webp",
+                      "tags": ["unit 3", "model answers", "8 marker"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "unit4",
+          "name": "Unit 4 - Research Methods",
+          "number": 4,
+          "description": "Research methods and approaches in psychology",
+          "topics": [
+            {
+              "id": "unit4-notes",
+              "name": "Unit 4 Notes",
+              "resources": [
+                {
+                  "id": "unit4-20-markers",
+                  "title": "All Unit 4 20 Markers",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/All_Unit_4_20_Markers.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-20-markers.webp",
+                  "tags": ["unit 4", "research methods", "20 marker", "essay questions"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit4-evaluations",
+              "name": "Unit 4 Evaluations",
+              "resources": [
+                {
+                  "id": "evaluations-everything-unit4",
+                  "title": "EVALUATIONS Of Everything for Unit 4",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U4.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit4.webp",
+                  "tags": ["unit 4", "evaluations", "comprehensive", "AO3"],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            },
+            {
+              "id": "unit4-practice-questions",
+              "name": "Unit 4 Practice Questions",
+              "resources": [
+                {
+                  "id": "unit4-6-marker-folder",
+                  "title": "6 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-folder.webp",
+                  "tags": ["unit 4", "practice questions", "6 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit4-6-marker-questions",
+                      "title": "6 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/6%20markers/Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-questions.webp",
+                      "tags": ["unit 4", "practice questions", "6 marker"]
+                    },
+                    {
+                      "id": "unit4-6-marker-answers",
+                      "title": "6 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/6%20markers/Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-answers.webp",
+                      "tags": ["unit 4", "model answers", "6 marker"]
+                    }
+                  ]
+                },
+                {
+                  "id": "unit4-8-marker-folder",
+                  "title": "8 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-folder.webp",
+                  "tags": ["unit 4", "practice questions", "8 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit4-8-marker-questions",
+                      "title": "8 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/8%20markers/Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-questions.webp",
+                      "tags": ["unit 4", "practice questions", "8 marker"]
+                    },
+                    {
+                      "id": "unit4-8-marker-answers",
+                      "title": "8 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/8%20markers/Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-answers.webp",
+                      "tags": ["unit 4", "model answers", "8 marker"]
+                    }
+                  ]
+                },
+                {
+                  "id": "unit4-16-marker-folder",
+                  "title": "16 Marker Questions",
+                  "type": "folder",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-folder.webp",
+                  "tags": ["unit 4", "practice questions", "16 marker"],
+                  "dateAdded": "2025-05-22",
+                  "items": [
+                    {
+                      "id": "unit4-16-marker-questions",
+                      "title": "16 Marker Questions",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/16%20markers/Questions.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-questions.webp",
+                      "tags": ["unit 4", "practice questions", "16 marker"]
+                    },
+                    {
+                      "id": "unit4-16-marker-answers",
+                      "title": "16 Marker Answers",
+                      "type": "pdf",
+                      "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/16%20markers/Answers.pdf",
+                      "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-answers.webp",
+                      "tags": ["unit 4", "model answers", "16 marker"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "id": "ial-edexcel-psychology-notes-nym",
+          "title": "IAL Edexcel Psychology Notes by nym",
+          "type": "pdf",
+          "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/IAL_Edexcel_Psychology_Notes_by_nym.pdf",
+          "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/ial-edexcel-psychology-notes-nym.webp",
+          "tags": ["psychology", "comprehensive notes", "edexcel"],
+          "dateAdded": "2025-05-22"
+        },
+        {
+          "id": "key-studies-mark-scheme",
+          "title": "Key Studies - Mark Scheme Content",
+          "type": "pdf",
+          "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/Key_Studies_-_Mark_Scheme_Content.pdf",
+          "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/key-studies-mark-scheme.webp",
+          "tags": ["psychology", "mark scheme", "key studies", "exam preparation"],
+          "dateAdded": "2025-05-22"
+        },
+        {
+          "id": "theories-methods-mark-scheme",
+          "title": "Theories and Methods - Mark Scheme Content",
+          "type": "pdf",
+          "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/Theories_and_Methods_-_Mark_Scheme_Content.pdf",
+          "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/theories-methods-mark-scheme.webp",
+          "tags": ["psychology", "mark scheme", "theories", "methods", "exam preparation"],
+          "dateAdded": "2025-05-22"
+        }
+      ]
     }
   ]
 }
