@@ -533,26 +533,6 @@ export default function SubjectPage() {
                       <h2 className="text-lg font-semibold text-text">
                         {unit.name}
                       </h2>
-                      {isExpanded && (
-                        <svg 
-                          className="w-4 h-4 text-text-muted" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                        </svg>
-                      )}
-                      {!isExpanded && (
-                        <svg 
-                          className="w-4 h-4 text-text-muted" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
                     </div>
                     <span className="text-sm text-text-muted ml-4">
                       {summary?.total_papers ?? "..."} papers
