@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
     // 3. Handle auth token for non-public paths
     const accessToken = request.cookies.get(COOKIE_CONFIG.accessToken.name);
     
-    if (!path.startsWith('/subjects')) {
+    // Allow both subjects and search paths without auth
+    if (!path.startsWith('/subjects') && !path.startsWith('/search')) {
       if (!accessToken?.value) {
         return new Response('Unauthorized', { status: 401 });
       }
