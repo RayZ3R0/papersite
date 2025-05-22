@@ -240,7 +240,7 @@ export default function SubjectsPage() {
 
               <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <LatestPapersLink
-                  href={`/latest#${subject.id}`}
+                  href={`/papers/${subject.id}`}
                   className="flex items-center justify-center px-4 py-2 text-sm
                     bg-surface-alt hover:bg-primary hover:text-white
                     text-text rounded-md transition-colors duration-200 
