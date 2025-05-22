@@ -10,11 +10,8 @@ import { ConversionData } from "@/types/conversion";
 import { createSignedRequest } from '@/lib/auth/request-security';
 
 function getApiUrl() {
-  const baseUrl = typeof window !== "undefined"
-    ? window.location.origin
-    : process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    
-  return `${baseUrl}/api/marks`;
+  // Always use relative URL which will work on any domain
+  return '/api/marks';
 }
 
 async function fetchFromProxy<T>(path: string): Promise<T> {

@@ -44,15 +44,8 @@ export interface UnitSummary {
 
 // Get the base URL dynamically based on the current environment
 function getApiUrl() {
-  if (typeof window !== "undefined") {
-    // Client-side: use the current origin
-    return `${window.location.origin}/api/papers`;
-  } else {
-    // Server-side: fallback to environment variable or default
-    return (
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/papers"
-    );
-  }
+  // Always use relative URL which will work on any domain
+  return '/api/papers';
 }
 
 import { createSignedRequest } from '@/lib/auth/request-security';
@@ -63,6 +56,7 @@ async function fetchFromProxy(path: string) {
   // Create request security headers
   const { token, timestamp, signature } = await createSignedRequest();
 
+  // Use absolute path from root which works regardless of domain
   const response = await fetch(`${API_URL}?path=${encodeURIComponent(path)}`, {
     // Add security headers
     credentials: 'include', // Important: Send cookies for auth

@@ -56,32 +56,26 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Helper function to safely check URL
-    const startsWithUrl = (value: string | null | undefined, url: string | undefined): boolean => {
-      if (!url) return false;
-      return typeof value === 'string' && value.startsWith(url);
-    };
-
-    // 2. Verify request origin
+    // 2. Verify request origin is from a same-site context or trusted domain
     const referer = request.headers.get('referer');
     const origin = request.headers.get('origin');
-    
-    if (!APP_URL) {
-      throw new Error('NEXT_PUBLIC_APP_URL is required for origin verification');
-    }
-    
-    const isValidReferer = startsWithUrl(referer, APP_URL);
-    const isValidOrigin = startsWithUrl(origin, APP_URL);
-    
-    if (!isValidReferer && !isValidOrigin) {
-      return new Response('Invalid origin', { status: 403 });
-    }
 
-    // 4. Verify request origin
+    // Skip origin check for same-site requests
+    if (origin) {
+      // If there's an origin header, verify it's from an allowed domain
+      // Get the hostname from the current request
+      const currentHost = request.headers.get('host');
+      const originHost = new URL(origin).hostname;
+      
+      // Allow if origin matches current host or is a known trusted domain
+      const isValidOrigin = originHost === currentHost;
+      
+      if (!isValidOrigin) {
+        return new Response('Invalid origin', { status: 403 });
+      }
+    }
 
     // 4. Forward request to API with security headers
-
-    // 5. Forward request to API with security headers
     const headers: Record<string, string> = {
       'X-Request-ID': requestToken
     };
@@ -95,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
 
-    // 6. Encrypt and return response data
+    // 5. Encrypt and return response data
     const encryptedData = await encryptResponse(data);
     return new Response(JSON.stringify({ data: encryptedData }), {
       status: 200,
