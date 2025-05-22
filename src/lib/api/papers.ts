@@ -1,3 +1,5 @@
+import { decryptResponse } from '@/lib/auth/request-security';
+
 export interface Paper {
   id: string;
   unit_id: string;
@@ -53,22 +55,42 @@ function getApiUrl() {
   }
 }
 
+import { createSignedRequest } from '@/lib/auth/request-security';
+
 async function fetchFromProxy(path: string) {
   const API_URL = getApiUrl();
 
+  // Create request security headers
+  const { token, timestamp, signature } = await createSignedRequest();
+
   const response = await fetch(`${API_URL}?path=${encodeURIComponent(path)}`, {
-    // Add cache headers for better performance
+    // Add security headers
+    credentials: 'include', // Important: Send cookies for auth
     headers: {
       "Cache-Control": "no-cache",
-      Pragma: "no-cache",
+      "Pragma": "no-cache",
+      "X-Request-Token": token,
+      "X-Request-Timestamp": timestamp.toString(),
+      "X-Request-Signature": signature
     },
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Unauthorized. Please log in.");
+    }
+    if (response.status === 403) {
+      throw new Error("Access forbidden. Invalid request signature.");
+    }
     throw new Error("Failed to fetch data");
   }
 
-  return response.json();
+  const encryptedResponse = await response.json();
+  if (encryptedResponse.data) {
+    // Response is encrypted, decrypt it
+    return await decryptResponse(encryptedResponse.data);
+  }
+  return encryptedResponse;
 }
 
 export const papersApi = {

@@ -248,7 +248,10 @@ export async function middleware(request: NextRequest) {
       '/api/auth/login',
       '/api/auth/register',
       '/api/auth/password/reset',
-      '/api/health'
+      '/api/health',
+      '/api/papers',
+      '/api/subjects',
+      '/api/marks'
     ];
     
     if (publicEndpoints.some(endpoint => pathname.startsWith(endpoint))) {
@@ -281,7 +284,7 @@ export const config = {
     // Auth routes that need protection
     '/api/auth/((?!login|register|password/reset).)*',
 
-    // Protected API routes
-    '/api/((?!health|subjects|books|papers).)*',
+    // Protected API routes - all routes except health check
+    '/api/((?!health).)*',
   ]
 };

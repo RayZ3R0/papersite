@@ -1,62 +1,120 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from 'next/server';
+import { validateSignedRequest, encryptResponse } from '@/lib/auth/request-security';
+import { verifyToken } from '@/lib/auth/jwt';
+import { COOKIE_CONFIG } from '@/lib/auth/config';
 
-// Get base API URL from environment variable
-const apiBaseUrl = process.env.PAPERVOID_API_URL || '';
+const API_BASE = process.env.PAPERVOID_API_URL;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
-// Remove trailing /api if present in env var to avoid double /api
-const normalizedBaseUrl = apiBaseUrl.endsWith('/api')
-  ? apiBaseUrl.slice(0, -4)
-  : apiBaseUrl;
+if (!API_BASE) {
+  throw new Error('PAPERVOID_API_URL environment variable is not set');
+}
+
+if (!APP_URL) {
+  throw new Error('NEXT_PUBLIC_APP_URL environment variable is not set');
+}
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the path from query parameter
-    const url = new URL(request.url);
-    const path = url.searchParams.get('path') || '';
+    // 1. Verify request signature first
+    const requestToken = request.headers.get('x-request-token');
+    const requestTimestamp = request.headers.get('x-request-timestamp');
+    const requestSignature = request.headers.get('x-request-signature');
+
+    if (!requestToken || !requestTimestamp || !requestSignature) {
+      return new Response('Missing request security headers', { status: 400 });
+    }
+
+    const isValidRequest = await validateSignedRequest(
+      requestToken,
+      parseInt(requestTimestamp),
+      requestSignature
+    );
     
-    // Construct the target URL
-    const targetUrl = `${normalizedBaseUrl}/api/marks${path}`;
+    if (!isValidRequest) {
+      return new Response('Invalid request signature', { status: 403 });
+    }
     
-    console.log(`Proxying request to: ${targetUrl}`);
+    // 2. Get and validate path parameter
+    const path = request.nextUrl.searchParams.get('path');
+    if (!path) {
+      return new Response('Path is required', { status: 400 });
+    }
+
+    // 3. Handle auth token for non-public paths
+    const accessToken = request.cookies.get(COOKIE_CONFIG.accessToken.name);
     
-    // Forward the request
-    const response = await fetch(targetUrl, {
+    if (!request.nextUrl.pathname.startsWith('/api/marks')) {
+      if (!accessToken?.value) {
+        return new Response('Unauthorized', { status: 401 });
+      }
+
+      try {
+        await verifyToken(accessToken.value);
+      } catch {
+        return new Response('Invalid token', { status: 401 });
+      }
+    }
+
+    // Helper function to safely check URL
+    const startsWithUrl = (value: string | null | undefined, url: string | undefined): boolean => {
+      if (!url) return false;
+      return typeof value === 'string' && value.startsWith(url);
+    };
+
+    // 4. Verify request origin
+    const referer = request.headers.get('referer');
+    const origin = request.headers.get('origin');
+    
+    if (!APP_URL) {
+      throw new Error('NEXT_PUBLIC_APP_URL is required for origin verification');
+    }
+    
+    const isValidReferer = startsWithUrl(referer, APP_URL);
+    const isValidOrigin = startsWithUrl(origin, APP_URL);
+    
+    if (!isValidReferer && !isValidOrigin) {
+      return new Response('Invalid origin', { status: 403 });
+    }
+
+    // 5. Forward request to API with security headers
+    const headers: Record<string, string> = {
+      'X-Request-ID': requestToken
+    };
+
+    // Add Authorization header if token is available
+    if (accessToken?.value) {
+      headers['Authorization'] = `Bearer ${accessToken.value}`;
+    }
+
+    const response = await fetch(`${API_BASE}/marks${path}`, { headers });
+
+    const data = await response.json();
+
+    // 6. Encrypt and return response data
+    const encryptedData = await encryptResponse(data);
+    return new Response(JSON.stringify({ success: true, data: encryptedData }), {
+      status: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block',
+        'Referrer-Policy': 'same-origin'
       },
-      cache: "no-store"
     });
-
-    if (!response.ok) {
-      console.error(`API error: ${response.status} ${response.statusText}`);
-      return NextResponse.json({
-        success: false,
-        error: `API returned ${response.status}: ${response.statusText}`,
-      }, { status: response.status });
-    }
-
-    // Handle the response
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      return NextResponse.json({
-        success: true,
-        data,
-      });
-    } else {
-      const text = await response.text();
-      console.error('Received non-JSON response:', text.substring(0, 200));
-      return NextResponse.json({
-        success: false,
-        error: "Invalid response format from API",
-      }, { status: 500 });
-    }
   } catch (error) {
-    console.error("Marks API proxy error:", error);
-    return NextResponse.json({
-      success: false,
-      error: "Internal server error: " + (error instanceof Error ? error.message : String(error)),
-    }, { status: 500 });
+    console.error('API error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Internal Server Error' 
+    }), { 
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }

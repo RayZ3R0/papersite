@@ -1,39 +1,107 @@
-import { NextRequest, NextResponse } from 'next/server';
-import subjectsData from '@/lib/data/subjects.json';
+import { NextRequest } from 'next/server';
+import { validateSignedRequest, encryptResponse } from '@/lib/auth/request-security';
+import { verifyToken } from '@/lib/auth/jwt';
+import { COOKIE_CONFIG } from '@/lib/auth/config';
 
-// Use Node.js runtime
-export const runtime = 'nodejs';
+const API_BASE = process.env.PAPERVOID_API_URL;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
-// Make route dynamic
-export const dynamic = 'force-dynamic';
+if (!API_BASE) {
+  throw new Error('PAPERVOID_API_URL environment variable is not set');
+}
+
+if (!APP_URL) {
+  throw new Error('NEXT_PUBLIC_APP_URL environment variable is not set');
+}
 
 export async function GET(request: NextRequest) {
   try {
-    // Clean up the response to only include necessary subject info
-    const cleanSubjects = Object.entries(subjectsData.subjects).reduce((acc, [id, data]: [string, any]) => {
-      acc[id] = {
-        id,
-        name: data.name || id.charAt(0).toUpperCase() + id.slice(1),
-        units: data.units.map((unit: any) => ({
-          id: unit.id,
-          name: unit.name,
-          order: unit.order,
-          description: unit.description
-        }))
-      };
-      return acc;
-    }, {} as Record<string, any>);
+    // 1. Verify request signature first
+    const requestToken = request.headers.get('x-request-token');
+    const requestTimestamp = request.headers.get('x-request-timestamp');
+    const requestSignature = request.headers.get('x-request-signature');
 
-    return NextResponse.json({ subjects: cleanSubjects });
-  } catch (error) {
-    console.error('Error loading subjects:', error);
-    return NextResponse.json(
-      { error: 'Failed to load subjects' },
-      { status: 500 }
+    if (!requestToken || !requestTimestamp || !requestSignature) {
+      return new Response('Missing request security headers', { status: 400 });
+    }
+
+    const isValidRequest = await validateSignedRequest(
+      requestToken,
+      parseInt(requestTimestamp),
+      requestSignature
     );
+    
+    if (!isValidRequest) {
+      return new Response('Invalid request signature', { status: 403 });
+    }
+
+    // 2. Handle auth token for non-public paths
+    const accessToken = request.cookies.get(COOKIE_CONFIG.accessToken.name);
+    
+    if (!request.nextUrl.pathname.startsWith('/api/subjects')) {
+      if (!accessToken?.value) {
+        return new Response('Unauthorized', { status: 401 });
+      }
+
+      try {
+        await verifyToken(accessToken.value);
+      } catch {
+        return new Response('Invalid token', { status: 401 });
+      }
+    }
+
+    // Helper function to safely check URL
+    const startsWithUrl = (value: string | null | undefined, url: string | undefined): boolean => {
+      if (!url) return false;
+      return typeof value === 'string' && value.startsWith(url);
+    };
+
+    // 3. Verify request origin
+    const referer = request.headers.get('referer');
+    const origin = request.headers.get('origin');
+    
+    if (!APP_URL) {
+      throw new Error('NEXT_PUBLIC_APP_URL is required for origin verification');
+    }
+    
+    const isValidReferer = startsWithUrl(referer, APP_URL);
+    const isValidOrigin = startsWithUrl(origin, APP_URL);
+    
+    if (!isValidReferer && !isValidOrigin) {
+      return new Response('Invalid origin', { status: 403 });
+    }
+
+    // 4. Forward request to API with security headers
+    const headers: Record<string, string> = {
+      'X-Request-ID': requestToken
+    };
+
+    // Add Authorization header if token is available
+    if (accessToken?.value) {
+      headers['Authorization'] = `Bearer ${accessToken.value}`;
+    }
+
+    const response = await fetch(`${API_BASE}/subjects`, { headers });
+
+    const data = await response.json();
+
+    // 5. Return response with security headers
+    // Encrypt response data
+    const encryptedData = await encryptResponse(data);
+    return new Response(JSON.stringify({ data: encryptedData }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block',
+        'Referrer-Policy': 'same-origin'
+      },
+    });
+  } catch (error) {
+    console.error('API error:', error);
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
-
-// Allow caching for better performance
-export const fetchCache = 'force-cache';
-export const revalidate = 3600; // Revalidate every hour

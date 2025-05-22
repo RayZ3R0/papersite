@@ -5,7 +5,9 @@ import {
   MarksConversionResponse,
   UnitInfo,
 } from "@/types/marks";
+import { decryptResponse } from '@/lib/auth/request-security';
 import { ConversionData } from "@/types/conversion";
+import { createSignedRequest } from '@/lib/auth/request-security';
 
 function getApiUrl() {
   const baseUrl = typeof window !== "undefined"
@@ -17,20 +19,39 @@ function getApiUrl() {
 
 async function fetchFromProxy<T>(path: string): Promise<T> {
   const API_URL = getApiUrl();
+  
+  // Create request security headers
+  const { token, timestamp, signature } = await createSignedRequest();
+
   const response = await fetch(`${API_URL}?path=${encodeURIComponent(path)}`, {
+    credentials: 'include', // Important: Send cookies for auth
     headers: {
       "Cache-Control": "no-cache",
-      Pragma: "no-cache",
+      "Pragma": "no-cache",
+      "X-Request-Token": token,
+      "X-Request-Timestamp": timestamp.toString(),
+      "X-Request-Signature": signature
     },
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Unauthorized. Please log in.");
+    }
+    if (response.status === 403) {
+      throw new Error("Access forbidden. Invalid request signature.");
+    }
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const result = await response.json();
   if (!result.success) {
     throw new Error(result.error || "API request failed");
+  }
+
+  // Decrypt the response data if it's encrypted
+  if (typeof result.data === 'string') {
+    return await decryptResponse(result.data);
   }
 
   return result.data;
