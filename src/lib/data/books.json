@@ -24,6 +24,13 @@
       "imageUrl": "/books/chemlab.png"
     },
     {
+      "id": "chemistry-4",
+      "title": "George Facer's Edexcel A Level Chemistry Studentbook 1 UK Edition",
+      "pdfUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/books/george_facer_1.pdf",
+      "subject": "Chemistry",
+      "imageUrl": "/books/george.png"
+    },
+    {
       "id": "psychology-1",
       "name": "Psychology Student Book 1",
       "pdfUrl": "https://pdfhost.io/v/ZVpy99AYyq_Psychology_Book_1",
