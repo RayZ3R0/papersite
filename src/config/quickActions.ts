@@ -79,11 +79,11 @@ export const quickActions: QuickAction[] = [
     },
   },
   {
-    id: "latest",
-    label: "Latest",
-    description: "Recently added resources",
+    id: "ums-trends",
+    label: "UMS Trends",
+    description: "Check the latest UMS trends",
     icon: LatestIcon,
-    href: "/latest",
+    href: "/tools/ums-charts",
     color: {
       gradientBg: "bg-gradient-to-br from-pink-950/20 via-pink-900/10 to-pink-950/5",
       highlight: "bg-pink-400",

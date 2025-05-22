@@ -4,6 +4,18 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { papersApi, type SubjectWithStats } from "@/lib/api/papers";
 
+// Cache duration in milliseconds (10 minutes)
+const CACHE_DURATION = 10 * 60 * 1000;
+
+// Cache key for subjects data
+const SUBJECTS_CACHE_KEY = 'papersite-subjects-cache';
+
+// Cache interface
+interface CacheData {
+  data: SubjectWithStats[];
+  timestamp: number;
+}
+
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState<SubjectWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -12,17 +24,107 @@ export default function SubjectsPage() {
   useEffect(() => {
     async function loadSubjects() {
       try {
-        const data = await papersApi.getSubjects();
-        setSubjects(data);
+        // Try to get data from cache first
+        const cachedData = getCachedSubjects();
+        
+        if (cachedData) {
+          setSubjects(cachedData);
+          setLoading(false);
+          
+          // Refresh in background if cache is older than half the duration
+          const cacheAge = Date.now() - getTimestamp();
+          if (cacheAge > CACHE_DURATION / 2) {
+            refreshSubjectsData();
+          }
+        } else {
+          // No cache or expired cache, fetch fresh data
+          await refreshSubjectsData();
+        }
       } catch (err) {
         setError('Failed to load subjects. Please try again later.');
         console.error('Error loading subjects:', err);
-      } finally {
         setLoading(false);
       }
     }
+    
     loadSubjects();
   }, []);
+  
+  // Function to get cached subjects if valid
+  function getCachedSubjects(): SubjectWithStats[] | null {
+    try {
+      if (typeof window === 'undefined') return null;
+      
+      const cachedData = localStorage.getItem(SUBJECTS_CACHE_KEY);
+      if (!cachedData) return null;
+      
+      const parsedCache: CacheData = JSON.parse(cachedData);
+      
+      // Check if cache is still valid
+      if (Date.now() - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      }
+      
+      return null;
+    } catch (e) {
+      console.warn('Error reading from cache:', e);
+      return null;
+    }
+  }
+  
+  // Function to get cache timestamp
+  function getTimestamp(): number {
+    try {
+      if (typeof window === 'undefined') return 0;
+      
+      const cachedData = localStorage.getItem(SUBJECTS_CACHE_KEY);
+      if (!cachedData) return 0;
+      
+      const parsedCache: CacheData = JSON.parse(cachedData);
+      return parsedCache.timestamp;
+    } catch {
+      return 0;
+    }
+  }
+  
+  // Function to refresh subjects data
+  async function refreshSubjectsData() {
+    try {
+      const data = await papersApi.getSubjects();
+      
+      // Update state
+      setSubjects(data);
+      setLoading(false);
+      
+      // Update cache
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SUBJECTS_CACHE_KEY, JSON.stringify({
+          data,
+          timestamp: Date.now()
+        }));
+      }
+      
+      return data;
+    } catch (err) {
+      // Only set error if we don't already have data
+      if (subjects.length === 0) {
+        setError('Failed to load subjects. Please try again later.');
+        console.error('Error refreshing subjects:', err);
+      }
+      throw err;
+    }
+  }
+
+  // Manual refresh function for the "Try Again" button
+  const handleRefresh = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await refreshSubjectsData();
+    } catch (err) {
+      // Error already handled in refreshSubjectsData
+    }
+  };
 
   if (loading) {
     return (
@@ -47,7 +149,7 @@ export default function SubjectsPage() {
           <h2 className="text-xl font-semibold text-text mb-2">Error</h2>
           <p className="text-text-muted">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={handleRefresh}
             className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90"
           >
             Try Again
@@ -60,13 +162,26 @@ export default function SubjectsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* Header Section */}
-      <header className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
-          All Subjects
-        </h1>
-        <p className="text-text-muted">
-          Browse through all available subjects and their papers
-        </p>
+      <header className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-text mb-2">
+            All Subjects
+          </h1>
+          <p className="text-text-muted">
+            Browse through all available subjects and their papers
+          </p>
+        </div>
+        <button 
+          onClick={handleRefresh}
+          className="p-2 text-text-muted hover:text-primary"
+          title="Refresh subjects"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+            />
+          </svg>
+        </button>
       </header>
 
       {/* Subjects Grid */}
@@ -78,8 +193,8 @@ export default function SubjectsPage() {
             className="group block overflow-hidden rounded-lg border border-border 
               bg-surface hover:shadow-lg transition-all"
           >
+            {/* Rest of the component remains unchanged */}
             <div className="p-6">
-              {/* Subject Title */}
               <h2
                 className="text-xl font-semibold text-text group-hover:text-primary 
                 transition-colors"
@@ -87,7 +202,6 @@ export default function SubjectsPage() {
                 {subject.name}
               </h2>
 
-              {/* Stats */}
               <div className="mt-3 space-y-1 text-sm text-text-muted">
                 <div className="flex items-center gap-2">
                   <svg
@@ -123,7 +237,6 @@ export default function SubjectsPage() {
                 </div>
               </div>
 
-              {/* Quick Access Buttons */}
               <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <Link
                   href={`/latest#${subject.id}`}
