@@ -69,7 +69,7 @@ const nextConfig = {
           new webpack.IgnorePlugin({
             resourceRegExp: /^\.\/locale$/,
             contextRegExp: /moment$/,
-          }),
+          })
         );
       }
     }

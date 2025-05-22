@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { consumeLatestPapersState } from "@/utils/latestPapersState";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Script from "next/script";
 import {
@@ -132,6 +133,24 @@ export default function SubjectPage() {
   }, [selectedUnit, selectedYears, selectedSession, expandedUnits, debouncedUpdateUrl]);
 
   // Load units and their summaries from API or cache
+  // Initialize latest papers state if needed
+  useEffect(() => {
+    if (consumeLatestPapersState() && !selectedYears.size) {
+      // Get all years and find the most recent
+      const allYears = Array.from(
+        Object.values(unitSummaries).reduce((acc, summary) => {
+          summary.years_with_sessions.forEach((year) => acc.add(year.year));
+          return acc;
+        }, new Set<number>())
+      );
+      
+      if (allYears.length > 0) {
+        const mostRecentYear = Math.max(...allYears);
+        setSelectedYears(new Set([mostRecentYear]));
+      }
+    }
+  }, [unitSummaries]);
+
   useEffect(() => {
     async function loadUnits() {
       if (globalCache.units[subjectId]) {

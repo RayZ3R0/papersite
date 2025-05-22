@@ -4,15 +4,11 @@ import { verifyToken } from '@/lib/auth/jwt';
 import { COOKIE_CONFIG } from '@/lib/auth/config';
 
 const API_BASE = process.env.PAPERVOID_API_URL;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 if (!API_BASE) {
   throw new Error('PAPERVOID_API_URL environment variable is not set');
 }
 
-if (!APP_URL) {
-  throw new Error('NEXT_PUBLIC_APP_URL environment variable is not set');
-}
 
 export async function GET(request: NextRequest) {
   try {

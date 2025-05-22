@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import LatestPapersLink from "@/components/papers/LatestPapersLink";
 import { useEffect, useState } from "react";
 import { papersApi, type SubjectWithStats } from "@/lib/api/papers";
 
@@ -238,9 +239,9 @@ export default function SubjectsPage() {
               </div>
 
               <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                <Link
+                <LatestPapersLink
                   href={`/latest#${subject.id}`}
-                  className="flex items-center justify-center px-4 py-2 text-sm 
+                  className="flex items-center justify-center px-4 py-2 text-sm
                     bg-surface-alt hover:bg-primary hover:text-white
                     text-text rounded-md transition-colors duration-200 
                     flex-1 font-medium"
@@ -259,7 +260,7 @@ export default function SubjectsPage() {
                     />
                   </svg>
                   Latest Papers
-                </Link>
+                </LatestPapersLink>
                 <Link
                   href={`/papers/${subject.id}`}
                   className="flex items-center justify-center px-4 py-2 text-sm 

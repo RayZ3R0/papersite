@@ -4,15 +4,12 @@ import { verifyToken } from '@/lib/auth/jwt';
 import { COOKIE_CONFIG } from '@/lib/auth/config';
 
 const API_BASE = process.env.PAPERVOID_API_URL;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 if (!API_BASE) {
   throw new Error('PAPERVOID_API_URL environment variable is not set');
 }
 
-if (!APP_URL) {
-  throw new Error('NEXT_PUBLIC_APP_URL environment variable is not set');
-}
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,23 +53,41 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Helper function to safely check URL
-    const startsWithUrl = (value: string | null | undefined, url: string | undefined): boolean => {
-      if (!url) return false;
-      return typeof value === 'string' && value.startsWith(url);
-    };
-
     // 4. Verify request origin
     const referer = request.headers.get('referer');
     const origin = request.headers.get('origin');
-    
-    if (!APP_URL) {
-      throw new Error('NEXT_PUBLIC_APP_URL is required for origin verification');
+
+    // Get the hostname from the current request
+    const currentHost = request.headers.get('host');
+
+    if (!currentHost) {
+      return new Response('Missing host header', { status: 400 });
     }
-    
-    const isValidReferer = startsWithUrl(referer, APP_URL);
-    const isValidOrigin = startsWithUrl(origin, APP_URL);
-    
+
+    // Check if the origin matches the current host
+    let isValidOrigin = true;
+    if (origin) {
+      try {
+        const originHostname = new URL(origin).hostname;
+        const currentHostname = currentHost.split(':')[0]; // Remove port if present
+        isValidOrigin = originHostname === currentHostname;
+      } catch {
+        isValidOrigin = false;
+      }
+    }
+
+    // Check if referer matches current host
+    let isValidReferer = true;
+    if (referer) {
+      try {
+        const refererHostname = new URL(referer).hostname;
+        const currentHostname = currentHost.split(':')[0]; // Remove port if present
+        isValidReferer = refererHostname === currentHostname;
+      } catch {
+        isValidReferer = false;
+      }
+    }
+
     if (!isValidReferer && !isValidOrigin) {
       return new Response('Invalid origin', { status: 403 });
     }
