@@ -24,9 +24,10 @@ export default function SubjectPage() {
   const searchParams = useSearchParams();
   const subjectId = params.subject as string;
   
-  // Track if component is mounted
+  // Track if component is mounted and other refs
   const isMounted = useRef(false);
   const restoreScrollRef = useRef(false);
+  const shouldSelectLatestYear = useRef(consumeLatestPapersState());
   
   // Initialize state from URL params
   const [selectedUnit, setSelectedUnit] = useState<string | null>(
@@ -133,24 +134,6 @@ export default function SubjectPage() {
   }, [selectedUnit, selectedYears, selectedSession, expandedUnits, debouncedUpdateUrl]);
 
   // Load units and their summaries from API or cache
-  // Initialize latest papers state if needed
-  useEffect(() => {
-    if (consumeLatestPapersState() && !selectedYears.size) {
-      // Get all years and find the most recent
-      const allYears = Array.from(
-        Object.values(unitSummaries).reduce((acc, summary) => {
-          summary.years_with_sessions.forEach((year) => acc.add(year.year));
-          return acc;
-        }, new Set<number>())
-      );
-      
-      if (allYears.length > 0) {
-        const mostRecentYear = Math.max(...allYears);
-        setSelectedYears(new Set([mostRecentYear]));
-      }
-    }
-  }, [unitSummaries]);
-
   useEffect(() => {
     async function loadUnits() {
       if (globalCache.units[subjectId]) {
@@ -185,6 +168,22 @@ export default function SubjectPage() {
         setUnitSummaries(summaryMap);
         // Cache summaries
         globalCache.unitSummaries[subjectId] = summaryMap;
+
+        // Set the most recent year if needed
+        if (shouldSelectLatestYear.current && !selectedYears.size) {
+          const allYears = Array.from(
+            Object.values(summaryMap).reduce((acc, summary) => {
+              summary.years_with_sessions.forEach((year) => acc.add(year.year));
+              return acc;
+            }, new Set<number>())
+          );
+          
+          if (allYears.length > 0) {
+            const mostRecentYear = Math.max(...allYears);
+            setSelectedYears(new Set([mostRecentYear]));
+            shouldSelectLatestYear.current = false;
+          }
+        }
         
         // Initialize papers cache for this subject if needed
         if (!globalCache.papersByUnit[subjectId]) {
