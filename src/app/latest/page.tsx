@@ -1,26 +1,118 @@
 'use client';
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { getLatestPapers } from '@/lib/data/latestPapers';
+import { useState, useEffect, useRef } from 'react';
+import { papersApi, Paper, SubjectWithStats } from '@/lib/api/papers';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import ErrorDisplay from '@/components/common/ErrorDisplay';
+import PaperCard from '@/components/papers/PaperCard';
+import FilterControls from '@/components/papers/FilterControls';
 
 export default function LatestPapersPage() {
-  const latestPapers = getLatestPapers();
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [subjects, setSubjects] = useState<SubjectWithStats[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSession, setSelectedSession] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+
+  const subjectRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  // Handle hash change and initial hash
+  useEffect(() => {
+    function handleHashChange() {
+      const hash = window.location.hash.slice(1); // Remove the # symbol
+      if (hash) {
+        // Convert hash to subject name format (e.g., chemistry -> Chemistry)
+        const formattedHash = hash.charAt(0).toUpperCase() + hash.slice(1).toLowerCase();
+        
+        // Set the subject as expanded
+        setExpandedSubjects(prev => ({
+          ...prev,
+          [formattedHash]: true
+        }));
+
+        // Scroll to the subject section
+        setTimeout(() => {
+          const element = subjectRefs.current[formattedHash];
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    }
+
+    // Set all subjects as collapsed initially
+    setExpandedSubjects({});
+
+    // Handle hash on initial load and hash changes
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Fetch subjects and papers
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch subjects and papers in parallel
+        const [subjectsData] = await Promise.all([
+          papersApi.getSubjects()
+        ]);
+
+        setSubjects(subjectsData);
+        
+        // Get most recent papers for each subject
+        const allPapers: Paper[] = [];
+        for (const subject of subjectsData) {
+          if (subject.units && subject.units.length > 0) {
+            const unitPapers = await papersApi.getUnitPapers(subject.id, subject.units[0].id);
+            allPapers.push(...unitPapers.map(paper => ({ ...paper, subject_name: subject.name })));
+          }
+        }
+
+        setPapers(allPapers);
+      } catch (err) {
+        setError('Failed to load papers. Please try again later.');
+        console.error('Error fetching papers:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  // Filter papers based on search query and filters
+  const filteredPapers = papers.filter(paper => {
+    const matchesSearch = !searchQuery || 
+      paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (paper.subject_name && paper.subject_name.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesSession = !selectedSession || paper.session === selectedSession;
+    const matchesYear = !selectedYear || paper.year.toString() === selectedYear;
+
+    return matchesSearch && matchesSession && matchesYear;
+  });
+
   // Group papers by subject
-  const papersBySubject = latestPapers.reduce((acc, paper) => {
-    const subjectPapers = acc[paper.subjectName] || [];
+  const papersBySubject = filteredPapers.reduce((acc, paper) => {
+    if (!paper.subject_name) return acc;
+    const subjectPapers = acc[paper.subject_name] || [];
     return {
       ...acc,
-      [paper.subjectName]: [...subjectPapers, paper]
+      [paper.subject_name]: [...subjectPapers, paper]
     };
-  }, {} as Record<string, typeof latestPapers>);
+  }, {} as Record<string, Paper[]>);
 
-  // Get session info from first paper (they're all from same session)
-  const sessionInfo = latestPapers[0] ? 
-    `${latestPapers[0].session} ${latestPapers[0].year}` : 
-    'No papers available';
+  // Get unique sessions and years for filters
+  const availableSessions = Array.from(new Set(papers.map(p => p.session))).sort();
+  const availableYears = Array.from(new Set(papers.map(p => p.year.toString()))).sort().reverse();
 
   // Toggle subject expansion
   const toggleSubject = (subject: string) => {
@@ -28,12 +120,32 @@ export default function LatestPapersPage() {
       ...prev,
       [subject]: !prev[subject]
     }));
+
+    // Update URL hash when expanding a subject
+    if (!expandedSubjects[subject]) {
+      const hash = subject.toLowerCase();
+      window.history.pushState(null, '', `#${hash}`);
+    }
   };
 
-  // Check if a subject is expanded
-  const isSubjectExpanded = (subject: string) => {
-    return expandedSubjects[subject] ?? true; // Default to expanded
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <ErrorDisplay 
+          message={error}
+          retry={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -43,14 +155,28 @@ export default function LatestPapersPage() {
           Latest Papers
         </h1>
         <p className="text-text-muted">
-          Papers from {sessionInfo}
+          Browse the most recent papers across all subjects
         </p>
       </header>
+
+      {/* Filters */}
+      <FilterControls
+        onSearch={setSearchQuery}
+        onSessionChange={setSelectedSession}
+        onYearChange={setSelectedYear}
+        availableSessions={availableSessions}
+        availableYears={availableYears}
+        isLoading={loading}
+      />
 
       {/* Papers by Subject */}
       <div className="space-y-4">
         {Object.entries(papersBySubject).map(([subjectName, papers]) => (
-          <section key={subjectName} className="bg-surface rounded-lg border border-border">
+          <section 
+            key={subjectName} 
+            ref={el => subjectRefs.current[subjectName] = el}
+            className="bg-surface rounded-lg border border-border scroll-mt-24"
+          >
             {/* Subject Header - Always visible */}
             <button
               onClick={() => toggleSubject(subjectName)}
@@ -66,7 +192,7 @@ export default function LatestPapersPage() {
                 </p>
               </div>
               <div className="transform transition-transform duration-200" 
-                style={{ transform: isSubjectExpanded(subjectName) ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                style={{ transform: expandedSubjects[subjectName] ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                 <svg 
                   className="w-5 h-5 text-text-muted" 
                   fill="none" 
@@ -86,68 +212,11 @@ export default function LatestPapersPage() {
             {/* Papers List - Collapsible */}
             <div 
               className={`overflow-hidden transition-all duration-200 ease-in-out
-                ${isSubjectExpanded(subjectName) ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
+                ${expandedSubjects[subjectName] ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
             >
               <div className="divide-y divide-border">
                 {papers.map((paper) => (
-                  <div
-                    key={paper.id}
-                    className="p-4 hover:bg-surface-alt transition-colors"
-                  >
-                    <h3 className="font-medium text-text mb-3">
-                      {paper.title}
-                    </h3>
-                    
-                    {/* Paper and Marking Scheme */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <a
-                        href={paper.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 p-3 
-                          bg-primary text-white rounded-lg hover:opacity-90 
-                          transition-colors shadow-sm hover:shadow"
-                      >
-                        <svg 
-                          className="w-4 h-4" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                          />
-                        </svg>
-                        Question Paper
-                      </a>
-                      <a
-                        href={paper.markingSchemeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 p-3 
-                          bg-secondary text-white rounded-lg hover:opacity-90 
-                          transition-colors shadow-sm hover:shadow"
-                      >
-                        <svg 
-                          className="w-4 h-4" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" 
-                          />
-                        </svg>
-                        Marking Scheme
-                      </a>
-                    </div>
-                  </div>
+                  <PaperCard key={paper.id} paper={paper} />
                 ))}
               </div>
             </div>
