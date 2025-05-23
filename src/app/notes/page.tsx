@@ -18,104 +18,7 @@ import {
 // Type assertion for the imported JSON
 const notesData = rawNotesData as NotesData;
 
-// Banner Ad Component for header
-function HeaderBannerAd({ 
-  className = '',
-  style = {}
-}: { 
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  const [isProduction, setIsProduction] = useState(false);
-  const [adLoaded, setAdLoaded] = useState(false);
-  const scriptLoadedRef = useRef(false);
-
-  useEffect(() => {
-    const isProductionEnv = process.env.NODE_ENV === 'production' && 
-                           typeof window !== 'undefined' && 
-                           !window.location.hostname.includes('localhost') &&
-                           !window.location.hostname.includes('127.0.0.1');
-
-    setIsProduction(isProductionEnv);
-
-    if (isProductionEnv && !scriptLoadedRef.current) {
-      // Set up the banner ad configuration
-      (window as any).atOptions = {
-        'key': '7cdd627f9268ad1cfcc5a5362a84558f',
-        'format': 'iframe',
-        'height': 90,
-        'width': 728,
-        'params': {}
-      };
-
-      // Load the banner ad script
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
-      
-      script.onload = () => {
-        console.log('Banner ad script loaded successfully');
-        setAdLoaded(true);
-        scriptLoadedRef.current = true;
-      };
-      
-      script.onerror = () => {
-        console.error('Failed to load banner ad script');
-      };
-
-      document.head.appendChild(script);
-
-      return () => {
-        try {
-          if (document.head.contains(script)) {
-            document.head.removeChild(script);
-          }
-          // Clean up global atOptions
-          delete (window as any).atOptions;
-        } catch (e) {
-          console.warn('Error removing banner ad script:', e);
-        }
-      };
-    }
-  }, []);
-
-  if (!isProduction) {
-    return (
-      <div className={`banner-ad-placeholder ${className}`} style={style}>
-        <div className="bg-surface-alt border border-dashed border-border rounded-lg p-3 text-center" 
-             style={{ width: '728px', height: '90px', maxWidth: '100%' }}>
-          <div className="text-text-muted text-xs opacity-60 mb-1">
-            Sponsored (Dev Mode)
-          </div>
-          <div className="text-text-muted text-sm opacity-50">
-            728x90 Banner Ad
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={`banner-ad-container ${className}`} style={style}>
-      <div className="text-xs text-text-muted mb-1 opacity-40 text-center">
-        Sponsored
-      </div>
-      <div 
-        className="bg-surface rounded-lg border border-border/30 p-2 overflow-hidden"
-        style={{ width: '728px', height: '90px', maxWidth: '100%' }}
-      >
-        {!adLoaded && (
-          <div className="bg-surface-alt rounded p-2 text-center h-full flex items-center justify-center">
-            <div className="text-text-muted text-xs">Loading banner...</div>
-          </div>
-        )}
-        {/* The ad script will automatically insert content here */}
-      </div>
-    </div>
-  );
-}
-
-// Native Ad Component with proper environment detection
+// Native Ad Component
 function NativeAdWidget({ 
   variant = 'default',
   className = '',
@@ -125,97 +28,103 @@ function NativeAdWidget({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const [isProduction, setIsProduction] = useState(false);
-  const [adLoaded, setAdLoaded] = useState(false);
-  const adContainerRef = useRef<HTMLDivElement>(null);
-  const scriptLoadedRef = useRef(false);
-
   useEffect(() => {
-    // Check if we're in production environment
-    const isProductionEnv = process.env.NODE_ENV === 'production' && 
-                           typeof window !== 'undefined' && 
-                           !window.location.hostname.includes('localhost') &&
-                           !window.location.hostname.includes('127.0.0.1') &&
-                           !window.location.hostname.includes('vercel.app'); // Remove this if you want ads on Vercel preview
+    // Load the ad script
+    const script = document.createElement('script');
+    script.async = true;
+    script.setAttribute('data-cfasync', 'false');
+    script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
+    document.head.appendChild(script);
 
-    setIsProduction(isProductionEnv);
-
-    if (isProductionEnv && !scriptLoadedRef.current) {
-      // Create a unique container ID for this instance
-      const containerId = `container-9befc45ca1d704f1b3ac3e59fd44c8c8-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      if (adContainerRef.current) {
-        adContainerRef.current.id = containerId;
-      }
-
-      // Load the ad script
-      const script = document.createElement('script');
-      script.async = true;
-      script.setAttribute('data-cfasync', 'false');
-      script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
-      
-      script.onload = () => {
-        console.log('Native ad script loaded successfully');
-        setAdLoaded(true);
-        scriptLoadedRef.current = true;
-      };
-      
-      script.onerror = () => {
-        console.error('Failed to load native ad script');
-      };
-
-      document.head.appendChild(script);
-
-      return () => {
-        // Cleanup: remove script when component unmounts
-        try {
-          if (document.head.contains(script)) {
-            document.head.removeChild(script);
-          }
-        } catch (e) {
-          console.warn('Error removing native ad script:', e);
-        }
-      };
-    }
+    return () => {
+      // Cleanup
+      document.head.removeChild(script);
+    };
   }, []);
 
-  if (!isProduction) {
-    // Development placeholder
-    return (
-      <div className={`native-ad-placeholder ${className}`} style={style}>
-        <div className="text-xs text-text-muted mb-2 opacity-60">
-          Sponsored (Dev Mode)
-        </div>
-        <div className="bg-surface-alt border-2 border-dashed border-border rounded-lg p-4 text-center min-h-[120px] flex flex-col justify-center">
-          <div className="text-text-muted text-sm">
-            📢 Native Ad Placeholder
-            <br />
-            <span className="text-xs opacity-70">({variant} layout)</span>
-            <br />
-            <span className="text-xs opacity-50">Will show ads in production</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Production ad container
   return (
-    <div className={`native-ad-container ${className}`} style={style}>
+    <div 
+      className={`native-ad-container ${className}`}
+      style={style}
+    >
+      {/* Small "Sponsored" label for transparency */}
       <div className="text-xs text-text-muted mb-2 opacity-60">
         Sponsored
       </div>
-      <div 
-        ref={adContainerRef}
-        id="container-9befc45ca1d704f1b3ac3e59fd44c8c8"
-        style={{ minHeight: '100px' }}
-      >
-        {/* Fallback content if ad doesn't load */}
-        {!adLoaded && (
-          <div className="bg-surface-alt border border-border rounded-lg p-4 text-center">
-            <div className="text-text-muted text-sm">Loading advertisement...</div>
-          </div>
-        )}
+      <div id="container-9befc45ca1d704f1b3ac3e59fd44c8c8"></div>
+    </div>
+  );
+}
+
+// Banner Ad Component (Desktop only)
+function BannerAdWidget({ 
+  className = '',
+  style = {}
+}: { 
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Only load on desktop (screen width > 768px)
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return;
+    }
+
+    // Load the banner ad script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.innerHTML = `
+      atOptions = {
+        'key' : '7cdd627f9268ad1cfcc5a5362a84558f',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    `;
+    document.head.appendChild(script);
+
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
+    invokeScript.async = true;
+    
+    if (bannerRef.current) {
+      bannerRef.current.appendChild(invokeScript);
+    }
+
+    return () => {
+      // Cleanup
+      try {
+        document.head.removeChild(script);
+      } catch (e) {
+        // Script might already be removed
+      }
+    };
+  }, []);
+
+  // Don't render on mobile
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    return null;
+  }
+
+  return (
+    <div 
+      className={`banner-ad-container hidden md:flex justify-center ${className}`}
+      style={style}
+    >
+      <div className="text-center">
+        {/* Small "Sponsored" label for transparency */}
+        <div className="text-xs text-text-muted mb-2 opacity-60">
+          Advertisement
+        </div>
+        <div 
+          ref={bannerRef}
+          className="inline-block bg-surface-alt rounded-lg p-2 border border-border/50"
+          style={{ width: '728px', height: '90px' }}
+        />
       </div>
     </div>
   );
@@ -386,25 +295,11 @@ export default function NotesPage() {
       <div className="bg-surface border-b border-border sticky top-[56px] md:top-0 z-40">
         <div className="container mx-auto px-4">
           <div className="py-4 md:py-6">
-            {/* Header with Banner Ad */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-              {/* Left side - Title and description */}
-              <div className="flex-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
-                <p className="text-text-muted mt-1">
-                  Browse comprehensive study materials organized by subject and unit
-                </p>
-              </div>
-              
-              {/* Right side - Banner Ad (Desktop only) */}
-              <div className="hidden lg:block flex-shrink-0">
-                <HeaderBannerAd className="ml-6" />
-              </div>
-            </div>
-
-            {/* Mobile Banner Ad (below title) */}
-            <div className="lg:hidden mb-4 flex justify-center">
-              <HeaderBannerAd />
+            <div className="mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
+              <p className="text-text-muted mt-1">
+                Browse comprehensive study materials organized by subject and unit
+              </p>
             </div>
 
             {/* Mobile Filters */}
@@ -531,6 +426,9 @@ export default function NotesPage() {
           </div>
         </div>
       </div>
+
+      {/* Banner Ad - Desktop only, placed after header */}
+      <BannerAdWidget className="py-4 bg-background border-b border-border/30" />
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">
@@ -709,6 +607,11 @@ export default function NotesPage() {
                     </div>
                   </div>
 
+                  {/* Second Banner Ad - Desktop only, placed before resource grid when there are many resources */}
+                  {filteredResources.length > 12 && (
+                    <BannerAdWidget className="py-3" />
+                  )}
+
                   {/* Resources Grid with integrated ads */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 
                     pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0">
@@ -737,6 +640,11 @@ export default function NotesPage() {
                       );
                     })}
                   </div>
+
+                  {/* Bottom Banner Ad - Desktop only, placed at the end of content */}
+                  {filteredResources.length > 8 && (
+                    <BannerAdWidget className="py-4 mt-8" />
+                  )}
                 </div>
               </NotesErrorBoundary>
             )}
