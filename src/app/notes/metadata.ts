@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description: 'Download comprehensive A-Level revision notes and study guides for all subjects. Expert-curated content including topic summaries, exam tips, and detailed explanations.',
     siteName: 'PaperNexus',
     images: [{
-      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Revision Notes & Study Materials')}&type=notes`,
+      url: `https://i.imgur.com/lSEDPga.png`,
       width: 1200,
       height: 630,
       alt: 'A-Level Revision Notes Preview'
@@ -26,13 +26,40 @@ export const metadata: Metadata = {
     title: 'Free A-Level Notes & Study Materials',
     description: 'Download comprehensive A-Level revision notes and study guides',
     images: [{
-      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Revision Notes & Study Materials')}&type=notes`,
+      url: `https://i.imgur.com/lSEDPga.png`,
       width: 1200,
       height: 630,
       alt: 'A-Level Revision Notes Preview'
     }],
     site: '@papernexus',
     creator: '@papernexus'
+  },
+  // Discord uses OpenGraph but with some specific considerations
+  // Discord will use the OG tags, but we can add additional properties
+  other: {
+    // Discord-specific
+    'og:image:width': '1200',
+    'og:image:height': '630',
+    'theme-color': '#5865F2', // Discord brand color for embeds
+
+    // Facebook-specific (already covered by OpenGraph but can be more specific)
+    'fb:app_id': '', // Add your Facebook App ID if you have one
+
+    // Pinterest-specific
+    'pinterest:image': 'https://i.imgur.com/lSEDPga.png',
+    'pinterest:description': 'Download comprehensive A-Level revision notes and study guides for all subjects.',
+
+    // WhatsApp and other messaging platforms
+    'og:site': 'PaperNexus',
+    'og:image:alt': 'A-Level Revision Notes Preview',
+
+    // LinkedIn-specific
+    'linkedin:title': 'Free A-Level Notes & Study Materials',
+    'linkedin:description': 'Download comprehensive A-Level revision notes and study guides for all subjects. Expert-curated content including topic summaries, exam tips, and detailed explanations.',
+    
+    // General social media
+    'article:publisher': 'https://papernexus.xyz',
+    'article:modified_time': new Date().toISOString(),
   },
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
