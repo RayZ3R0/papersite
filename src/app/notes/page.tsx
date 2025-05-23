@@ -295,11 +295,38 @@ export default function NotesPage() {
           <div className="py-4 md:py-6">
             {/* Header with Banner Ad beside it */}
             <div className="flex items-start justify-between gap-8 mb-4">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
-                <p className="text-text-muted mt-1">
-                  Browse comprehensive study materials organized by subject and unit
-                </p>
+              <div className="flex-1 min-w-0 space-y-3">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
+                  <p className="text-text-muted mt-1">
+                    Browse comprehensive study materials organized by subject and unit
+                  </p>
+                </div>
+                
+                {/* Subtle Search Bar in Header - Desktop only */}
+                <div className="hidden md:block max-w-md">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+                    <input
+                      type="text"
+                      placeholder="Quick search notes..."
+                      value={searchQuery}
+                      onChange={(e) => updateFilters(selectedSubject, selectedUnit, e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 bg-surface-alt/60 border border-border/50 rounded-lg
+                        text-text placeholder-text-muted focus:outline-none focus:ring-2 
+                        focus:ring-primary/30 focus:border-primary/50 focus:bg-surface-alt transition-all text-sm
+                        backdrop-blur-sm"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => updateFilters(selectedSubject, selectedUnit, '')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-surface-hover rounded-full transition-colors"
+                      >
+                        <XMarkIcon className="h-3 w-3 text-text-muted" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
               
               {/* Banner Ad beside header - Desktop only */}
@@ -437,7 +464,7 @@ export default function NotesPage() {
         <div className="flex gap-6">
           {/* Sidebar Filters - Desktop Only */}
           <div className="hidden md:block w-80 flex-shrink-0 space-y-6">
-            {/* Search Bar */}
+            {/* Search Bar
             <div className="bg-surface rounded-xl p-4 border border-border">
               <h3 className="font-semibold text-text mb-3">Search</h3>
               <div className="relative">
@@ -452,7 +479,7 @@ export default function NotesPage() {
                     focus:ring-primary/50 focus:border-primary transition-colors text-sm"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Subjects */}
             <div className="bg-surface rounded-xl p-4 border border-border">
