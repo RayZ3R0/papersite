@@ -26,7 +26,7 @@ export default function SubjectPage() {
   
   // Track if component is mounted and other refs
   const isMounted = useRef(false);
-  const restoreScrollRef = useRef(false);
+  const returnFromPaperView = useRef(false);
   const shouldSelectLatestYear = useRef(consumeLatestPapersState());
   
   // Initialize state from URL params
@@ -54,84 +54,65 @@ export default function SubjectPage() {
   const [loading, setLoading] = useState(!globalCache.units[subjectId]);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounced URL update to avoid excessive history entries
-  const debouncedUpdateUrl = useCallback(() => {
+  // Simplified URL update - no scroll position
+  const updateUrl = useCallback(() => {
     const params = new URLSearchParams();
     if (selectedUnit) params.set('unit', selectedUnit);
     if (selectedYears.size > 0) params.set('years', Array.from(selectedYears).join(','));
     if (selectedSession) params.set('session', selectedSession);
     if (expandedUnits.size > 0) params.set('expanded', Array.from(expandedUnits).join(','));
-    params.set('scroll', window.scrollY.toString());
     
     router.replace(`/papers/${subjectId}?${params.toString()}`, {
       scroll: false
     });
   }, [selectedUnit, selectedYears, selectedSession, expandedUnits, router, subjectId]);
 
-  // Debounced scroll position update
-  const handleScroll = useCallback(() => {
-    // Don't track scroll position during initial load
-    if (!isMounted.current) return;
+  // Save scroll position when navigating to view page
+  const handleViewPaper = useCallback((encodedPDF: string, encodedMS: string, type: string) => {
+    // Save scroll position and filter state to sessionStorage
+    const scrollPosition = window.scrollY;
+    const storageKey = `papers_scroll_${subjectId}`;
+    sessionStorage.setItem(storageKey, scrollPosition.toString());
     
-    // Use requestAnimationFrame for better performance
-    window.requestAnimationFrame(() => {
-      const currentPosition = window.scrollY;
-      const params = new URLSearchParams(window.location.search);
-      params.set('scroll', currentPosition.toString());
-      
-      router.replace(`/papers/${subjectId}?${params.toString()}`, {
-        scroll: false
-      });
-    });
+    // Navigate to paper view
+    router.push(`/papers/view?type=${type}&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
   }, [router, subjectId]);
 
-  // Add scroll position tracking - throttled with useEffect cleanup
+  // Check if we're returning from paper view page and restore scroll
   useEffect(() => {
     isMounted.current = true;
-    restoreScrollRef.current = true;
-
-    // Restore scroll position on mount (once)
-    const restoreScroll = () => {
-      if (restoreScrollRef.current) {
-        const savedPosition = searchParams.get('scroll');
-        if (savedPosition) {
+    
+    // Check if we're returning from paper view
+    const referrer = document.referrer;
+    const isReturningFromPaperView = referrer.includes('/papers/view');
+    
+    if (isReturningFromPaperView) {
+      const storageKey = `papers_scroll_${subjectId}`;
+      const savedPosition = sessionStorage.getItem(storageKey);
+      
+      if (savedPosition) {
+        // Use a small timeout to ensure content has rendered
+        setTimeout(() => {
           window.scrollTo({
             top: parseInt(savedPosition),
-            behavior: 'instant'
+            behavior: 'auto'
           });
-        }
-        restoreScrollRef.current = false;
+        }, 100);
       }
-    };
-
-    // Throttled scroll handler
-    let scrollTimeout: NodeJS.Timeout;
-    const throttledScrollHandler = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(handleScroll, 100);
-    };
-
-    // Set up event listeners
-    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
-    
-    // Restore scroll on first render with a slight delay
-    // to ensure content has loaded
-    setTimeout(restoreScroll, 100);
+    }
     
     return () => {
       isMounted.current = false;
-      window.removeEventListener('scroll', throttledScrollHandler);
-      clearTimeout(scrollTimeout);
     };
-  }, [searchParams, handleScroll]);
+  }, [subjectId]);
 
   // Update URL when important state changes (debounced)
   useEffect(() => {
     if (!isMounted.current) return;
     
-    const timeoutId = setTimeout(debouncedUpdateUrl, 300);
+    const timeoutId = setTimeout(updateUrl, 300);
     return () => clearTimeout(timeoutId);
-  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, debouncedUpdateUrl]);
+  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, updateUrl]);
 
   // Load units and their summaries from API or cache
   useEffect(() => {
@@ -626,7 +607,7 @@ export default function SubjectPage() {
                                         onClick={() => {
                                           const encodedPDF = btoa(paper.pdf_url);
                                           const encodedMS = btoa(paper.marking_scheme_url);
-                                          router.push(`/papers/view?type=qp&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
+                                          handleViewPaper(encodedPDF, encodedMS, 'qp');
                                         }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-primary text-white rounded-lg hover:opacity-90
@@ -677,7 +658,7 @@ export default function SubjectPage() {
                                         onClick={() => {
                                           const encodedPDF = btoa(paper.pdf_url);
                                           const encodedMS = btoa(paper.marking_scheme_url);
-                                          router.push(`/papers/view?type=ms&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
+                                          handleViewPaper(encodedPDF, encodedMS, 'ms');
                                         }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-secondary text-white rounded-lg hover:opacity-90
