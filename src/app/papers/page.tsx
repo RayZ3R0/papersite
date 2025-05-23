@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import LatestPapersLink from "@/components/papers/LatestPapersLink";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { papersApi, type SubjectWithStats } from "@/lib/api/papers";
 
 // Cache duration in milliseconds (10 minutes)
@@ -15,6 +15,70 @@ const SUBJECTS_CACHE_KEY = 'papersite-subjects-cache';
 interface CacheData {
   data: SubjectWithStats[];
   timestamp: number;
+}
+
+// Banner Ad Component for the bottom of the page
+function BottomBannerAd() {
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Only load on desktop (screen width > 768px)
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return;
+    }
+
+    // Load the banner ad script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.innerHTML = `
+      atOptions = {
+        'key' : '7cdd627f9268ad1cfcc5a5362a84558f',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    `;
+    document.head.appendChild(script);
+
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
+    invokeScript.async = true;
+    
+    if (bannerRef.current) {
+      bannerRef.current.appendChild(invokeScript);
+    }
+
+    return () => {
+      // Cleanup
+      try {
+        document.head.removeChild(script);
+      } catch (e) {
+        // Script might already be removed
+      }
+    };
+  }, []);
+
+  // Don't render on mobile
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    return null;
+  }
+
+  return (
+    <div className="hidden md:flex justify-center my-12 opacity-90 hover:opacity-100 transition-opacity">
+      <div className="relative">
+        <div className="text-xs text-text-muted/50 text-center mb-1">
+          Advertisement
+        </div>
+        <div 
+          ref={bannerRef}
+          className="bg-surface rounded-md border border-border/30 p-1.5 shadow-sm"
+          style={{ width: '728px', height: '90px' }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default function SubjectsPage() {
@@ -194,7 +258,6 @@ export default function SubjectsPage() {
             className="group block overflow-hidden rounded-lg border border-border 
               bg-surface hover:shadow-lg transition-all"
           >
-            {/* Rest of the component remains unchanged */}
             <div className="p-6">
               <h2
                 className="text-xl font-semibold text-text group-hover:text-primary 
@@ -288,6 +351,9 @@ export default function SubjectsPage() {
           </Link>
         ))}
       </div>
+      
+      {/* Subtle Banner Ad at the bottom */}
+      <BottomBannerAd />
     </div>
   );
 }
