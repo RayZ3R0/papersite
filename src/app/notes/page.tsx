@@ -18,6 +18,44 @@ import {
 // Type assertion for the imported JSON
 const notesData = rawNotesData as NotesData;
 
+// Native Ad Component
+function NativeAdWidget({ 
+  variant = 'default',
+  className = '',
+  style = {}
+}: { 
+  variant?: 'default' | 'sidebar' | 'grid';
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  useEffect(() => {
+    // Load the ad script
+    const script = document.createElement('script');
+    script.async = true;
+    script.setAttribute('data-cfasync', 'false');
+    script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  return (
+    <div 
+      className={`native-ad-container ${className}`}
+      style={style}
+    >
+      {/* Small "Sponsored" label for transparency */}
+      <div className="text-xs text-text-muted mb-2 opacity-60">
+        Sponsored
+      </div>
+      <div id="container-9befc45ca1d704f1b3ac3e59fd44c8c8"></div>
+    </div>
+  );
+}
+
 export default function NotesPage() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
@@ -161,6 +199,22 @@ export default function NotesPage() {
     files: filteredResources.filter(r => r.type === 'pdf').length
   };
 
+  // Insert ad in grid at strategic positions
+  const getResourcesWithAds = () => {
+    if (filteredResources.length <= 6) return filteredResources;
+    
+    const resourcesWithAds = [...filteredResources];
+    // Insert ad after 6th item for better visibility
+    const adPosition = 6;
+    resourcesWithAds.splice(adPosition, 0, {
+      id: 'native-ad-1',
+      type: 'ad' as any,
+      title: 'Advertisement',
+    } as any);
+    
+    return resourcesWithAds;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -286,6 +340,14 @@ export default function NotesPage() {
                   )}
                 </div>
               )}
+
+              {/* Mobile Native Ad - Top of page */}
+              {selectedSubject && (
+                <NativeAdWidget 
+                  variant="default"
+                  className="bg-surface rounded-lg border border-border p-3"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -311,7 +373,6 @@ export default function NotesPage() {
                 />
               </div>
             </div>
-
 
             {/* Subjects */}
             <div className="bg-surface rounded-xl p-4 border border-border">
@@ -385,6 +446,7 @@ export default function NotesPage() {
                 </div>
               </div>
             )}
+
             {/* Statistics Card */}
             <div className="bg-surface rounded-xl p-4 border border-border">
               <h3 className="font-semibold text-text mb-3">Statistics</h3>
@@ -413,6 +475,13 @@ export default function NotesPage() {
                 </div>
               </div>
             </div>
+
+            {/* Sidebar Native Ad - Bottom placement for 4x1 widget */}
+            <NativeAdWidget 
+              variant="sidebar"
+              className="bg-surface rounded-xl border border-border p-4"
+              style={{ minHeight: '200px' }}
+            />
           </div>
 
           {/* Main Content */}
@@ -461,10 +530,23 @@ export default function NotesPage() {
                     </div>
                   </div>
 
-                  {/* Resources Grid */}
+                  {/* Resources Grid with integrated ads */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 
                     pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0">
-                    {filteredResources.map(resource => {
+                    {getResourcesWithAds().map((item, index) => {
+                      if ((item as any).type === 'ad') {
+                        return (
+                          <div key="native-ad-grid" className="col-span-1 sm:col-span-2 lg:col-span-1">
+                            <NativeAdWidget 
+                              variant="grid"
+                              className="bg-surface rounded-xl border border-border p-4 h-full"
+                              style={{ minHeight: '280px' }}
+                            />
+                          </div>
+                        );
+                      }
+                      
+                      const resource = item as Resource;
                       const metadata = getResourceMetadata(resource);
                       return (
                         <NoteCard
