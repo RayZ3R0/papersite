@@ -341,34 +341,6 @@ export default function NotesPage() {
               </div>
             </div>
 
-            {/* Statistics Card */}
-            <div className="bg-surface rounded-xl p-4 border border-border">
-              <h3 className="font-semibold text-text mb-3">Statistics</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-text-muted">Subjects</span>
-                  <span className="text-text font-medium">{stats.totalSubjects}</span>
-                </div>
-                {selectedSubject && (
-                  <div className="flex justify-between">
-                    <span className="text-text-muted">Units</span>
-                    <span className="text-text font-medium">{stats.totalUnits}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-text-muted">Resources</span>
-                  <span className="text-text font-medium">{stats.totalResources}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-muted">Folders</span>
-                  <span className="text-text font-medium">{stats.folders}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-muted">Files</span>
-                  <span className="text-text font-medium">{stats.files}</span>
-                </div>
-              </div>
-            </div>
 
             {/* Subjects */}
             <div className="bg-surface rounded-xl p-4 border border-border">
@@ -442,6 +414,34 @@ export default function NotesPage() {
                 </div>
               </div>
             )}
+            {/* Statistics Card */}
+            <div className="bg-surface rounded-xl p-4 border border-border">
+              <h3 className="font-semibold text-text mb-3">Statistics</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-text-muted">Subjects</span>
+                  <span className="text-text font-medium">{stats.totalSubjects}</span>
+                </div>
+                {selectedSubject && (
+                  <div className="flex justify-between">
+                    <span className="text-text-muted">Units</span>
+                    <span className="text-text font-medium">{stats.totalUnits}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-text-muted">Resources</span>
+                  <span className="text-text font-medium">{stats.totalResources}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-muted">Folders</span>
+                  <span className="text-text font-medium">{stats.folders}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-muted">Files</span>
+                  <span className="text-text font-medium">{stats.files}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Main Content */}
