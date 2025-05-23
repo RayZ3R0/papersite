@@ -287,20 +287,20 @@ export default function NotesPage() {
   };
 
   // Insert ad in grid at strategic positions
-  const getResourcesWithAds = () => {
-    if (filteredResources.length <= 6) return filteredResources;
+  // const getResourcesWithAds = () => {
+  //   if (filteredResources.length <= 6) return filteredResources;
     
-    const resourcesWithAds = [...filteredResources];
-    // Insert ad after 6th item for better visibility
-    const adPosition = 6;
-    resourcesWithAds.splice(adPosition, 0, {
-      id: 'native-ad-1',
-      type: 'ad' as any,
-      title: 'Advertisement',
-    } as any);
+  //   const resourcesWithAds = [...filteredResources];
+  //   // Insert ad after 6th item for better visibility
+  //   const adPosition = 6;
+  //   resourcesWithAds.splice(adPosition, 0, {
+  //     id: 'native-ad-1',
+  //     type: 'ad' as any,
+  //     title: 'Advertisement',
+  //   } as any);
     
-    return resourcesWithAds;
-  };
+  //   return resourcesWithAds;
+  // };
 
   return (
     <div className="min-h-screen bg-background">
@@ -652,30 +652,10 @@ export default function NotesPage() {
                     </div>
                   </div>
 
-                  {/* Second Banner Ad - Desktop only, placed before resource grid when there are many resources */}
-                  {filteredResources.length > 12 && (
-                    <div className="hidden lg:flex justify-center py-3">
-                      <BannerAdWidget />
-                    </div>
-                  )}
-
-                  {/* Resources Grid with integrated ads */}
+                  {/* Resources Grid without ads */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 
                     pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0">
-                    {getResourcesWithAds().map((item, index) => {
-                      if ((item as any).type === 'ad') {
-                        return (
-                          <div key="native-ad-grid" className="col-span-1 sm:col-span-2 lg:col-span-1">
-                            <NativeAdWidget 
-                              variant="grid"
-                              className="bg-surface rounded-xl border border-border p-4 h-full"
-                              style={{ minHeight: '280px' }}
-                            />
-                          </div>
-                        );
-                      }
-                      
-                      const resource = item as Resource;
+                    {filteredResources.map((resource) => {
                       const metadata = getResourceMetadata(resource);
                       return (
                         <NoteCard
@@ -687,13 +667,6 @@ export default function NotesPage() {
                       );
                     })}
                   </div>
-
-                  {/* Bottom Banner Ad - Desktop only, placed at the end of content */}
-                  {filteredResources.length > 8 && (
-                    <div className="hidden lg:flex justify-center py-4 mt-8">
-                      <BannerAdWidget />
-                    </div>
-                  )}
                 </div>
               </NotesErrorBoundary>
             )}
