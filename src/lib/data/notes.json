@@ -1039,24 +1039,6 @@
               "name": "Social Psychology Notes",
               "resources": [
                 {
-                  "id": "social-psychology-uzayer-1",
-                  "title": "Social Psychology Notes by uzayer",
-                  "type": "pdf",
-                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_uzayer.pdf",
-                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-uzayer-1.webp",
-                  "tags": ["unit 1", "social psychology", "notes"],
-                  "dateAdded": "2025-05-22"
-                },
-                {
-                  "id": "social-psychology-uzayer-2",
-                  "title": "Social Psychology Notes by uzayer 2",
-                  "type": "pdf",
-                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_uzayer_2.pdf",
-                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-uzayer-2.webp",
-                  "tags": ["unit 1", "social psychology", "notes"],
-                  "dateAdded": "2025-05-22"
-                },
-                {
                   "id": "social-psychology-meowmeow666",
                   "title": "Social Psychology Notes by meowmeow666",
                   "type": "pdf",
@@ -1161,15 +1143,6 @@
               "id": "unit2-notes",
               "name": "Unit 2 Notes",
               "resources": [
-                {
-                  "id": "unit2-dovahzul-notes",
-                  "title": "Unit 2 Psych Notes by Dovahzul",
-                  "type": "pdf",
-                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Psych_notes_by_Dovahzul.pdf",
-                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-dovahzul-notes.webp",
-                  "tags": ["unit 2", "biological psychology", "notes"],
-                  "dateAdded": "2025-05-22"
-                },
                 {
                   "id": "body-rhythms-topic",
                   "title": "Body Rhythms Topic",

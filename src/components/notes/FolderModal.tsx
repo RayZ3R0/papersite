@@ -10,7 +10,7 @@ import {
   FolderIcon,
   DocumentTextIcon,
   ArrowDownTrayIcon,
-  Squares2X2Icon,    // Grid view icon (correct name)
+  Squares2X2Icon,
   ListBulletIcon
 } from '@heroicons/react/24/outline';
 
@@ -95,7 +95,7 @@ export default function FolderModal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60" />
         </Transition.Child>
 
         {/* Dialog container */}
@@ -117,13 +117,14 @@ export default function FolderModal({
                   md:rounded-xl border border-border/50
                   flex flex-col"
                 style={{
+                  // Mobile: Account for top nav (56px) and bottom nav (64px + safe area)
                   marginTop: 'calc(env(safe-area-inset-top, 0px) + 56px)',
                   marginBottom: 'calc(env(safe-area-inset-bottom, 0px) + 64px)',
                   maxHeight: 'calc(100vh - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))'
                 }}
               >
                 {/* Modal Header - Fixed */}
-                <div className="flex-shrink-0 border-b border-border bg-background/95 backdrop-blur-sm">
+                <div className="flex-shrink-0 border-b border-border bg-background">
                   <div className="flex items-center justify-between p-4 md:p-6">
                     <div className="flex-1 min-w-0">
                       <Dialog.Title
@@ -159,10 +160,10 @@ export default function FolderModal({
                     </button>
                   </div>
 
-                  {/* Search and Controls */}
+                  {/* Search and Controls - Hide search on mobile, keep on desktop */}
                   <div className="px-4 md:px-6 pb-4 space-y-3">
-                    {/* Search Bar */}
-                    <div className="relative">
+                    {/* Search Bar - Hidden on mobile */}
+                    <div className="relative hidden md:block">
                       <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-muted" />
                       <input
                         type="text"
@@ -201,6 +202,22 @@ export default function FolderModal({
                             <ListBulletIcon className="h-4 w-4" />
                           </button>
                         </div>
+
+                        {/* Mobile Search Icon - Compact */}
+                        <div className="md:hidden">
+                          <div className="relative">
+                            <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="w-32 pl-8 pr-3 py-2 bg-surface border border-border rounded-lg
+                                text-sm text-text placeholder-text-muted focus:outline-none focus:ring-2 
+                                focus:ring-primary/50 focus:border-primary focus:w-40 transition-all"
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       {/* Bulk Actions */}
@@ -211,7 +228,8 @@ export default function FolderModal({
                             rounded-lg hover:opacity-90 transition-opacity text-sm"
                         >
                           <ArrowDownTrayIcon className="h-4 w-4" />
-                          Download {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''}
+                          <span className="hidden sm:inline">Download</span>
+                          <span>{selectedItems.size}</span>
                         </button>
                       )}
                     </div>
