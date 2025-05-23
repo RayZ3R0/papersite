@@ -28,18 +28,33 @@ function NativeAdWidget({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  useEffect(() => {
-    // Load the ad script
-    const script = document.createElement('script');
-    script.async = true;
-    script.setAttribute('data-cfasync', 'false');
-    script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
-    document.head.appendChild(script);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    return () => {
-      // Cleanup
-      document.head.removeChild(script);
-    };
+  useEffect(() => {
+    // Wait a small amount of time to ensure the container is rendered
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      
+      // Load the ad script
+      const script = document.createElement('script');
+      script.async = true;
+      script.setAttribute('data-cfasync', 'false');
+      script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
+      
+      // Append to the document body instead of head
+      document.body.appendChild(script);
+
+      return () => {
+        // Cleanup
+        try {
+          document.body.removeChild(script);
+        } catch (e) {
+          // Script might already be removed
+        }
+      };
+    }, 100); // Small delay to ensure container is ready
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -51,7 +66,7 @@ function NativeAdWidget({
       <div className="text-xs text-text-muted mb-2 opacity-60">
         Sponsored
       </div>
-      <div id="container-9befc45ca1d704f1b3ac3e59fd44c8c8"></div>
+      <div id="container-9befc45ca1d704f1b3ac3e59fd44c8c8" ref={containerRef}></div>
     </div>
   );
 }
