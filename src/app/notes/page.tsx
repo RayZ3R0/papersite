@@ -287,35 +287,6 @@ export default function NotesPage() {
                 </div>
               )}
             </div>
-
-            {/* Filter Pills (Desktop & Mobile) */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {selectedSubject && (
-                <div className="flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                  <BookOpenIcon className="h-4 w-4" />
-                  <span>{selectedSubject.name}</span>
-                  <button
-                    onClick={() => updateFilters(null, null)}
-                    className="ml-1 hover:bg-primary/20 rounded-full p-0.5"
-                  >
-                    <XMarkIcon className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
-              
-              {selectedUnit && (
-                <div className="flex items-center gap-1 px-3 py-1.5 bg-secondary/10 text-secondary rounded-full text-sm">
-                  <DocumentTextIcon className="h-4 w-4" />
-                  <span>{selectedUnit.name}</span>
-                  <button
-                    onClick={() => updateFilters(selectedSubject, null)}
-                    className="ml-1 hover:bg-secondary/20 rounded-full p-0.5"
-                  >
-                    <XMarkIcon className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
