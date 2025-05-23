@@ -112,20 +112,18 @@ function BannerAdWidget({
 
   return (
     <div 
-      className={`banner-ad-container hidden md:flex justify-center ${className}`}
+      className={`banner-ad-container hidden lg:block ${className}`}
       style={style}
     >
-      <div className="text-center">
-        {/* Small "Sponsored" label for transparency */}
-        <div className="text-xs text-text-muted mb-2 opacity-60">
-          Advertisement
-        </div>
-        <div 
-          ref={bannerRef}
-          className="inline-block bg-surface-alt rounded-lg p-2 border border-border/50"
-          style={{ width: '728px', height: '90px' }}
-        />
+      {/* Small "Sponsored" label for transparency */}
+      <div className="text-xs text-text-muted mb-1 opacity-50 text-center">
+        Advertisement
       </div>
+      <div 
+        ref={bannerRef}
+        className="bg-surface-alt rounded-md p-1.5 border border-border/30 shadow-sm"
+        style={{ width: '728px', height: '90px' }}
+      />
     </div>
   );
 }
@@ -295,11 +293,19 @@ export default function NotesPage() {
       <div className="bg-surface border-b border-border sticky top-[56px] md:top-0 z-40">
         <div className="container mx-auto px-4">
           <div className="py-4 md:py-6">
-            <div className="mb-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
-              <p className="text-text-muted mt-1">
-                Browse comprehensive study materials organized by subject and unit
-              </p>
+            {/* Header with Banner Ad beside it */}
+            <div className="flex items-start justify-between gap-8 mb-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl md:text-3xl font-bold text-text">Study Notes</h1>
+                <p className="text-text-muted mt-1">
+                  Browse comprehensive study materials organized by subject and unit
+                </p>
+              </div>
+              
+              {/* Banner Ad beside header - Desktop only */}
+              <div className="flex-shrink-0">
+                <BannerAdWidget />
+              </div>
             </div>
 
             {/* Mobile Filters */}
@@ -426,9 +432,6 @@ export default function NotesPage() {
           </div>
         </div>
       </div>
-
-      {/* Banner Ad - Desktop only, placed after header */}
-      <BannerAdWidget className="py-4 bg-background border-b border-border/30" />
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">
@@ -609,7 +612,9 @@ export default function NotesPage() {
 
                   {/* Second Banner Ad - Desktop only, placed before resource grid when there are many resources */}
                   {filteredResources.length > 12 && (
-                    <BannerAdWidget className="py-3" />
+                    <div className="hidden lg:flex justify-center py-3">
+                      <BannerAdWidget />
+                    </div>
                   )}
 
                   {/* Resources Grid with integrated ads */}
@@ -643,7 +648,9 @@ export default function NotesPage() {
 
                   {/* Bottom Banner Ad - Desktop only, placed at the end of content */}
                   {filteredResources.length > 8 && (
-                    <BannerAdWidget className="py-4 mt-8" />
+                    <div className="hidden lg:flex justify-center py-4 mt-8">
+                      <BannerAdWidget />
+                    </div>
                   )}
                 </div>
               </NotesErrorBoundary>
