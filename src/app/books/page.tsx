@@ -25,14 +25,14 @@ function BottomBannerAd() {
     if (containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth;
       // Use the smaller of container width or default ad width (728px)
-      setAdWidth(Math.min(containerWidth, 728));
+      setAdWidth(Math.min(containerWidth, 742));
     }
 
     // Handle resize events
     const handleResize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        setAdWidth(Math.min(containerWidth, 728));
+        setAdWidth(Math.min(containerWidth, 742));
       }
     };
 
@@ -89,7 +89,7 @@ function BottomBannerAd() {
         <div 
           ref={bannerRef}
           className="bg-surface rounded-md border border-border/30 p-1.5 shadow-sm mx-auto"
-          style={{ width: `${adWidth}px`, height: '90px', maxWidth: '100%' }}
+          style={{ width: `${adWidth}px`, height: '103px', maxWidth: '100%' }}
         />
       </div>
     </div>

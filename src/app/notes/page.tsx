@@ -137,7 +137,7 @@ function BannerAdWidget({
       <div 
         ref={bannerRef}
         className="bg-surface-alt rounded-md p-1.5 border border-border/30 shadow-sm"
-        style={{ width: '728px', height: '90px' }}
+        style={{ width: '742px', height: '103px' }}
       />
     </div>
   );

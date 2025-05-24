@@ -31,12 +31,13 @@ function Toast({ message, isVisible }: { message: string; isVisible: boolean }) 
   );
 }
 
-// Native Ad Component for PDF Viewer
+// Native Ad Component for PDF Viewer - Fixed version
 function PDFNativeAd({ className = '' }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    // Wait a bit longer to ensure the container is ready, especially for iframes
     const timer = setTimeout(() => {
       if (!containerRef.current) return;
       
@@ -49,9 +50,11 @@ function PDFNativeAd({ className = '' }: { className?: string }) {
       return () => {
         try {
           document.body.removeChild(script);
-        } catch (e) {}
+        } catch (e) {
+          // Script might already be removed
+        }
       };
-    }, 100);
+    }, 500); // Increased delay for PDF viewer context
     
     return () => clearTimeout(timer);
   }, []);
@@ -75,7 +78,8 @@ function PDFNativeAd({ className = '' }: { className?: string }) {
       <div 
         id="container-9befc45ca1d704f1b3ac3e59fd44c8c8" 
         ref={containerRef}
-        className="bg-surface-alt rounded-lg border border-border/30 min-h-[120px] flex items-center justify-center"
+        className="bg-surface-alt rounded-lg border border-border/30"
+        style={{ minHeight: '200px' }} // Increased minimum height like notes page
       />
     </div>
   );
@@ -409,7 +413,7 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
               </div>
             </div>
             
-            {/* Sidebar Ad */}
+            {/* Sidebar Ad - Fixed with proper height */}
             <PDFNativeAd className="flex-shrink-0" />
           </div>
         )}
@@ -447,7 +451,7 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
               </div>
             </div>
             
-            {/* Right Sidebar Ad */}
+            {/* Right Sidebar Ad - Fixed with proper height */}
             <PDFNativeAd className="flex-shrink-0" />
           </div>
         )}

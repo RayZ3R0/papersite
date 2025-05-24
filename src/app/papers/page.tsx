@@ -74,7 +74,7 @@ function BottomBannerAd() {
         <div 
           ref={bannerRef}
           className="bg-surface rounded-md border border-border/30 p-1.5 shadow-sm"
-          style={{ width: '728px', height: '90px' }}
+          style={{ width: '742px', height: '103px' }}
         />
       </div>
     </div>
