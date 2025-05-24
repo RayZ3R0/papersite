@@ -15,6 +15,8 @@ interface ViewerControlsProps {
   onToggleFullscreen: () => void;
   isFullscreen: boolean;
   onDownload: () => void;
+  hasQP: boolean;
+  hasMSS: boolean;
 }
 
 const ViewerControls = ({ 
@@ -25,33 +27,39 @@ const ViewerControls = ({
   showSplitOption = true,
   onToggleFullscreen,
   isFullscreen,
-  onDownload
+  onDownload,
+  hasQP,
+  hasMSS
 }: ViewerControlsProps) => {
   return (
     <div className="fixed top-[56px] md:top-16 left-0 right-0 bg-surface/95 backdrop-blur-sm border-b border-border z-40 px-4 py-1 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center h-10">
         <div className="flex items-center space-x-1 flex-1">
           <div className="bg-surface-alt rounded-lg p-0.5 flex">
-            <button
-              onClick={() => onViewChange("qp")}
-              className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
-                currentView === "qp"
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-text hover:bg-surface-alt/80"
-              }`}
-            >
-              Question Paper
-            </button>
-            <button
-              onClick={() => onViewChange("ms")}
-              className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
-                currentView === "ms"
-                  ? "bg-secondary text-white shadow-sm"
-                  : "text-text hover:bg-surface-alt/80"
-              }`}
-            >
-              Mark Scheme
-            </button>
+            {hasQP && (
+              <button
+                onClick={() => onViewChange("qp")}
+                className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
+                  currentView === "qp"
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-text hover:bg-surface-alt/80"
+                }`}
+              >
+                Question Paper
+              </button>
+            )}
+            {hasMSS && (
+              <button
+                onClick={() => onViewChange("ms")}
+                className={`px-3 py-1 rounded-md text-xs md:text-sm font-medium transition-all duration-200 ${
+                  currentView === "ms"
+                    ? "bg-secondary text-white shadow-sm"
+                    : "text-text hover:bg-surface-alt/80"
+                }`}
+              >
+                Mark Scheme
+              </button>
+            )}
             {showSplitOption && (
               <button
                 onClick={() => onViewChange("split")}
@@ -161,6 +169,11 @@ export default function PDFViewerPage() {
   const msUrl = atob(searchParams.get("msUrl") || "");
   const initialView = (searchParams.get("type") || "qp") as "qp" | "ms" | "split";
   
+  // Check if URLs are available (exclude "/nopaper" URLs)
+  const hasQP = Boolean(pdfUrl && pdfUrl.trim() && pdfUrl !== "/nopaper");
+  const hasMSS = Boolean(msUrl && msUrl.trim() && msUrl !== "/nopaper");
+  const canShowSplit = hasQP && hasMSS && isWideScreen;
+  
   // Create hidden download links
   const qpDownloadLinkRef = useRef<HTMLAnchorElement>(null);
   const msDownloadLinkRef = useRef<HTMLAnchorElement>(null);
@@ -171,17 +184,35 @@ export default function PDFViewerPage() {
   // State to show toast when entering fullscreen
   const [showFullscreenToast, setShowFullscreenToast] = useState(false);
   
-  // Don't allow split view on narrow screens
+  // Determine valid initial view based on availability
+  const getValidInitialView = () => {
+    if (initialView === "split" && !canShowSplit) {
+      return hasQP ? "qp" : "ms";
+    }
+    if (initialView === "qp" && !hasQP) {
+      return "ms";
+    }
+    if (initialView === "ms" && !hasMSS) {
+      return "qp";
+    }
+    return initialView;
+  };
+  
+  // Don't allow split view on narrow screens or when files are missing
   const [currentView, setCurrentView] = useState<"qp" | "ms" | "split">(
-    !isWideScreen && initialView === "split" ? "qp" : initialView
+    getValidInitialView()
   );
 
-  // Switch to single view when screen becomes narrow
+  // Switch to single view when screen becomes narrow or validate current view
   useEffect(() => {
-    if (!isWideScreen && currentView === "split") {
+    if (currentView === "split" && !canShowSplit) {
+      setCurrentView(hasQP ? "qp" : "ms");
+    } else if (currentView === "qp" && !hasQP) {
+      setCurrentView("ms");
+    } else if (currentView === "ms" && !hasMSS) {
       setCurrentView("qp");
     }
-  }, [isWideScreen, currentView]);
+  }, [isWideScreen, currentView, hasQP, hasMSS, canShowSplit]);
 
   // Download function that works across all browsers
   const handleDownload = () => {
@@ -346,10 +377,12 @@ export default function PDFViewerPage() {
         onViewChange={setCurrentView}
         qpUrl={pdfUrl}
         msUrl={msUrl}
-        showSplitOption={isWideScreen}
+        showSplitOption={canShowSplit}
         onToggleFullscreen={handleToggleFullscreen}
         isFullscreen={isFullscreen}
         onDownload={handleDownload}
+        hasQP={hasQP}
+        hasMSS={hasMSS}
       />
 
       <div 
