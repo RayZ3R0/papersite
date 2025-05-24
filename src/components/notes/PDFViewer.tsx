@@ -31,41 +31,75 @@ function Toast({ message, isVisible }: { message: string; isVisible: boolean }) 
   );
 }
 
-// Native Ad Component for PDF Viewer - Fixed version
-function PDFNativeAd({ className = '' }: { className?: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+// Small Banner Ad Component for PDF Viewer (160x300)
+function PDFBannerAd({ className = '' }: { className?: string }) {
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    // Wait a bit longer to ensure the container is ready, especially for iframes
-    const timer = setTimeout(() => {
-      if (!containerRef.current) return;
-      
-      const script = document.createElement('script');
-      script.async = true;
-      script.setAttribute('data-cfasync', 'false');
-      script.src = '//pl26722926.profitableratecpm.com/9befc45ca1d704f1b3ac3e59fd44c8c8/invoke.js';
-      document.body.appendChild(script);
+  const loadAd = () => {
+    if (!bannerRef.current) return;
 
-      return () => {
-        try {
-          document.body.removeChild(script);
-        } catch (e) {
-          // Script might already be removed
-        }
+    // Clear existing ad content
+    bannerRef.current.innerHTML = '';
+
+    // Load the banner ad script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.innerHTML = `
+      atOptions = {
+        'key' : '44964c31b66708e0e7c34c7eab2f916e',
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
       };
-    }, 500); // Increased delay for PDF viewer context
+    `;
+    document.head.appendChild(script);
+
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = '//www.highperformanceformat.com/44964c31b66708e0e7c34c7eab2f916e/invoke.js';
+    invokeScript.async = true;
     
-    return () => clearTimeout(timer);
+    bannerRef.current.appendChild(invokeScript);
+
+    // Clean up the script from head after a short delay
+    setTimeout(() => {
+      try {
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
+      } catch (e) {
+        // Script might already be removed
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    // Load initial ad
+    loadAd();
+
+    // Set up refresh interval (30 seconds)
+    refreshIntervalRef.current = setInterval(() => {
+      loadAd();
+    }, 30000);
+
+    return () => {
+      // Cleanup
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
   }, []);
 
   if (!isVisible) return null;
 
   return (
-    <div className={`pdf-ad-container ${className}`}>
+    <div className={`pdf-banner-ad ${className}`}>
       <div className="flex items-center justify-between mb-2">
         <div className="text-xs text-text-muted opacity-60">
-          Sponsored
+          Advertisement
         </div>
         <button
           onClick={() => setIsVisible(false)}
@@ -75,12 +109,13 @@ function PDFNativeAd({ className = '' }: { className?: string }) {
           <EyeSlashIcon className="h-3 w-3" />
         </button>
       </div>
-      <div 
-        id="container-9befc45ca1d704f1b3ac3e59fd44c8c8" 
-        ref={containerRef}
-        className="bg-surface-alt rounded-lg border border-border/30"
-        style={{ minHeight: '200px' }} // Increased minimum height like notes page
-      />
+      <div className="flex justify-center">
+        <div 
+          ref={bannerRef}
+          className="bg-surface-alt rounded-lg border border-border/30 shadow-sm"
+          style={{ width: '160px', height: '300px' }}
+        />
+      </div>
     </div>
   );
 }
@@ -390,8 +425,9 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
       }`}>
         {/* Left Sidebar - Show on lg+ screens */}
         {!isFullscreen && showLeftSidebar && (
-          <div className="flex flex-col w-64 bg-surface border-r border-border p-4 gap-4">
-            <div className="flex-1">
+          <div className="flex flex-col w-64 bg-surface border-r border-border">
+            {/* Document Info Section */}
+            <div className="p-4 border-b border-border">
               <h3 className="text-sm font-semibold text-text mb-3">Document Info</h3>
               <div className="space-y-2 text-xs text-text-muted">
                 <div>
@@ -413,8 +449,12 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
               </div>
             </div>
             
-            {/* Sidebar Ad - Fixed with proper height */}
-            <PDFNativeAd className="flex-shrink-0" />
+            {/* Only show ad in left sidebar if right sidebar is not visible */}
+            {!showBothSidebars && (
+              <div className="flex-1 flex items-center justify-center p-4">
+                <PDFBannerAd />
+              </div>
+            )}
           </div>
         )}
 
@@ -432,9 +472,10 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
 
         {/* Right Sidebar - Show only on xl+ screens */}
         {!isFullscreen && showBothSidebars && (
-          <div className="flex flex-col w-64 bg-surface border-l border-border p-4">
-            <div className="flex-1 space-y-4">
-              <h3 className="text-sm font-semibold text-text">Quick Actions</h3>
+          <div className="flex flex-col w-64 bg-surface border-l border-border">
+            {/* Quick Actions Section */}
+            <div className="p-4 border-b border-border">
+              <h3 className="text-sm font-semibold text-text mb-3">Quick Actions</h3>
               <div className="space-y-2">
                 <button
                   onClick={() => window.open(resource.downloadUrl, '_blank')}
@@ -451,22 +492,24 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
               </div>
             </div>
             
-            {/* Right Sidebar Ad - Fixed with proper height */}
-            <PDFNativeAd className="flex-shrink-0" />
+            {/* Right Sidebar Banner Ad - Only when both sidebars are visible */}
+            <div className="flex-1 flex items-center justify-center p-4">
+              <PDFBannerAd />
+            </div>
           </div>
         )}
       </div>
 
-      {/* Keyboard Shortcuts Help */}
+      {/* Keyboard Shortcuts Help
       {!isFullscreen && (
         <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-text-muted text-xs hidden lg:block pointer-events-none">
           <div className="bg-surface border border-border rounded-lg p-2 space-y-1">
             <div>F - Fullscreen</div>
             <div>Esc - Close</div>
-            <div>Esc might not<br />if you have clicked inside PDF<br />Click outside to use Esc again</div>
+            <div>Esc might not work<br />if you have clicked inside PDF<br />Click outside to use Esc again</div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

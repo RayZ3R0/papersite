@@ -49,8 +49,8 @@
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.11.174",
     "postcss": "8.4.35",
-    "react": "19.1.0-canary-ef4bc8b4-20250328",
-    "react-dom": "19.1.0-canary-ef4bc8b4-20250328",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-pdf": "^7.7.1",
@@ -81,7 +81,9 @@
   },
   "pnpm": {
     "overrides": {
-      "canvas": "3.1.0"
+      "canvas": "3.1.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
     },
     "ignoredBuiltDependencies": [
       "bcrypt",
