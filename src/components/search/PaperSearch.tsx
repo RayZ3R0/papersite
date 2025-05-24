@@ -627,7 +627,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                     {/* Question Paper Button */}
                     {result.paper.pdf_url !== "/nopaper" ? (
                       <Link
-                        href={result.paper.pdf_url}
+                        href={`/papers/view?type=qp&pdfUrl=${btoa(result.paper.pdf_url)}&msUrl=${btoa(result.paper.marking_scheme_url)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
@@ -683,7 +683,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                     {/* Marking Scheme Button */}
                     {result.paper.marking_scheme_url !== "/nopaper" ? (
                       <Link
-                        href={result.paper.marking_scheme_url}
+                        href={`/papers/view?type=ms&pdfUrl=${btoa(result.paper.pdf_url)}&msUrl=${btoa(result.paper.marking_scheme_url)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
