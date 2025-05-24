@@ -88,12 +88,14 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
   const [showFullscreenToast, setShowFullscreenToast] = useState(false);
   const [showCloseToast, setShowCloseToast] = useState(false);
   const [copyToast, setCopyToast] = useState('');
+  const [isControlsVisible, setIsControlsVisible] = useState(true);
   
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
   const fullscreenToastTimeoutRef = useRef<NodeJS.Timeout>();
   const closeToastTimeoutRef = useRef<NodeJS.Timeout>();
   const copyToastTimeoutRef = useRef<NodeJS.Timeout>();
+  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Track screen width
   useEffect(() => {
@@ -107,10 +109,23 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
     return () => window.removeEventListener('resize', updateScreenWidth);
   }, []);
 
+  // Auto-hide controls functionality
+  const resetControlsTimeout = useCallback(() => {
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    setIsControlsVisible(true);
+    controlsTimeoutRef.current = setTimeout(() => {
+      setIsControlsVisible(false);
+    }, 3000); // Hide after 3 seconds of inactivity
+  }, []);
+
   // Show close toast when PDF viewer opens
   useEffect(() => {
     if (isOpen) {
       setShowCloseToast(true);
+      resetControlsTimeout(); // Show controls initially
+      
       if (closeToastTimeoutRef.current) {
         clearTimeout(closeToastTimeoutRef.current);
       }
@@ -119,6 +134,7 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
       }, 4000); // Show for 4 seconds on open
     } else {
       setShowCloseToast(false);
+      setIsControlsVisible(true); // Reset controls visibility
     }
 
     return () => {
@@ -126,12 +142,14 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
         clearTimeout(closeToastTimeoutRef.current);
       }
     };
-  }, [isOpen]);
+  }, [isOpen, resetControlsTimeout]);
 
   // Show fullscreen toast when entering fullscreen
   useEffect(() => {
     if (isFullscreen) {
       setShowFullscreenToast(true);
+      resetControlsTimeout(); // Show controls when entering fullscreen
+      
       if (fullscreenToastTimeoutRef.current) {
         clearTimeout(fullscreenToastTimeoutRef.current);
       }
@@ -147,7 +165,7 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
         clearTimeout(fullscreenToastTimeoutRef.current);
       }
     };
-  }, [isFullscreen]);
+  }, [isFullscreen, resetControlsTimeout]);
 
   // Enhanced keyboard event handling with polling for iframe focus
   useEffect(() => {
@@ -156,6 +174,8 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
     let intervalId: NodeJS.Timeout;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      resetControlsTimeout(); // Show controls on any key press
+      
       switch (e.key) {
         case 'Escape':
           e.preventDefault();
@@ -176,11 +196,16 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
       }
     };
 
+    const handleMouseMove = () => {
+      resetControlsTimeout(); // Show controls on mouse movement
+    };
+
     // Multiple event listeners for better capture
     document.addEventListener('keydown', handleKeyDown, true);
     window.addEventListener('keydown', handleKeyDown, true);
     document.addEventListener('keydown', handleKeyDown, false);
     window.addEventListener('keydown', handleKeyDown, false);
+    document.addEventListener('mousemove', handleMouseMove);
 
     // Poll for iframe focus and add event listeners
     intervalId = setInterval(() => {
@@ -191,9 +216,11 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
             // Remove existing listeners to prevent duplicates
             iframeDoc.removeEventListener('keydown', handleKeyDown, true);
             iframeDoc.removeEventListener('keydown', handleKeyDown, false);
+            iframeDoc.removeEventListener('mousemove', handleMouseMove);
             // Add new listeners
             iframeDoc.addEventListener('keydown', handleKeyDown, true);
             iframeDoc.addEventListener('keydown', handleKeyDown, false);
+            iframeDoc.addEventListener('mousemove', handleMouseMove);
           }
         } catch (e) {
           // Cross-origin error - expected for external PDFs
@@ -215,12 +242,16 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
       window.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('keydown', handleKeyDown, false);
       window.removeEventListener('keydown', handleKeyDown, false);
+      document.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('message', handleMessage);
       if (intervalId) {
         clearInterval(intervalId);
       }
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
     };
-  }, [isOpen, isFullscreen, onClose]);
+  }, [isOpen, isFullscreen, onClose, resetControlsTimeout]);
 
   // Handle share functionality
   const handleShare = async () => {
@@ -249,14 +280,18 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
     }
   };
 
-  // Create PDF URL with fit to width parameter
-  const pdfUrl = `${resource.downloadUrl}#view=FitH`;
+  // Create PDF URL with parameters to disable sidebar and fit to width
+  const pdfUrl = `${resource.downloadUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH&pagemode=none`;
 
   if (!isOpen) return null;
 
   // Determine sidebar layout based on screen width
   const showBothSidebars = screenWidth >= 1536; // xl breakpoint
   const showLeftSidebar = screenWidth >= 1024; // lg breakpoint
+
+  // Calculate header height for proper spacing
+  const headerHeight = isControlsVisible ? 'h-16' : 'h-0';
+  const paddingTop = isControlsVisible ? 'pt-16' : 'pt-0';
 
   return (
     <div 
@@ -277,8 +312,10 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
         </div>
       )}
 
-      {/* Header Controls - Always visible, no auto-hide */}
-      <div className="absolute top-0 left-0 right-0 bg-surface border-b border-border px-4 py-3 z-20">
+      {/* Header Controls - Auto-hide */}
+      <div className={`absolute top-0 left-0 right-0 bg-surface border-b border-border px-4 py-3 z-20 transition-all duration-300 ${
+        isControlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+      }`}>
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-text font-semibold text-base truncate">{resource.title}</h2>
@@ -343,8 +380,10 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
         />
       )}
 
-      {/* Main PDF Container - Adjusted for header */}
-      <div className={`h-full flex ${isFullscreen ? 'pt-0' : 'pt-16'}`}>
+      {/* Main PDF Container - Dynamically adjusted for header */}
+      <div className={`h-full flex transition-all duration-300 ${
+        isFullscreen ? 'pt-0' : (isControlsVisible ? 'pt-16' : 'pt-0')
+      }`}>
         {/* Left Sidebar - Show on lg+ screens */}
         {!isFullscreen && showLeftSidebar && (
           <div className="flex flex-col w-64 bg-surface border-r border-border p-4 gap-4">
@@ -415,12 +454,15 @@ export default function PDFViewer({ isOpen, onClose, resource, unitName, topicNa
       </div>
 
       {/* Keyboard Shortcuts Help */}
-      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-text-muted text-xs hidden lg:block pointer-events-none">
-        <div className="bg-surface border border-border rounded-lg p-2 space-y-1">
-          <div>F - Fullscreen</div>
-          <div>Esc - Close</div>
+      {!isFullscreen && (
+        <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-text-muted text-xs hidden lg:block pointer-events-none">
+          <div className="bg-surface border border-border rounded-lg p-2 space-y-1">
+            <div>F - Fullscreen</div>
+            <div>Esc - Close</div>
+            <div>Esc might not<br />if you have clicked inside PDF<br />Click outside to use Esc again</div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
