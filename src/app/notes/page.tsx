@@ -80,12 +80,15 @@ function BannerAdWidget({
   style?: React.CSSProperties;
 }) {
   const bannerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [adWidth, setAdWidth] = useState(742);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    // Only load on desktop (screen width > 768px)
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      return;
-    }
+  const loadAd = () => {
+    if (!bannerRef.current) return;
+
+    // Clear existing ad content
+    bannerRef.current.innerHTML = '';
 
     // Load the banner ad script
     const script = document.createElement('script');
@@ -95,7 +98,7 @@ function BannerAdWidget({
         'key' : '7cdd627f9268ad1cfcc5a5362a84558f',
         'format' : 'iframe',
         'height' : 90,
-        'width' : 728,
+        'width' : ${adWidth},
         'params' : {}
       };
     `;
@@ -106,19 +109,59 @@ function BannerAdWidget({
     invokeScript.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
     invokeScript.async = true;
     
-    if (bannerRef.current) {
-      bannerRef.current.appendChild(invokeScript);
-    }
+    bannerRef.current.appendChild(invokeScript);
 
-    return () => {
-      // Cleanup
+    // Clean up the script from head after a short delay
+    setTimeout(() => {
       try {
-        document.head.removeChild(script);
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
       } catch (e) {
         // Script might already be removed
       }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    // Only load on desktop (screen width > 768px)
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return;
+    }
+
+    // Calculate the available width for the ad
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      // Use the smaller of container width or default ad width (728px)
+      setAdWidth(Math.min(containerWidth, 742));
+    }
+
+    // Handle resize events
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        setAdWidth(Math.min(containerWidth, 742));
+      }
     };
-  }, []);
+
+    window.addEventListener('resize', handleResize);
+
+    // Load initial ad
+    loadAd();
+
+    // Set up refresh interval (30 seconds)
+    refreshIntervalRef.current = setInterval(() => {
+      loadAd();
+    }, 30000);
+
+    return () => {
+      // Cleanup
+      window.removeEventListener('resize', handleResize);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [adWidth]);
 
   // Don't render on mobile
   if (typeof window !== 'undefined' && window.innerWidth <= 768) {
@@ -127,6 +170,7 @@ function BannerAdWidget({
 
   return (
     <div 
+      ref={containerRef}
       className={`banner-ad-container hidden lg:block ${className}`}
       style={style}
     >
@@ -137,7 +181,7 @@ function BannerAdWidget({
       <div 
         ref={bannerRef}
         className="bg-surface-alt rounded-md p-1.5 border border-border/30 shadow-sm"
-        style={{ width: '742px', height: '103px' }}
+        style={{ width: `${adWidth}px`, height: '103px', maxWidth: '100%' }}
       />
     </div>
   );

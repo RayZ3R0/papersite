@@ -14,6 +14,46 @@ function BottomBannerAd() {
   const bannerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [adWidth, setAdWidth] = useState(728);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const loadAd = () => {
+    if (!bannerRef.current) return;
+
+    // Clear existing ad content
+    bannerRef.current.innerHTML = '';
+
+    // Load the banner ad script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.innerHTML = `
+      atOptions = {
+        'key' : '7cdd627f9268ad1cfcc5a5362a84558f',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : ${adWidth},
+        'params' : {}
+      };
+    `;
+    document.head.appendChild(script);
+
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
+    invokeScript.async = true;
+    
+    bannerRef.current.appendChild(invokeScript);
+
+    // Clean up the script from head after a short delay
+    setTimeout(() => {
+      try {
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
+      } catch (e) {
+        // Script might already be removed
+      }
+    }, 1000);
+  };
 
   useEffect(() => {
     // Only load on desktop (screen width > 768px)
@@ -38,36 +78,19 @@ function BottomBannerAd() {
 
     window.addEventListener('resize', handleResize);
 
-    // Load the banner ad script
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = `
-      atOptions = {
-        'key' : '7cdd627f9268ad1cfcc5a5362a84558f',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : ${adWidth},
-        'params' : {}
-      };
-    `;
-    document.head.appendChild(script);
+    // Load initial ad
+    loadAd();
 
-    const invokeScript = document.createElement('script');
-    invokeScript.type = 'text/javascript';
-    invokeScript.src = '//www.highperformanceformat.com/7cdd627f9268ad1cfcc5a5362a84558f/invoke.js';
-    invokeScript.async = true;
-    
-    if (bannerRef.current) {
-      bannerRef.current.appendChild(invokeScript);
-    }
+    // Set up refresh interval (30 seconds)
+    refreshIntervalRef.current = setInterval(() => {
+      loadAd();
+    }, 30000);
 
     return () => {
       // Cleanup
-      try {
-        document.head.removeChild(script);
-        window.removeEventListener('resize', handleResize);
-      } catch (e) {
-        // Script might already be removed
+      window.removeEventListener('resize', handleResize);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
   }, [adWidth]);
