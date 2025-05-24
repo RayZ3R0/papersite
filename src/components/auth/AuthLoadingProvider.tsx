@@ -44,6 +44,13 @@ export function AuthLoadingProvider({
 
   // Track page transitions
   useEffect(() => {
+    // Skip transition on initial load
+    if (prevPathname === null) {
+      setPrevPathname(pathname);
+      return;
+    }
+    
+    // Only transition when actually changing pages
     if (prevPathname !== pathname) {
       // Start transition animation
       setIsTransitioning(true);
@@ -54,7 +61,7 @@ export function AuthLoadingProvider({
       // End transition after a short delay
       const timer = setTimeout(() => {
         setIsTransitioning(false);
-      }, 300); // Match this to your CSS transition duration
+      }, 300);
       
       return () => clearTimeout(timer);
     }

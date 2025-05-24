@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Resource } from '@/types/note';
 import { FolderIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import FolderModal from './FolderModal';
+import PDFViewer from './PDFViewer';
 
 interface NoteCardProps {
   resource: Resource;
@@ -14,13 +15,35 @@ interface NoteCardProps {
 
 export default function NoteCard({ resource, unitName, topicName }: NoteCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const isFolder = resource.type === 'folder';
+  const isPDF = resource.type === 'pdf';
   const itemCount = resource.items?.length || 0;
+
+  // Check if device is desktop
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024); // lg breakpoint
+    };
+    
+    checkIsDesktop();
+    window.addEventListener('resize', checkIsDesktop);
+    
+    return () => window.removeEventListener('resize', checkIsDesktop);
+  }, []);
 
   const handleCardClick = () => {
     if (isFolder) {
       setIsModalOpen(true);
+    } else if (isPDF) {
+      // Use PDF viewer only on desktop, otherwise open in new tab
+      if (isDesktop) {
+        setIsPDFViewerOpen(true);
+      } else {
+        window.open(resource.downloadUrl, '_blank');
+      }
     } else {
       window.open(resource.downloadUrl, '_blank');
     }
@@ -78,6 +101,17 @@ export default function NoteCard({ resource, unitName, topicName }: NoteCardProp
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           folder={resource}
+          unitName={unitName}
+          topicName={topicName}
+        />
+      )}
+
+      {/* PDF Viewer - Only on desktop */}
+      {isPDF && isDesktop && (
+        <PDFViewer
+          isOpen={isPDFViewerOpen}
+          onClose={() => setIsPDFViewerOpen(false)}
+          resource={resource}
           unitName={unitName}
           topicName={topicName}
         />
