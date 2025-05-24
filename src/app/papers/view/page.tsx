@@ -429,12 +429,36 @@ export default function PDFViewerPage() {
         
         /* PDF viewer styling for fullscreen */
         .fullscreen-container .bg-surface {
-          height: ${currentView === "split" ? "98vh" : "98vh"};
+          height: 98vh;
           overflow: auto;
           display: flex;
           align-items: center;
           justify-content: center;
         }
+        
+        /* In split view, both containers take 50% width */
+        .fullscreen-container .bg-surface {
+          width: ${currentView === "split" ? "50%" : "100%"} !important;
+          flex: ${currentView === "split" ? "1" : "none"};
+        }
+        
+        /* Hide the non-active PDF in fullscreen single view mode */
+        .fullscreen-container .bg-surface[style*="display: none"] {
+          display: none !important;
+        }
+        
+        /* In fullscreen single view, hide the container that should not be visible */
+        ${currentView === "qp" && isFullscreen ? `
+          .fullscreen-container .bg-surface:nth-child(2) {
+            display: none !important;
+          }
+        ` : ""}
+        
+        ${currentView === "ms" && isFullscreen ? `
+          .fullscreen-container .bg-surface:nth-child(1) {
+            display: none !important;
+          }
+        ` : ""}
         
         /* Adjust max width of PDF in fullscreen mode */
         .fullscreen-container .mx-auto {
