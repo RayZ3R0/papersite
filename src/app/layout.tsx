@@ -39,6 +39,11 @@ const ConnectionAwareOptimizer = dynamicImport(
   { ssr: false }
 );
 
+const QuickOptions = dynamicImport(
+  () => import("@/components/quick-options").then(mod => ({ default: mod.QuickOptions })),
+  { ssr: false }
+);
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://papernexus.xyz'),
   title: {
@@ -186,6 +191,9 @@ export default function RootLayout({
                     </Suspense>
                   </main>
                 </AuthLoadingProvider>
+                <Suspense fallback={null}>
+                  <QuickOptions />
+                </Suspense>
                 <Suspense fallback={null}>
                   <MusicPlayer />
                 </Suspense>
