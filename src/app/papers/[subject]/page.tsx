@@ -353,16 +353,72 @@ export default function SubjectPage() {
       <div className="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-6">
         {/* Subject Header */}
         <header className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold capitalize mb-2 text-text">
-            {subjectId
-              ? subjectId
-                  .replace(/-/g, " ")
-                  .replace(/\b\w/g, (c) => c.toUpperCase()) + " Papers"
-              : "Loading..."}
-          </h1>
-          <p className="text-text-muted">
-            {units.length} units available • Select a unit to view papers
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-3xl font-bold capitalize mb-2 text-text">
+                {subjectId
+                  ? subjectId
+                      .replace(/-/g, " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase()) + " Papers"
+                  : "Loading..."}
+              </h1>
+              <p className="text-text-muted">
+                {units.length} units available • Select a unit to view papers
+              </p>
+            </div>
+            
+            {/* Data Booklet Button - Positioned alongside header */}
+            {(subjectId === 'chemistry' || subjectId === 'mathematics') && (
+              <div className="flex-shrink-0">
+                <a
+                  href={
+                    subjectId === 'chemistry'
+                      ? 'https://qualifications.pearson.com/content/dam/pdf/A%20Level/Chemistry/2015/teaching-and-learning-materials/a-level-chemistry-data-booklet-9ch0.pdf'
+                      : 'https://qualifications.pearson.com/content/dam/pdf/International%20Advanced%20Level/Mathematics/2018/Specification-and-Sample-Assessment/IAL-Mathematics-Formula-Book.pdf'
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-surface border border-border 
+                    rounded-lg hover:bg-surface-alt transition-colors text-sm font-medium text-text
+                    shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-primary 
+                    focus:ring-offset-2 focus:ring-offset-background whitespace-nowrap"
+                >
+                  <svg
+                    className="w-4 h-4 text-text-muted flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">
+                    {subjectId === 'chemistry' ? 'Data Booklet' : 'Formula Book'}
+                  </span>
+                  <span className="sm:hidden">
+                    {subjectId === 'chemistry' ? 'Data' : 'Formulas'}
+                  </span>
+                  <svg
+                    className="w-3 h-3 text-text-muted flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Quick Filters */}
