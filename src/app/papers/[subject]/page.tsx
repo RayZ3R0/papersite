@@ -131,7 +131,13 @@ export default function SubjectPage() {
   }, [selectedUnit, selectedSession, selectedYears, expandedUnits, subjectId]);
 
   // Save scroll position when navigating to view page
-  const handleViewPaper = useCallback((encodedPDF: string, encodedMS: string, type: string) => {
+  const handleViewPaper = useCallback((encodedPDF: string, encodedMS: string, type: string, paperData: {
+    subject: string;
+    unit: string;
+    session: string;
+    year: number;
+    unitCode: string;
+  }) => {
     // Save scroll position to sessionStorage
     const scrollPosition = window.scrollY;
     try {
@@ -140,8 +146,19 @@ export default function SubjectPage() {
       console.warn('Failed to save scroll position:', error);
     }
     
-    // Navigate to paper view
-    router.push(`/papers/view?type=${type}&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
+    // Create a data object with all the info
+    const viewData = {
+      type,
+      pdfUrl: encodedPDF,
+      msUrl: encodedMS,
+      ...paperData
+    };
+    
+    // Encode the entire data object and put it in the hash
+    const hashData = btoa(JSON.stringify(viewData));
+    
+    // Navigate to clean URL with data in hash
+    router.push(`/papers/view#${hashData}`);
   }, [router, subjectId]);
 
   // Check if we're returning from paper view page and restore scroll + state
@@ -150,7 +167,8 @@ export default function SubjectPage() {
     
     // Check if we're returning from paper view
     const referrer = document.referrer;
-    isReturningFromPaperView.current = referrer.includes('/papers/view');
+    const currentPath = window.location.pathname;
+    isReturningFromPaperView.current = referrer.includes('/papers/view') && currentPath.includes(`/papers/${subjectId}`);
     
     if (isReturningFromPaperView.current) {
       // Restore scroll position
@@ -182,8 +200,13 @@ export default function SubjectPage() {
   useEffect(() => {
     return () => {
       // Only clear if we're navigating away from this subject entirely
-      // (not just going to view a paper)
-      if (!window.location.pathname.includes('/papers/view')) {
+      // Check if we're still on a papers-related page for this subject
+      const currentPath = window.location.pathname;
+      const isOnPapersView = currentPath.includes('/papers/view');
+      const isOnSameSubject = currentPath.includes(`/papers/${subjectId}`);
+      
+      // Don't clear if we're going to the view page or staying on the same subject
+      if (!isOnPapersView && !isOnSameSubject) {
         clearStateFromSession(subjectId);
       }
     };
@@ -739,7 +762,13 @@ export default function SubjectPage() {
                                         onClick={() => {
                                           const encodedPDF = btoa(paper.pdf_url);
                                           const encodedMS = btoa(paper.marking_scheme_url);
-                                          handleViewPaper(encodedPDF, encodedMS, 'qp');
+                                          handleViewPaper(encodedPDF, encodedMS, 'qp', {
+                                            subject: subjectId,
+                                            unit: unit.id,
+                                            session: paper.session,
+                                            year: paper.year,
+                                            unitCode: paper.unit_code
+                                          });
                                         }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-primary text-white rounded-lg hover:opacity-90
@@ -790,7 +819,13 @@ export default function SubjectPage() {
                                         onClick={() => {
                                           const encodedPDF = btoa(paper.pdf_url);
                                           const encodedMS = btoa(paper.marking_scheme_url);
-                                          handleViewPaper(encodedPDF, encodedMS, 'ms');
+                                          handleViewPaper(encodedPDF, encodedMS, 'ms', {
+                                            subject: subjectId,
+                                            unit: unit.id,
+                                            session: paper.session,
+                                            year: paper.year,
+                                            unitCode: paper.unit_code
+                                          });
                                         }}
                                         className="flex items-center justify-center gap-2 p-3
                                           bg-secondary text-white rounded-lg hover:opacity-90

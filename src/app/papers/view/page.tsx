@@ -1,10 +1,27 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import PDFWrapper from "@/components/pdf/PDFWrapper";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Script from "next/script";
+import dynamic from "next/dynamic";
+
+// Lazy load DataBooklet component
+const DataBooklet = dynamic(
+  () => import("@/components/data-booklet/DataBooklet"),
+  { ssr: false, loading: () => null }
+);
+
+interface ViewData {
+  type: "qp" | "ms" | "split";
+  pdfUrl: string;
+  msUrl: string;
+  subject: string;
+  unit: string;
+  session: string;
+  year: number;
+  unitCode: string;
+}
 
 interface ViewerControlsProps {
   currentView: "qp" | "ms" | "split";
@@ -134,7 +151,6 @@ const FloatingExitButton = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-// Toast notification component for fullscreen mode
 const FullscreenToast = () => {
   const [visible, setVisible] = useState(true);
   
@@ -161,85 +177,155 @@ const FullscreenToast = () => {
 };
 
 export default function PDFViewerPage() {
-  const searchParams = useSearchParams();
   const isWideScreen = useMediaQuery("(min-width: 1024px)");
+  const fullscreenContainerRef = useRef<HTMLDivElement>(null);
+  const qpDownloadLinkRef = useRef<HTMLAnchorElement>(null);
+  const msDownloadLinkRef = useRef<HTMLAnchorElement>(null);
   
-  // Get URLs from params and decode
-  const pdfUrl = atob(searchParams.get("pdfUrl") || "");
-  const msUrl = atob(searchParams.get("msUrl") || "");
-  const initialView = (searchParams.get("type") || "qp") as "qp" | "ms" | "split";
+  // State management
+  const [viewData, setViewData] = useState<ViewData | null>(null);
+  const [currentView, setCurrentView] = useState<"qp" | "ms" | "split">("qp");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showFullscreenToast, setShowFullscreenToast] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Check if URLs are available (exclude "/nopaper" URLs)
+  // Parse data from hash - use useEffect to avoid hydration issues
+  useEffect(() => {
+    const parseHashData = (): ViewData | null => {
+      try {
+        const hash = window.location.hash.slice(1); // Remove the #
+        if (hash) {
+          const decoded = JSON.parse(atob(hash));
+          return decoded as ViewData;
+        }
+      } catch (error) {
+        console.error("Failed to parse view data from hash:", error);
+        
+        // Fallback to old method using URLSearchParams for backward compatibility
+        try {
+          const searchParams = new URLSearchParams(window.location.search);
+          const fallbackData: ViewData = {
+            type: (searchParams.get("type") as "qp" | "ms" | "split") || "qp",
+            pdfUrl: searchParams.get("pdfUrl") || "",
+            msUrl: searchParams.get("msUrl") || "",
+            subject: "unknown",
+            unit: "unknown", 
+            session: "unknown",
+            year: new Date().getFullYear(),
+            unitCode: "unknown"
+          };
+          return fallbackData;
+        } catch (fallbackError) {
+          console.error("Failed to parse fallback data:", fallbackError);
+        }
+      }
+      return null;
+    };
+    
+    const data = parseHashData();
+    if (data) {
+      setViewData(data);
+      setCurrentView(data.type || "qp");
+    }
+    setIsLoading(false);
+    
+    // Listen for hash changes (for navigation within the app)
+    const handleHashChange = () => {
+      const newData = parseHashData();
+      if (newData) {
+        setViewData(newData);
+        setCurrentView(newData.type || "qp");
+      }
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+  
+  // Derived values - these are computed from viewData, so they won't cause hook order issues
+  const pdfUrl = viewData ? atob(viewData.pdfUrl || "") : "";
+  const msUrl = viewData ? atob(viewData.msUrl || "") : "";
   const hasQP = Boolean(pdfUrl && pdfUrl.trim() && pdfUrl !== "/nopaper");
   const hasMSS = Boolean(msUrl && msUrl.trim() && msUrl !== "/nopaper");
   const canShowSplit = hasQP && hasMSS && isWideScreen;
   
-  // Create hidden download links
-  const qpDownloadLinkRef = useRef<HTMLAnchorElement>(null);
-  const msDownloadLinkRef = useRef<HTMLAnchorElement>(null);
-  const fullscreenContainerRef = useRef<HTMLDivElement>(null);
-  
-  // State for fullscreen mode
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  // State to show toast when entering fullscreen
-  const [showFullscreenToast, setShowFullscreenToast] = useState(false);
-  
-  // Determine valid initial view based on availability
-  const getValidInitialView = () => {
-    if (initialView === "split" && !canShowSplit) {
-      return hasQP ? "qp" : "ms";
-    }
-    if (initialView === "qp" && !hasQP) {
-      return "ms";
-    }
-    if (initialView === "ms" && !hasMSS) {
-      return "qp";
-    }
-    return initialView;
-  };
-  
-  // Don't allow split view on narrow screens or when files are missing
-  const [currentView, setCurrentView] = useState<"qp" | "ms" | "split">(
-    getValidInitialView()
-  );
-
-  // Switch to single view when screen becomes narrow or validate current view
+  // Validate and adjust current view based on available files
   useEffect(() => {
-    if (currentView === "split" && !canShowSplit) {
-      setCurrentView(hasQP ? "qp" : "ms");
-    } else if (currentView === "qp" && !hasQP) {
-      setCurrentView("ms");
-    } else if (currentView === "ms" && !hasMSS) {
-      setCurrentView("qp");
+    if (!viewData) return;
+    
+    // Determine valid view based on availability
+    const getValidView = (desiredView: "qp" | "ms" | "split"): "qp" | "ms" | "split" => {
+      if (desiredView === "split" && !canShowSplit) {
+        return hasQP ? "qp" : "ms";
+      }
+      if (desiredView === "qp" && !hasQP) {
+        return "ms";
+      }
+      if (desiredView === "ms" && !hasMSS) {
+        return "qp";
+      }
+      return desiredView;
+    };
+    
+    const validView = getValidView(currentView);
+    if (validView !== currentView) {
+      setCurrentView(validView);
     }
-  }, [isWideScreen, currentView, hasQP, hasMSS, canShowSplit]);
+  }, [currentView, hasQP, hasMSS, canShowSplit, viewData]);
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Ctrl+S (or Command+S on Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleDownload();
+      } else if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (isWideScreen) {
+          handleToggleFullscreen();
+        }
+      } else if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
 
-  // Download function that works across all browsers
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentView, isFullscreen, isWideScreen]);
+
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement === null) {
+        setIsFullscreen(false);
+        setShowFullscreenToast(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  // Download function
   const handleDownload = () => {
-    // Extract filename from URL
     const getFilenameFromUrl = (url: string): string => {
       try {
-        // Try to get the filename from the URL path
         const urlPath = new URL(url).pathname;
         const fileName = urlPath.split('/').pop();
         
-        // If we got a valid filename, return it, otherwise use a fallback
         if (fileName && fileName.endsWith('.pdf')) {
           return decodeURIComponent(fileName);
         }
-        // Fallback if filename can't be extracted
         return urlPath.includes('ms') ? "marking_scheme.pdf" : "question_paper.pdf";
       } catch (e) {
-        // Fallback if URL parsing fails
         return url.includes('ms') ? "marking_scheme.pdf" : "question_paper.pdf";
       }
     };
 
-    // Create temporary blob URLs to force download instead of navigation
     const downloadFile = (url: string) => {
       const filename = getFilenameFromUrl(url);
       
-      // Fetch the file and create a blob URL
       fetch(url)
         .then(response => response.blob())
         .then(blob => {
@@ -250,7 +336,6 @@ export default function PDFViewerPage() {
           document.body.appendChild(tempLink);
           tempLink.click();
           
-          // Clean up
           setTimeout(() => {
             document.body.removeChild(tempLink);
             window.URL.revokeObjectURL(blobUrl);
@@ -266,7 +351,6 @@ export default function PDFViewerPage() {
     }
     
     if (currentView === "ms" || currentView === "split") {
-      // Add slight delay when downloading both to prevent browser blocking
       if (currentView === "split") {
         setTimeout(() => {
           downloadFile(msUrl);
@@ -277,46 +361,7 @@ export default function PDFViewerPage() {
     }
   };
 
-  // Handle keyboard shortcuts for downloading
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Check for Ctrl+S (or Command+S on Mac)
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault(); // Prevent browser's save dialog
-        handleDownload();
-      } else if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
-        // Add fullscreen shortcut (Ctrl+F or Command+F)
-        e.preventDefault();
-        if (isWideScreen) {
-          handleToggleFullscreen();
-        }
-      } else if (e.key === 'Escape' && isFullscreen) {
-        // Exit fullscreen with Escape key
-        setIsFullscreen(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [currentView, isFullscreen, isWideScreen]);
-
-  // Listen for fullscreenchange event
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement === null) {
-        setIsFullscreen(false);
-        setShowFullscreenToast(false);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
-
+  // Fullscreen toggle
   const handleToggleFullscreen = async () => {
     if (!fullscreenContainerRef.current) return;
 
@@ -339,6 +384,41 @@ export default function PDFViewerPage() {
     }
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-text-muted">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - no data found
+  if (!viewData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center max-w-md mx-auto px-4">
+          <svg className="w-16 h-16 text-text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <h2 className="text-xl font-semibold text-text mb-2">No Paper Data Found</h2>
+          <p className="text-text-muted mb-4">
+            The paper data could not be loaded. This might happen if you accessed this page directly or if the link is invalid.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Script 
@@ -354,7 +434,7 @@ export default function PDFViewerPage() {
         strategy="beforeInteractive"
       />
       
-      {/* Hidden download links to ensure cross-browser compatibility */}
+      {/* Hidden download links */}
       <a 
         ref={qpDownloadLinkRef}
         href={pdfUrl}
@@ -371,6 +451,11 @@ export default function PDFViewerPage() {
         aria-hidden="true"
         data-testid="ms-download-link"
       />
+      
+      {/* Data Booklet/Formula Book - Only for chemistry and mathematics */}
+      {viewData && (viewData.subject === 'chemistry' || viewData.subject === 'mathematics') && (
+        <DataBooklet subject={viewData.subject} />
+      )}
       
       <ViewerControls
         currentView={currentView}
@@ -390,7 +475,7 @@ export default function PDFViewerPage() {
         className={`w-full mx-auto px-2 
           ${currentView === "split" ? "lg:grid lg:grid-cols-2 lg:gap-2" : "max-w-[95%]"}
           ${isFullscreen ? "fullscreen-container" : ""} 
-          pt-[68px] md:pt-[78px]`
+          pt-[108px] md:pt-[118px]`
         }
       >
         {/* Question Paper container */}
@@ -450,17 +535,14 @@ export default function PDFViewerPage() {
           padding-top: 0 !important;
         }
         
-        /* Make sure the floating exit button has higher z-index and stands out */
         button[aria-label="Exit fullscreen"] {
           z-index: 99999;
         }
         
-        /* Hide controls in fullscreen mode */
         .fullscreen-container:fullscreen .fixed {
           display: none;
         }
         
-        /* PDF viewer styling for fullscreen */
         .fullscreen-container .bg-surface {
           height: 98vh;
           overflow: auto;
@@ -469,18 +551,15 @@ export default function PDFViewerPage() {
           justify-content: center;
         }
         
-        /* In split view, both containers take 50% width */
         .fullscreen-container .bg-surface {
           width: ${currentView === "split" ? "50%" : "100%"} !important;
           flex: ${currentView === "split" ? "1" : "none"};
         }
         
-        /* Hide the non-active PDF in fullscreen single view mode */
         .fullscreen-container .bg-surface[style*="display: none"] {
           display: none !important;
         }
         
-        /* In fullscreen single view, hide the container that should not be visible */
         ${currentView === "qp" && isFullscreen ? `
           .fullscreen-container .bg-surface:nth-child(2) {
             display: none !important;
@@ -493,13 +572,11 @@ export default function PDFViewerPage() {
           }
         ` : ""}
         
-        /* Adjust max width of PDF in fullscreen mode */
         .fullscreen-container .mx-auto {
           max-width: 100%;
           height: 100%;
         }
         
-        /* Toast notification styling */
         .fullscreen-toast {
           position: fixed;
           bottom: 20px;
