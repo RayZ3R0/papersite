@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     title: 'PaperNexus - A-Level Past Papers & Study Resources',
     description: 'Access A-Level past papers, mark schemes, notes, and study materials. Free comprehensive resources for all subjects.',
     images: [{
-      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Past Papers & Study Resources')}`,
+      url: `https://i.imgur.com/yPdLNHw.png`,
       width: 1200,
       height: 630,
       alt: 'PaperNexus - Your A-Level Study Companion'
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     title: 'PaperNexus - A-Level Study Resources',
     description: 'Access A-Level past papers and study materials',
     images: [{
-      url: `https://papernexus.xyz/api/og?title=${encodeURIComponent('A-Level Past Papers & Study Resources')}`,
+      url: `https://i.imgur.com/yPdLNHw.png`,
       width: 1200,
       height: 630,
       alt: 'PaperNexus - Your A-Level Study Companion'
