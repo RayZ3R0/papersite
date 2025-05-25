@@ -84,20 +84,23 @@ const getRawSession = (formattedSession: string): {session: string, year: string
 
 const FILTERS_VISIBLE_KEY = "papernexus:filters-visible";
 
-// Safe URL generator to prevent null/undefined href values
-const safeGetPaperUrl = (paper: Paper, subject: string): string => {
-  if (!paper || !subject) {
-    return "#"; // Fallback URL if we're missing data
-  }
+// Helper function to create view URL with hash data (matching subject page format)
+const createViewUrl = (paper: Paper, type: 'qp' | 'ms', subject: { id: string; name: string }, unit: { id: string; name: string }) => {
+  const viewData = {
+    type,
+    pdfUrl: btoa(paper.pdf_url),
+    msUrl: btoa(paper.marking_scheme_url),
+    subject: subject.id,
+    unit: unit.id,
+    session: paper.session,
+    year: paper.year,
+    unitCode: paper.unit_code || 'unknown'
+  };
   
-  // Make sure we have a valid subject string (lowercase for URL paths)
-  const safeSubject = subject.toLowerCase();
+  // Encode the entire data object and put it in the hash
+  const hashData = btoa(JSON.stringify(viewData));
   
-  // Some papers might not have unitId, so provide fallbacks
-  const unitPath = paper.unit_id || "unknown-unit";
-  const paperId = paper.id || "unknown-paper";
-  
-  return `/papers/${safeSubject}/${unitPath}/${paperId}`;
+  return `/papers/view#${hashData}`;
 };
 
 export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
@@ -581,9 +584,6 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
           <div className="divide-y divide-border" role="list">
             {/* Results */}
             {results.map((result: SearchResult, index) => {
-              // Create safe URL using our helper function
-              const paperUrl = safeGetPaperUrl(result.paper, result.subject.id);
-              
               return (
                 <div
                   key={`${result.paper.id}-${index}`}
@@ -627,7 +627,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                     {/* Question Paper Button */}
                     {result.paper.pdf_url !== "/nopaper" ? (
                       <Link
-                        href={`/papers/view?type=qp&pdfUrl=${btoa(result.paper.pdf_url)}&msUrl=${btoa(result.paper.marking_scheme_url)}`}
+                        href={createViewUrl(result.paper, 'qp', result.subject, result.unit)}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View paper for ${result.subject.name} ${result.unit.name}`}
@@ -683,7 +683,7 @@ export default function PaperSearch({ initialQuery = "" }: PaperSearchProps) {
                     {/* Marking Scheme Button */}
                     {result.paper.marking_scheme_url !== "/nopaper" ? (
                       <Link
-                        href={`/papers/view?type=ms&pdfUrl=${btoa(result.paper.pdf_url)}&msUrl=${btoa(result.paper.marking_scheme_url)}`}
+                        href={createViewUrl(result.paper, 'ms', result.subject, result.unit)}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View marking scheme for ${result.subject.name} ${result.unit.name}`}
