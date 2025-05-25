@@ -144,6 +144,14 @@ export default function MainNav() {
                 >
                   UMS Grade Predictor
                 </QueryPreservingLink>
+                <QueryPreservingLink
+                  href="/tools/study-helper"
+                  className="block px-4 py-2 text-sm text-text hover:bg-surface-hover"
+                  role="menuitem"
+                  onClick={() => setShowToolsMenu(false)}
+                >
+                  Study Helper
+                </QueryPreservingLink>
               </div>
             )}
           </div>
