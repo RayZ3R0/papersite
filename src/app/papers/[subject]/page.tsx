@@ -18,6 +18,50 @@ const globalCache = {
   papersByUnit: {} as Record<string, Record<string, Paper[]>>,
 };
 
+// State management for sessionStorage
+const getStorageKey = (subjectId: string) => `papers_state_${subjectId}`;
+const getScrollKey = (subjectId: string) => `papers_scroll_${subjectId}`;
+
+const saveStateToSession = (subjectId: string, state: {
+  selectedUnit: string | null;
+  selectedSession: string | null;
+  selectedYears: number[];
+  expandedUnits: string[];
+}) => {
+  try {
+    sessionStorage.setItem(getStorageKey(subjectId), JSON.stringify(state));
+  } catch (error) {
+    console.warn('Failed to save state to sessionStorage:', error);
+  }
+};
+
+const loadStateFromSession = (subjectId: string) => {
+  try {
+    const stored = sessionStorage.getItem(getStorageKey(subjectId));
+    if (stored) {
+      const state = JSON.parse(stored);
+      return {
+        selectedUnit: state.selectedUnit || null,
+        selectedSession: state.selectedSession || null,
+        selectedYears: new Set(state.selectedYears || []),
+        expandedUnits: new Set(state.expandedUnits || []),
+      };
+    }
+  } catch (error) {
+    console.warn('Failed to load state from sessionStorage:', error);
+  }
+  return null;
+};
+
+const clearStateFromSession = (subjectId: string) => {
+  try {
+    sessionStorage.removeItem(getStorageKey(subjectId));
+    sessionStorage.removeItem(getScrollKey(subjectId));
+  } catch (error) {
+    console.warn('Failed to clear state from sessionStorage:', error);
+  }
+};
+
 export default function SubjectPage() {
   const params = useParams();
   const router = useRouter();
@@ -26,22 +70,35 @@ export default function SubjectPage() {
   
   // Track if component is mounted and other refs
   const isMounted = useRef(false);
-  const returnFromPaperView = useRef(false);
   const shouldSelectLatestYear = useRef(consumeLatestPapersState());
+  const initialStateLoaded = useRef(false);
   
-  // Initialize state from URL params
-  const [selectedUnit, setSelectedUnit] = useState<string | null>(
-    searchParams.get('unit')
-  );
-  const [selectedSession, setSelectedSession] = useState<string | null>(
-    searchParams.get('session')
-  );
-  const [selectedYears, setSelectedYears] = useState<Set<number>>(
-    new Set(searchParams.get('years')?.split(',').map(Number).filter(Boolean) || [])
-  );
-  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(
-    new Set(searchParams.get('expanded')?.split(',').filter(Boolean) || [])
-  );
+  // Check if we're returning from paper view
+  const isReturningFromPaperView = useRef(false);
+  
+  // Initialize state - either from sessionStorage or URL params (for direct links)
+  const initializeState = () => {
+    // First check sessionStorage
+    const sessionState = loadStateFromSession(subjectId);
+    if (sessionState) {
+      return sessionState;
+    }
+    
+    // Fallback to URL params for direct links
+    return {
+      selectedUnit: searchParams.get('unit'),
+      selectedSession: searchParams.get('session'),
+      selectedYears: new Set(searchParams.get('years')?.split(',').map(Number).filter(Boolean) || []),
+      expandedUnits: new Set(searchParams.get('expanded')?.split(',').filter(Boolean) || []),
+    };
+  };
+
+  const initialState = initializeState();
+  
+  const [selectedUnit, setSelectedUnit] = useState<string | null>(initialState.selectedUnit);
+  const [selectedSession, setSelectedSession] = useState<string | null>(initialState.selectedSession);
+  const [selectedYears, setSelectedYears] = useState<Set<number>>(initialState.selectedYears);
+  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(initialState.expandedUnits);
 
   // Application state
   const [units, setUnits] = useState<Unit[]>(globalCache.units[subjectId] || []);
@@ -54,42 +111,50 @@ export default function SubjectPage() {
   const [loading, setLoading] = useState(!globalCache.units[subjectId]);
   const [error, setError] = useState<string | null>(null);
 
-  // Simplified URL update - no scroll position
-  const updateUrl = useCallback(() => {
-    const params = new URLSearchParams();
-    if (selectedUnit) params.set('unit', selectedUnit);
-    if (selectedYears.size > 0) params.set('years', Array.from(selectedYears).join(','));
-    if (selectedSession) params.set('session', selectedSession);
-    if (expandedUnits.size > 0) params.set('expanded', Array.from(expandedUnits).join(','));
+  // Clean URL - remove query parameters since we're using sessionStorage
+  const cleanUrl = useCallback(() => {
+    router.replace(`/papers/${subjectId}`, { scroll: false });
+  }, [router, subjectId]);
+
+  // Save state to sessionStorage whenever it changes
+  useEffect(() => {
+    if (!isMounted.current || !initialStateLoaded.current) return;
     
-    router.replace(`/papers/${subjectId}?${params.toString()}`, {
-      scroll: false
-    });
-  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, router, subjectId]);
+    const state = {
+      selectedUnit,
+      selectedSession,
+      selectedYears: Array.from(selectedYears),
+      expandedUnits: Array.from(expandedUnits),
+    };
+    
+    saveStateToSession(subjectId, state);
+  }, [selectedUnit, selectedSession, selectedYears, expandedUnits, subjectId]);
 
   // Save scroll position when navigating to view page
   const handleViewPaper = useCallback((encodedPDF: string, encodedMS: string, type: string) => {
-    // Save scroll position and filter state to sessionStorage
+    // Save scroll position to sessionStorage
     const scrollPosition = window.scrollY;
-    const storageKey = `papers_scroll_${subjectId}`;
-    sessionStorage.setItem(storageKey, scrollPosition.toString());
+    try {
+      sessionStorage.setItem(getScrollKey(subjectId), scrollPosition.toString());
+    } catch (error) {
+      console.warn('Failed to save scroll position:', error);
+    }
     
     // Navigate to paper view
     router.push(`/papers/view?type=${type}&pdfUrl=${encodedPDF}&msUrl=${encodedMS}`);
   }, [router, subjectId]);
 
-  // Check if we're returning from paper view page and restore scroll
+  // Check if we're returning from paper view page and restore scroll + state
   useEffect(() => {
     isMounted.current = true;
     
     // Check if we're returning from paper view
     const referrer = document.referrer;
-    const isReturningFromPaperView = referrer.includes('/papers/view');
+    isReturningFromPaperView.current = referrer.includes('/papers/view');
     
-    if (isReturningFromPaperView) {
-      const storageKey = `papers_scroll_${subjectId}`;
-      const savedPosition = sessionStorage.getItem(storageKey);
-      
+    if (isReturningFromPaperView.current) {
+      // Restore scroll position
+      const savedPosition = sessionStorage.getItem(getScrollKey(subjectId));
       if (savedPosition) {
         // Use a small timeout to ensure content has rendered
         setTimeout(() => {
@@ -99,20 +164,30 @@ export default function SubjectPage() {
           });
         }, 100);
       }
+    } else {
+      // If not returning from paper view, clean URL on first load
+      if (searchParams.toString()) {
+        cleanUrl();
+      }
     }
+    
+    initialStateLoaded.current = true;
     
     return () => {
       isMounted.current = false;
     };
-  }, [subjectId]);
+  }, [subjectId, searchParams, cleanUrl]);
 
-  // Update URL when important state changes (debounced)
+  // Cleanup sessionStorage when leaving the page or changing subjects
   useEffect(() => {
-    if (!isMounted.current) return;
-    
-    const timeoutId = setTimeout(updateUrl, 300);
-    return () => clearTimeout(timeoutId);
-  }, [selectedUnit, selectedYears, selectedSession, expandedUnits, updateUrl]);
+    return () => {
+      // Only clear if we're navigating away from this subject entirely
+      // (not just going to view a paper)
+      if (!window.location.pathname.includes('/papers/view')) {
+        clearStateFromSession(subjectId);
+      }
+    };
+  }, [subjectId]);
 
   // Load units and their summaries from API or cache
   useEffect(() => {
@@ -150,8 +225,8 @@ export default function SubjectPage() {
         // Cache summaries
         globalCache.unitSummaries[subjectId] = summaryMap;
 
-        // Set the most recent year if needed
-        if (shouldSelectLatestYear.current && !selectedYears.size) {
+        // Set the most recent year if needed (only if no saved state and no URL params)
+        if (shouldSelectLatestYear.current && !selectedYears.size && !searchParams.get('years')) {
           const allYears = Array.from(
             Object.values(summaryMap).reduce((acc, summary) => {
               summary.years_with_sessions.forEach((year) => acc.add(year.year));
@@ -195,7 +270,7 @@ export default function SubjectPage() {
     }
     
     loadUnits();
-  }, [subjectId, selectedUnit, expandedUnits]);
+  }, [subjectId, selectedUnit, expandedUnits, selectedYears, searchParams]);
 
   // Load papers when a unit is selected or expanded
   useEffect(() => {
@@ -330,6 +405,7 @@ export default function SubjectPage() {
 
   return (
     <>
+      {/* ...existing JSX code remains the same... */}
       <Script
         id="subject-schema"
         type="application/ld+json"

@@ -1,4 +1,3 @@
-// Fix for src/app/layout.tsx
 import "@/app/globals.css";
 import MainNav from "@/components/layout/MainNav";
 import MobileNav from "@/components/layout/MobileNav";
@@ -172,6 +171,7 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <div className="min-h-screen bg-background text-text">
+                {/* NyanCat runs independently and persists across page navigation */}
                 <NyanCatEasterEgg />
                 <DomainNotification />
                 <MainNav />
@@ -194,6 +194,7 @@ export default function RootLayout({
                 <Suspense fallback={null}>
                   <QuickOptions />
                 </Suspense>
+                {/* MusicPlayer also persists across navigation and doesn't stop when switching pages */}
                 <Suspense fallback={null}>
                   <MusicPlayer />
                 </Suspense>

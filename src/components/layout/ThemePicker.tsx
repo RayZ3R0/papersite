@@ -2,7 +2,6 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { useTheme, themeNames, Theme } from "@/hooks/useTheme";
-import { useRouter, usePathname } from "next/navigation";
 
 // Get theme-specific colors without CSS variables
 const themePreviewColors: Record<Theme, string[]> = {
@@ -31,6 +30,9 @@ const themePreviewColors: Record<Theme, string[]> = {
 const RECENT_THEMES_KEY = 'recent-themes';
 const MAX_RECENT_THEMES = 5;
 
+// SessionStorage key for NyanCat state
+const NYAN_CAT_KEY = 'nyan-cat-enabled';
+
 // Group themes by category for better organization
 const themeCategories: Record<string, Theme[]> = {
   "Catppuccin": ["catppuccin-latte", "catppuccin-frappe", "catppuccin-macchiato", "catppuccin-mocha"],
@@ -38,16 +40,37 @@ const themeCategories: Record<string, Theme[]> = {
   "Dark": ["dark", "one-dark", "tokyo-night", "gruvbox", "dracula", "nord", "solarized-dark", "rose-pine", "everforest", "kanagawa", "crimson", "cotton-candy-dreams"]
 };
 
+// NyanCat state management functions
+const getNyanCatState = (): boolean => {
+  try {
+    const stored = sessionStorage.getItem(NYAN_CAT_KEY);
+    return stored === 'true';
+  } catch (error) {
+    console.warn('Failed to get NyanCat state from sessionStorage:', error);
+    return false;
+  }
+};
+
+const setNyanCatState = (enabled: boolean): void => {
+  try {
+    sessionStorage.setItem(NYAN_CAT_KEY, enabled.toString());
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('nyanCatStateChange', { 
+      detail: { enabled } 
+    }));
+  } catch (error) {
+    console.warn('Failed to save NyanCat state to sessionStorage:', error);
+  }
+};
+
 export default function ThemePicker() {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [recentThemes, setRecentThemes] = useState<Theme[]>([]);
+  const [isNyanCatActive, setIsNyanCatActive] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [isNyanCatActive, setIsNyanCatActive] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
 
   // Load recent themes from localStorage
   useEffect(() => {
@@ -70,6 +93,11 @@ export default function ThemePicker() {
       // Initialize with current theme
       setRecentThemes([theme]);
     }
+  }, []);
+
+  // Load NyanCat state from sessionStorage on mount
+  useEffect(() => {
+    setIsNyanCatActive(getNyanCatState());
   }, []);
 
   // Update recent themes when theme changes
@@ -127,34 +155,14 @@ export default function ThemePicker() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
-  // Check if NyanCat is active on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      setIsNyanCatActive(params.get('cat') === 'true');
-    }
-  }, []);
-
   // Toggle the NyanCat Easter egg
   const toggleNyanCat = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Get current query params
-    const searchParams = new URLSearchParams(window.location.search);
-    
-    // Toggle the cat parameter
-    if (searchParams.get('cat') === 'true') {
-      searchParams.delete('cat');
-      setIsNyanCatActive(false);
-    } else {
-      searchParams.set('cat', 'true');
-      setIsNyanCatActive(true);
-    }
-    
-    // Update URL without refreshing the page
-    const newUrl = `${pathname}?${searchParams.toString()}`;
-    router.push(newUrl, { scroll: false });
+    const newState = !isNyanCatActive;
+    setIsNyanCatActive(newState);
+    setNyanCatState(newState);
   };
 
   // Filter themes based on search query
