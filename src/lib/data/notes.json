@@ -20,7 +20,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/uFGZhX3HVq_Proof_by_Exhaustion_worksheet",
                   "previewImage": "/previews/p2.png",
-                  "tags": ["mathematics", "calculus", "p2", "pure 2"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p2",
+                    "pure 2"
+                  ]
                 },
                 {
                   "id": "p2-proof-comp",
@@ -28,7 +33,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/NpCsQfJsEd_PURE_2_-_FULL_PROOF_QUESTIONS",
                   "previewImage": "/previews/p2proof.png",
-                  "tags": ["mathematics", "calculus", "p2", "pure 2"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p2",
+                    "pure 2"
+                  ]
                 }
               ]
             }
@@ -65,7 +75,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://drive.google.com/file/d/1q4vzNEoKu4mZQucQnD8jflpfS3Xd5Y70/view",
                   "previewImage": "/previews/p3notes.png",
-                  "tags": ["mathematics", "calculus", "p3", "pure 3"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p3",
+                    "pure 3"
+                  ]
                 }
               ]
             }
@@ -81,7 +96,12 @@
             "type": "pdf",
             "downloadUrl": "https://drive.google.com/file/d/1aHwhBZcrm4srvyDh7yNMFkbJjeQ7By5a/view",
             "previewImage": "/previews/p4.png",
-            "tags": ["mathematics", "calculus", "p4", "pure 4"]
+            "tags": [
+              "mathematics",
+              "calculus",
+              "p4",
+              "pure 4"
+            ]
           },
           "topics": [
             {
@@ -94,7 +114,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/MvLewj6FJn_PURE_4_-_FULL_PROOF_QUESTIONS_UPDATED",
                   "previewImage": "/previews/p4proof.png",
-                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p4",
+                    "pure 4"
+                  ]
                 }
               ]
             },
@@ -108,7 +133,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/u7mdPRcURc_PURE_4_-_TRICKY_VECTORS_QUESTIONS",
                   "previewImage": "/previews/p4vec.png",
-                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p4",
+                    "pure 4"
+                  ]
                 }
               ]
             },
@@ -122,7 +152,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/nbX7Y2XZBY_PURE_4_-_TRICKY_INTEGRATION_QUESTIONS__MS",
                   "previewImage": "/previews/p4int.png",
-                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p4",
+                    "pure 4"
+                  ]
                 }
               ]
             },
@@ -136,7 +171,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/LFubfeKWwy_PURE_4_-_TRICKY_DIFFERENTIAL_EQUATION_QUESTIONS",
                   "previewImage": "/previews/p4diff.png",
-                  "tags": ["mathematics", "calculus", "p4", "pure 4"]
+                  "tags": [
+                    "mathematics",
+                    "calculus",
+                    "p4",
+                    "pure 4"
+                  ]
                 }
               ]
             }
@@ -195,7 +235,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://drive.google.com/file/d/1tzto-S9tr3QdmliPv9t-F6SyFIVLPNVK/view",
                   "previewImage": "/previews/m1.png",
-                  "tags": ["mathematics", "mechanics", "m1", "mechanics 1"]
+                  "tags": [
+                    "mathematics",
+                    "mechanics",
+                    "m1",
+                    "mechanics 1"
+                  ]
                 }
               ]
             }
@@ -218,7 +263,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/2HTsudFXru_Chemistry_Edexcel_IAS_Unit_1_Notes_new",
             "previewImage": "/previews/chemu1.png",
-            "tags": ["chemistry", "unit 1", "complete notes"]
+            "tags": [
+              "chemistry",
+              "unit 1",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -257,7 +306,10 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/ThmUYZJBrT_Energetics_Unit_2",
                   "previewImage": "/previews/energ.png",
-                  "tags": ["chemistry", "unit 2"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2"
+                  ]
                 },
                 {
                   "id": "energetics2",
@@ -265,7 +317,10 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/kapnL7fZuE_TOPIC_6_-_HESS",
                   "previewImage": "/previews/hess.png",
-                  "tags": ["chemistry", "unit 2"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2"
+                  ]
                 }
               ]
             },
@@ -279,7 +334,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/rWxK5cHs9r_Oxidation_and_redox_reactions!!",
                   "previewImage": "/previews/redoxo.png",
-                  "tags": ["chemistry", "unit 2", "reduction", "oxidation"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2",
+                    "reduction",
+                    "oxidation"
+                  ]
                 }
               ]
             },
@@ -293,7 +353,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/mger5QFhTL_TOPIC_8-_GROUP_7",
                   "previewImage": "/previews/g7.png",
-                  "tags": ["chemistry", "unit 2", "kinetics"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2",
+                    "kinetics"
+                  ]
                 }
               ]
             },
@@ -307,7 +371,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/ynR5JZPHaZ_Topic_8-_Redox__Group_1_and_2",
                   "previewImage": "/previews/g12.png",
-                  "tags": ["chemistry", "unit 2", "equilibria"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2",
+                    "equilibria"
+                  ]
                 }
               ]
             },
@@ -321,7 +389,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/yjvJjhG8KY_TOPIC_9-_KINETICS_AND_EQUILIBRIA",
                   "previewImage": "/previews/kinet.png",
-                  "tags": ["chemistry", "unit 2", "kinetics"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2",
+                    "kinetics"
+                  ]
                 }
               ]
             },
@@ -335,7 +407,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/ammMJuTnFu_Topic_10-_Organic_Chemistry__Halogenoalkanes__Alcohols_and_Spectra",
                   "previewImage": "/previews/u2org.png",
-                  "tags": ["chemistry", "unit 2", "organic"]
+                  "tags": [
+                    "chemistry",
+                    "unit 2",
+                    "organic"
+                  ]
                 }
               ]
             }
@@ -357,7 +433,10 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/xHMAqvuf39_Chemistry_Unit_3_By_Alex_Rider",
                   "previewImage": "/previews/alex.png",
-                  "tags": ["chemistry", "unit 3"]
+                  "tags": [
+                    "chemistry",
+                    "unit 3"
+                  ]
                 },
                 {
                   "id": "osama-bin-laden",
@@ -365,7 +444,10 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/hHL33mGnAZ_Unit_3_by_Osama_Orabi",
                   "previewImage": "/previews/osama.png",
-                  "tags": ["chemistry", "unit 3"]
+                  "tags": [
+                    "chemistry",
+                    "unit 3"
+                  ]
                 }
               ]
             }
@@ -406,7 +488,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Organic Chemistry.pdf",
                   "previewImage": "/previews/organic.png",
-                  "tags": ["chemistry", "organic", "unit 4"]
+                  "tags": [
+                    "chemistry",
+                    "organic",
+                    "unit 4"
+                  ]
                 }
               ]
             },
@@ -420,7 +506,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Acid Base Equilibrium.pdf",
                   "previewImage": "/previews/acid-base.png",
-                  "tags": ["chemistry", "acid-base", "unit 4"]
+                  "tags": [
+                    "chemistry",
+                    "acid-base",
+                    "unit 4"
+                  ]
                 }
               ]
             },
@@ -434,7 +524,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Unit 4 - Chemical Equilibrium.pdf",
                   "previewImage": "/previews/equilibria.png",
-                  "tags": ["chemistry", "equilibria", "unit 4"]
+                  "tags": [
+                    "chemistry",
+                    "equilibria",
+                    "unit 4"
+                  ]
                 }
               ]
             },
@@ -448,7 +542,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/NMR Spectroscopy.pdf",
                   "previewImage": "/previews/nmr.png",
-                  "tags": ["chemistry", "nmr", "unit 4"]
+                  "tags": [
+                    "chemistry",
+                    "nmr",
+                    "unit 4"
+                  ]
                 }
               ]
             },
@@ -462,7 +560,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit4/Energetics and Entropy.pdf",
                   "previewImage": "/previews/entropy.png",
-                  "tags": ["chemistry", "energetics", "entropy", "unit 4"]
+                  "tags": [
+                    "chemistry",
+                    "energetics",
+                    "entropy",
+                    "unit 4"
+                  ]
                 }
               ]
             }
@@ -484,7 +587,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Topic%2017%20Transition%20Metals.pdf",
                   "previewImage": "/previews/transition-metals.png",
-                  "tags": ["chemistry", "transition metals", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "transition metals",
+                    "unit 5"
+                  ]
                 },
                 {
                   "id": "transition-metals-mindmap",
@@ -492,7 +599,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/ligands.pdf",
                   "previewImage": "/previews/colors.png",
-                  "tags": ["chemistry", "transition metals", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "transition metals",
+                    "unit 5"
+                  ]
                 }
               ]
             },
@@ -506,7 +617,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Fuel_Cells.pdf",
                   "previewImage": "/previews/fuel-cells.png",
-                  "tags": ["chemistry", "fuel cells", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "fuel cells",
+                    "unit 5"
+                  ]
                 }
               ]
             },
@@ -520,7 +635,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Redox Equilibria.pdf",
                   "previewImage": "/previews/redox-reactions.png",
-                  "tags": ["chemistry", "redox equilibria", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "redox equilibria",
+                    "unit 5"
+                  ]
                 }
               ]
             },
@@ -534,7 +653,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Organic Synthesis.pdf",
                   "previewImage": "/previews/organic-synthesis.png",
-                  "tags": ["chemistry", "electrolysis", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "electrolysis",
+                    "unit 5"
+                  ]
                 },
                 {
                   "id": "organic-synthesis-aliphatic-flow",
@@ -542,7 +665,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/xmpNpLExJX_aliphaticflow",
                   "previewImage": "/previews/aroma.png",
-                  "tags": ["chemistry", "organic synthesis", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "organic synthesis",
+                    "unit 5"
+                  ]
                 },
                 {
                   "id": "organic-synthesis-aromatic-flow",
@@ -550,7 +677,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/qVSnK4QdQS_aromaticflow",
                   "previewImage": "/previews/alipha.png",
-                  "tags": ["chemistry", "organic synthesis", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "organic synthesis",
+                    "unit 5"
+                  ]
                 }
               ]
             },
@@ -564,7 +695,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/chemistry/unit5/Unit 5 - Organic Chemistry.pdf",
                   "previewImage": "/previews/organic-chemistry.png",
-                  "tags": ["chemistry", "organic chemistry", "unit 5"]
+                  "tags": [
+                    "chemistry",
+                    "organic chemistry",
+                    "unit 5"
+                  ]
                 }
               ]
             }
@@ -580,7 +715,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/cqhxw4s9pY_Chemistry_Unit_6_Notes",
             "previewImage": "/previews/chemu6.png",
-            "tags": ["chemistry", "unit 6", "complete notes"]
+            "tags": [
+              "chemistry",
+              "unit 6",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -593,7 +732,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/SYfdgg2YEq_practical-guide-international-edexcel",
                   "previewImage": "/previews/chemu6core.png",
-                  "tags": ["chemistry", "unit 6", "core practical"]
+                  "tags": [
+                    "chemistry",
+                    "unit 6",
+                    "core practical"
+                  ]
                 }
               ]
             }
@@ -616,7 +759,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/vKABbcPXcB_Accounting_Notes_1",
             "previewImage": "/previews/accu1.png",
-            "tags": ["accounting", "unit 1", "complete notes"]
+            "tags": [
+              "accounting",
+              "unit 1",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -629,7 +776,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/rq5Bw49tpJ_Accounting_AS",
                   "previewImage": "/previews/accu1form.png",
-                  "tags": ["accounting", "unit 1", "formulae"]
+                  "tags": [
+                    "accounting",
+                    "unit 1",
+                    "formulae"
+                  ]
                 }
               ]
             }
@@ -645,7 +796,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/dtKDmb5WZd_A2",
             "previewImage": "/previews/accu2.png",
-            "tags": ["accounting", "unit 2", "complete notes"]
+            "tags": [
+              "accounting",
+              "unit 2",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -658,7 +813,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/apghy6yNeq_Accounting_formulae",
                   "previewImage": "/previews/accu2form.png",
-                  "tags": ["accounting", "unit 2", "formulae"]
+                  "tags": [
+                    "accounting",
+                    "unit 2",
+                    "formulae"
+                  ]
                 }
               ]
             }
@@ -681,7 +840,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/MSHt8apG3p_Physics-Unit-1_Revision_Notes",
             "previewImage": "/previews/phyu1.png",
-            "tags": ["physics", "unit 1", "complete notes"]
+            "tags": [
+              "physics",
+              "unit 1",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -694,7 +857,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/UQmaK5nvNm_Directions__Man!",
                   "previewImage": "/previews/doublemotion.png",
-                  "tags": ["physics", "unit 1", "motion"]
+                  "tags": [
+                    "physics",
+                    "unit 1",
+                    "motion"
+                  ]
                 }
               ]
             },
@@ -708,7 +875,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/QJxM8jHTbq_PHYSICS_UNIT_1",
                   "previewImage": "/previews/phyu1faq.png",
-                  "tags": ["physics", "unit 1", "faq"]
+                  "tags": [
+                    "physics",
+                    "unit 1",
+                    "faq"
+                  ]
                 }
               ]
             }
@@ -724,7 +895,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/2HTsudFXru_Chemistry_Edexcel_IAS_Unit_2_Notes_new",
             "previewImage": "/previews/phyu2.png",
-            "tags": ["physics", "unit 2", "complete notes"]
+            "tags": [
+              "physics",
+              "unit 2",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -737,7 +912,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/pR7Jv84HPr_Waves_notes_Aravinth",
                   "previewImage": "/previews/phywaves.png",
-                  "tags": ["physics", "unit 2", "waves"]
+                  "tags": [
+                    "physics",
+                    "unit 2",
+                    "waves"
+                  ]
                 },
                 {
                   "id": "u2-waves-2",
@@ -745,7 +924,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/kgcMtVNEvD_Wave_Particle_Duality_Edexcel_IAL_PHYSICS",
                   "previewImage": "/previews/waveparticle.png",
-                  "tags": ["physics", "unit 2", "waves", "particle duality"]
+                  "tags": [
+                    "physics",
+                    "unit 2",
+                    "waves",
+                    "particle duality"
+                  ]
                 }
               ]
             },
@@ -759,7 +943,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/rKenF5FpWm_PHYSCIS_UNIT_2",
                   "previewImage": "/previews/phyu2faq.png",
-                  "tags": ["physics", "unit 2", "faq"]
+                  "tags": [
+                    "physics",
+                    "unit 2",
+                    "faq"
+                  ]
                 }
               ]
             }
@@ -775,7 +963,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/TnTn2Jynjm_IAL_Physics_Unit_3_note-2",
             "previewImage": "/previews/phyu3.png",
-            "tags": ["physics", "unit 3", "complete notes"]
+            "tags": [
+              "physics",
+              "unit 3",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -788,7 +980,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/2Edb8hVpTQ_Physics_Unit_3_FAQ",
                   "previewImage": "/previews/phyu3faq.png",
-                  "tags": ["physics", "unit 3", "faq"]
+                  "tags": [
+                    "physics",
+                    "unit 3",
+                    "faq"
+                  ]
                 }
               ]
             }
@@ -804,7 +1000,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/3YW5DXU4pQ_Unit_4_notes",
             "previewImage": "/previews/phyu4.png",
-            "tags": ["physics", "unit 4", "complete notes"]
+            "tags": [
+              "physics",
+              "unit 4",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -817,7 +1017,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/Xq9CyEKbsc_A2-Physics-Unit-4-Definitions-and-Statements-Questions__1_",
                   "previewImage": "/previews/phyu4faq.png",
-                  "tags": ["physics", "unit 4", "faq"]
+                  "tags": [
+                    "physics",
+                    "unit 4",
+                    "faq"
+                  ]
                 }
               ]
             },
@@ -831,7 +1035,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/JxfQFPNP5r_Physics_Unit_4",
                   "previewImage": "/previews/phyu4short.png",
-                  "tags": ["physics", "unit 4", "short notes"]
+                  "tags": [
+                    "physics",
+                    "unit 4",
+                    "short notes"
+                  ]
                 }
               ]
             }
@@ -847,7 +1055,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/uLBBgH4f2e_Unit_5_notes",
             "previewImage": "/previews/phyu5.png",
-            "tags": ["physics", "unit 5", "complete notes"]
+            "tags": [
+              "physics",
+              "unit 5",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -860,7 +1072,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/Kf9R3F9Uwv_Physics_Unit_5",
                   "previewImage": "/previews/phyu5short.png",
-                  "tags": ["physics", "unit 5", "short notes"]
+                  "tags": [
+                    "physics",
+                    "unit 5",
+                    "short notes"
+                  ]
                 }
               ]
             },
@@ -874,7 +1090,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/TjkhDtEyYT_Unit-5_FAQ",
                   "previewImage": "/previews/phyu5faq.png",
-                  "tags": ["physics", "unit 5", "faq"]
+                  "tags": [
+                    "physics",
+                    "unit 5",
+                    "faq"
+                  ]
                 }
               ]
             }
@@ -895,7 +1115,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/bANpNdxbNj_All_about_UNCERTAINTY-Unit-6",
                   "previewImage": "/previews/phyu6uncert.png",
-                  "tags": ["physics", "unit 6", "uncertainty"]
+                  "tags": [
+                    "physics",
+                    "unit 6",
+                    "uncertainty"
+                  ]
                 }
               ]
             }
@@ -918,7 +1142,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/pXbazCdNYr_BIOLOGY_U1",
             "previewImage": "/previews/biou1.png",
-            "tags": ["biology", "unit 1", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 1",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -932,7 +1160,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/TVZjJtmFcG_Unit_2",
             "previewImage": "/previews/biou2.png",
-            "tags": ["biology", "unit 2", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 2",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -946,7 +1178,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/KH2Qu2Uqky_Unit_3",
             "previewImage": "/previews/biou3.png",
-            "tags": ["biology", "unit 3", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 3",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -960,7 +1196,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/z7x9QsSkBV_U4_notes",
             "previewImage": "/previews/biou4.png",
-            "tags": ["biology", "unit 4", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 4",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -974,7 +1214,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/pZUXAdsJtG_Edexcel_Bio_Unit_5",
             "previewImage": "/previews/biou5.png",
-            "tags": ["biology", "unit 5", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 5",
+              "complete notes"
+            ]
           },
           "topics": []
         },
@@ -988,7 +1232,11 @@
             "type": "pdf",
             "downloadUrl": "https://pdfhost.io/v/ATfsXvRcbE_Unit_6_mohab__1_",
             "previewImage": "/previews/biou6.png",
-            "tags": ["biology", "unit 6", "complete notes"]
+            "tags": [
+              "biology",
+              "unit 6",
+              "complete notes"
+            ]
           },
           "topics": [
             {
@@ -1001,7 +1249,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/TXGH3DJGKg_U6_Repeated_Ideas",
                   "previewImage": "/previews/biou6rep.png",
-                  "tags": ["biology", "unit 6", "repeated ideas"]
+                  "tags": [
+                    "biology",
+                    "unit 6",
+                    "repeated ideas"
+                  ]
                 }
               ]
             },
@@ -1015,7 +1267,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://pdfhost.io/v/5m2EuFaSrW_UNIT_3___6_Biology-Experiments",
                   "previewImage": "/previews/biou6sum.png",
-                  "tags": ["biology", "unit 6", "summary"]
+                  "tags": [
+                    "biology",
+                    "unit 6",
+                    "summary"
+                  ]
                 }
               ]
             }
@@ -1030,7 +1286,7 @@
       "units": [
         {
           "id": "unit1",
-          "name": "Unit 1 - Social Psychology",
+          "name": "Unit 1",
           "number": 1,
           "description": "Social Psychology notes and assessment materials",
           "topics": [
@@ -1044,7 +1300,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_meowmeow666.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-meowmeow666.webp",
-                  "tags": ["unit 1", "social psychology", "notes"],
+                  "tags": [
+                    "unit 1",
+                    "social psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 },
                 {
@@ -1053,7 +1313,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/Social_Psychology_Notes_by_meowmeow666_2.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/social-psychology-meowmeow666-2.webp",
-                  "tags": ["unit 1", "social psychology", "notes"],
+                  "tags": [
+                    "unit 1",
+                    "social psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1068,7 +1332,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/EVALUATIONS_for_Unit_1.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit1.webp",
-                  "tags": ["unit 1", "evaluations", "AO3"],
+                  "tags": [
+                    "unit 1",
+                    "evaluations",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1082,7 +1350,11 @@
                   "title": "8 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-folder.webp",
-                  "tags": ["unit 1", "practice questions", "8 marker"],
+                  "tags": [
+                    "unit 1",
+                    "practice questions",
+                    "8 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1091,7 +1363,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/8%20marker/8%20marker%20questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-questions.webp",
-                      "tags": ["unit 1", "practice questions", "8 marker"]
+                      "tags": [
+                        "unit 1",
+                        "practice questions",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "unit1-8-marker-answers",
@@ -1099,7 +1375,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/8%20marker/8%20marker%20answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-8-marker-answers.webp",
-                      "tags": ["unit 1", "model answers", "8 marker"]
+                      "tags": [
+                        "unit 1",
+                        "model answers",
+                        "8 marker"
+                      ]
                     }
                   ]
                 },
@@ -1108,7 +1388,11 @@
                   "title": "12 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-folder.webp",
-                  "tags": ["unit 1", "practice questions", "12 marker"],
+                  "tags": [
+                    "unit 1",
+                    "practice questions",
+                    "12 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1117,7 +1401,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/12%20marker/12%20marker%20questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-questions.webp",
-                      "tags": ["unit 1", "practice questions", "12 marker"]
+                      "tags": [
+                        "unit 1",
+                        "practice questions",
+                        "12 marker"
+                      ]
                     },
                     {
                       "id": "unit1-12-marker-answers",
@@ -1125,7 +1413,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit1/12%20marker/12%20marker%20answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit1-12-marker-answers.webp",
-                      "tags": ["unit 1", "model answers", "12 marker"]
+                      "tags": [
+                        "unit 1",
+                        "model answers",
+                        "12 marker"
+                      ]
                     }
                   ]
                 }
@@ -1135,7 +1427,7 @@
         },
         {
           "id": "unit2",
-          "name": "Unit 2 - Biological Psychology",
+          "name": "Unit 2",
           "number": 2,
           "description": "Biological Psychology including body rhythms and psychosexual stages",
           "topics": [
@@ -1149,7 +1441,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Body_Rhythms_Topic.pptx",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/body-rhythms-topic.webp",
-                  "tags": ["unit 2", "body rhythms", "circadian rhythms", "presentation"],
+                  "tags": [
+                    "unit 2",
+                    "body rhythms",
+                    "circadian rhythms",
+                    "presentation"
+                  ],
                   "dateAdded": "2025-05-22"
                 },
                 {
@@ -1158,7 +1455,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Freud_s_Psychosexual_Stages.pptx",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/freuds-psychosexual-stages.webp",
-                  "tags": ["unit 2", "freud", "psychosexual development", "presentation"],
+                  "tags": [
+                    "unit 2",
+                    "freud",
+                    "psychosexual development",
+                    "presentation"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1173,7 +1475,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/EVALUATIONS_for_Unit_2.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit2.webp",
-                  "tags": ["unit 2", "evaluations", "AO3"],
+                  "tags": [
+                    "unit 2",
+                    "evaluations",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 },
                 {
@@ -1182,7 +1488,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U2.docx.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit2-pdf.webp",
-                  "tags": ["unit 2", "evaluations", "comprehensive", "AO3"],
+                  "tags": [
+                    "unit 2",
+                    "evaluations",
+                    "comprehensive",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1196,7 +1507,11 @@
                   "title": "8 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-folder.webp",
-                  "tags": ["unit 2", "practice questions", "8 marker"],
+                  "tags": [
+                    "unit 2",
+                    "practice questions",
+                    "8 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1205,7 +1520,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/U2%208%20Markers/8%20Marker%20Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-questions.webp",
-                      "tags": ["unit 2", "practice questions", "8 marker"]
+                      "tags": [
+                        "unit 2",
+                        "practice questions",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "unit2-8-marker-answers",
@@ -1213,7 +1532,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/U2%208%20Markers/8%20Marker%20Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-8-marker-answers.webp",
-                      "tags": ["unit 2", "model answers", "8 marker"]
+                      "tags": [
+                        "unit 2",
+                        "model answers",
+                        "8 marker"
+                      ]
                     }
                   ]
                 },
@@ -1222,7 +1545,11 @@
                   "title": "16 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-folder.webp",
-                  "tags": ["unit 2", "practice questions", "16 marker"],
+                  "tags": [
+                    "unit 2",
+                    "practice questions",
+                    "16 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1231,7 +1558,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/16%20Marker%20Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-questions.webp",
-                      "tags": ["unit 2", "practice questions", "16 marker"]
+                      "tags": [
+                        "unit 2",
+                        "practice questions",
+                        "16 marker"
+                      ]
                     },
                     {
                       "id": "unit2-16-marker-answers",
@@ -1239,7 +1570,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/16%20Marker%20Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-16-marker-answers.webp",
-                      "tags": ["unit 2", "model answers", "16 marker"]
+                      "tags": [
+                        "unit 2",
+                        "model answers",
+                        "16 marker"
+                      ]
                     }
                   ]
                 },
@@ -1248,7 +1583,11 @@
                   "title": "Sample Responses",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit2-sample-responses.webp",
-                  "tags": ["unit 2", "sample responses", "model answers"],
+                  "tags": [
+                    "unit 2",
+                    "sample responses",
+                    "model answers"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1257,7 +1596,12 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(1).pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-1.webp",
-                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                      "tags": [
+                        "unit 2",
+                        "sample response",
+                        "model answer",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "sample-8-marker-2",
@@ -1265,7 +1609,12 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(2).pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-2.webp",
-                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                      "tags": [
+                        "unit 2",
+                        "sample response",
+                        "model answer",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "sample-8-marker-3",
@@ -1273,7 +1622,12 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%208%20MARKER%20(3).pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-8-marker-3.webp",
-                      "tags": ["unit 2", "sample response", "model answer", "8 marker"]
+                      "tags": [
+                        "unit 2",
+                        "sample response",
+                        "model answer",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "sample-12-marker-1",
@@ -1281,7 +1635,12 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%2012%20MARKER%20(1).pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-12-marker-1.webp",
-                      "tags": ["unit 2", "sample response", "model answer", "12 marker"]
+                      "tags": [
+                        "unit 2",
+                        "sample response",
+                        "model answer",
+                        "12 marker"
+                      ]
                     },
                     {
                       "id": "sample-16-marker-1",
@@ -1289,7 +1648,12 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit2/Unit_2_Sample_Responses_Folder/SAMPLE%2016%20MARKER%20(1).pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/sample-16-marker-1.webp",
-                      "tags": ["unit 2", "sample response", "model answer", "16 marker"]
+                      "tags": [
+                        "unit 2",
+                        "sample response",
+                        "model answer",
+                        "16 marker"
+                      ]
                     }
                   ]
                 }
@@ -1299,7 +1663,7 @@
         },
         {
           "id": "unit3",
-          "name": "Unit 3 - Developmental, Criminological, Clinical Psychology",
+          "name": "Unit 3",
           "number": 3,
           "description": "Development, crime and clinical psychology topics",
           "topics": [
@@ -1313,7 +1677,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_E_Developmental_Psychology_by_ehmpty.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-e-developmental.webp",
-                  "tags": ["unit 3", "developmental psychology", "notes"],
+                  "tags": [
+                    "unit 3",
+                    "developmental psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1328,7 +1696,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_F_Criminological_Psychology_by_ehmpty.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-f-criminological.webp",
-                  "tags": ["unit 3", "criminological psychology", "notes"],
+                  "tags": [
+                    "unit 3",
+                    "criminological psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1343,7 +1715,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Topic_H_Clinical_Psychology_by_ehmpty.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/topic-h-clinical.webp",
-                  "tags": ["unit 3", "clinical psychology", "notes"],
+                  "tags": [
+                    "unit 3",
+                    "clinical psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 },
                 {
@@ -1352,7 +1728,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Clinical_Psychology_Notes_by_kxuser.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/clinical-psychology-kxuser.webp",
-                  "tags": ["unit 3", "clinical psychology", "notes"],
+                  "tags": [
+                    "unit 3",
+                    "clinical psychology",
+                    "notes"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1367,7 +1747,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/EVALUATIONS_for_Unit_3.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-unit3.webp",
-                  "tags": ["unit 3", "evaluations", "AO3"],
+                  "tags": [
+                    "unit 3",
+                    "evaluations",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 },
                 {
@@ -1376,7 +1760,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U3.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit3.webp",
-                  "tags": ["unit 3", "evaluations", "comprehensive", "AO3"],
+                  "tags": [
+                    "unit 3",
+                    "evaluations",
+                    "comprehensive",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1391,7 +1780,11 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/Schmolk_Et_Al_Study_by_Krilly.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/schmolk-study.webp",
-                  "tags": ["unit 3", "key study", "research"],
+                  "tags": [
+                    "unit 3",
+                    "key study",
+                    "research"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1405,7 +1798,11 @@
                   "title": "8 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-folder.webp",
-                  "tags": ["unit 3", "practice questions", "8 marker"],
+                  "tags": [
+                    "unit 3",
+                    "practice questions",
+                    "8 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1414,7 +1811,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/8%20Markers/8%20Marker%20Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-questions.webp",
-                      "tags": ["unit 3", "practice questions", "8 marker"]
+                      "tags": [
+                        "unit 3",
+                        "practice questions",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "unit3-8-marker-answers",
@@ -1422,7 +1823,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit3/8%20Markers/8%20Marker%20Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit3-8-marker-answers.webp",
-                      "tags": ["unit 3", "model answers", "8 marker"]
+                      "tags": [
+                        "unit 3",
+                        "model answers",
+                        "8 marker"
+                      ]
                     }
                   ]
                 }
@@ -1432,7 +1837,7 @@
         },
         {
           "id": "unit4",
-          "name": "Unit 4 - Research Methods",
+          "name": "Unit 4",
           "number": 4,
           "description": "Research methods and approaches in psychology",
           "topics": [
@@ -1446,7 +1851,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/All_Unit_4_20_Markers.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-20-markers.webp",
-                  "tags": ["unit 4", "research methods", "20 marker", "essay questions"],
+                  "tags": [
+                    "unit 4",
+                    "research methods",
+                    "20 marker",
+                    "essay questions"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1461,7 +1871,12 @@
                   "type": "pdf",
                   "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/EVALUATIONS%20Of%20Everything%20that%20can%20Basically%20Come%20up%20for%20U4.pdf",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/evaluations-everything-unit4.webp",
-                  "tags": ["unit 4", "evaluations", "comprehensive", "AO3"],
+                  "tags": [
+                    "unit 4",
+                    "evaluations",
+                    "comprehensive",
+                    "AO3"
+                  ],
                   "dateAdded": "2025-05-22"
                 }
               ]
@@ -1475,7 +1890,11 @@
                   "title": "6 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-folder.webp",
-                  "tags": ["unit 4", "practice questions", "6 marker"],
+                  "tags": [
+                    "unit 4",
+                    "practice questions",
+                    "6 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1484,7 +1903,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/6%20markers/Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-questions.webp",
-                      "tags": ["unit 4", "practice questions", "6 marker"]
+                      "tags": [
+                        "unit 4",
+                        "practice questions",
+                        "6 marker"
+                      ]
                     },
                     {
                       "id": "unit4-6-marker-answers",
@@ -1492,7 +1915,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/6%20markers/Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-6-marker-answers.webp",
-                      "tags": ["unit 4", "model answers", "6 marker"]
+                      "tags": [
+                        "unit 4",
+                        "model answers",
+                        "6 marker"
+                      ]
                     }
                   ]
                 },
@@ -1501,7 +1928,11 @@
                   "title": "8 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-folder.webp",
-                  "tags": ["unit 4", "practice questions", "8 marker"],
+                  "tags": [
+                    "unit 4",
+                    "practice questions",
+                    "8 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1510,7 +1941,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/8%20markers/Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-questions.webp",
-                      "tags": ["unit 4", "practice questions", "8 marker"]
+                      "tags": [
+                        "unit 4",
+                        "practice questions",
+                        "8 marker"
+                      ]
                     },
                     {
                       "id": "unit4-8-marker-answers",
@@ -1518,7 +1953,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/8%20markers/Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-8-marker-answers.webp",
-                      "tags": ["unit 4", "model answers", "8 marker"]
+                      "tags": [
+                        "unit 4",
+                        "model answers",
+                        "8 marker"
+                      ]
                     }
                   ]
                 },
@@ -1527,7 +1966,11 @@
                   "title": "16 Marker Questions",
                   "type": "folder",
                   "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-folder.webp",
-                  "tags": ["unit 4", "practice questions", "16 marker"],
+                  "tags": [
+                    "unit 4",
+                    "practice questions",
+                    "16 marker"
+                  ],
                   "dateAdded": "2025-05-22",
                   "items": [
                     {
@@ -1536,7 +1979,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/16%20markers/Questions.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-questions.webp",
-                      "tags": ["unit 4", "practice questions", "16 marker"]
+                      "tags": [
+                        "unit 4",
+                        "practice questions",
+                        "16 marker"
+                      ]
                     },
                     {
                       "id": "unit4-16-marker-answers",
@@ -1544,7 +1991,11 @@
                       "type": "pdf",
                       "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Unit4/16%20markers/Answers.pdf",
                       "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/unit4-16-marker-answers.webp",
-                      "tags": ["unit 4", "model answers", "16 marker"]
+                      "tags": [
+                        "unit 4",
+                        "model answers",
+                        "16 marker"
+                      ]
                     }
                   ]
                 }
@@ -1560,7 +2011,11 @@
           "type": "pdf",
           "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/IAL_Edexcel_Psychology_Notes_by_nym.pdf",
           "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/ial-edexcel-psychology-notes-nym.webp",
-          "tags": ["psychology", "comprehensive notes", "edexcel"],
+          "tags": [
+            "psychology",
+            "comprehensive notes",
+            "edexcel"
+          ],
           "dateAdded": "2025-05-22"
         },
         {
@@ -1569,7 +2024,12 @@
           "type": "pdf",
           "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/Key_Studies_-_Mark_Scheme_Content.pdf",
           "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/key-studies-mark-scheme.webp",
-          "tags": ["psychology", "mark scheme", "key studies", "exam preparation"],
+          "tags": [
+            "psychology",
+            "mark scheme",
+            "key studies",
+            "exam preparation"
+          ],
           "dateAdded": "2025-05-22"
         },
         {
@@ -1578,7 +2038,117 @@
           "type": "pdf",
           "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/Other/Theories_and_Methods_-_Mark_Scheme_Content.pdf",
           "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/psychology/preview/theories-methods-mark-scheme.webp",
-          "tags": ["psychology", "mark scheme", "theories", "methods", "exam preparation"],
+          "tags": [
+            "psychology",
+            "mark scheme",
+            "theories",
+            "methods",
+            "exam preparation"
+          ],
+          "dateAdded": "2025-05-22"
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "description": "IAL Edexcel Business study materials and notes organized by unit",
+      "units": [
+        {
+          "id": "unit2",
+          "name": "Unit 2",
+          "number": 2,
+          "description": "Business Environment and Business Objectives",
+          "topics": [
+            {
+              "id": "unit2-notes",
+              "name": "Unit 2 Notes",
+              "resources": [
+                {
+                  "id": "ial-unit-2-definition",
+                  "title": "NEW IAL UNIT 2 DEFINITION",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/NEW IAL UNIT 2 DEFINITION.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/preview/ial-unit-2-definition.webp",
+                  "tags": [
+                    "business",
+                    "unit 2",
+                    "definitions",
+                    "terminology"
+                  ],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "unit3",
+          "name": "Unit 3",
+          "number": 2,
+          "description": "Business Environment and Business Objectives",
+          "topics": [
+            {
+              "id": "unit3-notes",
+              "name": "Unit 3 Notes",
+              "resources": [
+                {
+                  "id": "business-unit-3-notes",
+                  "title": "Business Unit 3 Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/Business Unit 3 Notes.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/preview/business-unit-3-notes.webp",
+                  "tags": [
+                    "business",
+                    "unit 3",
+                    "complete notes"
+                  ],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "unit4",
+          "name": "Unit 4",
+          "number": 3,
+          "description": "Business Environment and Business Objectives",
+          "topics": [
+            {
+              "id": "unit4-notes",
+              "name": "Unit 4 Notes",
+              "resources": [
+                {
+                  "id": "business-unit-4-notes",
+                  "title": "Business Unit 4 Notes",
+                  "type": "pdf",
+                  "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/Business Unit 4 Notes.pdf",
+                  "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/preview/business-unit-4-notes.webp",
+                  "tags": [
+                    "business",
+                    "unit 4",
+                    "complete notes"
+                  ],
+                  "dateAdded": "2025-05-22"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "id": "business-studies-as",
+          "title": "Business Studies AS",
+          "type": "pdf",
+          "downloadUrl": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/Business Studies AS.pdf",
+          "previewImage": "https://wildly-fresh-lab.global.ssl.fastly.net/notes/business/preview/business-studies-as.webp",
+          "tags": [
+            "business",
+            "AS level",
+            "comprehensive notes"
+          ],
           "dateAdded": "2025-05-22"
         }
       ]
