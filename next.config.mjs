@@ -4,6 +4,8 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     forceSwcTransforms: true,
+    // Add runtime configuration
+    serverComponentsExternalPackages: ["mongoose"],
   },
 
   // Optimize production build
@@ -55,6 +57,8 @@ const nextConfig = {
         path: false,
         crypto: false,
         stream: false,
+        mongodb: false,
+        mongoose: false,
       };
     }
 
@@ -136,37 +140,18 @@ const nextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        // Handle Node.js routes
+        // Handle flashcard API routes with Node.js runtime
+        {
+          source: "/api/flashcards/:path*",
+          destination: "/api/flashcards/:path*",
+        },
+        // Handle other Node.js routes
         {
           source: "/api/subjects/:path*",
           destination: "/api/subjects/:path*",
-          has: [
-            {
-              type: "header",
-              key: "x-invoke-path",
-              value: "/api/subjects",
-            },
-          ],
-        },
-        // Handle Edge routes
-        {
-          source: "/api/auth/:path*",
-          destination: "/api/auth/:path*",
-          has: [
-            {
-              type: "header",
-              key: "x-invoke-path",
-              value: "/api/auth",
-            },
-          ],
         },
       ],
     };
-  },
-
-  // Sitemap and robots.txt configuration
-  async redirects() {
-    return [];
   },
 
   // Improve performance with modern features

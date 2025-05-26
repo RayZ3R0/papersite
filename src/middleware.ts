@@ -145,7 +145,8 @@ const NODE_RUNTIME_ROUTES = [
   '/api/auth/verify',
   '/api/auth/register',
   '/api/auth/login',
-  '/api/email'
+  '/api/email',
+  '/api/flashcards'  // Add this line
 ];
 
 // Skip middleware for static files, public assets, and next internal routes

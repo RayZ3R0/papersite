@@ -2,7 +2,7 @@
 
 import { useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition, useRef } from "react";
 
 interface AuthLoadingProviderProps {
   children: React.ReactNode;
@@ -15,10 +15,8 @@ export function AuthLoadingProvider({
   children,
   fallback = null,
   publicPaths = [
-    // Auth paths
     "/auth/login",
     "/auth/register",
-    // Public pages
     "/",
     "/books",
     "/notes",
@@ -26,7 +24,6 @@ export function AuthLoadingProvider({
     "/search",
     "/exams",
     "/annotate",
-    // API endpoints
     "/api/health",
     "/api/subjects",
     "/api/books",
@@ -36,108 +33,68 @@ export function AuthLoadingProvider({
 }: AuthLoadingProviderProps) {
   const { user, isLoading, refreshSession } = useAuth();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const initializationRef = useRef(false);
 
+  // Check if a path should be public
+  const checkPublicPath = (currentPath: string | null) => {
+    if (!currentPath) return false;
+    const path = currentPath.toLowerCase();
+    return publicPaths.some(publicPath =>
+      path === publicPath || path.startsWith(publicPath + '/')
+    );
+  };
+
+  const isPrivatePath = (currentPath: string | null) => {
+    if (!currentPath) return false;
+    if (currentPath.startsWith('/annotate')) return false;
+
+    const privatePaths = ['/profile', '/forum/new', '/admin', '/flashcards'];
+    return privatePaths.some(path => currentPath.startsWith(path));
+  };
+
+  // Initialize auth state only once
   useEffect(() => {
     let mounted = true;
 
-    // Check and initialize auth state
     const initializeAuth = async () => {
-      if (!isInitialized) {
-        try {
-          await refreshSession();
-        } finally {
-          if (mounted) {
-            setIsInitialized(true);
-          }
+      if (initializationRef.current || isInitialized) return;
+      
+      initializationRef.current = true;
+      
+      try {
+        await refreshSession();
+      } catch (error) {
+        console.error('Auth initialization failed:', error);
+      } finally {
+        if (mounted) {
+          setIsInitialized(true);
+          setHasInitiallyLoaded(true);
         }
       }
     };
 
-    initializeAuth();
+    // Only initialize once when component first mounts
+    if (!hasInitiallyLoaded) {
+      initializeAuth();
+    }
 
     return () => {
       mounted = false;
     };
-  }, [isInitialized, refreshSession]);
+  }, []); // Empty dependency array - only run once
 
-  // Check if a path should be public based on configured rules
-  const checkPublicPath = (currentPath: string | null) => {
-    if (!currentPath) return false;
-
-    const path = currentPath.toLowerCase();
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('\n==== Auth Path Check ====');
-      console.log('Checking path:', path);
-    }
-
-    // Check if path starts with any public path
-    const isPublic = publicPaths.some(publicPath =>
-      path === publicPath || path.startsWith(publicPath + '/')
-    );
-
-    if (process.env.NODE_ENV === 'development') {
-      if (isPublic) {
-        console.log(`✅ Path ${path} is public`);
-      } else {
-        console.log('❌ No public path match found');
-        console.log('Available public paths:', publicPaths);
-      }
-      console.log('=======================\n');
-    }
-
-    return isPublic;
-  };
-
-  // Check if a path should be treated as private
-  const isPrivatePath = (currentPath: string | null) => {
-    if (!currentPath) return false;
-
-    // Explicitly handle annotator paths
-    if (currentPath.startsWith('/annotate')) {
-      return false;
-    }
-
-    const privatePaths = [
-      '/profile',
-      '/forum/new',
-      '/admin'
-    ];
-
-    const isPrivate = privatePaths.some(path =>
-      currentPath.startsWith(path)
-    );
-
-    if (process.env.NODE_ENV === 'development' && isPrivate) {
-      console.log(`🔒 Protected path detected: ${currentPath}`);
-    }
-
-    return isPrivate;
-  };
-
+  // Handle redirects based on auth state
   useEffect(() => {
     if (!isInitialized || isLoading) return;
     
-    if (process.env.NODE_ENV === 'development') {
-      console.log('\n==== Auth State ====');
-      console.log({
-        path: pathname,
-        isInitialized,
-        isLoading,
-        hasUser: !!user,
-        isPublic: checkPublicPath(pathname),
-        isPrivate: isPrivatePath(pathname)
-      });
-    }
-
-    // Check path status and handle auth-based redirects
     const isPublic = checkPublicPath(pathname);
     const isPrivate = isPrivatePath(pathname);
 
-    // Only redirect if path is private
+    // Only redirect if path is private and user is not authenticated
     if (!user && isPrivate) {
       startTransition(() => {
         const returnPath = encodeURIComponent(pathname || "/");
@@ -154,26 +111,17 @@ export function AuthLoadingProvider({
         router.push(decodeURIComponent(returnTo || "/"));
       });
     }
-  }, [
-    user,
-    isInitialized,
-    isLoading,
-    pathname,
-    router,
-    publicPaths,
-    loginPath,
-  ]);
+  }, [user, isInitialized, isLoading, pathname, router, loginPath]);
 
-  // Render content based on auth state
+  // Show loading only for private paths and only during initial load
   const isPublicPath = checkPublicPath(pathname);
+  const isPrivate = isPrivatePath(pathname);
 
-  // Check if current path is public before showing loading state
-  if (!isInitialized || isLoading) {
+  if (!hasInitiallyLoaded || (!isInitialized && isPrivate)) {
     if (isPublicPath) {
-      return children;
+      return <>{children}</>;
     }
     
-    // Only show loading for private paths
     return (
       <div className="min-h-screen flex items-center justify-center">
         {fallback || (
@@ -186,15 +134,12 @@ export function AuthLoadingProvider({
     );
   }
 
-  // Check if path requires authentication
-  const requiresAuth = isPrivatePath(pathname);
-
-  // Only block access to private paths
-  if (!user && requiresAuth) {
+  // Block access to private paths for unauthenticated users
+  if (!user && isPrivate && !isLoading) {
     return null; // Will be redirected by the routing effect
   }
 
-  return children;
+  return <>{children}</>;
 }
 
 export default AuthLoadingProvider;

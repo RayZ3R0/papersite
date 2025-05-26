@@ -36,8 +36,10 @@
     "framer-motion": "^11.18.2",
     "fs": "0.0.1-security",
     "html2canvas": "^1.4.1",
+    "isomorphic-dompurify": "^2.25.0",
     "jose": "^6.0.10",
     "jspdf": "^3.0.1",
+    "katex": "^0.16.22",
     "lucide-react": "^0.487.0",
     "mongodb": "^6.5.0",
     "mongoose": "^8.13.1",
@@ -57,7 +59,9 @@
     "recharts": "^2.15.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "3.4.1",
-    "typescript": "5.4.2"
+    "tesseract.js": "^6.0.1",
+    "typescript": "5.4.2",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@svgdotjs/svg.js": "^3.2.4",
