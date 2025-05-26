@@ -1,251 +1,290 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { securityHeaders, getRouteHeaders } from '@/lib/security/headers';
-import { rateLimit } from '@/lib/security/rateLimit';
-import { createSecureResponse } from '@/lib/security/headers';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { COOKIE_CONFIG, SECURITY_CONFIG } from '@/lib/auth/config';
 
-type CorsHeaders = {
-  'Access-Control-Allow-Origin': string;
-  'Access-Control-Allow-Methods': string;
-  'Access-Control-Allow-Headers': string;
-  'Access-Control-Allow-Credentials': string;
-  'Access-Control-Max-Age': string;
+// Edge-compatible correlation ID generation
+function generateCorrelationId(): string {
+  return Math.random().toString(36).substring(2, 15) +
+         Math.random().toString(36).substring(2, 15) +
+         Date.now().toString(36);
+}
+
+const { accessToken: ACCESS_TOKEN_CONFIG, refreshToken: REFRESH_TOKEN_CONFIG } = COOKIE_CONFIG;
+
+// Token verification cache using Edge Runtime compatible storage
+const tokenCache = new Map<string, {
+  payload: any;
+  timestamp: number;
+  validUntil: number;
+}>();
+
+// Cache settings
+const CACHE_CONFIG = {
+  maxAge: 5 * 60 * 1000, // 5 minutes
+  staleWhileRevalidate: 60 * 1000, // 1 minute
+  cleanupInterval: 10 * 60 * 1000, // 10 minutes
 };
 
-// Define paths that need different security configurations
-const AUTH_PATHS = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
-const API_PATHS = ['/api/user', '/api/profile'];
-const PROFILE_PATHS = ['/profile'];
+// Periodic cache cleanup
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of tokenCache.entries()) {
+      if (value.validUntil < now) {
+        tokenCache.delete(key);
+      }
+    }
+  }, CACHE_CONFIG.cleanupInterval);
+}
 
-// Define route types for rate limiting
-const RATE_LIMIT_ROUTES = {
-  '/api/auth/login': 'login',
-  '/api/auth/register': 'register',
-  '/api/user/profile': 'profile'
-} as const;
+// Helper function to create login redirect URL
+function createLoginUrl(request: NextRequest, returnTo: string) {
+  const loginUrl = new URL('/auth/login', request.url);
+  loginUrl.searchParams.set('returnTo', returnTo);
+  return loginUrl;
+}
 
-// Get allowed domains from environment
-const ALLOWED_DOMAINS = process.env.NEXT_PUBLIC_ALLOWED_DOMAINS?.split(',') || [];
-const VERCEL_DOMAIN = process.env.NEXT_PUBLIC_VERCEL_DOMAIN;
-const CUSTOM_DOMAIN = process.env.NEXT_PUBLIC_CUSTOM_DOMAIN;
+// Helper function to verify token with caching
+async function verifyToken(token: string, baseUrl: string, correlationId: string) {
+  // Add a fast path for initial page load
+  if (typeof sessionStorage !== 'undefined') {
+    const cachedPayload = sessionStorage.getItem(`token-payload-${token.slice(0,10)}`);
+    if (cachedPayload) {
+      try {
+        const payload = JSON.parse(cachedPayload);
+        if (payload.exp * 1000 > Date.now()) {
+          return payload;
+        }
+      } catch (e) {
+        // Ignore parse errors, continue with normal flow
+      }
+    }
+  }
+
+  // Log cache stats periodically
+  if (Math.random() < 0.01) { // 1% sampling
+    console.debug(`Token cache stats (${correlationId}):`, {
+      size: tokenCache.size,
+      hitRate: tokenCache.size > 0 ?
+        Array.from(tokenCache.values()).filter(v => v.timestamp + CACHE_CONFIG.maxAge > Date.now()).length / tokenCache.size : 0
+    });
+  }
+  // Check cache first
+  const cached = tokenCache.get(token);
+  const now = Date.now();
+
+  if (cached) {
+    // Return cached result if still fresh
+    if (cached.timestamp + CACHE_CONFIG.maxAge > now) {
+      return cached.payload;
+    }
+    
+    // Use stale data and revalidate in background if within grace period
+    if (cached.timestamp + CACHE_CONFIG.maxAge + CACHE_CONFIG.staleWhileRevalidate > now) {
+      // Trigger background revalidation
+      verifyTokenViaApi(token, baseUrl, correlationId).then(newPayload => {
+        if (newPayload) {
+          updateTokenCache(token, newPayload);
+        } else {
+          tokenCache.delete(token);
+        }
+      });
+      return cached.payload;
+    }
+  }
+
+  // No cache or stale data - do fresh verification
+  const payload = await verifyTokenViaApi(token, baseUrl, correlationId);
+  if (payload) {
+    updateTokenCache(token, payload);
+  }
+  return payload;
+}
+
+// Helper function for actual API verification
+async function verifyTokenViaApi(token: string, baseUrl: string, correlationId: string) {
+  console.debug(`Token verification attempt (${correlationId}):`, {
+    tokenStart: token.slice(0, 10) + '...',
+    timestamp: new Date().toISOString()
+  });
+  try {
+    const response = await fetch(`${baseUrl}/api/auth/verify-token`, {
+      method: 'POST',
+      body: token,
+      headers: {
+        'X-Correlation-ID': correlationId,
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=60'
+      }
+    });
+    
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.valid ? data.payload : null;
+  } catch (error) {
+    console.error(`Token verification error (${correlationId}):`, error);
+    return null;
+  }
+}
+
+// Helper function to update token cache
+function updateTokenCache(token: string, payload: any) {
+  const now = Date.now();
+  tokenCache.set(token, {
+    payload,
+    timestamp: now,
+    validUntil: now + SECURITY_CONFIG.session.renewalThreshold * 1000
+  });
+}
+
+// Routes that require Node.js runtime
+const NODE_RUNTIME_ROUTES = [
+  '/api/auth/password/reset',
+  '/api/auth/verify',
+  '/api/auth/register',
+  '/api/auth/login',
+  '/api/email'
+];
+
+// Skip middleware for static files, public assets, and next internal routes
+function isStaticPath(pathname: string) {
+  return (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/assets') ||
+    pathname.includes('.') ||
+    pathname.includes('/papers/') ||
+    pathname.includes('/books/') ||
+    pathname.startsWith('/papers') ||
+    pathname.startsWith('/notes') ||
+    pathname.startsWith('/subjects') ||
+    pathname.startsWith('/search') ||
+    pathname.startsWith('/tools') ||
+    pathname === '/favicon.ico'
+  );
+}
+
+// Check if route needs Node.js runtime
+function needsNodeRuntime(pathname: string) {
+  return NODE_RUNTIME_ROUTES.some(route => pathname.startsWith(route));
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const correlationId = generateCorrelationId();
+
+  // Skip middleware for static files
+  if (isStaticPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Add runtime and correlation headers for Node.js routes
+  if (needsNodeRuntime(pathname)) {
+    const response = NextResponse.next();
+    response.headers.set('x-middleware-runtime', 'nodejs');
+    response.headers.set('x-correlation-id', correlationId);
+    return response;
+  }
+
+  // Add correlation ID to all responses
+  const response = NextResponse.next();
+  response.headers.set('x-correlation-id', correlationId);
+
+  // Handle admin routes
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+    const accessToken = request.cookies.get(ACCESS_TOKEN_CONFIG.name);
+    const refreshToken = request.cookies.get(REFRESH_TOKEN_CONFIG.name);
+    
+    // No tokens - redirect to login
+    if (!accessToken?.value && !refreshToken?.value) {
+      return NextResponse.redirect(createLoginUrl(request, pathname));
+    }
+
+    // Try to verify via API
+    const baseUrl = request.nextUrl.origin;
+    let payload = null;
+
+    // Try access token first
+    if (accessToken?.value) {
+      payload = await verifyToken(accessToken.value, baseUrl, correlationId);
+    }
+
+    // Try refresh token if access token failed
+    if (!payload && refreshToken?.value) {
+      payload = await verifyToken(refreshToken.value, baseUrl, correlationId);
+    }
+
+    // Add caching headers to response if successful
+    if (payload) {
+      const expiryTime = payload.exp * 1000;
+      const maxAge = Math.floor((expiryTime - Date.now()) / 1000);
+      response.headers.set('Cache-Control', `public, max-age=${maxAge}, stale-while-revalidate=60`);
+      response.headers.set('ETag', `"${payload.jti || correlationId}"`);
+    }
+
+    // Check if user is admin
+    if (!payload || payload.role !== 'admin') {
+      return NextResponse.redirect(createLoginUrl(request, pathname));
+    }
+
+    return NextResponse.next();
+  }
+
+  // Handle other protected routes
+  if (pathname.startsWith('/api/')) {
+    const accessToken = request.cookies.get(ACCESS_TOKEN_CONFIG.name);
+    const refreshToken = request.cookies.get(REFRESH_TOKEN_CONFIG.name);
+
+    // Allow refresh token endpoint without auth
+    if (pathname === '/api/auth/refresh') {
+      return NextResponse.next();
+    }
+
+    // Public endpoints
+    const publicEndpoints = [
+      '/api/auth/login',
+      '/api/auth/register',
+      '/api/auth/password/reset',
+      '/api/health',
+      '/api/papers',
+      '/api/subjects',
+      '/api/marks'
+    ];
+    
+    if (publicEndpoints.some(endpoint => pathname.startsWith(endpoint))) {
+      return NextResponse.next();
+    }
+
+    // Require auth for other API routes
+    if (!accessToken?.value && !refreshToken?.value) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+  }
+
+  // Continue with request
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    '/api/:path*',  // API routes
-    '/profile/:path*', // Profile pages
-    '/auth/:path*'  // Auth pages
+    // Admin routes
+    '/admin/:path*',
+    '/api/admin/:path*',
+
+    // Protected pages that require login
+    '/profile/:path*',
+    '/forum/new/:path*',
+
+    // Auth routes that need protection
+    '/api/auth/((?!login|register|password/reset).)*',
+
+    // Protected API routes - all routes except health check
+    '/api/((?!health).)*',
   ]
 };
-
-/**
- * Check if origin is allowed
- */
-function isAllowedOrigin(origin: string | null): origin is string {
-  if (!origin) return false;
-  
-  // Always allow localhost in development
-  if (process.env.NODE_ENV === 'development') {
-    return origin.startsWith('http://localhost:') || 
-           origin === 'http://localhost' ||
-           origin.startsWith('https://localhost:');
-  }
-
-  // Check if origin is in allowed list
-  if (ALLOWED_DOMAINS.some(domain => origin.endsWith(domain))) {
-    return true;
-  }
-
-  // Allow Vercel preview deployments
-  if (origin.endsWith('.vercel.app')) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Get CORS headers based on origin
- */
-function getCorsHeaders(origin: string | null): Partial<CorsHeaders> {
-  // In development, if no origin, allow localhost
-  if (!origin && process.env.NODE_ENV === 'development') {
-    return {
-      'Access-Control-Allow-Origin': 'http://localhost:3000',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Max-Age': '86400',
-    };
-  }
-
-  if (!isAllowedOrigin(origin)) {
-    return {};
-  }
-
-  return {
-    'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Max-Age': '86400',
-  };
-}
-
-/**
- * Determine route type from request path
- */
-function getRouteType(path: string): 'auth' | 'api' | 'profile' {
-  if (AUTH_PATHS.some(p => path.startsWith(p))) return 'auth';
-  if (API_PATHS.some(p => path.startsWith(p))) return 'api';
-  if (PROFILE_PATHS.some(p => path.startsWith(p))) return 'profile';
-  return 'api';
-}
-
-/**
- * Get rate limit configuration for path
- */
-function getRateLimitConfig(path: string) {
-  const key = Object.entries(RATE_LIMIT_ROUTES).find(([route]) => path.startsWith(route));
-  return key ? key[1] : 'default';
-}
-
-/**
- * Add correlation ID to request
- */
-function addCorrelationId(request: NextRequest): string {
-  const correlationId = crypto.randomUUID();
-  const headers = new Headers(request.headers);
-  headers.set('x-correlation-id', correlationId);
-  return correlationId;
-}
-
-/**
- * Log request details in development
- */
-function logRequest(request: NextRequest, correlationId: string) {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[${correlationId}] ${request.method} ${request.url}`, {
-      headers: Object.fromEntries(request.headers.entries()),
-      ip: request.ip,
-      geo: request.geo,
-    });
-  }
-}
-
-/**
- * Add headers to response
- */
-function addHeaders(
-  response: NextResponse,
-  headers: Record<string, string | undefined>
-) {
-  Object.entries(headers).forEach(([key, value]) => {
-    if (value) {
-      response.headers.set(key, value);
-    }
-  });
-}
-
-/**
- * Handle preflight requests
- */
-function handlePreflight(request: NextRequest): NextResponse | null {
-  if (request.method !== 'OPTIONS') {
-    return null;
-  }
-
-  const origin = request.headers.get('origin');
-  const response = new NextResponse(null, { status: 204 });
-  const corsHeaders = getCorsHeaders(origin);
-  const securityHeadersForRoute = getRouteHeaders('api');
-  
-  addHeaders(response, {
-    ...corsHeaders,
-    ...securityHeadersForRoute
-  });
-  
-  return response;
-}
-
-/**
- * Middleware handler
- */
-export default async function middleware(request: NextRequest) {
-  try {
-    // Handle CORS preflight
-    const preflightResponse = handlePreflight(request);
-    if (preflightResponse) {
-      return preflightResponse;
-    }
-
-    // Add correlation ID
-    const correlationId = addCorrelationId(request);
-    
-    // Log request in development
-    logRequest(request, correlationId);
-
-    // Check origin for API routes
-    if (request.nextUrl.pathname.startsWith('/api/')) {
-      const origin = request.headers.get('origin');
-      // In development, allow requests without origin
-      if (!origin && process.env.NODE_ENV === 'development') {
-        // Continue processing
-      } else if (!isAllowedOrigin(origin)) {
-        return createSecureResponse(
-          { error: 'Invalid origin' },
-          403,
-          'api'
-        );
-      }
-    }
-
-    // Determine route type
-    const routeType = getRouteType(request.nextUrl.pathname);
-    
-    // Get appropriate headers
-    const corsHeaders = getCorsHeaders(request.headers.get('origin'));
-    const securityHeadersForRoute = getRouteHeaders(routeType);
-
-    // Create base response
-    const response = NextResponse.next({
-      request: {
-        headers: new Headers(request.headers)
-      }
-    });
-
-    // Add all headers
-    addHeaders(response, {
-      ...corsHeaders,
-      ...securityHeadersForRoute
-    });
-
-    // Check rate limits for API routes
-    if (routeType === 'api' || routeType === 'auth') {
-      const rateLimitType = getRateLimitConfig(request.nextUrl.pathname);
-      const rateLimitResult = await rateLimit(request, rateLimitType);
-
-      if (!rateLimitResult.success) {
-        return rateLimitResult.response;
-      }
-
-      // Add rate limit headers if they exist
-      if (rateLimitResult.headers) {
-        addHeaders(response, rateLimitResult.headers);
-      }
-    }
-
-    // Add correlation ID to response
-    response.headers.set('x-correlation-id', correlationId);
-
-    return response;
-
-  } catch (error) {
-    console.error('Middleware error:', error);
-
-    // Return error response with security headers
-    return createSecureResponse(
-      { error: 'Internal server error' },
-      500,
-      'api'
-    );
-  }
-}

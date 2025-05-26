@@ -1,219 +1,155 @@
-import { NextRequest } from 'next/server';
-import { AuthError } from '@/lib/authTypes';
-import { validateProfile } from '@/lib/security/validation';
-import { createSecureResponse } from '@/lib/security/headers';
-import { rateLimit } from '@/lib/security/rateLimit';
-import mongoose from 'mongoose';
+import { NextRequest, NextResponse } from 'next/server';
 import { User } from '@/models/User';
+import { withDb, handleOptions, createErrorResponse, ApiMiddlewareOptions } from '@/lib/api-middleware';
+import { requireAuth } from '@/lib/auth/validation';
 
-// Use Node.js runtime for mongoose
-export const runtime = 'nodejs';
-
-// Make route dynamic
+// Configure runtime and dynamic settings
+export const runtime = 'nodejs'; // Force Node.js runtime for Mongoose
 export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Disable cache
 
-// Set maximum duration
-export const maxDuration = 30;
+// Connection options for better reliability
+const connectionOptions: ApiMiddlewareOptions = {
+  maxRetries: 3,
+  retryDelay: 1000,
+  validateConnection: true
+};
 
-/**
- * Get user from request
- */
-async function getUser(request: NextRequest) {
-  const userId = request.headers.get('x-user-id');
-  if (!userId) {
-    throw new AuthError('INVALID_TOKEN', 'No user ID found');
-  }
-
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new AuthError('USER_NOT_FOUND', 'User not found');
-  }
-
-  return user;
-}
-
-/**
- * Handle profile GET request
- */
-export async function GET(request: NextRequest) {
-  const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
-
+export const GET = withDb(async (req: NextRequest) => {
   try {
-    // Check rate limits
-    const rateLimitResult = await rateLimit(request, 'profile');
-    if (!rateLimitResult.success) {
-      return rateLimitResult.response;
+    // Verify user authentication
+    const payload = await requireAuth();
+    // console.log('Auth payload:', { userId: payload.userId });
+
+    // Find user and exclude sensitive fields
+    const user = await User.findById(
+      payload.userId,
+      '-password -refreshToken -verificationToken -resetPasswordToken'
+    ).lean();
+
+    if (!user) {
+      console.log('User not found:', payload.userId);
+      return createErrorResponse({
+        message: 'User not found',
+        code: 'USER_NOT_FOUND'
+      }, 404);
     }
 
-    // Check MongoDB connection
-    if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.MONGODB_URI as string);
+    // console.log('Raw user data:', JSON.stringify(user, null, 2));
+
+    // Get request tracking ID
+    const requestId = req.headers.get('x-request-id');
+
+    // Structure and validate response data
+    const userData = {
+      _id: user._id?.toString(),
+      username: user.username,
+      email: user.email,
+      role: user.role || 'user',
+      verified: !!user.verified,
+      createdAt: user.createdAt?.toISOString() || new Date().toISOString(),
+      lastLogin: user.lastLogin?.toISOString() || new Date().toISOString()
+    };
+
+    const profileData = {
+      success: true,
+      user: userData,
+      subjects: Array.isArray(user.subjects) ? user.subjects : [],
+      studyPreferences: {
+        dailyStudyHours: user.studyPreferences?.dailyStudyHours || 0,
+        preferredStudyTime: user.studyPreferences?.preferredStudyTime || 'morning',
+        notifications: user.studyPreferences?.notifications ?? true
+      },
+      timestamp: new Date().toISOString(),
+      ...(requestId && { requestId })
+    };
+
+    // console.log('Processed profile data:', JSON.stringify(profileData, null, 2));
+    return NextResponse.json(profileData);
+
+  } catch (error: any) {
+    console.error('Profile fetch error:', error, error.stack);
+    return createErrorResponse({
+      message: error?.message || 'Failed to fetch profile',
+      code: error?.code || 'PROFILE_ERROR',
+      requestId: req.headers.get('x-request-id')
+    }, error?.status || 500);
+  }
+}, connectionOptions);
+
+export const PATCH = withDb(async (req: NextRequest) => {
+  try {
+    // Verify user authentication
+    const payload = await requireAuth();
+    const data = await req.json();
+
+    // Validate update data
+    if (!data || (typeof data !== 'object')) {
+      return createErrorResponse({
+        message: 'Invalid update data',
+        code: 'INVALID_REQUEST'
+      }, 400);
     }
 
-    // Get user from request
-    const user = await getUser(request);
-
-    // Return profile data
-    return createSecureResponse({
-      profile: {
-        subjects: user.subjects || [],
-        studyPreferences: user.studyPreferences || {
-          dailyStudyHours: 0,
-          preferredStudyTime: 'morning',
-          notifications: true
+    // Find and update user
+    const user = await User.findByIdAndUpdate(
+      payload.userId,
+      {
+        $set: {
+          subjects: data.subjects,
+          studyPreferences: data.studyPreferences,
         }
+      },
+      {
+        new: true,
+        select: '-password -refreshToken -verificationToken -resetPasswordToken',
+        runValidators: true
       }
-    }, 200, 'profile');
+    ).lean();
 
-  } catch (error) {
-    console.error(`[${correlationId}] Profile GET error:`, error);
-
-    if (error instanceof AuthError) {
-      return createSecureResponse(
-        { error: error.message },
-        error.code === 'USER_NOT_FOUND' ? 404 : 401,
-        'profile'
-      );
+    if (!user) {
+      return createErrorResponse({
+        message: 'User not found',
+        code: 'USER_NOT_FOUND'
+      }, 404);
     }
 
-    // Check for MongoDB errors
-    if (error instanceof Error && 
-        (error.name === 'MongooseError' || 
-         error.name === 'MongoServerError' ||
-         error.message.includes('MongoDB'))) {
-      return createSecureResponse(
-        { error: 'Database error' },
-        503,
-        'profile'
-      );
-    }
+    // Get request tracking ID
+    const requestId = req.headers.get('x-request-id');
 
-    return createSecureResponse(
-      { error: 'An unexpected error occurred' },
-      500,
-      'profile'
-    );
+    return NextResponse.json({
+      success: true,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin
+      },
+      subjects: user.subjects || [],
+      studyPreferences: user.studyPreferences || {
+        dailyStudyHours: 0,
+        preferredStudyTime: 'morning',
+        notifications: true
+      },
+      timestamp: new Date().toISOString(),
+      ...(requestId && { requestId })
+    });
 
-  } finally {
-    // Close MongoDB connection
-    if (mongoose.connection.readyState === 1) {
-      try {
-        await mongoose.connection.close();
-      } catch (error) {
-        console.error(`[${correlationId}] Error closing MongoDB connection:`, error);
-      }
-    }
+  } catch (error: any) {
+    console.error('Profile update error:', error);
+    return createErrorResponse({
+      message: error?.message || 'Failed to update profile',
+      code: error?.code || 'PROFILE_UPDATE_ERROR',
+      requestId: req.headers.get('x-request-id')
+    }, error?.status || 500);
   }
-}
+}, connectionOptions);
 
-/**
- * Handle profile PATCH request
- */
-export async function PATCH(request: NextRequest) {
-  const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
+// Handle preflight requests with improved CORS headers
+export const OPTIONS = () => handleOptions(['GET', 'PATCH', 'OPTIONS']);
 
-  try {
-    // Check rate limits
-    const rateLimitResult = await rateLimit(request, 'profile');
-    if (!rateLimitResult.success) {
-      return rateLimitResult.response;
-    }
-
-    // Parse and validate request body
-    const updates = await request.json();
-    try {
-      validateProfile(updates);
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return createSecureResponse(
-          { error: error.message },
-          400,
-          'profile'
-        );
-      }
-      throw error;
-    }
-
-    // Check MongoDB connection
-    if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.MONGODB_URI as string);
-    }
-
-    // Get user and update profile
-    const user = await getUser(request);
-    
-    if (updates.subjects) {
-      user.subjects = updates.subjects;
-    }
-    
-    if (updates.studyPreferences) {
-      user.studyPreferences = {
-        ...user.studyPreferences,
-        ...updates.studyPreferences
-      };
-    }
-
-    await user.save();
-
-    // Log update in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[${correlationId}] Profile updated:`, {
-        userId: user._id,
-        updates: JSON.stringify(updates)
-      });
-    }
-
-    return createSecureResponse({
-      profile: {
-        subjects: user.subjects,
-        studyPreferences: user.studyPreferences
-      }
-    }, 200, 'profile');
-
-  } catch (error) {
-    console.error(`[${correlationId}] Profile PATCH error:`, error);
-
-    if (error instanceof AuthError) {
-      return createSecureResponse(
-        { error: error.message },
-        error.code === 'USER_NOT_FOUND' ? 404 : 401,
-        'profile'
-      );
-    }
-
-    // Check for MongoDB errors
-    if (error instanceof Error && 
-        (error.name === 'MongooseError' || 
-         error.name === 'MongoServerError' ||
-         error.message.includes('MongoDB'))) {
-      return createSecureResponse(
-        { error: 'Database error' },
-        503,
-        'profile'
-      );
-    }
-
-    return createSecureResponse(
-      { error: 'An unexpected error occurred' },
-      500,
-      'profile'
-    );
-
-  } finally {
-    // Close MongoDB connection
-    if (mongoose.connection.readyState === 1) {
-      try {
-        await mongoose.connection.close();
-      } catch (error) {
-        console.error(`[${correlationId}] Error closing MongoDB connection:`, error);
-      }
-    }
-  }
-}
-
-/**
- * Handle OPTIONS request
- */
-export async function OPTIONS() {
-  return createSecureResponse(null, 204, 'profile');
-}
+// Maximum duration for the API route
+export const maxDuration = 10; // seconds
