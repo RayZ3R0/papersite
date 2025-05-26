@@ -2,7 +2,7 @@
 
 import { useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState, useTransition, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface AuthLoadingProviderProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export function AuthLoadingProvider({
   fallback = null,
   publicPaths = [
     "/auth/login",
-    "/auth/register",
+    "/auth/register", 
     "/",
     "/books",
     "/notes",
@@ -31,97 +31,68 @@ export function AuthLoadingProvider({
   ].map(p => p.toLowerCase()),
   loginPath = "/auth/login",
 }: AuthLoadingProviderProps) {
-  const { user, isLoading, refreshSession } = useAuth();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
+  const { user, isLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const initializationRef = useRef(false);
+  const redirectHandled = useRef(false);
 
-  // Check if a path should be public
-  const checkPublicPath = (currentPath: string | null) => {
-    if (!currentPath) return false;
-    const path = currentPath.toLowerCase();
-    return publicPaths.some(publicPath =>
-      path === publicPath || path.startsWith(publicPath + '/')
+  // Check if path is public
+  const isPublicPath = (path: string) => {
+    const normalizedPath = path.toLowerCase();
+    return publicPaths.some(publicPath => 
+      normalizedPath === publicPath || normalizedPath.startsWith(publicPath + '/')
     );
   };
 
-  const isPrivatePath = (currentPath: string | null) => {
-    if (!currentPath) return false;
-    if (currentPath.startsWith('/annotate')) return false;
-
+  // Check if path requires authentication
+  const isPrivatePath = (path: string) => {
+    if (path.startsWith('/annotate')) return false; // annotate is public
     const privatePaths = ['/profile', '/forum/new', '/admin', '/flashcards'];
-    return privatePaths.some(path => currentPath.startsWith(path));
+    return privatePaths.some(privatePath => path.startsWith(privatePath));
   };
 
-  // Initialize auth state only once
+  // Handle redirects after auth state is determined
   useEffect(() => {
-    let mounted = true;
+    if (isLoading) return;
 
-    const initializeAuth = async () => {
-      if (initializationRef.current || isInitialized) return;
-      
-      initializationRef.current = true;
-      
-      try {
-        await refreshSession();
-      } catch (error) {
-        console.error('Auth initialization failed:', error);
-      } finally {
-        if (mounted) {
-          setIsInitialized(true);
-          setHasInitiallyLoaded(true);
-        }
-      }
-    };
+    const currentPath = pathname || "";
+    const isPublic = isPublicPath(currentPath);
+    const isPrivate = isPrivatePath(currentPath);
 
-    // Only initialize once when component first mounts
-    if (!hasInitiallyLoaded) {
-      initializeAuth();
-    }
+    // Prevent redirect loops
+    if (redirectHandled.current) return;
 
-    return () => {
-      mounted = false;
-    };
-  }, []); // Empty dependency array - only run once
-
-  // Handle redirects based on auth state
-  useEffect(() => {
-    if (!isInitialized || isLoading) return;
-    
-    const isPublic = checkPublicPath(pathname);
-    const isPrivate = isPrivatePath(pathname);
-
-    // Only redirect if path is private and user is not authenticated
+    // Redirect unauthenticated users from private paths
     if (!user && isPrivate) {
-      startTransition(() => {
-        const returnPath = encodeURIComponent(pathname || "/");
-        router.push(`${loginPath}?returnTo=${returnPath}`);
-      });
+      redirectHandled.current = true;
+      const returnPath = encodeURIComponent(currentPath);
+      router.replace(`${loginPath}?returnTo=${returnPath}`);
       return;
     }
 
-    // Handle post-login redirects
-    if (user && pathname === loginPath) {
-      startTransition(() => {
-        const params = new URLSearchParams(window.location.search);
-        const returnTo = params.get("returnTo");
-        router.push(decodeURIComponent(returnTo || "/"));
-      });
+    // Redirect authenticated users from login page
+    if (user && currentPath === loginPath) {
+      redirectHandled.current = true;
+      const params = new URLSearchParams(window.location.search);
+      const returnTo = params.get("returnTo");
+      router.replace(decodeURIComponent(returnTo || "/"));
+      return;
     }
-  }, [user, isInitialized, isLoading, pathname, router, loginPath]);
 
-  // Show loading only for private paths and only during initial load
-  const isPublicPath = checkPublicPath(pathname);
-  const isPrivate = isPrivatePath(pathname);
+    // Reset redirect flag for valid navigation
+    redirectHandled.current = false;
+  }, [user, isLoading, pathname, router, loginPath]);
 
-  if (!hasInitiallyLoaded || (!isInitialized && isPrivate)) {
-    if (isPublicPath) {
+  // Show loading spinner only during initial auth check and only for private routes
+  if (isLoading) {
+    const currentPath = pathname || "";
+    const isPrivate = isPrivatePath(currentPath);
+    
+    // Don't show loading for public paths
+    if (!isPrivate) {
       return <>{children}</>;
     }
-    
+
     return (
       <div className="min-h-screen flex items-center justify-center">
         {fallback || (
@@ -134,9 +105,12 @@ export function AuthLoadingProvider({
     );
   }
 
-  // Block access to private paths for unauthenticated users
-  if (!user && isPrivate && !isLoading) {
-    return null; // Will be redirected by the routing effect
+  // Block unauthenticated access to private paths (will be redirected)
+  const currentPath = pathname || "";
+  const isPrivate = isPrivatePath(currentPath);
+  
+  if (!user && isPrivate) {
+    return null;
   }
 
   return <>{children}</>;
