@@ -1,94 +1,156 @@
-'use client';
+import { useState, useEffect, useCallback } from 'react';
+import { UserProfile, UserSubjectConfig } from '@/types/profile';
+import { AuthError } from '@/lib/authTypes';
 
-import { useState } from 'react';
-import { useProfile, ProfileData } from './useProfile';
-
-interface UpdateOptions {
-  // If true, will update the local state before the server response
-  optimistic?: boolean;
+interface UseProfileUpdateOptions {
+  onSuccess?: (data: UserProfile) => void;
+  onError?: (error: Error) => void;
+  debounceMs?: number;
 }
 
-export function useProfileUpdate() {
-  const { data, refetch } = useProfile();
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+interface UpdateState {
+  loading: boolean;
+  error: Error | null;
+  data: UserProfile | null;
+  lastSaved: Date | null;
+}
 
-  const updateProfile = async (
-    updates: Partial<Omit<ProfileData, 'user'>>,
-    options: UpdateOptions = { optimistic: true }
-  ) => {
-    try {
-      setError(null);
-      setIsUpdating(true);
+type ProfileUpdate = {
+  subjects?: UserSubjectConfig[];
+  studyPreferences?: {
+    dailyStudyHours?: number;
+    preferredStudyTime?: 'morning' | 'afternoon' | 'evening' | 'night';
+    notifications?: boolean;
+  };
+};
 
-      // Create updated profile data
-      const updatedData = {
-        ...data,
-        ...updates
-      };
+/**
+ * Hook for managing profile updates with security and error handling
+ */
+export function useProfileUpdate(options: UseProfileUpdateOptions = {}) {
+  const [state, setState] = useState<UpdateState>({
+    loading: false,
+    error: null,
+    data: null,
+    lastSaved: null
+  });
 
-      // If optimistic updates are enabled, update local state immediately
-      if (options.optimistic) {
-        refetch();
+  const [pendingUpdates, setPendingUpdates] = useState<ProfileUpdate>({});
+  const [updateTimeout, setUpdateTimeout] = useState<NodeJS.Timeout>();
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeout) {
+        clearTimeout(updateTimeout);
       }
+    };
+  }, [updateTimeout]);
 
-      // Send update to server
+  /**
+   * Send profile update request
+   */
+  const updateProfile = useCallback(async (updates: ProfileUpdate) => {
+    try {
+      setState(prev => ({ ...prev, loading: true, error: null }));
+
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest' // CSRF protection
         },
         body: JSON.stringify(updates),
+        credentials: 'include' // Include cookies
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update profile');
+        const data = await response.json();
+        
+        // Check for rate limiting
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          throw new AuthError('RATE_LIMIT', data.error, retryAfter ? parseInt(retryAfter) : undefined);
+        }
+
+        throw new Error(data.error || 'Failed to update profile');
       }
 
-      // Refetch to ensure we have the latest data
-      await refetch();
+      const data = await response.json();
 
-      return await response.json();
-    } catch (err) {
-      console.error('Profile update error:', err);
-      setError(err instanceof Error ? err : new Error('Failed to update profile'));
-      
-      // If optimistic update was used, refetch to revert changes
-      if (options.optimistic) {
-        await refetch();
-      }
-      
-      throw err;
-    } finally {
-      setIsUpdating(false);
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        data: data.profile,
+        lastSaved: new Date(),
+        error: null
+      }));
+
+      options.onSuccess?.(data.profile);
+
+    } catch (error) {
+      console.error('Profile update error:', error);
+
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        lastSaved: null
+      }));
+
+      options.onError?.(error instanceof Error ? error : new Error('Unknown error'));
     }
-  };
+  }, [options]);
 
-  const updateStudyPreferences = async (
-    preferences: Partial<ProfileData['studyPreferences']>
-  ) => {
-    return updateProfile({
-      studyPreferences: {
-        ...data?.studyPreferences,
-        ...preferences
-      }
-    });
-  };
+  /**
+   * Queue profile update with debouncing
+   */
+  const queueUpdate = useCallback((updates: ProfileUpdate) => {
+    // Clear any pending timeout
+    if (updateTimeout) {
+      clearTimeout(updateTimeout);
+    }
 
-  const updateSubjects = async (
-    subjects: ProfileData['subjects']
-  ) => {
-    return updateProfile({ subjects });
-  };
+    // Merge new updates with pending updates
+    setPendingUpdates(prev => ({
+      subjects: updates.subjects || prev.subjects,
+      studyPreferences: updates.studyPreferences ? {
+        ...prev.studyPreferences,
+        ...updates.studyPreferences
+      } : prev.studyPreferences
+    }));
+
+    // Set new timeout
+    const timeout = setTimeout(() => {
+      updateProfile(pendingUpdates);
+      setPendingUpdates({});
+    }, options.debounceMs || 1000);
+
+    setUpdateTimeout(timeout);
+  }, [updateTimeout, pendingUpdates, options.debounceMs, updateProfile]);
+
+  /**
+   * Force immediate update
+   */
+  const saveNow = useCallback(async () => {
+    if (updateTimeout) {
+      clearTimeout(updateTimeout);
+      setUpdateTimeout(undefined);
+    }
+
+    if (Object.keys(pendingUpdates).length > 0) {
+      await updateProfile(pendingUpdates);
+      setPendingUpdates({});
+    }
+  }, [updateTimeout, pendingUpdates, updateProfile]);
 
   return {
-    isUpdating,
-    error,
-    updateProfile,
-    updateStudyPreferences,
-    updateSubjects
+    update: queueUpdate,
+    saveNow,
+    loading: state.loading,
+    error: state.error,
+    data: state.data,
+    lastSaved: state.lastSaved,
+    hasPendingChanges: Object.keys(pendingUpdates).length > 0
   };
 }
-
-export type UseProfileUpdateReturn = ReturnType<typeof useProfileUpdate>;

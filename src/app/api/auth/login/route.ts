@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { loginUser } from '@/lib/auth';
 import { AuthError } from '@/lib/authTypes';
+import { validateLogin } from '@/lib/security/validation';
+import { createSecureResponse } from '@/lib/security/headers';
+import { rateLimit } from '@/lib/security/rateLimit';
 import mongoose from 'mongoose';
 
 // Use Node.js runtime for mongoose
@@ -9,19 +12,46 @@ export const runtime = 'nodejs';
 // Make route dynamic
 export const dynamic = 'force-dynamic';
 
-// Set maximum duration for login operations
+// Set maximum duration
 export const maxDuration = 15;
 
+/**
+ * Handle login request
+ */
 export async function POST(request: NextRequest) {
+  const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
+
   try {
-    // Check MongoDB connection first
+    // Check rate limits first
+    const rateLimitResult = await rateLimit(request, 'login');
+    if (!rateLimitResult.success) {
+      return rateLimitResult.response;
+    }
+
+    // Parse request body
+    const body = await request.json();
+    const { email, username, password, rememberMe } = body;
+
+    // Validate input
+    try {
+      validateLogin({ email, username, password });
+    } catch (error) {
+      if (error instanceof AuthError) {
+        return createSecureResponse(
+          { error: error.message },
+          400,
+          'auth'
+        );
+      }
+      throw error;
+    }
+
+    // Check MongoDB connection
     if (mongoose.connection.readyState !== 1) {
       await mongoose.connect(process.env.MONGODB_URI as string);
     }
 
-    const body = await request.json();
-    const { email, username, password, rememberMe } = body;
-
+    // Attempt login
     const result = await loginUser({
       email,
       username,
@@ -32,55 +62,70 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    if (!result || !result.user) {
-      return NextResponse.json(
-        { error: 'Login failed' },
-        { status: 401 }
-      );
+    // Log successful login in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[${correlationId}] Successful login:`, {
+        email: email || undefined,
+        username: username || undefined,
+        userId: result.user._id
+      });
     }
 
-    return NextResponse.json(result);
+    // Return success response
+    return createSecureResponse({
+      user: result.user,
+      sessionInfo: {
+        lastRefresh: new Date().toISOString(),
+        sessionId: correlationId
+      }
+    }, 200, 'auth');
+
   } catch (error) {
-    console.error('Login error:', error);
-    
+    // Log error details
+    console.error(`[${correlationId}] Login error:`, error);
+
     if (error instanceof AuthError) {
-      return NextResponse.json(
+      return createSecureResponse(
         { error: error.message },
-        { status: error.code === 'SERVER_ERROR' ? 500 : 401 }
+        error.code === 'SERVER_ERROR' ? 500 : 401,
+        'auth'
       );
     }
 
-    if (error instanceof mongoose.Error.MongooseError) {
-      return NextResponse.json(
+    // Check for MongoDB connection errors
+    if (error instanceof Error && 
+        (error.name === 'MongooseError' || 
+         error.name === 'MongoServerError' ||
+         error.message.includes('MongoDB'))) {
+      return createSecureResponse(
         { error: 'Database connection error' },
-        { status: 503 }
+        503,
+        'auth'
       );
     }
 
-    return NextResponse.json(
+    // Generic error response
+    return createSecureResponse(
       { error: 'An unexpected error occurred' },
-      { status: 500 }
+      500,
+      'auth'
     );
+
   } finally {
     // Ensure we don't keep idle connections
     if (mongoose.connection.readyState === 1) {
       try {
         await mongoose.connection.close();
       } catch (error) {
-        console.error('Error closing MongoDB connection:', error);
+        console.error(`[${correlationId}] Error closing MongoDB connection:`, error);
       }
     }
   }
 }
 
-// Handle preflight requests
-export function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
+/**
+ * Handle OPTIONS requests
+ */
+export async function OPTIONS() {
+  return createSecureResponse(null, 204, 'auth');
 }
