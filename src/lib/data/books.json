@@ -54,6 +54,13 @@
       "imageUrl": "/books/psych2.png"
     },
     {
+      "id": "psychology-3",
+      "name": "Cambridge IAL Psychology Coursebook 2nd Edition",
+      "pdfUrl": "https://cdn.papernexus.xyz/books/Julia Russell, Lizzie Gauntlett, Amy Papaconstantinou - Cambridge International AS & A Level Psychology Coursebook with Digital Access (2 Years)-Cambridge University Press (2022).pdf",
+      "subject": "Psychology",
+      "imageUrl": "https://cdn.papernexus.xyz/books/psych_preview.png"
+    },
+    {
       "id": "accounting-1",
       "name": "Accounting Student Book 1",
       "pdfUrl": "https://mega.nz/file/achGTbhK#zzG_s3LZYXGxgNlSeefehDCycB77A0-Jmezl2Bd1lL0",
