@@ -137,6 +137,53 @@ const sortSessions = (sessions: string[]): string[] => {
   });
 };
 
+// Custom sorting function for units
+const sortUnits = (units: Unit[]): Unit[] => {
+  return [...units].sort((a, b) => {
+    // Extract subject prefix and number from unit ID (e.g., "WCH04" -> "WCH", "04")
+    const matchA = a.id.match(/^([A-Z]+)(\d+)$/);
+    const matchB = b.id.match(/^([A-Z]+)(\d+)$/);
+    
+    if (!matchA || !matchB) {
+      // Fallback to alphabetical sorting if pattern doesn't match
+      return a.id.localeCompare(b.id);
+    }
+    
+    const [, prefixA, numberA] = matchA;
+    const [, prefixB, numberB] = matchB;
+    
+    // First sort by prefix (subject)
+    if (prefixA !== prefixB) {
+      return prefixA.localeCompare(prefixB);
+    }
+    
+    // Skip custom sorting for maths units (assuming they start with 'M')
+    if (prefixA.startsWith('M')) {
+      return parseInt(numberA, 10) - parseInt(numberB, 10);
+    }
+    
+    const numA = parseInt(numberA, 10);
+    const numB = parseInt(numberB, 10);
+    
+    // Define priority order: 11-16 first, then 04-06
+    const getPriority = (num: number) => {
+      if (num >= 11 && num <= 16) return 1; // High priority
+      if (num >= 4 && num <= 6) return 2;   // Low priority
+      return 3; // Everything else at the end
+    };
+    
+    const priorityA = getPriority(numA);
+    const priorityB = getPriority(numB);
+    
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+    
+    // Within same priority group, sort numerically
+    return numA - numB;
+  });
+};
+
 const Card = ({
   children,
   className = "",
@@ -400,6 +447,34 @@ const ActionButton = ({
   >
     {children}
   </button>
+);
+
+const TipBanner = ({ children }: { children: React.ReactNode }) => (
+  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-lg">
+    <div className="flex items-start gap-3">
+      <div className="flex-shrink-0 mt-0.5">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          className="text-blue-600 dark:text-blue-400"
+        >
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4"/>
+          <path d="M12 8h.01"/>
+        </svg>
+      </div>
+      <div className="text-sm text-blue-800 dark:text-blue-200">
+        {children}
+      </div>
+    </div>
+  </div>
 );
 
 export default function UMSChart({
@@ -1195,6 +1270,15 @@ export default function UMSChart({
         </CardHeader>
 
         {/* Chart View */}
+        <div className="p-6 pb-0">
+          {/* Tip Banner for Grade Boundaries view */}
+          {viewType === VIEW_TYPES.GRADE_BOUNDS && (
+            <TipBanner>
+              <strong>Tip:</strong> Hover over the chart lines to see the exact raw marks required for each grade boundary in different exam sessions.
+            </TipBanner>
+          )}
+        </div>
+
         <div className="h-[450px] p-6 relative overflow-hidden border-b border-border/50">
           {options ? (
             <ReactECharts
