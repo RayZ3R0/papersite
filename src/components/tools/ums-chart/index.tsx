@@ -13,9 +13,9 @@ interface UMSChartProps {
 }
 
 const VIEW_TYPES = {
-  GRADE_BOUNDS: "grade-bounds",   // Now first
-  GRADE_DIST: "grade-dist",       // Second
-  SESSION_COMP: "session-comp",   // Third
+  GRADE_BOUNDS: "grade-bounds",
+  GRADE_DIST: "grade-dist",
+  SESSION_COMP: "session-comp",
 } as const;
 
 type ViewType = (typeof VIEW_TYPES)[keyof typeof VIEW_TYPES];
@@ -50,6 +50,36 @@ const SESSION_COLORS = [
   "#F97316", // Orange
   "#6366F1", // Indigo
   "#D946EF", // Fuchsia
+  "#14B8A6", // Teal
+  "#F43F5E", // Rose
+  "#84CC16", // Lime
+  "#A855F7", // Violet
+  "#0EA5E9", // Sky
+  "#EAB308", // Yellow
+  "#DC2626", // Red-600
+  "#059669", // Emerald-600
+  "#7C3AED", // Violet-600
+  "#DB2777", // Pink-600
+  "#0891B2", // Cyan-600
+  "#CA8A04", // Yellow-600
+  "#9333EA", // Purple-600
+  "#BE123C", // Rose-700
+  "#047857", // Emerald-700
+  "#1D4ED8", // Blue-700
+  "#B45309", // Amber-700
+  "#7C2D12", // Orange-800
+  "#991B1B", // Red-800
+  "#365314", // Lime-800
+  "#1E3A8A", // Blue-900
+  "#92400E", // Amber-800
+  "#166534", // Green-800
+  "#7E22CE", // Purple-700
+  "#BE185D", // Pink-700
+  "#0F766E", // Teal-700
+  "#C2410C", // Orange-700
+  "#4338CA", // Indigo-700
+  "#E11D48", // Rose-600
+  "#16A34A", // Green-600
 ];
 
 const GRADE_COLORS: Record<string, string> = {
@@ -128,7 +158,7 @@ const CardHeader = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className={`p-4 bg-surface/40 border-b border-border/50 ${className}`}>
+  <div className={`p-6 bg-surface/40 border-b border-border/50 ${className}`}>
     {children}
   </div>
 );
@@ -139,7 +169,7 @@ const CardContent = ({
 }: {
   children: React.ReactNode;
   className?: string;
-}) => <div className={`p-5 ${className}`}>{children}</div>;
+}) => <div className={`p-6 ${className}`}>{children}</div>;
 
 const TabButton = ({
   active,
@@ -159,13 +189,13 @@ const TabButton = ({
     role={role}
     aria-selected={ariaSelected}
     className={`
-      px-4 py-2 rounded-lg font-medium
-      transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-primary/30
+      px-4 py-2.5 rounded-lg font-medium text-sm
+      transition-all duration-200 ease-out
+      focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background
       ${
         active
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "text-text-muted hover:text-text hover:bg-surface-hover"
+          ? "bg-primary text-primary-foreground shadow-sm scale-[1.02]"
+          : "text-text-muted hover:text-text hover:bg-surface-hover hover:scale-[1.01]"
       }
     `}
   >
@@ -177,33 +207,58 @@ const UnitSelector = ({ unit, subject }: { unit: Unit; subject: Subject }) => (
   <div className="relative group">
     <div
       className="
-        px-4 py-2 rounded-lg bg-surface border border-border
-        hover:bg-surface-hover hover:border-border/80
+        px-4 py-3 rounded-lg bg-surface border border-border
+        hover:bg-surface-hover hover:border-border/80 hover:shadow-sm
         transition-all duration-200 cursor-pointer
+        flex items-center gap-3
       "
       role="button"
       aria-haspopup="true"
       aria-expanded="false"
     >
+      <div className="w-2 h-2 rounded-full bg-primary/60"></div>
       <span className="font-mono font-medium text-lg">{unit.id}</span>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width="16" 
+        height="16" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        className="text-text-muted"
+      >
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9,9h6v6"/>
+        <path d="m9,9 6,6"/>
+      </svg>
     </div>
     <div
       className="
-        absolute z-10 left-0 top-full mt-2 opacity-0 invisible
+        absolute z-20 left-0 top-full mt-3 opacity-0 invisible
         group-hover:opacity-100 group-hover:visible
-        transition-all duration-200 w-[300px]
+        transition-all duration-300 ease-out w-[320px]
+        transform translate-y-2 group-hover:translate-y-0
       "
       role="tooltip"
     >
       <div
         className="
-        bg-popover text-popover-foreground p-4 rounded-lg
-        shadow-lg border border-border/50 backdrop-blur-sm
+        bg-popover text-popover-foreground p-5 rounded-xl
+        shadow-xl border border-border/50 backdrop-blur-sm
+        before:content-[''] before:absolute before:-top-2 before:left-6
+        before:w-4 before:h-4 before:bg-popover before:border-l before:border-t 
+        before:border-border/50 before:rotate-45
       "
       >
-        <div className="border-b border-border pb-2 mb-2">
-          <h4 className="font-semibold text-lg">{subject.name}</h4>
-          <p className="text-sm text-text-muted mt-1">{unit.name}</p>
+        <div className="border-b border-border pb-3 mb-3">
+          <h4 className="font-semibold text-lg flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary"></div>
+            {subject.name}
+          </h4>
+          <p className="text-sm text-text-muted mt-1 font-medium">{unit.name}</p>
         </div>
         {unit.description && (
           <p className="text-sm text-text-muted leading-relaxed">
@@ -228,56 +283,123 @@ const SessionButton = ({
   onClick: () => void;
   metadata: { recordCount: number; timestamp: string };
 }) => (
-  <div className="relative group">
-    <button
-      className={`
-        px-4 py-2 rounded-lg
-        transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-primary/30
-        ${
-          selected
-            ? "bg-background shadow-sm"
-            : "bg-surface hover:bg-surface-hover"
-        }
-      `}
-      style={{
-        borderColor: color,
-        borderWidth: 2,
-        borderStyle: "solid",
-        color: selected ? color : undefined,
-        fontWeight: selected ? 500 : 400,
-      }}
-      onClick={onClick}
-      aria-pressed={selected}
-    >
-      {formatSessionName(session)}
-    </button>
-    <div
-      className="
-      absolute z-10 left-0 top-full mt-2
-      opacity-0 invisible
-      group-hover:opacity-100 group-hover:visible
-      transition-all duration-200
-    "
-    >
+  <button
+    className={`
+      relative px-4 py-2.5 rounded-xl font-medium text-sm
+      transition-all duration-300 ease-out
+      focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background
+      transform hover:scale-105 active:scale-95
+      ${
+        selected
+          ? "bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-lg border-2"
+          : "bg-surface hover:bg-surface-hover border-2 border-transparent hover:shadow-md"
+      }
+    `}
+    style={{
+      borderColor: selected ? color : "transparent",
+      ...(selected && {
+        boxShadow: `0 8px 25px -8px ${color}40, 0 4px 12px -4px ${color}30`,
+      }),
+    }}
+    onClick={onClick}
+    aria-pressed={selected}
+    aria-label={`${selected ? 'Deselect' : 'Select'} ${formatSessionName(session)} session`}
+  >
+    {/* Color indicator dot */}
+    <div className="flex items-center gap-3">
       <div
-        className="
-        bg-popover text-popover-foreground p-3 rounded-lg
-        shadow-lg min-w-[160px] border border-border/50
-      "
+        className={`
+          w-3 h-3 rounded-full flex-shrink-0
+          transition-all duration-300 ease-out
+          ${selected ? "scale-110 shadow-sm" : "scale-100"}
+        `}
+        style={{
+          backgroundColor: color,
+          boxShadow: selected ? `0 0 8px ${color}60` : "none",
+        }}
+      />
+      
+      {/* Session name */}
+      <span
+        className={`
+          transition-colors duration-200
+          ${selected ? "text-text font-semibold" : "text-text hover:text-text"}
+        `}
+        style={{ color: selected ? color : undefined }}
       >
-        <div className="font-medium mb-1" style={{ color }}>
-          {formatSessionName(session)}
+        {formatSessionName(session)}
+      </span>
+      
+      {/* Selected indicator */}
+      {selected && (
+        <div
+          className="flex-shrink-0 transition-all duration-200 ease-out"
+          style={{ color }}
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="14" 
+            height="14" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="animate-in zoom-in duration-200"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
         </div>
-        <div className="space-y-1">
-          <p className="text-xs text-text-muted">
-            {metadata.recordCount} records
-          </p>
-          <p className="text-xs text-text-muted">{metadata.timestamp}</p>
-        </div>
-      </div>
+      )}
     </div>
-  </div>
+    
+    {/* Subtle shine effect for selected state */}
+    {selected && (
+      <div 
+        className="absolute inset-0 rounded-xl opacity-20 pointer-events-none"
+        style={{
+          background: `linear-gradient(135deg, transparent 30%, ${color}20 50%, transparent 70%)`,
+        }}
+      />
+    )}
+    
+    {/* Ripple effect overlay */}
+    <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+      <div 
+        className={`
+          absolute inset-0 rounded-xl transition-opacity duration-300
+          ${selected ? "opacity-5" : "opacity-0 hover:opacity-5 active:opacity-10"}
+        `}
+        style={{ backgroundColor: color }}
+      />
+    </div>
+  </button>
+);
+
+const ActionButton = ({
+  onClick,
+  children,
+  variant = "primary",
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  variant?: "primary" | "secondary";
+}) => (
+  <button
+    className={`
+      px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background
+      ${
+        variant === "primary"
+          ? "text-primary hover:text-primary-hover bg-primary/10 hover:bg-primary/15"
+          : "text-text-muted hover:text-text bg-surface hover:bg-surface-hover"
+      }
+    `}
+    onClick={onClick}
+  >
+    {children}
+  </button>
 );
 
 export default function UMSChart({
@@ -293,18 +415,21 @@ export default function UMSChart({
     session: string;
   }>(null);
 
+  // Get sorted sessions for UI display
+  const sortedSessions = useMemo(() => {
+    if (!umsData?.sessions) return [];
+    return sortSessions(umsData.sessions.map((s) => s.session));
+  }, [umsData]);
+
   // Sort sessions and set initial selection when umsData changes
   useEffect(() => {
-    if (umsData?.sessions) {
-      const sortedSessions = sortSessions(
-        umsData.sessions.map((s) => s.session),
-      );
+    if (sortedSessions.length > 0) {
       // Initially select the latest 3 sessions or all if less than 3
       setSelectedSessions(
         sortedSessions.slice(0, Math.min(3, sortedSessions.length)),
       );
     }
-  }, [umsData]);
+  }, [sortedSessions]);
 
   // Get URL parameters on component mount
   useEffect(() => {
@@ -508,24 +633,27 @@ export default function UMSChart({
 
       const commonOptions: EChartsOption = {
         animation: true,
-        animationDuration: 500,
+        animationDuration: 600,
+        animationEasing: "cubicOut",
         grid: {
-          top: 60,
-          right: 40,
-          bottom: 100,
-          left: 60,
+          top: 70,
+          right: 50,
+          bottom: 110,
+          left: 70,
           containLabel: true,
         },
         tooltip: {
           trigger: "axis",
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
-          borderRadius: 8,
+          backgroundColor: "rgba(255, 255, 255, 0.96)",
+          borderRadius: 10,
           borderWidth: 1,
-          padding: 12,
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          padding: [12, 16],
           textStyle: {
             color: "#1f2937",
+            fontSize: 13,
           },
-          extraCssText: "box-shadow: 0 4px 12px rgba(0,0,0,0.15);",
+          extraCssText: "box-shadow: 0 8px 32px rgba(0,0,0,0.12); backdrop-filter: blur(8px);",
         },
         dataZoom: [
           {
@@ -538,16 +666,22 @@ export default function UMSChart({
             show: true,
             start: 0,
             end: 100,
-            bottom: 5,
+            bottom: 8,
+            height: 18,
+            handleSize: 16,
+            borderRadius: 4,
           },
         ],
         legend: {
-          bottom: 35,
+          bottom: 45,
           formatter: formatSessionName,
-          itemGap: 20,
+          itemGap: 24,
+          itemWidth: 16,
+          itemHeight: 16,
           textStyle: {
             fontSize: 12,
-            color: "#64748B", // This slate-500 color works in both light and dark modes
+            color: "#64748B",
+            fontWeight: 500,
           },
         },
       };
@@ -562,45 +696,66 @@ export default function UMSChart({
                 data: gradeDistData.map((d) => d.grade),
                 axisLabel: {
                   interval: 0,
-                  fontSize: 12,
-                  fontWeight: "bold",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#374151",
+                },
+                axisLine: {
+                  lineStyle: {
+                    color: "#E5E7EB",
+                  },
                 },
               },
               yAxis: {
                 type: "value",
                 name: "Raw Mark",
                 nameLocation: "middle",
-                nameGap: 40,
+                nameGap: 50,
+                nameTextStyle: {
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#374151",
+                },
                 splitLine: {
                   lineStyle: {
                     type: "dashed",
+                    color: "#F3F4F6",
                   },
+                },
+                axisLabel: {
+                  fontSize: 12,
+                  color: "#6B7280",
                 },
               },
-              series: selectedSessions.map((session, index) => ({
-                name: session,
-                type: "bar",
-                data: gradeDistData.map((d) => d[session]),
-                itemStyle: {
-                  color: SESSION_COLORS[index % SESSION_COLORS.length],
-                  borderRadius: [4, 4, 0, 0],
-                },
-                emphasis: {
+              series: selectedSessions.map((session, index) => {
+                const sessionIndex = sortedSessions.indexOf(session);
+                return {
+                  name: session,
+                  type: "bar",
+                  data: gradeDistData.map((d) => d[session]),
                   itemStyle: {
-                    borderWidth: 1,
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: "rgba(0, 0, 0, 0.3)",
+                    color: SESSION_COLORS[sessionIndex % SESSION_COLORS.length],
+                    borderRadius: [6, 6, 0, 0],
                   },
-                },
-              })),
+                  emphasis: {
+                    itemStyle: {
+                      borderWidth: 2,
+                      borderColor: "#ffffff",
+                      shadowBlur: 15,
+                      shadowOffsetX: 0,
+                      shadowOffsetY: 4,
+                      shadowColor: "rgba(0, 0, 0, 0.2)",
+                    },
+                  },
+                };
+              }),
               tooltip: {
                 ...commonOptions.tooltip,
                 formatter: (params: any) => {
                   if (!Array.isArray(params)) return "";
 
                   const grade = params[0].name;
-                  let content = `<div style="font-weight: 500; margin-bottom: 8px;">Grade: ${grade}</div>`;
+                  let content = `<div style="font-weight: 600; margin-bottom: 10px; color: #111827;">Grade: ${grade}</div>`;
 
                   params.forEach((param: any) => {
                     const sessionName = param.seriesName;
@@ -608,10 +763,10 @@ export default function UMSChart({
                     const color = param.color;
 
                     content += `
-                <div style="margin-top: 8px;">
-                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
-                  <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
-                  <div style="padding-left: 16px;">Raw Mark: ${rawMark !== undefined ? rawMark : "N/A"}</div>
+                <div style="margin-top: 10px; display: flex; align-items: center;">
+                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${color}; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
+                  <span style="font-weight: 500; color: ${color}; margin-right: 8px;">${formatSessionName(sessionName)}</span>
+                  <span style="color: #6B7280;">Raw Mark: <strong style="color: #111827;">${rawMark !== undefined ? rawMark : "N/A"}</strong></span>
                 </div>
               `;
                   });
@@ -631,17 +786,33 @@ export default function UMSChart({
                     fontSize: 12,
                     rotate: 45,
                     align: "right",
+                    color: "#6B7280",
+                  },
+                  axisLine: {
+                    lineStyle: {
+                      color: "#E5E7EB",
+                    },
                   },
                 },
                 yAxis: {
                   type: "value",
                   name: "Raw Mark",
                   nameLocation: "middle",
-                  nameGap: 40,
+                  nameGap: 50,
+                  nameTextStyle: {
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                  },
                   splitLine: {
                     lineStyle: {
                       type: "dashed",
+                      color: "#F3F4F6",
                     },
+                  },
+                  axisLabel: {
+                    fontSize: 12,
+                    color: "#6B7280",
                   },
                 },
                 series: gradeBoundaryData.map((boundary) => ({
@@ -653,13 +824,15 @@ export default function UMSChart({
                     );
                     return dataPoint ? dataPoint.raw : null;
                   }),
-                  symbolSize: 8,
+                  symbolSize: 10,
                   lineStyle: {
                     width: 3,
                     color: boundary.color,
                   },
                   itemStyle: {
                     color: boundary.color,
+                    borderWidth: 2,
+                    borderColor: "#ffffff",
                   },
                   smooth: false,
                   connectNulls: false,
@@ -668,12 +841,18 @@ export default function UMSChart({
                     lineStyle: {
                       width: 4,
                     },
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowColor: boundary.color,
+                    },
                   },
                   label: {
                     show: true,
                     formatter: "{c}",
-                    fontSize: 12,
+                    fontSize: 11,
                     position: "top",
+                    fontWeight: 600,
+                    color: boundary.color,
                   },
                 })),
                 tooltip: {
@@ -682,7 +861,7 @@ export default function UMSChart({
                     if (!Array.isArray(params)) return "";
 
                     const sessionName = params[0].name;
-                    let content = `<div style="font-weight: 500; margin-bottom: 8px;">${sessionName}</div>`;
+                    let content = `<div style="font-weight: 600; margin-bottom: 10px; color: #111827;">${sessionName}</div>`;
 
                     params.forEach((param: any) => {
                       const grade = param.seriesName;
@@ -691,10 +870,10 @@ export default function UMSChart({
 
                       if (rawMark !== null && rawMark !== undefined) {
                         content += `
-                  <div style="margin-top: 8px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
-                    <span style="font-weight: 500; color: ${color};">${grade}</span>
-                    <div style="padding-left: 16px;">Raw Mark: ${rawMark}</div>
+                  <div style="margin-top: 10px; display: flex; align-items: center;">
+                    <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${color}; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
+                    <span style="font-weight: 500; color: ${color}; margin-right: 8px;">${grade}</span>
+                    <span style="color: #6B7280;">Raw Mark: <strong style="color: #111827;">${rawMark}</strong></span>
                   </div>
                 `;
                       }
@@ -714,80 +893,109 @@ export default function UMSChart({
                   type: "value",
                   name: "Raw Mark",
                   nameLocation: "middle",
-                  nameGap: 45,
+                  nameGap: 55,
+                  nameTextStyle: {
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                  },
                   min: 0,
                   max: "dataMax",
                   splitLine: {
                     lineStyle: {
                       type: "dashed",
+                      color: "#F3F4F6",
                     },
+                  },
+                  axisLabel: {
+                    fontSize: 12,
+                    color: "#6B7280",
                   },
                 },
                 yAxis: {
                   type: "value",
                   name: "UMS",
                   nameLocation: "middle",
-                  nameGap: 40,
+                  nameGap: 50,
+                  nameTextStyle: {
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#374151",
+                  },
                   splitLine: {
                     lineStyle: {
                       type: "dashed",
+                      color: "#F3F4F6",
                     },
+                  },
+                  axisLabel: {
+                    fontSize: 12,
+                    color: "#6B7280",
                   },
                 },
-                series: selectedSessions.map((session, index) => ({
-                  name: session,
-                  type: "line",
-                  smooth: true,
-                  symbol: "circle",
-                  symbolSize: 2,
-                  sampling: "average",
-                  data: chartData.map((point) => [point.raw, point[session]]),
-                  lineStyle: {
-                    color: SESSION_COLORS[index % SESSION_COLORS.length],
-                    width: 2,
-                  },
-                  emphasis: {
-                    focus: "series",
+                series: selectedSessions.map((session, index) => {
+                  const sessionIndex = sortedSessions.indexOf(session);
+                  return {
+                    name: session,
+                    type: "line",
+                    smooth: true,
+                    symbol: "circle",
+                    symbolSize: 3,
+                    sampling: "average",
+                    data: chartData.map((point) => [point.raw, point[session]]),
                     lineStyle: {
-                      width: 3,
+                      color: SESSION_COLORS[sessionIndex % SESSION_COLORS.length],
+                      width: 2.5,
                     },
-                    itemStyle: {
-                      borderWidth: 2,
+                    emphasis: {
+                      focus: "series",
+                      lineStyle: {
+                        width: 3.5,
+                      },
+                      itemStyle: {
+                        borderWidth: 3,
+                        shadowBlur: 8,
+                      },
                     },
-                  },
-                  markPoint: {
-                    data: [
-                      { type: "max", name: "Max", symbolSize: 60 },
-                      { type: "min", name: "Min", symbolSize: 60 },
-                    ],
-                    label: {
-                      fontSize: 12,
-                    },
-                  },
-                  areaStyle: {
-                    color: {
-                      type: "linear",
-                      x: 0,
-                      y: 0,
-                      x2: 0,
-                      y2: 1,
-                      colorStops: [
-                        {
-                          offset: 0,
-                          color:
-                            SESSION_COLORS[index % SESSION_COLORS.length] +
-                            "20", // 20% opacity
-                        },
-                        {
-                          offset: 1,
-                          color:
-                            SESSION_COLORS[index % SESSION_COLORS.length] +
-                            "00", // 0% opacity
-                        },
+                    markPoint: {
+                      data: [
+                        { type: "max", name: "Max", symbolSize: 50 },
+                        { type: "min", name: "Min", symbolSize: 50 },
                       ],
+                      label: {
+                        fontSize: 11,
+                        fontWeight: 600,
+                      },
+                      itemStyle: {
+                        shadowBlur: 5,
+                        shadowColor: "rgba(0,0,0,0.2)",
+                      },
                     },
-                  },
-                })),
+                    areaStyle: {
+                      color: {
+                        type: "linear",
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [
+                          {
+                            offset: 0,
+                            color:
+                              SESSION_COLORS[sessionIndex % SESSION_COLORS.length] +
+                              "25", // 25% opacity
+                          },
+                          {
+                            offset: 1,
+                            color:
+                              SESSION_COLORS[sessionIndex % SESSION_COLORS.length] +
+                              "00", // 0% opacity
+                          },
+                        ],
+                      },
+                    },
+                  };
+                }),
                 tooltip: {
                   ...commonOptions.tooltip,
                   formatter: (params: any) => {
@@ -796,7 +1004,7 @@ export default function UMSChart({
                     const raw = params[0]?.value?.[0];
                     if (raw === undefined) return "";
 
-                    let content = `<div style="font-weight: 500; margin-bottom: 8px;">Raw Mark: ${raw}</div>`;
+                    let content = `<div style="font-weight: 600; margin-bottom: 10px; color: #111827;">Raw Mark: ${raw}</div>`;
 
                     params.forEach((param: any) => {
                       if (!param.value) return;
@@ -807,11 +1015,15 @@ export default function UMSChart({
                       const color = param.color;
 
                       content += `
-                <div style="margin-top: 8px;">
-                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; margin-right: 6px;"></span>
-                  <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
-                  <div style="padding-left: 16px;">UMS: ${ums ?? "N/A"}</div>
-                  ${grade ? `<div style="padding-left: 16px;">Grade: ${grade}</div>` : ""}
+                <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 4px;">
+                  <div style="display: flex; align-items: center;">
+                    <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: ${color}; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
+                    <span style="font-weight: 500; color: ${color};">${formatSessionName(sessionName)}</span>
+                  </div>
+                  <div style="padding-left: 20px; color: #6B7280;">
+                    UMS: <strong style="color: #111827;">${ums ?? "N/A"}</strong>
+                    ${grade ? `<br>Grade: <strong style="color: #111827;">${grade}</strong>` : ""}
+                  </div>
                 </div>
               `;
                     });
@@ -822,26 +1034,28 @@ export default function UMSChart({
               };
 
       return { chartData, gradeDistData, gradeBoundaryData, options };
-    }, [umsData, selectedSessions, viewType]);
+    }, [umsData, selectedSessions, viewType, sortedSessions]);
 
   if (loading) {
     return (
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="h-12 w-36 bg-surface-alt rounded-lg animate-pulse"></div>
             <div className="flex gap-2">
               <div className="h-10 w-40 bg-surface-alt rounded-lg animate-pulse"></div>
               <div className="h-10 w-40 bg-surface-alt rounded-lg animate-pulse"></div>
+              <div className="h-10 w-44 bg-surface-alt rounded-lg animate-pulse"></div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="h-96 bg-surface-alt rounded-lg animate-pulse mb-6"></div>
-          <div className="flex flex-wrap gap-2 mt-6">
+          <div className="h-[450px] bg-surface-alt rounded-lg animate-pulse mb-8"></div>
+          <div className="flex flex-wrap gap-3 mt-6">
+            <div className="h-10 w-28 bg-surface-alt rounded-lg animate-pulse"></div>
             <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
-            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
-            <div className="h-10 w-32 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="h-10 w-30 bg-surface-alt rounded-lg animate-pulse"></div>
+            <div className="h-10 w-28 bg-surface-alt rounded-lg animate-pulse"></div>
           </div>
         </CardContent>
       </Card>
@@ -851,14 +1065,34 @@ export default function UMSChart({
   if (!subject || !unit) {
     return (
       <Card>
-        <CardContent className="py-12">
+        <CardContent className="py-16">
           <div className="text-center max-w-lg mx-auto">
-            <h3 className="text-xl font-medium text-text mb-3">
+            <div className="w-16 h-16 bg-surface-alt rounded-full mx-auto mb-4 flex items-center justify-center">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className="text-text-muted"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-text mb-3">
               No Unit Selected
             </h3>
-            <p className="text-text-muted">
+            <p className="text-text-muted leading-relaxed">
               Please select a subject and unit from the dropdown menu to view
-              UMS conversion charts.
+              UMS conversion charts and grade boundary analysis.
             </p>
           </div>
         </CardContent>
@@ -869,14 +1103,31 @@ export default function UMSChart({
   if (!umsData || !umsData.sessions.length) {
     return (
       <Card>
-        <CardContent className="py-12">
+        <CardContent className="py-16">
           <div className="text-center max-w-lg mx-auto">
-            <h3 className="text-xl font-medium text-text mb-3">
+            <div className="w-16 h-16 bg-surface-alt rounded-full mx-auto mb-4 flex items-center justify-center">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className="text-text-muted"
+              >
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-text mb-3">
               No Data Available
             </h3>
-            <p className="text-text-muted">
+            <p className="text-text-muted leading-relaxed">
               No UMS conversion data is currently available for this unit.
-              Please try selecting a different unit.
+              Data may be added in future updates.
             </p>
           </div>
         </CardContent>
@@ -884,21 +1135,18 @@ export default function UMSChart({
     );
   }
 
-  // Get sorted sessions for UI display
-  const sortedSessions = sortSessions(umsData.sessions.map((s) => s.session));
-
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-700">
       <Card>
         {/* Header with Unit Info and View Selector */}
-        <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
           {/* Unit Info */}
           <UnitSelector unit={unit} subject={subject} />
 
-          {/* View Type Selector - reorder the buttons */}
+          {/* View Type Selector */}
           <div
             role="tablist"
-            className="flex gap-2 p-1.5 bg-background rounded-xl shadow-sm border border-border/50"
+            className="flex gap-2 p-2 bg-background rounded-xl shadow-sm border border-border/50"
           >
             <TabButton
               active={viewType === VIEW_TYPES.GRADE_BOUNDS}
@@ -942,13 +1190,30 @@ export default function UMSChart({
             <ReactECharts
               option={options}
               style={{ height: "100%", width: "100%" }}
-              className="transition-all duration-300"
+              className="transition-all duration-500"
               opts={{ renderer: "svg" }}
               notMerge={true}
             />
           ) : (
             <div className="h-full flex items-center justify-center">
-              <div className="text-center space-y-2 text-text-muted/80">
+              <div className="text-center space-y-3 text-text-muted/80">
+                <div className="w-12 h-12 bg-surface-alt rounded-full mx-auto flex items-center justify-center">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                  </svg>
+                </div>
                 <p className="text-lg font-medium">No chart data available</p>
                 <p className="text-sm">
                   Please select at least one session to display data
@@ -960,8 +1225,14 @@ export default function UMSChart({
 
         {/* Session Selection */}
         <CardContent>
-          <h3 className="text-lg font-semibold mb-4">Exam Sessions</h3>
-          <div className="flex flex-wrap gap-3 mb-4 transition-all">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h3 className="text-lg font-semibold">Exam Sessions</h3>
+            <div className="text-sm text-text-muted">
+              {selectedSessions.length} of {sortedSessions.length} sessions selected
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-3 mb-6 transition-all">
             {sortedSessions.map((session, index) => {
               const sessionData = umsData.sessions.find(
                 (s) => s.session === session,
@@ -987,25 +1258,25 @@ export default function UMSChart({
             })}
           </div>
 
-          <div className="flex flex-wrap gap-3 mt-6 border-t border-border/50 pt-4">
-            <button
-              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+          <div className="flex flex-wrap gap-3 mt-8 pt-6 border-t border-border/50">
+            <ActionButton
               onClick={() => setSelectedSessions(sortedSessions)}
+              variant="primary"
             >
               Select all
-            </button>
-            <button
-              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+            </ActionButton>
+            <ActionButton
               onClick={() => setSelectedSessions([])}
+              variant="secondary"
             >
               Clear selection
-            </button>
-            <button
-              className="px-4 py-2 text-sm text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 rounded-md transition-colors"
+            </ActionButton>
+            <ActionButton
               onClick={() => setSelectedSessions(sortedSessions.slice(0, 3))}
+              variant="secondary"
             >
               Latest 3 sessions
-            </button>
+            </ActionButton>
           </div>
         </CardContent>
       </Card>
@@ -1013,31 +1284,34 @@ export default function UMSChart({
       {/* Metadata Card */}
       <Card>
         <CardHeader>
-          <h3 className="font-semibold">Dataset Information</h3>
+          <h3 className="font-semibold flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary"></div>
+            Dataset Information
+          </h3>
         </CardHeader>
-        <CardContent className="bg-background">
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <div>
-              <span className="block text-text-muted text-sm mb-1">
+        <CardContent className="bg-surface/20">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="space-y-1">
+              <span className="block text-text-muted text-sm font-medium">
                 Subject
               </span>
-              <span className="font-medium">{subject?.name}</span>
+              <span className="font-semibold text-lg">{subject?.name}</span>
             </div>
-            <div>
-              <span className="block text-text-muted text-sm mb-1">Unit</span>
-              <span className="font-medium">{unit?.name}</span>
+            <div className="space-y-1">
+              <span className="block text-text-muted text-sm font-medium">Unit</span>
+              <span className="font-semibold text-lg">{unit?.name}</span>
             </div>
-            <div>
-              <span className="block text-text-muted text-sm mb-1">
+            <div className="space-y-1">
+              <span className="block text-text-muted text-sm font-medium">
                 Papers Found
               </span>
-              <span className="font-medium">{umsData?.total_papers_found}</span>
+              <span className="font-semibold text-lg">{umsData?.total_papers_found}</span>
             </div>
-            <div>
-              <span className="block text-text-muted text-sm mb-1">
+            <div className="space-y-1">
+              <span className="block text-text-muted text-sm font-medium">
                 Available Sessions
               </span>
-              <span className="font-medium">{umsData?.sessions.length}</span>
+              <span className="font-semibold text-lg">{umsData?.sessions.length}</span>
             </div>
           </div>
         </CardContent>
