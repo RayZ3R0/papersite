@@ -653,7 +653,9 @@ export default function UMSChart({
             color: "#1f2937",
             fontSize: 13,
           },
-          extraCssText: "box-shadow: 0 8px 32px rgba(0,0,0,0.12); backdrop-filter: blur(8px);",
+          extraCssText: "box-shadow: 0 8px 32px rgba(0,0,0,0.12); backdrop-filter: blur(8px); z-index: 9999 !important;",
+          appendToBody: true,
+          confine: false,
         },
         dataZoom: [
           {
