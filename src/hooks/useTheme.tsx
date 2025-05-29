@@ -28,7 +28,8 @@ export type Theme =
   | "crimson"
   | "one-dark"
   | "kanagawa"
-  | "everforest";
+  | "everforest"
+  | "sea-green";
 
 export const themeNames: Record<Theme, string> = {
   light: "Light",
@@ -50,6 +51,7 @@ export const themeNames: Record<Theme, string> = {
   "one-dark": "One Dark",
   everforest: "Everforest",
   kanagawa: "Kanagawa",
+  "sea-green": "Sea Green",
 };
 
 // Dark themes list
@@ -66,6 +68,7 @@ export const darkThemes: Theme[] = [
   "gruvbox",
   "crimson",
   "one-dark",
+  "sea-green"
 ];
 
 interface ThemeContextType {
@@ -224,7 +227,8 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
       "crimson",
       "one-dark",
       "kanagawa",
-      "everforest"
+      "everforest",
+      "sea-green"
     );
 
     // Add new theme class
@@ -258,7 +262,7 @@ export function ThemeProvider({ children }: ThemeProviderProps): JSX.Element {
         
         // Only update if there's no saved preference
         if (!savedTheme) {
-          const newTheme = e.matches ? DEFAULT_THEME : "catppuccin-latte";
+          const newTheme = e.matches ? DEFAULT_THEME : "matcha";
           setThemeState(newTheme);
           await saveThemeToDB(newTheme);
         }

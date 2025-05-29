@@ -576,6 +576,39 @@ html[data-connection="2g"] .parallax-effect {
         --color-border: #ffabc5;
         --color-border-light: #ffc0d4;
     }
+        .sea-green {
+            --color-primary: #2e8b57;
+            /* Sea Green */
+            --color-primary-light: #4caf81;
+            /* Highlight / hover */
+            --color-primary-dark: #1c5e3a;
+            /* Phthalo Green base */
+    
+            --color-secondary: #206a5d;
+            /* Rich aquatic green */
+            --color-secondary-light: #2d9a7a;
+            --color-secondary-dark: #144c41;
+    
+            --color-background: #0e1a16;
+            /* Very dark greenish-black */
+            --color-background-alt: #132820;
+            /* Slightly lighter for contrast */
+    
+            --color-surface: #1a2e28;
+            /* Card/element backgrounds */
+            --color-surface-alt: #223d34;
+            /* Hovered surface */
+    
+            --color-text: #d6f5e3;
+            /* Very light mint green */
+            --color-text-muted: #88b6a3;
+            /* Subdued seafoam */
+    
+            --color-border: #2f4f43;
+            /* Subtle dark borders */
+            --color-border-light: #3a5f53;
+            /* For hovered/focused borders */
+        }
 
     /* Base HTML */
     html {
